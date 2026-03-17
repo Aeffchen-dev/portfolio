@@ -224,6 +224,9 @@
     const nav = document.getElementById('mainNav');
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
     nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    nav.querySelector('.nav__logo').addEventListener('touchend', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+    });
     nav.querySelector('.nav__logo').addEventListener('click', e => {
       if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
     });
