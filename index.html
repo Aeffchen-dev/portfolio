@@ -190,7 +190,7 @@
       width:100vw; max-height:95dvh;
       z-index:110;
       border-radius:16px 16px 0 0;
-      overflow:hidden;
+      overflow-x:hidden; overflow-y:auto;
       transform:translateY(100%);
       transition:transform .5s cubic-bezier(.4,0,.2,1);
       pointer-events:none;
@@ -200,7 +200,7 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:95dvh; overflow-y:auto; overflow-x:hidden;
+      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
       background:#f2f2f2; padding:24px;
       scrollbar-width:none;
       color:#111;
