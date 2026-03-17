@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171717" id="themeColor">
   <title>Jana Gramlich — Product Designer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -664,6 +665,7 @@
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
       document.body.style.overflow = 'hidden';
+      document.getElementById('themeColor').content = bg;
     }
 
     // === CLOSE MODAL ===
@@ -674,8 +676,7 @@
       modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
-      document.body.style.background = '#171717';
-      document.documentElement.style.background = '#171717';
+      document.getElementById('themeColor').content = '#171717';
       modal.addEventListener('transitionend', () => {
         modal.style.visibility = 'hidden';
       }, { once: true });
@@ -725,8 +726,7 @@
             modalEl.classList.remove('is-open');
             document.getElementById('modalBackdrop').classList.remove('is-active');
             document.body.style.overflow = '';
-            document.body.style.background = '#171717';
-            document.documentElement.style.background = '#171717';
+            document.getElementById('themeColor').content = '#171717';
           }, { once: true });
         } else { snapBack(); }
       });
