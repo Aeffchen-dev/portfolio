@@ -247,9 +247,9 @@
       });
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.94; vy *= 0.94;
-        if (Math.abs(vx) < 0.05) vx = 0;
-        if (Math.abs(vy) < 0.05) vy = 0;
+        vx *= 0.97; vy *= 0.97;
+        if (Math.abs(vx) < 0.01) vx = 0;
+        if (Math.abs(vy) < 0.01) vy = 0;
       }
       requestAnimationFrame(render);
     }
