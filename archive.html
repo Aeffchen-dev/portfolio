@@ -95,8 +95,8 @@
 
     /* === CANVAS === */
     #canvas {
-      position:fixed; inset:0;
-      /* lvh = large viewport (bars hidden) so canvas always fills full screen */
+      position:fixed; top:0; left:0; right:0;
+      /* 100lvh = large viewport height = full screen incl. behind browser bars */
       height:100lvh;
       cursor:grab;
       user-select:none;
@@ -180,14 +180,19 @@
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
+    // Use canvas's actual rendered size (height:100lvh = full screen incl. behind bars)
+    // window.innerHeight returns safe-area height on iOS, not full screen — so use offsetHeight
+    const CW = canvas.offsetWidth  || window.innerWidth;
+    const CH = canvas.offsetHeight || window.innerHeight;
+
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
     const COLS   = 6;
     const ROWS   = 5;
     const BASE_W = 120;
     const BASE_G = 12;
-    const mult   = window.innerWidth < 640 ? 2.3 : 1.3;
-    const scale  = window.innerWidth / (COLS * (BASE_W + BASE_G)) * mult;
+    const mult   = CW < 640 ? 2.3 : 1.3;
+    const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
     const TILE_H = 253   * scale;
     const GAP    = BASE_G * scale;
@@ -198,7 +203,7 @@
       .sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.6, 1.0, 1.4, 0.6, 1.0, 1.4]; // vertical parallax per column
+    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18]; // subtle vertical parallax
     const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15]; // initial vertical offset (fraction of tile+gap)
 
     // Generate grid positions (store column index for parallax)
@@ -235,8 +240,8 @@
     // - X moves uniformly (no horizontal parallax)
     // - Y: vertical scroll at per-column speed + horizontal scroll bleeds into vertical drift
     function tilePos(t) {
-      const cx = window.innerWidth  / 2;
-      const cy = window.innerHeight / 2;
+      const cx = CW / 2;
+      const cy = CH / 2;
       const p  = COL_PAR[t.c];                  // 0.78 | 1.0 | 1.22
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
       const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
