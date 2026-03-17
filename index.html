@@ -24,7 +24,9 @@
 
     /* === NAV === */
     .nav {
-      position:fixed; top:8px; left:8px; right:8px;
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:200px;
       border-radius:24px;
       background:rgba(255,255,255,0.06);
       backdrop-filter:blur(20px) saturate(180%);
@@ -32,7 +34,9 @@
       border:1px solid rgba(255,255,255,0.1);
       overflow:hidden;
       z-index:100;
+      transition:width .4s cubic-bezier(.4,0,.2,1);
     }
+    .nav.is-open { width:min(calc(100vw - 16px), 560px); }
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:center;
       padding:0 20px; cursor:pointer;
@@ -243,10 +247,10 @@
     .project-links { margin-top:32px; }
     .project-link {
       display:block;
-      font-size:clamp(28px, 4vw, 48px);
-      font-weight:400; line-height:1;
+      font-size:clamp(40px, 8vw, 60px);
+      font-weight:400; line-height:1.15;
       text-align:center; text-transform:uppercase; color:#111;
-      border-top:1px solid rgba(0,0,0,.2); padding:20px 0;
+      border-top:1px solid rgba(0,0,0,.2); padding:0;
       transition:opacity .15s;
     }
     .project-link:last-child { border-bottom:1px solid rgba(0,0,0,.2); }
@@ -258,7 +262,7 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
-      .nav { left:50%; right:auto; transform:translateX(-50%); width:clamp(280px, 40vw, 560px); }
+      .nav.is-open { width:min(calc(100vw - 16px), 680px); }
       .home-content { padding:100px 60px 60px; }
       .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
       .work-list { display:grid; grid-template-columns:1fr 1fr; gap:0; }
@@ -268,7 +272,7 @@
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:start; }
       .info-meta { margin-bottom:0; }
       .project-links { margin-top:64px; }
-      .project-link { font-size:clamp(40px, 5vw, 72px); }
+      .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
     @media (min-width:1024px) {
       .home-content { padding:100px 80px 60px; }
@@ -289,7 +293,7 @@
       <div class="nav__expand-inner">
         <div class="nav__links">
           <a href="#work" class="nav__link">Work</a>
-          <a href="about.html" class="nav__link">About</a>
+          <a href="#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
           <div class="nav__divider"></div>
         </div>
@@ -306,7 +310,7 @@
   <div class="home-content">
     <p class="home-intro">I design products and the systems behind them. As a UI/UX Lead Designer, I turn complexity into clear user experiences while building the design systems, workflows, and shared standards that help teams move faster and design more consistently.</p>
 
-    <a href="about.html" class="btn-about">
+    <a href="#about" class="btn-about">
       <span class="btn-about__dot"></span>
       About me
     </a>
@@ -375,7 +379,7 @@
     </div>
 
     <!-- CV SECTION -->
-    <div class="cv-section">
+    <div class="cv-section" id="about">
       <div class="cv-row">
         <div class="cv-left">
           <p class="cv-company">About You</p>

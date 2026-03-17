@@ -19,45 +19,67 @@
     .nav {
       position:fixed; top:8px;
       left:50%; transform:translateX(-50%);
-      width:40vw; min-width:200px; z-index:100;
-      border-radius:12px;
-      background:rgba(255,255,255,0.65);
+      width:200px;
+      border-radius:24px;
+      background:rgba(255,255,255,0.06);
       backdrop-filter:blur(20px) saturate(180%);
       -webkit-backdrop-filter:blur(20px) saturate(180%);
-      border:1px solid rgba(0,0,0,.08);
+      border:1px solid rgba(255,255,255,0.1);
       overflow:hidden;
+      z-index:100;
+      transition:width .4s cubic-bezier(.4,0,.2,1);
     }
+    .nav.is-open { width:min(calc(100vw - 16px), 560px); }
     .nav__bar {
-      height:32px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px;
+      height:33px; display:flex; align-items:center; justify-content:center;
+      padding:0 20px; cursor:pointer;
     }
-    .nav__logo { font-size:12px; font-weight:500; color:#111; letter-spacing:0; }
-    .nav__menu-icon { opacity:.5; flex-shrink:0; }
+    .nav__logo {
+      font-size:14px; font-weight:500; color:#fff;
+      letter-spacing:0.56px; text-transform:uppercase;
+    }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open .nav__expand { grid-template-rows:1fr; }
     .nav__expand-inner { overflow:hidden; }
-    .nav__menu {
-      padding:8px;
-      border-top:1px solid rgba(0,0,0,.07);
-      display:flex; flex-direction:column; gap:6px;
+    .nav__links { padding:32px 24px 0; display:flex; flex-direction:column; }
+    .nav__link {
+      display:block;
+      font-size:32px; font-weight:400; color:#fff; line-height:1.4;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease, color .15s;
     }
-    .nav__btn {
-      display:flex; align-items:center; justify-content:center;
-      height:44px; border-radius:8px;
-      background:rgba(0,0,0,.06);
-      font-size:14px; font-weight:400; color:#111;
-      opacity:0; transform:translateY(6px);
-      transition:color .15s, background .15s, opacity .2s ease, transform .25s ease;
-    }
-    .nav.is-open .nav__btn {
+    .nav.is-open .nav__link {
       opacity:1; transform:translateY(0);
-      transition:color .15s, background .15s, opacity .2s ease .28s, transform .28s ease .28s;
+      transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s;
     }
-    .nav__btn:hover { background:rgba(0,0,0,.12); }
-    .nav__btn-row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .nav__link:hover { color:rgba(255,255,255,.5); }
+    .nav__divider {
+      height:1px; background:rgba(255,255,255,0.12);
+      margin:16px 0;
+      opacity:0; transition:opacity .2s ease;
+    }
+    .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
+    .nav__contact {
+      padding:0 24px 24px;
+      opacity:0; transform:translateY(6px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__contact {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .34s, transform .25s ease .34s;
+    }
+    .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
+    .nav__contact-email { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
+    .nav__linkedin {
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#acb0ff; color:#171717;
+      border-radius:999px; padding:8px 10px;
+      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      margin-top:16px;
+    }
 
     /* === CANVAS === */
     #canvas {
@@ -89,30 +111,28 @@
       -webkit-user-drag:none;
     }
 
-    @media (max-width:639px) { .nav { width:60vw; } }
-    @media (min-width:640px) and (max-width:1023px) { .nav { width:80vw; } }
+    @media (min-width:640px) { .nav.is-open { width:min(calc(100vw - 16px), 680px); } }
   </style>
 </head>
 <body>
 
   <!-- NAV -->
-  <nav class="nav">
+  <nav class="nav" id="mainNav">
     <div class="nav__bar">
       <a href="index.html" class="nav__logo">Jana Gramlich</a>
-      <svg class="nav__menu-icon" width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
-        <line y1="0.6" x2="16" y2="0.6" stroke="#111" stroke-width="1.2"/>
-        <line y1="5.6" x2="16" y2="5.6" stroke="#111" stroke-width="1.2"/>
-        <line y1="10.6" x2="16" y2="10.6" stroke="#111" stroke-width="1.2"/>
-      </svg>
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__menu">
-          <a href="archive.html" class="nav__btn">Archive</a>
-          <div class="nav__btn-row">
-            <a href="about.html" class="nav__btn">About</a>
-            <a href="mailto:hello@janagramlich.com" class="nav__btn">Email</a>
-          </div>
+        <div class="nav__links">
+          <a href="index.html#work" class="nav__link">Work</a>
+          <a href="index.html#about" class="nav__link">About</a>
+          <a href="archive.html" class="nav__link">Archive</a>
+          <div class="nav__divider"></div>
+        </div>
+        <div class="nav__contact">
+          <p class="nav__contact-label">Contact</p>
+          <p class="nav__contact-email">hello@janagramlich.com</p>
+          <a href="https://www.linkedin.com/in/jana-gramlich/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
     </div>
@@ -123,12 +143,11 @@
 
   <script>
     // === NAV ===
-    const nav = document.querySelector('.nav');
+    const nav = document.getElementById('mainNav');
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
     nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
     nav.addEventListener('click', e => {
-      if (e.pointerType === 'touch' && !e.target.closest('a'))
-        nav.classList.toggle('is-open');
+      if (e.pointerType === 'touch' && !e.target.closest('a')) nav.classList.toggle('is-open');
     });
 
     // === CANVAS ===
