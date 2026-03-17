@@ -176,11 +176,15 @@
     const canvas = document.getElementById('canvas');
 
     // Grid config — portrait tiles (9:19 ratio)
-    const TILE_W = 120;
-    const TILE_H = 253;
-    const GAP    = 12;
+    // Scale so 6 columns always fill exactly 100vw
     const COLS   = 6;
     const ROWS   = 5;
+    const BASE_W = 120;
+    const BASE_G = 12;
+    const scale  = window.innerWidth / (COLS * (BASE_W + BASE_G));
+    const TILE_W = BASE_W * scale;
+    const TILE_H = 253   * scale;
+    const GAP    = BASE_G * scale;
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
