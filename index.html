@@ -42,11 +42,11 @@
       width:164%; height:227%;
       left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:1;
+      opacity:0.65;
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
       z-index:-1;
     }
-    .nav.is-open::before { opacity:1; }
+    .nav.is-open::before { opacity:0.65; }
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:center;
       padding:0 20px; cursor:pointer;
@@ -110,11 +110,11 @@
       min-height:100dvh;
       display:flex; flex-direction:column;
     }
+    .home-hero { max-width:580px; margin-left:auto; margin-right:auto; width:100%; }
     .home-intro {
       font-size:21px; font-weight:400;
       line-height:1.4; color:#6b6b6b;
-      margin-bottom:32px; max-width:580px;
-      margin-left:auto; margin-right:auto;
+      margin-bottom:32px;
     }
     .btn-about {
       display:inline-flex; align-items:center; gap:8px;
@@ -154,7 +154,7 @@
     .work-item__title { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
 
     /* === CV SECTION === */
-    .cv-section { margin-top:48px; }
+    .cv-section { margin-top:48px; width:100%; max-width:580px; margin-left:auto; margin-right:auto; }
     .cv-section .cv-row:first-child { border-top:none; }
     .cv-section-label {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
@@ -307,7 +307,6 @@
       .work-item:nth-child(3n)    { margin-top:0; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
       .info-meta { margin-bottom:0; }
-      .cv-section { max-width:580px; margin-left:auto; margin-right:auto; }
     }
   </style>
 </head>
@@ -338,12 +337,13 @@
 
   <!-- HOMEPAGE CONTENT -->
   <div class="home-content">
-    <p class="home-intro">I design products and the systems behind them. As a UI/UX Lead Designer, I turn complexity into clear user experiences while building the design systems, workflows, and shared standards that help teams move faster and design more consistently.</p>
-
-    <a href="#about" class="btn-about">
-      <span class="btn-about__dot"></span>
-      About me
-    </a>
+    <div class="home-hero">
+      <p class="home-intro">I design products and the systems behind them. As a UI/UX Lead Designer, I turn complexity into clear user experiences while building the design systems, workflows, and shared standards that help teams move faster and design more consistently.</p>
+      <a href="#about" class="btn-about">
+        <span class="btn-about__dot"></span>
+        About me
+      </a>
+    </div>
 
     <div class="work-list" id="work">
       <article class="work-item" data-project="douglas-premium-relaunch">
@@ -478,7 +478,7 @@
 
     <footer class="home-footer">
       <a href="mailto:hello@janagramlich.com">Contact</a>
-      <a href="#">Imprint</a>
+      <a href="imprint.html">Imprint</a>
     </footer>
   </div>
 
@@ -556,7 +556,7 @@
         name:'Hybrid App',
         title:'Douglas app goes hybrid: Successful transformation of the mobile website as app breakpoint',
         text:'Douglas is the leading premium beauty retailer in Europe, inspiring customers to live their own kind of beauty through an unparalleled assortment across online stores and around 1,800 physical locations.\n\nIn 2021, Douglas decided to transform its native app into a hybrid app using the mobile website as its foundation. In a joint eight-month project, I analysed both applications and created a master plan of what features and optimisations needed to be made to the mobile website to make the transition as unnoticeable as possible for app users.\n\nI initiated collaboration between the app and web teams and built bridges to understand what differences app design required. I created compelling concepts and screen designs for the new app breakpoint and unified all touchpoints into one Figma space.\n\nWith this project I established a mobile-first mentality company-wide, reduced TTM by 40%, increased the app share by 15%, and implemented company-wide design QA processes. 90% of the optimisations my analyses revealed have been implemented and are still being used 2 years later.',
-        media:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg','Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg','Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
+        media:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg',{v:'https://www.figma.com/proto/bOf7SFpD1bMUG7bBrt9qAE/Analyses?page-id=0%3A1&type=design&node-id=3-508&viewport=620%2C-1979%2C0.87&t=GBaCznTyICi4S0ce-1&scaling=min-zoom&mode=design',ar:'16/9'},'Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg',{v:'https://www.figma.com/proto/bOf7SFpD1bMUG7bBrt9qAE/Analyses?page-id=3%3A4411&type=design&node-id=3-4412&viewport=655%2C484%2C1.03&t=zXrPoWWCmGqDeeEg-1&scaling=min-zoom&mode=design',ar:'16/9'},'Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
         facts:[{l:'Year',v:'2021–2022'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'}],
         myRole:'My role was project lead, user interface and experience design, interdisciplinary communication, and development handoff.',
         links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'}],
@@ -669,7 +669,7 @@
         const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
         const center = -extra / 2;               // center image in container
         const ratio  = (rect.top + rect.height / 2) / vh - 0.5; // -0.5..+0.5
-        const raw    = center + ratio * extra * 2.5;             // parallax drive
+        const raw    = center + ratio * extra * 0.8;             // parallax drive
         const shift  = Math.max(-extra, Math.min(0, raw));       // clamp: no gaps ever
         img.style.transform = `translateY(${shift}px)`;
       });
