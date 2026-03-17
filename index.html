@@ -668,14 +668,14 @@
     // === CLOSE MODAL ===
     function closeModal() {
       const modal = document.getElementById('projectModal');
+      // Clear project colours immediately — before the slide-out transition
+      modal.querySelector('.modal__scroll').style.background = '';
+      modal.querySelector('.page-header').style.background   = '';
       modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
       document.body.style.background = '#171717';
       document.documentElement.style.background = '#171717';
-      modal.addEventListener('transitionend', () => {
-        modal.querySelector('.modal__scroll').style.background = '';
-      }, { once: true });
     }
     document.querySelector('.btn-close').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
