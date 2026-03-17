@@ -36,6 +36,16 @@
       transition:width .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open { width:min(calc(100vw - 16px), 560px); }
+    .nav::before {
+      content:'';
+      position:absolute; inset:-10%;
+      background:url('https://janagramlich.com/wp-content/uploads/About-Header-1.jpg') center/cover no-repeat;
+      opacity:0;
+      filter:blur(24px) brightness(0.25) saturate(1.2);
+      transition:opacity .4s cubic-bezier(.4,0,.2,1);
+      z-index:-1;
+    }
+    .nav.is-open::before { opacity:1; }
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:center;
       padding:0 20px; cursor:pointer;
@@ -153,7 +163,7 @@
     .cv-left { min-width:0; }
     .cv-company { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
     .cv-role { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
-    .cv-date { font-size:12px; font-weight:500; color:#6b6b6b; white-space:nowrap; flex-shrink:0; letter-spacing:0.48px; text-transform:uppercase; }
+    .cv-date { font-size:12px; font-weight:500; color:#6b6b6b; white-space:nowrap; flex-shrink:0; letter-spacing:0; }
 
     /* === HOME FOOTER === */
     .home-footer {
@@ -198,7 +208,7 @@
     .eyebrow-client { font-size:12px; font-weight:500; color:#000; letter-spacing:0.48px; text-transform:uppercase; }
     .eyebrow-year   { font-size:12px; font-weight:400; color:rgba(0,0,0,.5); }
     .btn-close {
-      position:absolute; top:28px; right:12px; z-index:10;
+      position:absolute; top:20px; right:12px; z-index:10;
       width:24px; height:24px; border-radius:50%;
       background:rgba(255,255,255,0.7);
       border:1px solid rgba(0,0,0,.08);
@@ -207,10 +217,10 @@
       transition:background .15s; cursor:pointer;
     }
     .btn-close:hover { background:rgba(255,255,255,0.9); }
-    .hero__title {
-      font-size:clamp(24px, 5vw, 40px);
-      font-weight:400; line-height:1.3; color:#111;
-      max-width:580px;
+    .hero__title { display:none; }
+    .modal-name {
+      font-size:16px; font-weight:500; color:#6b6b6b;
+      margin-bottom:16px;
     }
     .hero__desc {
       margin-top:16px;
@@ -221,7 +231,7 @@
 
     /* === BLOCKS GRID === */
     .blocks { padding:24px 0; }
-    .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:24px; }
+    .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:72px; }
     .block { border-radius:8px; overflow:hidden; }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
@@ -248,6 +258,18 @@
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -24px 24px; overflow:hidden; }
     .modal__hero img { width:100%; display:block; aspect-ratio:8/5; object-fit:cover; }
+
+    /* === MODAL BACKDROP === */
+    .modal-backdrop {
+      position:fixed; inset:0; z-index:109;
+      background:transparent;
+      pointer-events:none;
+      transition:background .5s cubic-bezier(.4,0,.2,1);
+    }
+    .modal-backdrop.is-active {
+      background:rgba(0,0,0,0.6);
+      pointer-events:auto;
+    }
 
     /* === DESKTOP === */
     @media (min-width:640px) {
@@ -289,7 +311,7 @@
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
-          <p class="nav__contact-email">hello@janagramlich.com</p>
+          <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
           <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
@@ -401,6 +423,9 @@
 
   </div><!-- /.page-wrapper -->
 
+  <!-- MODAL BACKDROP -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
   <!-- PROJECT MODAL -->
   <div class="modal is-hidden" id="projectModal">
     <button class="btn-close" aria-label="Close project">
@@ -417,7 +442,7 @@
             <span class="eyebrow-year"   id="modal-year"></span>
           </div>
         </div>
-        <h1 class="hero__title" id="modal-title"></h1>
+        <p class="modal-name" id="modal-name"></p>
         <div class="hero__desc"  id="modal-desc"></div>
       </header>
       <main class="blocks">
@@ -446,6 +471,7 @@
       'douglas-premium-relaunch': {
         bg:'#F2F2F2',
         hero: BASE+'Dgls-hybrid-Header-1.jpg', client:'Douglas', year:'2023',
+        name:'Premium Relaunch',
         title:'Aligning the Douglas app and webshop UI with the premium assortment',
         text:'Douglas has made significant strides over the past few years to establish itself as a premium brand. So it was time to align the brand UI with the premium assortment and to design a premium user experience. The previous UI was distracting from a cohesive brand identity as it was so busy and colorful. It was lacking the sense of exclusivity and premium, and the disorganized layout made it difficult for customers to focus on key products and features. The objectives of the premium redesign are to enhance brand recognition, identity, and premium appeal, to increase opportunities for better omnichannel service and inspiration and to create an emotionally engaging beauty experience in compliance with European Accessibility Act 2025.',
         images:['premium2.jpg','premium3-1.jpg','premium4.jpg','premium5.jpg','premium6.jpg','premium7.jpg','premium8.jpg','premium9.jpg','premium10.jpg','premium11.jpg','premium12.jpg','premium13.jpg','premium14.jpg'],
@@ -456,6 +482,7 @@
       'about-you': {
         bg:'#F2F2F2',
         hero: BASE+'About-Header-1.jpg', client:'About You', year:'2025',
+        name:'Design System',
         title:'About You Design System',
         text:'I was responsible for creating the About You Figma Design System, a comprehensive framework designed to elevate the brand\'s digital experience. The primary goal was to ensure consistency across all major touchpoints — specifically the app and website — by unifying their visual language and interaction patterns.\n\nAnother key objective was to streamline the design and development processes to significantly reduce time to market. By providing a library of reusable components, clear guidelines, and structured workflows, the system enabled teams to work more efficiently and focus on delivering high-quality solutions faster.\n\nAccessibility was also a central pillar of the project, with an emphasis on adhering to modern standards to make the platform more inclusive for all users. The design system was built to empower designers with a state-of-the-art toolkit that simplifies their work, fosters collaboration, and allows them to focus on innovation and creativity.',
         images:['AY1.jpg','AY2.jpg','AY3.jpg','AY4.jpg','AY5.jpg','AY6.jpg','AY7.jpg','AY8.jpg','AY9.jpg','AY10.jpg','AY11.jpg','AY12.jpg'],
@@ -466,6 +493,7 @@
       'douglas-hybrid': {
         bg:'#EDD3DE',
         hero: BASE+'Dgls-hybrid-Header.jpg', client:'Douglas', year:'2021–2022',
+        name:'Hybrid App',
         title:'Douglas app goes hybrid: Successful transformation of the mobile website as app breakpoint',
         text:'Douglas is the leading premium beauty retailer in Europe, inspiring customers to live their own kind of beauty through an unparalleled assortment across online stores and around 1,800 physical locations.\n\nIn 2021, Douglas decided to transform its native app into a hybrid app using the mobile website as its foundation. In a joint eight-month project, I analysed both applications and created a master plan of what features and optimisations needed to be made to the mobile website to make the transition as unnoticeable as possible for app users.\n\nI initiated collaboration between the app and web teams and built bridges to understand what differences app design required. I created compelling concepts and screen designs for the new app breakpoint and unified all touchpoints into one Figma space.\n\nWith this project I established a mobile-first mentality company-wide, reduced TTM by 40%, increased the app share by 15%, and implemented company-wide design QA processes. 90% of the optimisations my analyses revealed have been implemented and are still being used 2 years later.',
         images:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg','Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg','Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
@@ -476,6 +504,7 @@
       'zalando': {
         bg:'#F2F2F2',
         hero: BASE+'Bildschirmfoto-2025-08-27-um-16.53.19.png', client:'Zalando', year:'2020',
+        name:'Connected Retail',
         title:"Zalando's Connected Retail — the early beginning of ZEOS",
         text:"Connected Retail was one of Zalando's very first strategic B2B initiatives, designed to seamlessly connect local fashion stores with Zalando's online platform. It enabled brick-and-mortar retailers to sell their in-store assortment directly to millions of online customers, while Zalando handled payments, marketing, and customer support. Over time, the program grew into one of the largest digital retail networks in Europe and later evolved into ZEOS.\n\nTogether with a team of videographers, illustrators, developers, and a design colleague, I created the branding and designed the UI/UX for the landing page targeted at store owners — including the full onboarding flow for becoming a Zalando retail partner.\n\nThe challenge was that this concept was still very new to the industry, and many brick-and-mortar retailers felt threatened by Zalando's growing dominance. The answer turned out to be simple: for smaller retailers without resources to run their own online shops, access to millions of customers combined with the potential revenue made the opportunity highly attractive.",
         images:['Z2.jpg','Z3.jpg','Z4-scaled.jpg','Z5.jpg'],
@@ -486,6 +515,7 @@
       'dmexco': {
         bg:'#ffffff',
         hero: BASE+'Header2.jpg', client:'DMEXCO', year:'2017–2020',
+        name:'Digital Experience',
         title:'Digital experience for Germany\'s largest digital marketing expo and conference',
         text:"DMEXCO is one of Europe's largest and most prominent digital marketing events. 1000+ companies and more than 40,000 visitors come together every year to make business leads and get the latest trends and tools from the tech industry.\n\nIn 2017 I conceived and designed the new website as part of the first design agency DMEXCO was ever working with. Horizont and many other magazines wrote about our relaunch. Since then I did plenty of ongoing improvements based on DMEXCO's needs and user feedback. My role reached from conception to execution, tackling complex problems into user-friendly solutions. In the meantime, the page grew to a 100+ layouts file.\n\nIn 2018 I planned and designed the first DMEXCO app. In 2019 we launched a new version with many new features — including a networking feature where fair visitors and exhibitors could exchange contact data and schedule meetings to gain valuable business leads. The 2019 app also gained a completely fresh look as we constantly developed the CI further.",
         images:['1.jpg','2-scaled.jpg','3-2.jpg','4-2-scaled.jpg','5.jpg','6.jpg','7.jpg'],
@@ -496,6 +526,7 @@
       'the-makery': {
         bg:'#DCD8D3',
         hero: BASE+'Header-the-makery.jpg', client:'The Makery', year:'2018–2019',
+        name:'Website Relaunch',
         title:'Website relaunch for a local arts and crafts workshop platform',
         text:"The Makery is a platform of workshops hosted by local artists and craftsmen. The Makery is all about community building around activities. We constructed a new narrative to reflect this and made the communication clearer and more engaging so people would understand the concept and participate. For the website, we did a whole relaunch and simplified the process of finding a workshop and booking a ticket.\n\nThe project started in 2018. In 2019 we decided for a mobile-first approach based on analytics and redesigned the main page, switched to a one-page checkout, and added a system of category, subcategory, and occasion landing pages, and improved the search, menus, and footer.",
         images:['The-Makery_1.jpg','The-Makery_2.jpg','The-Makery_3.jpg','The-Makery_4.jpg','The-Makery_5.jpg','The-Makery_6.jpg','The-Makery_7.jpg','The-Makery_8.jpg','The-Makery_9.jpg'],
@@ -521,7 +552,7 @@
       document.getElementById('modal-hero').src      = p.hero;
       document.getElementById('modal-client').textContent = p.client;
       document.getElementById('modal-year').textContent   = p.year;
-      document.getElementById('modal-title').textContent  = p.title;
+      document.getElementById('modal-name').textContent   = p.name || '';
       document.getElementById('modal-desc').innerHTML     = buildText(p.text);
       document.getElementById('modal-blocks').innerHTML   = buildBlocks(p.images);
       document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
@@ -535,12 +566,16 @@
       modal.querySelector('.page-header').style.background   = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       modal.classList.add('is-open');
+      document.getElementById('modalBackdrop').classList.add('is-active');
     }
 
     // === CLOSE MODAL ===
-    document.querySelector('.btn-close').addEventListener('click', () => {
+    function closeModal() {
       document.getElementById('projectModal').classList.remove('is-open');
-    });
+      document.getElementById('modalBackdrop').classList.remove('is-active');
+    }
+    document.querySelector('.btn-close').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', closeModal);
 
     // === WORK ITEM CLICKS ===
     document.querySelectorAll('.work-item[data-project]').forEach(item => {
