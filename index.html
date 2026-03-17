@@ -524,7 +524,9 @@
     // === NAV ===
     const nav = document.getElementById('mainNav');
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
-    nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    let _mlSuppress = false;
+    nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+    nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
     nav.querySelector('.nav__logo').addEventListener('touchend', e => {
       if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
     });
@@ -540,6 +542,17 @@
     });
     document.addEventListener('click', e => {
       if (e.pointerType === 'touch' && !e.target.closest('#mainNav')) nav.classList.remove('is-open');
+    });
+    // Anchor links: explicit scroll so iOS fires correctly, close nav cleanly
+    nav.querySelectorAll('.nav__link[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        nav.classList.remove('is-open');
+        const top = target.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
     });
 
     // === PROJECT DATA ===

@@ -223,7 +223,9 @@
   <script>
     const nav = document.getElementById('mainNav');
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
-    nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    let _mlSuppress = false;
+    nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+    nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
     nav.querySelector('.nav__logo').addEventListener('touchend', e => {
       if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
     });
