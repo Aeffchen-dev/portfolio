@@ -31,7 +31,6 @@
       background:rgba(255,255,255,0.06);
       backdrop-filter:blur(20px) saturate(180%);
       -webkit-backdrop-filter:blur(20px) saturate(180%);
-      border:1px solid rgba(255,255,255,0.1);
       overflow:hidden;
       z-index:100;
       transition:width .4s cubic-bezier(.4,0,.2,1);
@@ -91,24 +90,8 @@
       margin-top:16px;
     }
 
-    /* === PAGE WRAPPER & MODAL BACKDROP === */
-    .page-wrapper {
-      background:#171717;
-      transform-origin:top center;
-      transition:transform .5s cubic-bezier(.4,0,.2,1), border-radius .5s, max-height .5s cubic-bezier(.4,0,.2,1);
-    }
-    .modal-backdrop {
-      position:fixed; inset:0;
-      background:rgba(0,0,0,0);
-      pointer-events:none;
-      z-index:109;
-      transition:background .45s cubic-bezier(.4,0,.2,1);
-    }
-    body.modal-open .modal-backdrop { background:rgba(0,0,0,0.3); }
-    @media (max-width:1023px) {
-      body.modal-open { background:#000; }
-      body.modal-open .page-wrapper { transform:translateY(16px) scale(0.92); border-radius:16px 16px 0 0; overflow:hidden; }
-    }
+    /* === PAGE WRAPPER === */
+    .page-wrapper { background:#171717; }
 
     /* === HOME CONTENT === */
     .home-content {
@@ -153,17 +136,15 @@
     .work-item__image img { width:100%; height:100%; object-fit:cover; }
     .work-item__row { display:flex; justify-content:space-between; align-items:baseline; }
     .work-item__client { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
-    .work-item__view {
-      font-size:12px; font-weight:500; color:#6b6b6b; letter-spacing:0.48px; text-transform:uppercase;
-      transition:transform .2s ease, opacity .2s ease;
-    }
-    .work-item:hover .work-item__view { transform:translateX(4px); opacity:0.35; }
+    .work-item__view { font-size:12px; font-weight:500; color:#6b6b6b; letter-spacing:0.48px; text-transform:uppercase; }
+    .work-item__arrow { display:inline-block; transition:transform .2s ease, color .2s ease; }
+    .work-item:hover .work-item__arrow { transform:translateX(4px); color:rgba(255,255,255,0.45); }
     .work-item__title { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
 
     /* === CV SECTION === */
     .cv-section { margin-top:48px; }
     .cv-row {
-      display:flex; justify-content:space-between; align-items:baseline;
+      display:flex; justify-content:space-between; align-items:flex-end;
       padding:16px 0;
       border-top:1px solid rgba(255,255,255,0.12);
       gap:16px;
@@ -172,7 +153,7 @@
     .cv-left { min-width:0; }
     .cv-company { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
     .cv-role { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
-    .cv-date { font-size:16px; font-weight:500; color:#6b6b6b; white-space:nowrap; flex-shrink:0; }
+    .cv-date { font-size:12px; font-weight:500; color:#6b6b6b; white-space:nowrap; flex-shrink:0; letter-spacing:0.48px; text-transform:uppercase; }
 
     /* === HOME FOOTER === */
     .home-footer {
@@ -256,7 +237,7 @@
     .project-link {
       display:block;
       font-size:clamp(40px, 8vw, 60px);
-      font-weight:400; line-height:1.15;
+      font-weight:400; line-height:1;
       text-align:center; text-transform:uppercase; color:#111;
       border-top:1px solid rgba(0,0,0,.2); padding:0;
       transition:opacity .15s;
@@ -274,7 +255,8 @@
       .home-content { padding:100px 60px 60px; }
       .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
       .work-list { display:grid; grid-template-columns:1fr 1fr; gap:0; }
-      .modal { left:50%; transform:translateX(-50%); max-width:1100px; max-height:90vh; }
+      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:90vh; }
+      .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:40px; max-height:90vh; }
       .modal__hero { margin:-40px -40px 40px; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:start; }
@@ -308,7 +290,7 @@
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <p class="nav__contact-email">hello@janagramlich.com</p>
-          <a href="https://www.linkedin.com/in/jana-gramlich/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
     </div>
@@ -330,7 +312,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">Douglas</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Premium Relaunch</p>
       </article>
@@ -340,7 +322,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">About You</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Design System</p>
       </article>
@@ -350,7 +332,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">Douglas</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Hybrid App</p>
       </article>
@@ -360,7 +342,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">Zalando</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Connected Retail</p>
       </article>
@@ -370,7 +352,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">DMEXCO</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Digital Experience</p>
       </article>
@@ -380,7 +362,7 @@
         </div>
         <div class="work-item__row">
           <span class="work-item__client">The Makery</span>
-          <span class="work-item__view">View ↗</span>
+          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
         </div>
         <p class="work-item__title">Website Relaunch</p>
       </article>
@@ -418,9 +400,6 @@
   </div>
 
   </div><!-- /.page-wrapper -->
-
-  <!-- MODAL BACKDROP -->
-  <div class="modal-backdrop" id="modalBackdrop"></div>
 
   <!-- PROJECT MODAL -->
   <div class="modal is-hidden" id="projectModal">
@@ -556,18 +535,11 @@
       modal.querySelector('.page-header').style.background   = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       modal.classList.add('is-open');
-      requestAnimationFrame(() => {
-        const modalTop = window.innerHeight - modal.offsetHeight;
-        document.querySelector('.page-wrapper').style.maxHeight = Math.max(0,(modalTop-16)/0.92)+'px';
-      });
-      document.body.classList.add('modal-open');
     }
 
     // === CLOSE MODAL ===
     document.querySelector('.btn-close').addEventListener('click', () => {
       document.getElementById('projectModal').classList.remove('is-open');
-      document.body.classList.remove('modal-open');
-      document.querySelector('.page-wrapper').style.maxHeight = '';
     });
 
     // === WORK ITEM CLICKS ===
