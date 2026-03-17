@@ -521,6 +521,9 @@
     const nav = document.getElementById('mainNav');
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
     nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    nav.querySelector('.nav__logo').addEventListener('click', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+    });
     nav.addEventListener('click', e => {
       if (e.pointerType !== 'touch') return;
       const onBar = e.target.closest('.nav__bar');
@@ -657,7 +660,6 @@
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
       document.body.style.overflow = 'hidden';
-      document.body.style.background = bg;
     }
 
     // === CLOSE MODAL ===
