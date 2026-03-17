@@ -92,13 +92,13 @@
       transition:opacity .2s ease .34s, transform .25s ease .34s;
     }
     .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
-    .nav__contact-email { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
+    .nav__contact-email { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:8px; }
     .nav__linkedin {
       display:inline-flex; align-items:center; justify-content:center;
       background:#acb0ff; color:#171717;
       border-radius:999px; padding:8px 10px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
-      margin-top:12px;
+      margin-top:16px;
     }
 
     /* === PAGE WRAPPER === */
@@ -154,6 +154,7 @@
 
     /* === CV SECTION === */
     .cv-section { margin-top:48px; }
+    .cv-section .cv-row:first-child { border-top:none; }
     .cv-section-label {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
       letter-spacing:0.48px; text-transform:uppercase;
@@ -241,9 +242,9 @@
     .block { border-radius:8px; overflow:hidden; }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
-    .block-video { background:#000; aspect-ratio:16/9; }
+    .block-video { background:#000; aspect-ratio:16/9; position:relative; }
     .block-video iframe,
-    .block-video video { width:100%; height:100%; border:none; display:block; }
+    .block-video video { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -288,9 +289,9 @@
       .btn-about { margin-left:auto; margin-right:auto; }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item:nth-child(even) { margin-top:48px; }
-      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:90vh; }
+      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95vh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { padding:40px; max-height:90vh; }
+      .modal__scroll { padding:40px; max-height:95vh; }
       .modal__hero { margin:-40px -40px 40px; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
       .info-meta { margin-bottom:0; }
@@ -442,7 +443,6 @@
         <span class="cv-date">Oct 16 – Nov 16</span>
       </div>
 
-      <p class="cv-section-label">Education</p>
       <div class="cv-row">
         <div class="cv-left">
           <p class="cv-company">DHBW Mediendesign</p>
@@ -535,7 +535,7 @@
         videos:[],
         facts:[{l:'Year',v:'2023'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'},{l:'Position',v:'Teamlead UI/UX'}],
         myRole:"I led the implementation of the Dept design draft on a Design System Implementation and mapping side. I applied Dept's visual vision to the current feature set and tested loads of UI improvements and made sure nothing harms the UX in the end.",
-        links:[{t:'Visit the Website',u:'https://www.douglas.de'},{t:'App Download',u:'#'},{t:'Next Project',u:'#'}],
+        links:[{t:'Visit the Website',u:'https://www.douglas.de'},{t:'App Download',u:'#'}],
       },
       'about-you': {
         bg:'#F2F2F2',
@@ -547,7 +547,7 @@
         videos:[],
         facts:[{l:'Year',v:'2025'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
         myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
-        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'},{t:'Next Project',u:'#'}],
+        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'}],
       },
       'douglas-hybrid': {
         bg:'#EDD3DE',
@@ -559,7 +559,7 @@
         videos:[],
         facts:[{l:'Year',v:'2021–2022'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'}],
         myRole:'My role was project lead, user interface and experience design, interdisciplinary communication, and development handoff.',
-        links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'},{t:'Next Project',u:'#'}],
+        links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'}],
       },
       'zalando': {
         bg:'#F2F2F2',
@@ -583,7 +583,7 @@
         videos:[],
         facts:[{l:'Year',v:'2017–2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Award',v:'Red Dot Design Award'}],
         myRole:'My role was conception, wireframing, screen design, prototyping, client communication and strategic planning, as well as accompanying the development process, testing and quality assurance.',
-        links:[{t:'Visit the Website',u:'https://www.dmexco.com'},{t:'Next Project',u:'#'}],
+        links:[{t:'Visit the Website',u:'https://www.dmexco.com'}],
       },
       'the-makery': {
         bg:'#DCD8D3',
@@ -595,7 +595,7 @@
         videos:[],
         facts:[{l:'Year',v:'2018–2019'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Developer',v:'External, hired by the client'}],
         myRole:'My role was conception, creation of the user interface and experience design, client communication, strategic planning, instructing a digital design intern, and development handoff.',
-        links:[{t:'Visit the Website',u:'https://themakery.de'},{t:'Next Project',u:'#'}],
+        links:[{t:'Visit the Website',u:'https://themakery.de'}],
       },
     };
 
