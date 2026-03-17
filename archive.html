@@ -180,10 +180,12 @@
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // Use canvas's actual rendered size (height:100lvh = full screen incl. behind bars)
-    // window.innerHeight returns safe-area height on iOS, not full screen — so use offsetHeight
-    const CW = canvas.offsetWidth  || window.innerWidth;
-    const CH = canvas.offsetHeight || window.innerHeight;
+    // CW/CH must cover the full physical screen including behind browser bars.
+    // canvas.offsetHeight may be 0 before 100lvh resolves; screen.height is the reliable
+    // full-screen value on mobile. On desktop, window.innerHeight is correct.
+    const CW = canvas.offsetWidth || window.innerWidth;
+    const _oh = canvas.offsetHeight;
+    const CH = _oh > 200 ? _oh : (CW < 640 ? screen.height : window.innerHeight);
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
