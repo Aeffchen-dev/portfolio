@@ -189,16 +189,10 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    const IMGS = [
-      'images/archive-1.png',
-      'images/archive-2.png',
-      'images/archive-3.jpg',
-      'images/archive-4.png',
-      'images/archive-5.png',
-    ];
+    const IMGS = Array.from({length:47}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR = [0.78, 1.0, 1.22, 0.78, 1.0, 1.22]; // vertical parallax per column
+    const COL_PAR = [0.6, 1.0, 1.4, 0.6, 1.0, 1.4]; // vertical parallax per column
 
     // Generate grid positions (store column index for parallax)
     const DEFS = [];
@@ -237,7 +231,7 @@
       const cy = window.innerHeight / 2;
       const p  = COL_PAR[t.c];                  // 0.78 | 1.0 | 1.22
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
-      const poy = oy * p + ox * (p - 1.0);      // vertical parallax + cross-axis drift from horizontal
+      const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
       const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
       return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
     }
