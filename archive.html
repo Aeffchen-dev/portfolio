@@ -189,7 +189,8 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    const IMGS = Array.from({length:40}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`);
+    const IMGS = Array.from({length:40}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`)
+      .sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
     const COL_PAR  = [0.6, 1.0, 1.4, 0.6, 1.0, 1.4]; // vertical parallax per column
