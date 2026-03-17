@@ -192,13 +192,15 @@
     const IMGS = Array.from({length:47}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR = [0.6, 1.0, 1.4, 0.6, 1.0, 1.4]; // vertical parallax per column
+    const COL_PAR  = [0.6, 1.0, 1.4, 0.6, 1.0, 1.4]; // vertical parallax per column
+    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15]; // initial vertical offset (fraction of tile+gap)
 
     // Generate grid positions (store column index for parallax)
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP), w: TILE_W, h: TILE_H, c });
+        const yo = COL_YOFF[c] * (TILE_H + GAP);
+        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP) + yo, w: TILE_W, h: TILE_H, c });
       }
     }
 
