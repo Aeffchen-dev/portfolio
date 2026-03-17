@@ -10,7 +10,7 @@
   <style>
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { -webkit-font-smoothing:antialiased; }
+    html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
     body {
       font-family:'DM Sans', sans-serif;
       font-optical-sizing:auto;
@@ -522,7 +522,14 @@
     nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
     nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
     nav.addEventListener('click', e => {
-      if (e.pointerType === 'touch' && !e.target.closest('a')) nav.classList.toggle('is-open');
+      if (e.pointerType !== 'touch') return;
+      const onBar = e.target.closest('.nav__bar');
+      const isOpen = nav.classList.contains('is-open');
+      if (onBar && !isOpen) { e.preventDefault(); nav.classList.add('is-open'); }
+      else if (onBar && !e.target.closest('a')) nav.classList.remove('is-open');
+    });
+    document.addEventListener('click', e => {
+      if (e.pointerType === 'touch' && !e.target.closest('#mainNav')) nav.classList.remove('is-open');
     });
 
     // === PROJECT DATA ===
@@ -650,6 +657,7 @@
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
       document.body.style.overflow = 'hidden';
+      document.body.style.background = bg;
     }
 
     // === CLOSE MODAL ===
@@ -657,6 +665,7 @@
       document.getElementById('projectModal').classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
+      document.body.style.background = '#171717';
     }
     document.querySelector('.btn-close').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
