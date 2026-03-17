@@ -676,6 +676,7 @@
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
       document.getElementById('themeColor').content = '#171717';
+      document.documentElement.style.backgroundColor = '#171717';
       modal.addEventListener('transitionend', () => {
         modal.style.visibility = 'hidden';
       }, { once: true });
@@ -708,6 +709,7 @@
           document.getElementById('modalBackdrop').classList.remove('is-active');
           document.body.style.overflow = '';
           document.getElementById('themeColor').content = '#171717';
+          document.documentElement.style.backgroundColor = '#171717';
         }, { once: true });
       }
 
