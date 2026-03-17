@@ -38,7 +38,9 @@
     .nav.is-open { width:min(calc(100vw - 16px), 560px); }
     .nav::before {
       content:'';
-      position:absolute; inset:0;
+      position:absolute;
+      width:164%; height:227%;
+      left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
       opacity:0;
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
@@ -96,7 +98,7 @@
       background:#acb0ff; color:#171717;
       border-radius:999px; padding:8px 10px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
-      margin-top:16px;
+      margin-top:0;
     }
 
     /* === PAGE WRAPPER === */
@@ -152,6 +154,11 @@
 
     /* === CV SECTION === */
     .cv-section { margin-top:48px; }
+    .cv-section-label {
+      font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
+      letter-spacing:0.48px; text-transform:uppercase;
+      margin-top:32px; margin-bottom:4px;
+    }
     .cv-row {
       display:flex; justify-content:space-between; align-items:flex-end;
       padding:16px 0;
@@ -416,6 +423,50 @@
           <p class="cv-role">Senior UI/UX Designer</p>
         </div>
         <span class="cv-date">Feb 21 – Jun 23</span>
+      </div>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">Navarra.is</p>
+          <p class="cv-role">UX / UI Designer</p>
+        </div>
+        <span class="cv-date">Jul 17 – Dec 20</span>
+      </div>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">ag-prop</p>
+          <p class="cv-role">UX / UI Designer, Internship</p>
+        </div>
+        <span class="cv-date">Oct 16 – Nov 16</span>
+      </div>
+
+      <p class="cv-section-label">Education</p>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">DHBW Mediendesign</p>
+          <p class="cv-role">Bachelor of Arts</p>
+        </div>
+        <span class="cv-date">Oct 14 – Sept 17</span>
+      </div>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">Kunsthøgskolen Oslo</p>
+          <p class="cv-role">Semester Abroad</p>
+        </div>
+        <span class="cv-date">Aug 16 – Dec 16</span>
+      </div>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">University of Stuttgart</p>
+          <p class="cv-role">Architecture</p>
+        </div>
+        <span class="cv-date">Oct 12 – Dec 13</span>
+      </div>
+      <div class="cv-row">
+        <div class="cv-left">
+          <p class="cv-company">attraktive grautöne</p>
+          <p class="cv-role">Spatial Design</p>
+        </div>
+        <span class="cv-date">Jan 14 – Jun 17</span>
       </div>
     </div>
 
