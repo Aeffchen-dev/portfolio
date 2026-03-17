@@ -28,7 +28,7 @@
       left:50%; transform:translateX(-50%);
       width:200px;
       border-radius:24px;
-      background:rgba(255,255,255,0.06);
+      background:rgba(255,255,255,0.11);
       backdrop-filter:blur(20px) saturate(180%);
       -webkit-backdrop-filter:blur(20px) saturate(180%);
       overflow:hidden;
@@ -42,7 +42,7 @@
       width:164%; height:227%;
       left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:0;
+      opacity:0.35;
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
       z-index:-1;
     }
@@ -98,7 +98,7 @@
       background:#acb0ff; color:#171717;
       border-radius:999px; padding:8px 10px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
-      margin-top:0;
+      margin-top:12px;
     }
 
     /* === PAGE WRAPPER === */
@@ -144,7 +144,7 @@
       background:#2a2a2a;
       margin-bottom:12px;
     }
-    .work-item__image img { width:100%; height:100%; object-fit:cover; }
+    .work-item__image img { width:100%; height:115%; object-fit:cover; will-change:transform; }
     .work-item__row { display:flex; justify-content:space-between; align-items:baseline; }
     .work-item__client { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
     .work-item__view { font-size:12px; font-weight:500; color:#6b6b6b; letter-spacing:0.48px; text-transform:uppercase; }
@@ -241,6 +241,9 @@
     .block { border-radius:8px; overflow:hidden; }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
+    .block-video { background:#000; aspect-ratio:16/9; }
+    .block-video iframe,
+    .block-video video { width:100%; height:100%; border:none; display:block; }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -281,7 +284,8 @@
     @media (min-width:640px) {
       .nav.is-open { width:min(calc(100vw - 16px), 680px); }
       .home-content { padding:100px 60px 60px; }
-      .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
+      .home-intro { font-size:clamp(19px, 1.8vw, 22px); text-align:center; margin-left:auto; margin-right:auto; }
+      .btn-about { margin-left:auto; margin-right:auto; }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item:nth-child(even) { margin-top:48px; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:90vh; }
@@ -298,7 +302,8 @@
       .work-list { grid-template-columns:repeat(3, 1fr); }
       .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
       .work-item:nth-child(3n+2)  { margin-top:40px; }
-      .work-item:nth-child(3n)    { margin-top:80px; }
+      .work-item:nth-child(3n)    { margin-top:0; }
+      .cv-section { max-width:580px; margin-left:auto; margin-right:auto; }
     }
   </style>
 </head>
@@ -317,12 +322,10 @@
           <a href="#work" class="nav__link">Work</a>
           <a href="#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <div class="nav__divider"></div>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
-          <div class="nav__divider" style="margin-top:16px;"></div>
           <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
@@ -494,7 +497,6 @@
         <div class="header-eyebrow">
           <div class="eyebrow-left">
             <span class="eyebrow-client" id="modal-client"></span>
-            <span class="eyebrow-year"   id="modal-year"></span>
           </div>
         </div>
         <p class="modal-name" id="modal-name"></p>
@@ -530,6 +532,7 @@
         title:'Aligning the Douglas app and webshop UI with the premium assortment',
         text:'Douglas has made significant strides over the past few years to establish itself as a premium brand. So it was time to align the brand UI with the premium assortment and to design a premium user experience. The previous UI was distracting from a cohesive brand identity as it was so busy and colorful. It was lacking the sense of exclusivity and premium, and the disorganized layout made it difficult for customers to focus on key products and features. The objectives of the premium redesign are to enhance brand recognition, identity, and premium appeal, to increase opportunities for better omnichannel service and inspiration and to create an emotionally engaging beauty experience in compliance with European Accessibility Act 2025.',
         images:['premium2.jpg','premium3-1.jpg','premium4.jpg','premium5.jpg','premium6.jpg','premium7.jpg','premium8.jpg','premium9.jpg','premium10.jpg','premium11.jpg','premium12.jpg','premium13.jpg','premium14.jpg'],
+        videos:[],
         facts:[{l:'Year',v:'2023'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'},{l:'Position',v:'Teamlead UI/UX'}],
         myRole:"I led the implementation of the Dept design draft on a Design System Implementation and mapping side. I applied Dept's visual vision to the current feature set and tested loads of UI improvements and made sure nothing harms the UX in the end.",
         links:[{t:'Visit the Website',u:'https://www.douglas.de'},{t:'App Download',u:'#'},{t:'Next Project',u:'#'}],
@@ -541,6 +544,7 @@
         title:'About You Design System',
         text:'I was responsible for creating the About You Figma Design System, a comprehensive framework designed to elevate the brand\'s digital experience. The primary goal was to ensure consistency across all major touchpoints — specifically the app and website — by unifying their visual language and interaction patterns.\n\nAnother key objective was to streamline the design and development processes to significantly reduce time to market. By providing a library of reusable components, clear guidelines, and structured workflows, the system enabled teams to work more efficiently and focus on delivering high-quality solutions faster.\n\nAccessibility was also a central pillar of the project, with an emphasis on adhering to modern standards to make the platform more inclusive for all users. The design system was built to empower designers with a state-of-the-art toolkit that simplifies their work, fosters collaboration, and allows them to focus on innovation and creativity.',
         images:['AY1.jpg','AY2.jpg','AY3.jpg','AY4.jpg','AY5.jpg','AY6.jpg','AY7.jpg','AY8.jpg','AY9.jpg','AY10.jpg','AY11.jpg','AY12.jpg'],
+        videos:[],
         facts:[{l:'Year',v:'2025'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
         myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
         links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'},{t:'Next Project',u:'#'}],
@@ -552,6 +556,7 @@
         title:'Douglas app goes hybrid: Successful transformation of the mobile website as app breakpoint',
         text:'Douglas is the leading premium beauty retailer in Europe, inspiring customers to live their own kind of beauty through an unparalleled assortment across online stores and around 1,800 physical locations.\n\nIn 2021, Douglas decided to transform its native app into a hybrid app using the mobile website as its foundation. In a joint eight-month project, I analysed both applications and created a master plan of what features and optimisations needed to be made to the mobile website to make the transition as unnoticeable as possible for app users.\n\nI initiated collaboration between the app and web teams and built bridges to understand what differences app design required. I created compelling concepts and screen designs for the new app breakpoint and unified all touchpoints into one Figma space.\n\nWith this project I established a mobile-first mentality company-wide, reduced TTM by 40%, increased the app share by 15%, and implemented company-wide design QA processes. 90% of the optimisations my analyses revealed have been implemented and are still being used 2 years later.',
         images:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg','Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg','Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
+        videos:[],
         facts:[{l:'Year',v:'2021–2022'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'}],
         myRole:'My role was project lead, user interface and experience design, interdisciplinary communication, and development handoff.',
         links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'},{t:'Next Project',u:'#'}],
@@ -563,6 +568,7 @@
         title:"Zalando's Connected Retail — the early beginning of ZEOS",
         text:"Connected Retail was one of Zalando's very first strategic B2B initiatives, designed to seamlessly connect local fashion stores with Zalando's online platform. It enabled brick-and-mortar retailers to sell their in-store assortment directly to millions of online customers, while Zalando handled payments, marketing, and customer support. Over time, the program grew into one of the largest digital retail networks in Europe and later evolved into ZEOS.\n\nTogether with a team of videographers, illustrators, developers, and a design colleague, I created the branding and designed the UI/UX for the landing page targeted at store owners — including the full onboarding flow for becoming a Zalando retail partner.\n\nThe challenge was that this concept was still very new to the industry, and many brick-and-mortar retailers felt threatened by Zalando's growing dominance. The answer turned out to be simple: for smaller retailers without resources to run their own online shops, access to millions of customers combined with the potential revenue made the opportunity highly attractive.",
         images:['Z2.jpg','Z3.jpg','Z4-scaled.jpg','Z5.jpg'],
+        videos:[],
         facts:[{l:'Year',v:'2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Zalando'}],
         myRole:'My role was creating and leading the user interface and experience design, interdisciplinary communication, and development handoff.',
         links:[],
@@ -574,6 +580,7 @@
         title:'Digital experience for Germany\'s largest digital marketing expo and conference',
         text:"DMEXCO is one of Europe's largest and most prominent digital marketing events. 1000+ companies and more than 40,000 visitors come together every year to make business leads and get the latest trends and tools from the tech industry.\n\nIn 2017 I conceived and designed the new website as part of the first design agency DMEXCO was ever working with. Horizont and many other magazines wrote about our relaunch. Since then I did plenty of ongoing improvements based on DMEXCO's needs and user feedback. My role reached from conception to execution, tackling complex problems into user-friendly solutions. In the meantime, the page grew to a 100+ layouts file.\n\nIn 2018 I planned and designed the first DMEXCO app. In 2019 we launched a new version with many new features — including a networking feature where fair visitors and exhibitors could exchange contact data and schedule meetings to gain valuable business leads. The 2019 app also gained a completely fresh look as we constantly developed the CI further.",
         images:['1.jpg','2-scaled.jpg','3-2.jpg','4-2-scaled.jpg','5.jpg','6.jpg','7.jpg'],
+        videos:[],
         facts:[{l:'Year',v:'2017–2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Award',v:'Red Dot Design Award'}],
         myRole:'My role was conception, wireframing, screen design, prototyping, client communication and strategic planning, as well as accompanying the development process, testing and quality assurance.',
         links:[{t:'Visit the Website',u:'https://www.dmexco.com'},{t:'Next Project',u:'#'}],
@@ -585,6 +592,7 @@
         title:'Website relaunch for a local arts and crafts workshop platform',
         text:"The Makery is a platform of workshops hosted by local artists and craftsmen. The Makery is all about community building around activities. We constructed a new narrative to reflect this and made the communication clearer and more engaging so people would understand the concept and participate. For the website, we did a whole relaunch and simplified the process of finding a workshop and booking a ticket.\n\nThe project started in 2018. In 2019 we decided for a mobile-first approach based on analytics and redesigned the main page, switched to a one-page checkout, and added a system of category, subcategory, and occasion landing pages, and improved the search, menus, and footer.",
         images:['The-Makery_1.jpg','The-Makery_2.jpg','The-Makery_3.jpg','The-Makery_4.jpg','The-Makery_5.jpg','The-Makery_6.jpg','The-Makery_7.jpg','The-Makery_8.jpg','The-Makery_9.jpg'],
+        videos:[],
         facts:[{l:'Year',v:'2018–2019'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Developer',v:'External, hired by the client'}],
         myRole:'My role was conception, creation of the user interface and experience design, client communication, strategic planning, instructing a digital design intern, and development handoff.',
         links:[{t:'Visit the Website',u:'https://themakery.de'},{t:'Next Project',u:'#'}],
@@ -592,10 +600,22 @@
     };
 
     // === MODAL HELPERS ===
-    function buildBlocks(imgs) {
-      return imgs.map(f =>
+    function buildMedia(imgs, videos) {
+      const imgBlocks = (imgs || []).map(f =>
         `<div class="block block-image"><img src="${BASE+f}" alt="" loading="lazy"></div>`
-      ).join('');
+      );
+      const vidBlocks = (videos || []).map(url => {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          const id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || '';
+          return `<div class="block block-video"><iframe src="https://www.youtube-nocookie.com/embed/${id}" frameborder="0" allowfullscreen loading="lazy" title="Video"></iframe></div>`;
+        }
+        if (url.includes('vimeo.com')) {
+          const id = url.match(/vimeo\.com\/(\d+)/)?.[1] || '';
+          return `<div class="block block-video"><iframe src="https://player.vimeo.com/video/${id}" frameborder="0" allowfullscreen loading="lazy" title="Video"></iframe></div>`;
+        }
+        return `<div class="block block-video"><video src="${url}" controls playsinline></video></div>`;
+      });
+      return [...imgBlocks, ...vidBlocks].join('');
     }
     function buildText(t) {
       return t.split('\n\n').filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('');
@@ -606,10 +626,9 @@
       const p = PROJECTS[key]; if (!p) return;
       document.getElementById('modal-hero').src      = p.hero;
       document.getElementById('modal-client').textContent = p.client;
-      document.getElementById('modal-year').textContent   = p.year;
       document.getElementById('modal-name').textContent   = p.name || '';
       document.getElementById('modal-desc').innerHTML     = buildText(p.text);
-      document.getElementById('modal-blocks').innerHTML   = buildBlocks(p.images);
+      document.getElementById('modal-blocks').innerHTML   = buildMedia(p.images, p.videos);
       document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent   = p.myRole;
@@ -636,6 +655,22 @@
     document.querySelectorAll('.work-item[data-project]').forEach(item => {
       item.addEventListener('click', () => openModal(item.dataset.project));
     });
+
+    // === TILE PARALLAX ===
+    function updateTileParallax() {
+      const imgs = document.querySelectorAll('.work-item__image img');
+      const vh = window.innerHeight;
+      imgs.forEach(img => {
+        const rect = img.closest('.work-item__image').getBoundingClientRect();
+        const centerY = rect.top + rect.height / 2;
+        // ratio: +1 when tile at bottom of screen, -1 when at top
+        const ratio = (centerY / vh - 0.5) * 2;
+        const shift = ratio * 7.5;
+        img.style.transform = `translateY(${shift}%)`;
+      });
+    }
+    window.addEventListener('scroll', updateTileParallax, { passive: true });
+    updateTileParallax();
   </script>
 </body>
 </html>
