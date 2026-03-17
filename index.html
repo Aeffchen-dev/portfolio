@@ -690,47 +690,52 @@
       const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
       let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
 
-      modalEl.addEventListener('pointerdown', e => {
-        if (e.pointerType !== 'touch' || scrollEl.scrollTop > 0) return;
-        sy = e.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
-        modalEl.setPointerCapture(e.pointerId);
-      }, { passive: true });
-
-      modalEl.addEventListener('pointermove', e => {
-        if (!active) return;
-        const d = e.clientY - sy; if (d <= 0) return;
-        vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
-        dy = d; pt = e.timeStamp;
-        modalEl.style.transition = 'none';
-        modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
-      });
-
       function snapBack() {
         modalEl.style.transition = '';
         modalEl.style.transform  = '';
       }
 
-      modalEl.addEventListener('pointerup', () => {
+      function doClose() {
+        modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+        modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
+        modalEl.addEventListener('transitionend', () => {
+          modalEl.style.visibility = 'hidden';
+          modalEl.style.transition = '';
+          modalEl.style.transform  = '';
+          modalEl.querySelector('.modal__scroll').style.background = '';
+          modalEl.querySelector('.page-header').style.background   = '';
+          modalEl.classList.remove('is-open');
+          document.getElementById('modalBackdrop').classList.remove('is-active');
+          document.body.style.overflow = '';
+          document.getElementById('themeColor').content = '#171717';
+        }, { once: true });
+      }
+
+      // Use touch events (not pointer) so touchmove can be non-passive and call preventDefault
+      modalEl.addEventListener('touchstart', e => {
+        if (scrollEl.scrollTop > 0) return;
+        const t = e.touches[0];
+        sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
+      }, { passive: true });
+
+      modalEl.addEventListener('touchmove', e => {
+        if (!active) return;
+        const t = e.touches[0];
+        const d = t.clientY - sy;
+        if (d <= 0) { active = false; return; }
+        e.preventDefault(); // block scroll — requires non-passive
+        vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
+        dy = d; pt = e.timeStamp;
+        modalEl.style.transition = 'none';
+        modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
+      }, { passive: false });
+
+      modalEl.addEventListener('touchend', () => {
         if (!active) return; active = false;
-        if (dy > 100 || vy > 8) {
-          // animate off-screen from current position, then clean up
-          modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
-          modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
-          modalEl.addEventListener('transitionend', () => {
-            modalEl.style.visibility = 'hidden'; // hide before resetting transform
-            modalEl.style.transition = '';
-            modalEl.style.transform  = '';
-            modalEl.querySelector('.modal__scroll').style.background = '';
-            modalEl.querySelector('.page-header').style.background   = '';
-            modalEl.classList.remove('is-open');
-            document.getElementById('modalBackdrop').classList.remove('is-active');
-            document.body.style.overflow = '';
-            document.getElementById('themeColor').content = '#171717';
-          }, { once: true });
-        } else { snapBack(); }
+        if (dy > 100 || vy > 8) doClose(); else snapBack();
       });
 
-      modalEl.addEventListener('pointercancel', () => { active = false; snapBack(); });
+      modalEl.addEventListener('touchcancel', () => { active = false; snapBack(); });
     })();
 
     // === WORK ITEM CLICKS ===
