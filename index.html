@@ -606,7 +606,11 @@
           const url = item.v;
           if (url.includes('figma.com')) {
             const ar = item.ar || '9/19';
-            return `<div class="block block-figma" style="aspect-ratio:${ar}"><iframe src="${url}" frameborder="0" allowfullscreen loading="lazy" title="Figma Prototype"></iframe></div>`;
+            // Proto/design URLs must use Figma's embed wrapper to work in iframes
+            const embedUrl = url.includes('figma.com/embed')
+              ? url
+              : `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+            return `<div class="block block-figma" style="aspect-ratio:${ar}"><iframe src="${embedUrl}" frameborder="0" allowfullscreen loading="lazy" title="Figma Prototype"></iframe></div>`;
           }
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             const id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || '';
@@ -645,12 +649,14 @@
       modal.querySelector('.modal__scroll').scrollTop = 0;
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
+      document.body.style.overflow = 'hidden';
     }
 
     // === CLOSE MODAL ===
     function closeModal() {
       document.getElementById('projectModal').classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
+      document.body.style.overflow = '';
     }
     document.querySelector('.btn-close').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
