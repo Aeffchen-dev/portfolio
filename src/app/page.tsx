@@ -5,10 +5,10 @@ export default function Home() {
   return (
     <main
       style={{
-        backgroundColor: "#0d0d0d",
+        background: "linear-gradient(160deg, #1c1c1e 0%, #0d0d0d 50%)",
         minHeight: "100vh",
-        paddingLeft: 8,
-        paddingRight: 8,
+        paddingLeft: 24,
+        paddingRight: 24,
         paddingBottom: 80,
         fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
       }}
@@ -16,36 +16,87 @@ export default function Home() {
       {/* Nav */}
       <nav
         className="flex items-center justify-between"
-        style={{ paddingTop: 20, paddingBottom: 20 }}
+        style={{ paddingTop: 28, paddingBottom: 28 }}
       >
         <span
-          className="text-sm font-medium"
-          style={{ color: "#f0f0f0", letterSpacing: "-0.01em" }}
+          style={{
+            color: "#f0f0f0",
+            fontSize: "1rem",
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+          }}
         >
-          Portfolio
+          portfolio
         </span>
+        {/* Hamburger */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 5, cursor: "pointer" }}>
+          <span style={{ display: "block", width: 22, height: 1.5, backgroundColor: "#f0f0f0", borderRadius: 1 }} />
+          <span style={{ display: "block", width: 22, height: 1.5, backgroundColor: "#f0f0f0", borderRadius: 1 }} />
+        </div>
       </nav>
 
-      {/* Header */}
-      <header style={{ paddingTop: 60, paddingBottom: 60 }}>
+      {/* Hero */}
+      <header style={{ paddingTop: 56, paddingBottom: 0 }}>
         <h1
-          className="font-semibold"
           style={{
-            fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
-            color: "#f0f0f0",
-            letterSpacing: "-0.03em",
-            lineHeight: 1.05,
+            fontSize: "clamp(3rem, 9vw, 7rem)",
+            fontWeight: 700,
+            color: "#ffffff",
+            letterSpacing: "-0.04em",
+            lineHeight: 1.0,
+            margin: 0,
           }}
         >
-          Selected work
+          Selected<br />
+          Work
         </h1>
-        <div
-          style={{
-            height: 1,
-            backgroundColor: "#2a2a2a",
-            marginTop: 48,
-          }}
-        />
+
+        {/* Divider */}
+        <div style={{ height: 1, backgroundColor: "#2a2a2a", marginTop: 48, marginBottom: 32 }} />
+
+        {/* Info rows */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {[
+            { label: "Discipline", value: "Product Design · Brand · Web" },
+            { label: "Availability", value: "Open to new projects" },
+            { label: "Based in", value: "San Francisco, CA" },
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <p style={{ margin: 0, fontSize: "0.8125rem", fontWeight: 600, color: "#f0f0f0", letterSpacing: "-0.01em" }}>
+                {label}
+              </p>
+              <p style={{ margin: 0, fontSize: "0.8125rem", color: "#666666", marginTop: 2 }}>
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pill CTA */}
+        <div style={{ marginTop: 36, marginBottom: 64 }}>
+          <a
+            href="mailto:hello@portfolio.com"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              backgroundColor: "#8b8de8",
+              color: "#ffffff",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              padding: "10px 20px",
+              borderRadius: 999,
+            }}
+          >
+            Get in touch
+          </a>
+        </div>
+
+        {/* Section divider before grid */}
+        <div style={{ height: 1, backgroundColor: "#2a2a2a", marginBottom: 24 }} />
       </header>
 
       {/* Projects grid */}
