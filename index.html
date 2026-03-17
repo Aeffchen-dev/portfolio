@@ -186,7 +186,7 @@
     .modal {
       position:fixed;
       bottom:0; left:0;
-      width:100vw; max-height:95vh;
+      width:100vw; max-height:95dvh;
       z-index:110;
       border-radius:16px 16px 0 0;
       overflow:hidden;
@@ -199,7 +199,7 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:95vh; overflow-y:auto; overflow-x:hidden;
+      max-height:95dvh; overflow-y:auto; overflow-x:hidden;
       background:#f2f2f2; padding:24px;
       scrollbar-width:none;
       color:#111;
@@ -292,9 +292,9 @@
       .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item:nth-child(even) { margin-top:48px; }
-      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95vh; }
+      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { padding:40px; max-height:95vh; }
+      .modal__scroll { padding:40px; max-height:95dvh; }
       .modal__hero { margin:-40px -40px 40px; }
       .project-links { margin-top:64px; }
       .project-link { font-size:clamp(56px, 6vw, 96px); }
@@ -667,10 +667,15 @@
 
     // === CLOSE MODAL ===
     function closeModal() {
-      document.getElementById('projectModal').classList.remove('is-open');
+      const modal = document.getElementById('projectModal');
+      modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
       document.body.style.background = '#171717';
+      document.documentElement.style.background = '#171717';
+      modal.addEventListener('transitionend', () => {
+        modal.querySelector('.modal__scroll').style.background = '';
+      }, { once: true });
     }
     document.querySelector('.btn-close').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
