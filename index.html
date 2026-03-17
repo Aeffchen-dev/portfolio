@@ -247,30 +247,8 @@
     .block-video-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
     .block-video-mp4 { background:#000; }
     .block-video-mp4 video { width:100%; height:auto; display:block; }
-    .block-figma {
-      background:#e8e8e8; position:relative; overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .block-figma__link {
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:16px; text-decoration:none;
-      position:absolute; inset:0;
-      transition:background .2s;
-    }
-    .block-figma__link:hover { background:rgba(0,0,0,0.04); }
-    .block-figma__icon {
-      width:48px; height:48px; border-radius:12px;
-      background:#111; display:flex; align-items:center; justify-content:center;
-      flex-shrink:0;
-    }
-    .block-figma__label {
-      font-size:14px; font-weight:500; color:#111;
-      letter-spacing:0.04em;
-    }
-    .block-figma__sub {
-      font-size:12px; color:rgba(0,0,0,0.4);
-      margin-top:-8px;
-    }
+    .block-figma { background:#e8e8e8; position:relative; overflow:hidden; }
+    .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -628,21 +606,11 @@
           const url = item.v;
           if (url.includes('figma.com')) {
             const ar = item.ar || '16/9';
-            return `<div class="block block-figma" style="aspect-ratio:${ar}">
-              <a href="${url}" target="_blank" rel="noopener" class="block-figma__link">
-                <div class="block-figma__icon">
-                  <svg width="24" height="24" viewBox="0 0 38 57" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19 9.5 9.5 0 0 1 19 28.5z" fill="#1ABCFE"/>
-                    <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5A9.5 9.5 0 1 1 0 47.5z" fill="#0ACF83"/>
-                    <path d="M19 0v19h9.5a9.5 9.5 0 0 0 0-19H19z" fill="#FF7262"/>
-                    <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E"/>
-                    <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#FF7262"/>
-                  </svg>
-                </div>
-                <span class="block-figma__label">View Prototype ↗</span>
-                <span class="block-figma__sub">Opens in Figma</span>
-              </a>
-            </div>`;
+            // Use Figma's official embed wrapper — requires the file to be set to "Anyone with the link"
+            const embedUrl = url.includes('figma.com/embed')
+              ? url
+              : `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+            return `<div class="block block-figma" style="aspect-ratio:${ar}"><iframe src="${embedUrl}" allowfullscreen loading="lazy" title="Figma Prototype"></iframe></div>`;
           }
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             const id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || '';
