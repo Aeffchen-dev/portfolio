@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Jana Gramlich</title>
+  <style>
+    /* === FONTS === */
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Regular.otf') format('opentype'); font-weight:400; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-RegularIt.otf') format('opentype'); font-weight:400; font-style:italic; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Medium.otf') format('opentype'); font-weight:500; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-MediumIt.otf') format('opentype'); font-weight:500; font-style:italic; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Bold.otf') format('opentype'); font-weight:700; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-BoldIt.otf') format('opentype'); font-weight:700; font-style:italic; }
+
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-font-smoothing:antialiased; }
+    body { font-family:'SuisseIntl', -apple-system, 'Helvetica Neue', sans-serif; background:#fff; color:#111; overflow-x:hidden; }
+    img { display:block; }
+    button { cursor:pointer; border:none; background:none; font-family:inherit; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV === */
+    .nav {
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:40vw; min-width:200px; z-index:100;
+      border-radius:12px;
+      background:rgba(255,255,255,0.65);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    .nav__bar {
+      height:32px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px;
+    }
+    .nav__logo { font-size:12px; font-weight:400; color:#111; letter-spacing:-0.02em; }
+    .nav__menu-icon { opacity:.5; flex-shrink:0; }
+    .nav__expand {
+      display:grid; grid-template-rows:0fr;
+      transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__expand { grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+    .nav__menu {
+      padding:8px;
+      border-top:1px solid rgba(0,0,0,.07);
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .nav__btn {
+      display:flex; align-items:center; justify-content:center;
+      height:44px; border-radius:8px;
+      background:rgba(0,0,0,.06);
+      font-size:14px; font-weight:400; color:#111;
+      opacity:0; transform:translateY(6px);
+      transition:color .15s, background .15s, opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__btn {
+      opacity:1; transform:translateY(0);
+      transition:color .15s, background .15s, opacity .2s ease .28s, transform .28s ease .28s;
+    }
+    .nav__btn:hover { background:rgba(0,0,0,.12); }
+    .nav__btn-row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+    /* === PAGE WRAPPER === */
+    .page-wrapper {
+      background:#fff;
+      transform-origin:top center;
+      transition:transform .45s cubic-bezier(.4,0,.2,1), border-radius .45s;
+    }
+    body.modal-open { background:#000; }
+    @media (max-width:1023px) {
+      body.modal-open .page-wrapper { transform:translateY(16px) scale(0.92); border-radius:16px 16px 0 0; overflow:hidden; }
+    }
+
+    /* === ARCHIVE PAGE === */
+    .archive-page {
+      padding:100px 40px 80px;
+      max-width:1100px; margin:0 auto;
+    }
+    .archive-header {
+      display:flex; align-items:baseline; justify-content:space-between;
+      padding-bottom:48px; border-bottom:1px solid rgba(0,0,0,.1);
+      margin-bottom:0;
+    }
+    .archive-title {
+      font-size:clamp(14px, 1.5vw, 18px); font-weight:400;
+      color:rgba(0,0,0,.4); letter-spacing:.04em; text-transform:uppercase;
+    }
+    .archive-count { font-size:13px; color:rgba(0,0,0,.3); }
+
+    /* === FLOATING PREVIEW === */
+    .preview {
+      position:fixed; pointer-events:none; z-index:50;
+      width:240px; aspect-ratio:3/4;
+      border-radius:8px; overflow:hidden;
+      opacity:0; transform:scale(0.94) translateY(6px);
+      transition:opacity .25s ease, transform .3s ease;
+    }
+    .preview.is-visible { opacity:1; transform:scale(1) translateY(0); }
+    .preview__img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* === PROJECT LIST === */
+    .project-list { list-style:none; }
+    .project-item {
+      display:grid;
+      grid-template-columns:56px 1fr auto;
+      align-items:center; gap:0 32px;
+      padding:20px 0;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      cursor:pointer;
+      transition:opacity .2s;
+    }
+    .project-item:first-child { border-top:none; }
+    .project-item:hover { opacity:.4; }
+    .project-item[data-modal]:hover { opacity:1; }
+    .project-item[data-modal]:hover .project-item__title { opacity:.4; }
+    .project-item__index {
+      font-size:12px; font-weight:400; color:rgba(0,0,0,.3);
+      font-variant-numeric:tabular-nums; letter-spacing:.02em;
+    }
+    .project-item__body { min-width:0; }
+    .project-item__title {
+      font-size:clamp(20px, 2.8vw, 34px); font-weight:400;
+      letter-spacing:-0.03em; line-height:1.1; color:#111;
+      transition:opacity .2s;
+    }
+    .project-item__client {
+      font-size:13px; color:rgba(0,0,0,.35); margin-top:4px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .project-item__right {
+      text-align:right; flex-shrink:0;
+    }
+    .project-item__year { font-size:12px; color:rgba(0,0,0,.35); display:block; }
+    .project-item__tag {
+      font-size:10px; color:rgba(0,0,0,.3);
+      text-transform:uppercase; letter-spacing:.08em; display:block; margin-top:2px;
+    }
+
+    /* === MODAL === */
+    .modal {
+      position:fixed;
+      bottom:0; left:0;
+      width:100vw; max-height:95vh;
+      z-index:110;
+      border-radius:16px 16px 0 0;
+      overflow:hidden;
+    }
+    .modal.is-hidden { display:none; }
+    .modal__scroll { max-height:95vh; overflow-y:auto; overflow-x:hidden; background:#f2f2f2; padding:16px; scrollbar-width:none; }
+    .modal__scroll::-webkit-scrollbar { display:none; }
+    .modal__hero { margin:-16px -16px 16px; overflow:hidden; }
+    .modal__hero img { width:100%; display:block; aspect-ratio:16/9; object-fit:cover; }
+    .page-header { padding:0; background:#f2f2f2; }
+    .header-eyebrow {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
+    .eyebrow-client { font-size:16px; font-weight:400; color:#111; }
+    .eyebrow-year   { font-size:16px; font-weight:400; color:rgba(0,0,0,.5); }
+    .btn-close {
+      position:absolute; top:16px; right:16px; z-index:10;
+      width:24px; height:24px; border-radius:50%;
+      background:rgba(0,0,0,.2);
+      border:1px solid rgba(0,0,0,.12);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s; cursor:pointer;
+    }
+    .btn-close:hover { background:rgba(0,0,0,.3); }
+    .hero__title { font-size:clamp(28px, 3vw, 48px); font-weight:400; letter-spacing:-0.035em; line-height:1.2; color:#111; }
+    .hero__desc { margin-top:16px; display:grid; grid-template-columns:1fr; gap:16px; max-width:960px; }
+    .hero__desc p { font-size:16px; font-weight:400; line-height:1.65; color:#111; }
+    .blocks { background:transparent; padding:16px 0 0; margin:16px 0; }
+    .blocks__grid { display:grid; grid-template-columns:1fr; gap:16px; }
+    .block { border-radius:8px; overflow:hidden; position:relative; }
+    .block--full, .block--half { grid-column:span 1; }
+    .ar-16-7 { aspect-ratio:16/7; }
+    .ar-4-3  { aspect-ratio:4/3; }
+    .block-image { background:#e8e8e8; aspect-ratio:unset; }
+    .block-image img { width:100%; height:auto; }
+    .block-text { background:transparent; border-radius:0; display:flex; flex-direction:column; justify-content:center; min-height:120px; }
+    .text-inner { padding:0; display:flex; flex-direction:column; height:100%; justify-content:center; }
+    .text-body { font-size:16px; font-weight:400; line-height:1.65; color:#111; }
+    .project-info { background:transparent; padding:0; color:#111; }
+    .info-meta { margin-bottom:16px; }
+    .info-row { display:grid; grid-template-columns:80px 1fr; gap:0 20px; padding:2px 0; }
+    .info-label { font-size:14px; font-weight:400; color:#111; }
+    .info-value { font-size:14px; font-weight:400; color:#111; }
+    .info-desc { font-size:15px; font-weight:400; line-height:1.65; color:#111; }
+    .project-links { background:transparent; margin-top:16px; }
+    .project-link {
+      display:block;
+      font-size:clamp(28px, 4vw, 56px);
+      font-weight:400; letter-spacing:-0.04em; line-height:1;
+      text-align:center; text-transform:uppercase; color:#111;
+      border-top:1px solid #111; transition:opacity .15s;
+    }
+    .project-link:last-child { border-bottom:1px solid #111; }
+    .project-link:hover { opacity:.5; }
+
+    /* === MOBILE === */
+    @media (max-width:639px) {
+      .nav { width:60vw; }
+      .archive-page { padding:80px 20px 60px; }
+      .project-item { grid-template-columns:40px 1fr auto; gap:0 12px; padding:16px 0; }
+      .project-item__title { font-size:clamp(18px, 5vw, 24px); }
+      .preview { display:none; }
+      .hero__title { font-size:clamp(24px, 7vw, 36px); }
+      .project-link { font-size:clamp(22px, 7vw, 36px); }
+    }
+
+    @media (min-width:640px) and (max-width:1023px) {
+      .nav { width:80vw; }
+      .preview { display:none; }
+    }
+
+    @media (min-width:640px) {
+      .modal { bottom:0; left:50%; transform:translateX(-50%); max-width:1100px; max-height:90vh; border-radius:16px 16px 0 0; }
+      .modal__scroll { padding:40px; max-height:90vh; }
+      .modal__hero { margin:-40px -40px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <svg class="nav__menu-icon" width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+        <line y1="0.6" x2="16" y2="0.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="5.6" x2="16" y2="5.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="10.6" x2="16" y2="10.6" stroke="#111" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__menu">
+          <a href="archive.html" class="nav__btn">Archive</a>
+          <div class="nav__btn-row">
+            <a href="about.html" class="nav__btn">About</a>
+            <a href="mailto:hello@janagramlich.com" class="nav__btn">Email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FLOATING PREVIEW -->
+  <div class="preview" id="preview">
+    <img class="preview__img" id="previewImg" src="" alt="">
+  </div>
+
+  <!-- ARCHIVE CONTENT -->
+  <div class="archive-page">
+    <header class="archive-header">
+      <span class="archive-title">Work</span>
+      <span class="archive-count">3 projects</span>
+    </header>
+
+    <ul class="project-list">
+      <li class="project-item" data-modal="projectModal" data-preview="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg">
+        <span class="project-item__index">01</span>
+        <div class="project-item__body">
+          <h2 class="project-item__title">Douglas Premium Relaunch</h2>
+          <p class="project-item__client">Douglas / Thalia Digital Retail Solutions</p>
+        </div>
+        <div class="project-item__right">
+          <span class="project-item__year">2023</span>
+          <span class="project-item__tag">UI/UX</span>
+        </div>
+      </li>
+      <li class="project-item">
+        <span class="project-item__index">02</span>
+        <div class="project-item__body">
+          <h2 class="project-item__title">Motion Design Language</h2>
+          <p class="project-item__client">Coming soon</p>
+        </div>
+        <div class="project-item__right">
+          <span class="project-item__year">2022</span>
+          <span class="project-item__tag">Motion</span>
+        </div>
+      </li>
+      <li class="project-item">
+        <span class="project-item__index">03</span>
+        <div class="project-item__body">
+          <h2 class="project-item__title">Design System Architecture</h2>
+          <p class="project-item__client">Coming soon</p>
+        </div>
+        <div class="project-item__right">
+          <span class="project-item__year">2021</span>
+          <span class="project-item__tag">Systems</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  </div><!-- /.page-wrapper -->
+
+  <!-- PROJECT MODAL (Douglas) -->
+  <div class="modal is-hidden" id="projectModal">
+    <button class="btn-close" aria-label="Close project">
+      <svg width="7" height="7" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="rgba(0,0,0,.6)" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="modal__scroll">
+
+      <div class="modal__hero">
+        <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="">
+      </div>
+
+      <header class="page-header">
+        <div class="header-eyebrow">
+          <div class="eyebrow-left">
+            <span class="eyebrow-client">Douglas</span>
+            <span class="eyebrow-year">2023</span>
+          </div>
+        </div>
+        <h1 class="hero__title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
+        <div class="hero__desc">
+          <p>Douglas strengthened its positioning as an upscale cosmetics retailer through comprehensive interface modernization. The previous design featured excessive visual complexity and color saturation, undermining brand coherence and diminishing perceived exclusivity.</p>
+          <p>As Teamlead UI/UX at Thalia Digital Retail Solutions, I led implementation of the DEPT design draft — mapping visual direction onto the existing design system while testing UI improvements to protect the established user experience.</p>
+        </div>
+      </header>
+
+      <main class="blocks">
+        <div class="blocks__grid">
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="" loading="eager">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">The redesign prioritized enhanced brand recognition and premium appeal, improved omnichannel service opportunities, and an emotionally engaging beauty experience.</p>
+            </div>
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">Accessibility compliance with the European Accessibility Act 2025 was a core requirement, shaping contrast decisions, interaction patterns, and semantic structure throughout.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium2.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium3-1.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium4.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium5.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">Implementation required careful mapping of the new visual language onto hundreds of existing components — balancing the agency's creative direction with the technical constraints of the live product.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium6.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium7.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium8.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium9.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium10.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">The redesign delivered a cohesive, accessible digital experience across app and webshop — elevating the brand's premium positioning while maintaining the usability of the existing platform.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium11.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium12.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium13.jpg" alt="" loading="lazy">
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium14.jpg" alt="" loading="lazy">
+          </div>
+
+        </div>
+      </main>
+
+      <section class="project-info">
+        <div class="info-meta">
+          <div class="info-row"><span class="info-label">Year:</span><span class="info-value">2023</span></div>
+          <div class="info-row"><span class="info-label">Agency:</span><span class="info-value">Thalia Digital Retail Solutions</span></div>
+          <div class="info-row"><span class="info-label">Brand:</span><span class="info-value">Douglas</span></div>
+          <div class="info-row"><span class="info-label">Position:</span><span class="info-value">Teamlead UI/UX</span></div>
+        </div>
+        <p class="info-desc">I lead the implementation of the Dept design draft on a Design System Implementation and mapping side. I applied Dept's visual vision to the current feature set and tested loads of UI improvements and made sure nothing harms the UX in the end.</p>
+      </section>
+      <nav class="project-links">
+        <a href="#" class="project-link">Visit the Website</a>
+        <a href="#" class="project-link">App Download</a>
+        <a href="#" class="project-link">Next Project</a>
+      </nav>
+
+    </div>
+  </div>
+
+  <script>
+    // === NAV ===
+    const nav = document.querySelector('.nav');
+    nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
+    nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    nav.addEventListener('click', (e) => {
+      if (e.pointerType === 'touch' && !e.target.closest('a')) {
+        nav.classList.toggle('is-open');
+      }
+    });
+
+    // === HOVER PREVIEW ===
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+    document.querySelectorAll('.project-item[data-preview]').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        previewImg.src = item.dataset.preview;
+        preview.classList.add('is-visible');
+      });
+      item.addEventListener('mousemove', (e) => {
+        const x = Math.min(e.clientX + 24, window.innerWidth - 264);
+        const y = Math.max(8, Math.min(e.clientY - 100, window.innerHeight - 330));
+        preview.style.left = x + 'px';
+        preview.style.top = y + 'px';
+      });
+      item.addEventListener('mouseleave', () => {
+        preview.classList.remove('is-visible');
+      });
+    });
+
+    // === MODAL CLOSE ===
+    document.querySelector('.btn-close').addEventListener('click', () => {
+      document.getElementById('projectModal').classList.add('is-hidden');
+      document.body.classList.remove('modal-open');
+      document.querySelector('.page-wrapper').style.maxHeight = '';
+      document.querySelector('#projectModal .modal__scroll').scrollTop = 0;
+    });
+
+    // === PROJECT ITEM → OPEN MODAL ===
+    document.querySelectorAll('.project-item[data-modal]').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.modal;
+        const modal = document.getElementById(id);
+        modal.classList.remove('is-hidden');
+        const modalTop = window.innerHeight - modal.offsetHeight;
+        document.querySelector('.page-wrapper').style.maxHeight = Math.max(0, (modalTop - 16) / 0.92) + 'px';
+        document.body.classList.add('modal-open');
+      });
+    });
+
+  </script>
+</body>
+</html>

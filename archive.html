@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archive — Jana Gramlich</title>
+  <style>
+    /* === FONTS === */
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Regular.otf') format('opentype'); font-weight:400; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-RegularIt.otf') format('opentype'); font-weight:400; font-style:italic; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Medium.otf') format('opentype'); font-weight:500; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Bold.otf') format('opentype'); font-weight:700; font-style:normal; }
+
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#f5f5f3; }
+    body { font-family:'SuisseIntl', -apple-system, 'Helvetica Neue', sans-serif; color:#111; }
+    img { display:block; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV === */
+    .nav {
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:40vw; min-width:200px; z-index:100;
+      border-radius:12px;
+      background:rgba(255,255,255,0.65);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    .nav__bar {
+      height:32px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px;
+    }
+    .nav__logo { font-size:12px; font-weight:400; color:#111; letter-spacing:-0.02em; }
+    .nav__menu-icon { opacity:.5; flex-shrink:0; }
+    .nav__expand {
+      display:grid; grid-template-rows:0fr;
+      transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__expand { grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+    .nav__menu {
+      padding:8px;
+      border-top:1px solid rgba(0,0,0,.07);
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .nav__btn {
+      display:flex; align-items:center; justify-content:center;
+      height:44px; border-radius:8px;
+      background:rgba(0,0,0,.06);
+      font-size:14px; font-weight:400; color:#111;
+      opacity:0; transform:translateY(6px);
+      transition:color .15s, background .15s, opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__btn {
+      opacity:1; transform:translateY(0);
+      transition:color .15s, background .15s, opacity .2s ease .28s, transform .28s ease .28s;
+    }
+    .nav__btn:hover { background:rgba(0,0,0,.12); }
+    .nav__btn-row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+    /* === CANVAS === */
+    #canvas {
+      position:fixed; top:0; left:0;
+      width:100vw; height:100vh;
+      cursor:grab;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:none;
+    }
+    #canvas.is-dragging { cursor:grabbing; }
+
+    /* === TILES === */
+    .tile {
+      position:absolute;
+      top:0; left:0;
+      border-radius:12px;
+      overflow:hidden;
+      will-change:transform;
+      background:#e0dedd;
+    }
+    .tile img {
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      pointer-events:none;
+      user-select:none;
+      -webkit-user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    @media (max-width:639px) { .nav { width:60vw; } }
+    @media (min-width:640px) and (max-width:1023px) { .nav { width:80vw; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <svg class="nav__menu-icon" width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+        <line y1="0.6" x2="16" y2="0.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="5.6" x2="16" y2="5.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="10.6" x2="16" y2="10.6" stroke="#111" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__menu">
+          <a href="archive.html" class="nav__btn">Archive</a>
+          <div class="nav__btn-row">
+            <a href="about.html" class="nav__btn">About</a>
+            <a href="mailto:hello@janagramlich.com" class="nav__btn">Email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- INFINITE CANVAS -->
+  <div id="canvas"></div>
+
+  <script>
+    // === NAV ===
+    const nav = document.querySelector('.nav');
+    nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
+    nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    nav.addEventListener('click', e => {
+      if (e.pointerType === 'touch' && !e.target.closest('a'))
+        nav.classList.toggle('is-open');
+    });
+
+    // === CANVAS ===
+    const canvas = document.getElementById('canvas');
+
+    // Grid config — portrait tiles (9:19 ratio)
+    const TILE_W = 120;
+    const TILE_H = 253;
+    const GAP    = 12;
+    const COLS   = 6;
+    const ROWS   = 5;
+    const RX     = COLS * (TILE_W + GAP);
+    const RY     = ROWS * (TILE_H + GAP);
+
+    // 30 unique images — app screenshots + all project assets (no repeats)
+    const WP = 'https://janagramlich.com/wp-content/uploads/';
+    const IMGS = [
+      // App screenshots (local)
+      'images/archive-1.png',
+      'images/archive-2.png',
+      'images/archive-3.jpg',
+      'images/archive-4.png',
+      'images/archive-5.png',
+      // Project hero images
+      WP+'Dgls-hybrid-Header-1.jpg',
+      WP+'About-Header-1.jpg',
+      WP+'Dgls-hybrid-Header.jpg',
+      WP+'Bildschirmfoto-2025-08-27-um-16.53.19.png',
+      WP+'Header2.jpg',
+      WP+'Header-the-makery.jpg',
+      // Douglas Premium detail
+      WP+'premium2.jpg',
+      WP+'premium3-1.jpg',
+      WP+'premium4.jpg',
+      WP+'premium5.jpg',
+      WP+'premium6.jpg',
+      // About You detail
+      WP+'AY1.jpg',
+      WP+'AY2.jpg',
+      WP+'AY3.jpg',
+      WP+'AY4.jpg',
+      // Douglas Hybrid detail
+      WP+'Dgls-hybrid-1.jpg',
+      WP+'Dgls-hybrid-2.jpg',
+      WP+'Dgls-hybrid-3.jpg',
+      // Zalando
+      WP+'Z2.jpg',
+      WP+'Z3.jpg',
+      // DMEXCO
+      WP+'1.jpg',
+      WP+'2-scaled.jpg',
+      WP+'3-2.jpg',
+      // The Makery
+      WP+'The-Makery_1.jpg',
+      WP+'The-Makery_2.jpg',
+    ];
+
+    // Generate grid positions
+    const DEFS = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP), w: TILE_W, h: TILE_H });
+      }
+    }
+
+    // Create tile DOM elements
+    const tiles = DEFS.map((def, i) => {
+      const el = document.createElement('div');
+      el.className = 'tile';
+      el.style.width  = def.w + 'px';
+      el.style.height = def.h + 'px';
+      const img = document.createElement('img');
+      img.src = IMGS[i % IMGS.length];
+      img.alt = '';
+      img.draggable = false;
+      el.appendChild(img);
+      canvas.appendChild(el);
+      return Object.assign({}, def, { el });
+    });
+
+    // State
+    let ox = 0, oy = 0;       // world offset
+    let vx = 0, vy = 0;       // velocity
+    let dragging = false;
+    let lastX = 0, lastY = 0, lastT = 0;
+
+    // Compute screen position with infinite wrap
+    function tilePos(t) {
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
+      const wy = (((t.y + oy) % RY) + RY) % RY - RY / 2;
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
+    }
+
+    // Render loop
+    function render() {
+      tiles.forEach(t => {
+        const p = tilePos(t);
+        t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
+      });
+      if (!dragging) {
+        ox += vx; oy += vy;
+        vx *= 0.94; vy *= 0.94;
+        if (Math.abs(vx) < 0.05) vx = 0;
+        if (Math.abs(vy) < 0.05) vy = 0;
+      }
+      requestAnimationFrame(render);
+    }
+
+    // Pointer events
+    canvas.addEventListener('pointerdown', e => {
+      dragging = true;
+      canvas.classList.add('is-dragging');
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      vx = 0; vy = 0;
+      canvas.setPointerCapture(e.pointerId);
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(performance.now() - lastT, 1);
+      vx = dx / dt * 16;
+      vy = dy / dt * 16;
+      ox += dx; oy += dy;
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+    });
+
+    canvas.addEventListener('pointerup',     () => { dragging = false; canvas.classList.remove('is-dragging'); });
+    canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
+
+    // Wheel / trackpad scroll
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      ox -= e.deltaX;
+      oy -= e.deltaY;
+      vx = 0; vy = 0;
+    }, { passive: false });
+
+    render();
+  </script>
+</body>
+</html>

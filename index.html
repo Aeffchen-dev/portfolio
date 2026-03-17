@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jana Gramlich — Product Designer</title>
+  <style>
+    /* === FONTS === */
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Regular.otf') format('opentype'); font-weight:400; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-RegularIt.otf') format('opentype'); font-weight:400; font-style:italic; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Medium.otf') format('opentype'); font-weight:500; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-MediumIt.otf') format('opentype'); font-weight:500; font-style:italic; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-Bold.otf') format('opentype'); font-weight:700; font-style:normal; }
+    @font-face { font-family:'SuisseIntl'; src:url('fonts/SuisseIntlTest-BoldIt.otf') format('opentype'); font-weight:700; font-style:italic; }
+
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-font-smoothing:antialiased; }
+    body { font-family:'SuisseIntl', -apple-system, 'Helvetica Neue', sans-serif; background:#fff; color:#111; overflow-x:hidden; letter-spacing:0; }
+    p { margin-top:0.5em; margin-bottom:0.5em; }
+    img { display:block; }
+    button { cursor:pointer; border:none; background:none; font-family:inherit; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV === */
+    .nav {
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:40vw; min-width:200px; z-index:100;
+      border-radius:12px;
+      background:rgba(255,255,255,0.65);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    .nav__bar {
+      height:32px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px;
+    }
+    .nav__logo { font-size:12px; font-weight:400; color:#111; }
+    .nav__menu-icon { opacity:.5; flex-shrink:0; }
+    .nav__expand {
+      display:grid; grid-template-rows:0fr;
+      transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__expand { grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+    .nav__menu {
+      padding:8px;
+      border-top:1px solid rgba(0,0,0,.07);
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .nav__btn {
+      display:flex; align-items:center; justify-content:center;
+      height:44px; border-radius:8px;
+      background:rgba(0,0,0,.06);
+      font-size:14px; font-weight:400; color:#111;
+      opacity:0; transform:translateY(6px);
+      transition:color .15s, background .15s, opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__btn {
+      opacity:1; transform:translateY(0);
+      transition:color .15s, background .15s, opacity .2s ease .28s, transform .28s ease .28s;
+    }
+    .nav__btn:hover { background:rgba(0,0,0,.12); }
+    .nav__btn-row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+    /* === HOME CONTENT === */
+    .page-wrapper {
+      background:#fff;
+      transform-origin:top center;
+      transition:transform .45s cubic-bezier(.4,0,.2,1), border-radius .45s;
+    }
+    .home-content {
+      height:100dvh; display:flex; flex-direction:column;
+      padding:80px 40px 60px;
+    }
+    /* === MODAL BACKDROP === */
+    .modal-backdrop {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0);
+      pointer-events:none;
+      z-index:109;
+      transition:background .45s cubic-bezier(.4,0,.2,1);
+    }
+    body.modal-open .modal-backdrop {
+      background:rgba(0,0,0,0.3);
+    }
+    @media (max-width:1023px) {
+      body.modal-open { background:#000; }
+      body.modal-open .page-wrapper { transform:translateY(16px) scale(0.92); border-radius:16px 16px 0 0; overflow:hidden; }
+    }
+    .home-hero { flex:1; display:flex; align-items:center; justify-content:center; padding-bottom:40px; min-height:0; }
+    .home-intro {
+      font-size:clamp(19px, 1.8vw, 20px); font-weight:400;
+      line-height:1.55; color:#111; max-width:580px;
+      margin-left:auto; margin-right:auto;
+    }
+
+    /* === WORK GRID === */
+    .home-work { padding-top:0; }
+    .work-label {
+      font-size:10px; font-weight:400;
+      text-transform:uppercase; color:rgba(0,0,0,.3); margin-bottom:24px;
+    }
+    .work-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:2px; }
+    .work-item { position:relative; overflow:hidden; border-radius:12px; cursor:pointer; }
+    .work-item__image { aspect-ratio:16/10; overflow:hidden; background:#f0f0f0; }
+    .work-item__image img { width:100%; height:100%; object-fit:cover; }
+    .work-item__meta { padding:0; }
+    .work-item__client { font-size:14px; font-weight:400; color:rgba(0,0,0,.38); line-height:1.3; margin-block:0; }
+    .work-item__title { font-size:17px; font-weight:400; color:#111; line-height:1.3; margin-block:0; }
+    .work-item__year { font-size:12px; color:rgba(0,0,0,.3); margin-top:4px; }
+
+    /* === MODAL === */
+    .modal {
+      position:fixed;
+      bottom:0; left:0;
+      width:100vw; max-height:95vh;
+      z-index:110;
+      border-radius:16px 16px 0 0;
+      overflow:hidden;
+    }
+    .modal.is-hidden { display:none; }
+    .modal__scroll { max-height:95vh; overflow-y:auto; overflow-x:hidden; background:#f2f2f2; padding:16px; scrollbar-width:none; }
+    .modal__scroll::-webkit-scrollbar { display:none; }
+
+    /* === PAGE HEADER (modal) === */
+    .page-header { padding:0; background:#f2f2f2; }
+    .header-eyebrow {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
+    .eyebrow-client { font-size:14px; font-weight:400; color:#111; }
+    .eyebrow-year   { font-size:14px; font-weight:400; color:rgba(0,0,0,.5); }
+    .btn-close {
+      position:absolute; top:16px; right:16px; z-index:10;
+      width:24px; height:24px; border-radius:50%;
+      background:rgba(255,255,255,0.7);
+      border:1px solid rgba(0,0,0,.08);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s; cursor:pointer;
+    }
+    .btn-close:hover { background:rgba(255,255,255,0.9); }
+    .hero__title {
+      font-size:clamp(28px, 3vw, 48px);
+      font-weight:400; line-height:1.2; color:#111;
+    }
+    .hero__title { max-width:580px; }
+    .hero__desc {
+      margin-top:16px;
+      display:grid; grid-template-columns:1fr; gap:16px;
+      max-width:580px;
+    }
+    .hero__desc p { font-size:16px; font-weight:400; line-height:1.65; color:#111; }
+
+    /* === BLOCKS GRID === */
+    .blocks { background:transparent; padding:16px 0 0; margin:16px 0; }
+    .blocks__grid { display:grid; grid-template-columns:1fr; column-gap:16px; row-gap:48px; }
+    .block { border-radius:8px; overflow:hidden; position:relative; }
+    .block--full, .block--half { grid-column:span 1; }
+    .ar-16-7 { aspect-ratio:16/7; }
+    .ar-4-3  { aspect-ratio:4/3; }
+    .block-image { background:#e8e8e8; aspect-ratio:unset; }
+    .block-image img { width:100%; height:auto; }
+    .block-text { background:transparent; border-radius:0; display:flex; flex-direction:column; justify-content:center; min-height:120px; }
+    .text-inner { padding:0; display:flex; flex-direction:column; height:100%; justify-content:center; max-width:580px; }
+    .text-body { font-size:16px; font-weight:400; line-height:1.65; color:#111; }
+
+    /* === PROJECT INFO & LINKS === */
+    .project-info { background:transparent; padding:0; color:#111; max-width:580px; }
+    .info-meta { margin-bottom:16px; }
+    .info-row { display:grid; grid-template-columns:80px 1fr; gap:0 20px; padding:2px 0; }
+    .info-label { font-size:14px; font-weight:400; color:#111; }
+    .info-value { font-size:14px; font-weight:400; color:#111; }
+    .info-desc { font-size:15px; font-weight:400; line-height:1.65; color:#111; }
+    .project-links { background:transparent; margin-top:32px; }
+    .project-link {
+      display:block;
+      font-size:clamp(28px, 4vw, 56px);
+      font-weight:400; line-height:1;
+      text-align:center; text-transform:uppercase; color:#111;
+      border-top:1px solid #111; transition:opacity .15s;
+    }
+    .project-link:last-child { border-bottom:1px solid #111; }
+    .project-link:hover { opacity:.5; }
+
+    /* === WORK SLIDER === */
+    .work-slider {
+      display:flex; gap:8px;
+      overflow-x:auto; overflow-y:hidden;
+      scroll-snap-type:x mandatory;
+      scroll-padding-left:16px;
+      scrollbar-width:none;
+      margin:0 -40px; padding:0 40px 0 16px;
+    }
+    .work-slider::-webkit-scrollbar { display:none; }
+    .work-item {
+      flex:0 0 auto; width:calc(50vw - 48px);
+      scroll-snap-align:start;
+      position:relative; cursor:pointer;
+    }
+    .work-item--placeholder .work-item__image { background:#f0f0f0; display:flex; align-items:center; justify-content:center; }
+    .work-item--placeholder .work-item__image::after { content:'Coming Soon'; font-size:11px; color:rgba(0,0,0,.3); }
+    .work-item--placeholder .work-item__meta { display:none; }
+    .work-item__image { aspect-ratio:3/4; overflow:hidden; border-radius:12px; }
+    .work-item__image img { width:100%; height:100%; object-fit:cover; }
+    .work-item__meta { margin-top:8px; }
+    .home-work { margin-bottom:40px; }
+    .work-item__title { font-size:14px; font-weight:400; color:#111; line-height:1.3; margin-block:0; }
+
+    /* === MODAL HERO === */
+    .modal__hero { margin:-16px -16px 16px; overflow:hidden; }
+    .modal__hero img { width:100%; display:block; aspect-ratio:16/9; object-fit:cover; }
+
+    /* === MOBILE === */
+    @media (max-width:639px) {
+      .nav { width:60vw; }
+      .home-content { padding:60px 20px 40px; }
+      .work-slider { margin:0 -20px; padding:0 20px 0 16px; }
+      .work-item { width:calc(70vw - 24px); }
+      .hero__title { font-size:clamp(24px, 7vw, 36px); }
+      .project-link { font-size:clamp(22px, 7vw, 36px); }
+    }
+
+    @media (min-width:640px) and (max-width:1023px) {
+      .nav { width:80vw; }
+    }
+
+    @media (min-width:640px) {
+      .modal { bottom:0; left:50%; transform:translateX(-50%); max-width:1100px; max-height:90vh; border-radius:16px 16px 0 0; }
+      .modal__scroll { padding:40px; max-height:90vh; }
+      .work-item { width:clamp(160px, 26vh, 340px); }
+      .modal__hero { margin:-40px -40px 40px; }
+      .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:start; max-width:none; }
+      .info-meta { margin-bottom:0; }
+      .project-link { font-size:clamp(40px, 5vw, 72px); }
+      .project-links { margin-top:64px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <svg class="nav__menu-icon" width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+        <line y1="0.6" x2="16" y2="0.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="5.6" x2="16" y2="5.6" stroke="#111" stroke-width="1.2"/>
+        <line y1="10.6" x2="16" y2="10.6" stroke="#111" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__menu">
+          <a href="archive.html" class="nav__btn">Archive</a>
+          <div class="nav__btn-row">
+            <a href="about.html" class="nav__btn">About</a>
+            <a href="mailto:hello@janagramlich.com" class="nav__btn">Email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOMEPAGE CONTENT (visible behind modal) -->
+  <div class="home-content">
+    <div class="home-hero">
+      <p class="home-intro">I design products and the systems behind them. As a UI/UX Lead Designer, I turn complexity into clear user experiences while building the design systems, workflows, and shared standards that help teams move faster and design more consistently.</p>
+    </div>
+    <div class="home-work">
+      <div class="work-slider">
+        <article class="work-item" data-project="douglas-premium-relaunch">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">Douglas</p>
+            <h3 class="work-item__title">Premium Relaunch</h3>
+          </div>
+        </article>
+        <article class="work-item" data-project="about-you">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/About-Header-1.jpg" alt="About You Design System" loading="lazy">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">About You</p>
+            <h3 class="work-item__title">Design System</h3>
+          </div>
+        </article>
+        <article class="work-item" data-project="douglas-hybrid">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">Douglas</p>
+            <h3 class="work-item__title">Hybrid App</h3>
+          </div>
+        </article>
+        <article class="work-item" data-project="zalando">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">Zalando</p>
+            <h3 class="work-item__title">Connected Retail</h3>
+          </div>
+        </article>
+        <article class="work-item" data-project="dmexco">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">DMEXCO</p>
+            <h3 class="work-item__title">Digital Experience</h3>
+          </div>
+        </article>
+        <article class="work-item" data-project="the-makery">
+          <div class="work-item__image">
+            <img src="https://janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
+          </div>
+          <div class="work-item__meta">
+            <p class="work-item__client">The Makery</p>
+            <h3 class="work-item__title">Website Relaunch</h3>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /.page-wrapper -->
+
+  <!-- MODAL BACKDROP -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal is-hidden" id="projectModal">
+    <button class="btn-close" aria-label="Close project">
+      <svg width="7" height="7" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="modal__scroll">
+      <div class="modal__hero"><img id="modal-hero" src="" alt=""></div>
+      <header class="page-header">
+        <div class="header-eyebrow">
+          <div class="eyebrow-left">
+            <span class="eyebrow-client" id="modal-client"></span>
+            <span class="eyebrow-year"   id="modal-year"></span>
+          </div>
+        </div>
+        <h1 class="hero__title" id="modal-title"></h1>
+        <div class="hero__desc"  id="modal-desc"></div>
+      </header>
+      <main class="blocks">
+        <div class="blocks__grid" id="modal-blocks"></div>
+      </main>
+      <section class="project-info">
+        <div class="info-meta" id="modal-facts"></div>
+        <p class="info-desc"    id="modal-role"></p>
+      </section>
+      <nav class="project-links" id="modal-links"></nav>
+    </div>
+  </div>
+
+  <script>
+    // === NAV ===
+    const nav = document.querySelector('.nav');
+    nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
+    nav.addEventListener('mouseleave', () => nav.classList.remove('is-open'));
+    nav.addEventListener('click', e => {
+      if (e.pointerType === 'touch' && !e.target.closest('a')) nav.classList.toggle('is-open');
+    });
+
+    // === PROJECT DATA ===
+    const BASE = 'https://janagramlich.com/wp-content/uploads/';
+    const PROJECTS = {
+      'douglas-premium-relaunch': {
+        bg:'#F2F2F2',
+        hero: BASE+'Dgls-hybrid-Header-1.jpg', client:'Douglas', year:'2023',
+        title:'Aligning the Douglas app and webshop UI with the premium assortment',
+        text:'Douglas has made significant strides over the past few years to establish itself as a premium brand. So it was time to align the brand UI with the premium assortment and to design a premium user experience. The previous UI was distracting from a cohesive brand identity as it was so busy and colorful. It was lacking the sense of exclusivity and premium, and the disorganized layout made it difficult for customers to focus on key products and features. The objectives of the premium redesign are to enhance brand recognition, identity, and premium appeal, to increase opportunities for better omnichannel service and inspiration and to create an emotionally engaging beauty experience in compliance with European Accessibility Act 2025.',
+        images:['premium2.jpg','premium3-1.jpg','premium4.jpg','premium5.jpg','premium6.jpg','premium7.jpg','premium8.jpg','premium9.jpg','premium10.jpg','premium11.jpg','premium12.jpg','premium13.jpg','premium14.jpg'],
+        facts:[{l:'Year',v:'2023'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'},{l:'Position',v:'Teamlead UI/UX'}],
+        myRole:"I led the implementation of the Dept design draft on a Design System Implementation and mapping side. I applied Dept's visual vision to the current feature set and tested loads of UI improvements and made sure nothing harms the UX in the end.",
+        links:[{t:'Visit the Website',u:'https://www.douglas.de'},{t:'App Download',u:'#'},{t:'Next Project',u:'#'}],
+      },
+      'about-you': {
+        bg:'#F2F2F2',
+        hero: BASE+'About-Header-1.jpg', client:'About You', year:'2025',
+        title:'About You Design System',
+        text:'I was responsible for creating the About You Figma Design System, a comprehensive framework designed to elevate the brand\'s digital experience. The primary goal was to ensure consistency across all major touchpoints — specifically the app and website — by unifying their visual language and interaction patterns.\n\nAnother key objective was to streamline the design and development processes to significantly reduce time to market. By providing a library of reusable components, clear guidelines, and structured workflows, the system enabled teams to work more efficiently and focus on delivering high-quality solutions faster.\n\nAccessibility was also a central pillar of the project, with an emphasis on adhering to modern standards to make the platform more inclusive for all users. The design system was built to empower designers with a state-of-the-art toolkit that simplifies their work, fosters collaboration, and allows them to focus on innovation and creativity.',
+        images:['AY1.jpg','AY2.jpg','AY3.jpg','AY4.jpg','AY5.jpg','AY6.jpg','AY7.jpg','AY8.jpg','AY9.jpg','AY10.jpg','AY11.jpg','AY12.jpg'],
+        facts:[{l:'Year',v:'2025'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
+        myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
+        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'},{t:'Next Project',u:'#'}],
+      },
+      'douglas-hybrid': {
+        bg:'#EDD3DE',
+        hero: BASE+'Dgls-hybrid-Header.jpg', client:'Douglas', year:'2021–2022',
+        title:'Douglas app goes hybrid: Successful transformation of the mobile website as app breakpoint',
+        text:'Douglas is the leading premium beauty retailer in Europe, inspiring customers to live their own kind of beauty through an unparalleled assortment across online stores and around 1,800 physical locations.\n\nIn 2021, Douglas decided to transform its native app into a hybrid app using the mobile website as its foundation. In a joint eight-month project, I analysed both applications and created a master plan of what features and optimisations needed to be made to the mobile website to make the transition as unnoticeable as possible for app users.\n\nI initiated collaboration between the app and web teams and built bridges to understand what differences app design required. I created compelling concepts and screen designs for the new app breakpoint and unified all touchpoints into one Figma space.\n\nWith this project I established a mobile-first mentality company-wide, reduced TTM by 40%, increased the app share by 15%, and implemented company-wide design QA processes. 90% of the optimisations my analyses revealed have been implemented and are still being used 2 years later.',
+        images:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg','Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg','Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
+        facts:[{l:'Year',v:'2021–2022'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'}],
+        myRole:'My role was project lead, user interface and experience design, interdisciplinary communication, and development handoff.',
+        links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'},{t:'Next Project',u:'#'}],
+      },
+      'zalando': {
+        bg:'#F2F2F2',
+        hero: BASE+'Bildschirmfoto-2025-08-27-um-16.53.19.png', client:'Zalando', year:'2020',
+        title:"Zalando's Connected Retail — the early beginning of ZEOS",
+        text:"Connected Retail was one of Zalando's very first strategic B2B initiatives, designed to seamlessly connect local fashion stores with Zalando's online platform. It enabled brick-and-mortar retailers to sell their in-store assortment directly to millions of online customers, while Zalando handled payments, marketing, and customer support. Over time, the program grew into one of the largest digital retail networks in Europe and later evolved into ZEOS.\n\nTogether with a team of videographers, illustrators, developers, and a design colleague, I created the branding and designed the UI/UX for the landing page targeted at store owners — including the full onboarding flow for becoming a Zalando retail partner.\n\nThe challenge was that this concept was still very new to the industry, and many brick-and-mortar retailers felt threatened by Zalando's growing dominance. The answer turned out to be simple: for smaller retailers without resources to run their own online shops, access to millions of customers combined with the potential revenue made the opportunity highly attractive.",
+        images:['Z2.jpg','Z3.jpg','Z4-scaled.jpg','Z5.jpg'],
+        facts:[{l:'Year',v:'2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Zalando'}],
+        myRole:'My role was creating and leading the user interface and experience design, interdisciplinary communication, and development handoff.',
+        links:[],
+      },
+      'dmexco': {
+        bg:'#ffffff',
+        hero: BASE+'Header2.jpg', client:'DMEXCO', year:'2017–2020',
+        title:'Digital experience for Germany\'s largest digital marketing expo and conference',
+        text:"DMEXCO is one of Europe's largest and most prominent digital marketing events. 1000+ companies and more than 40,000 visitors come together every year to make business leads and get the latest trends and tools from the tech industry.\n\nIn 2017 I conceived and designed the new website as part of the first design agency DMEXCO was ever working with. Horizont and many other magazines wrote about our relaunch. Since then I did plenty of ongoing improvements based on DMEXCO's needs and user feedback. My role reached from conception to execution, tackling complex problems into user-friendly solutions. In the meantime, the page grew to a 100+ layouts file.\n\nIn 2018 I planned and designed the first DMEXCO app. In 2019 we launched a new version with many new features — including a networking feature where fair visitors and exhibitors could exchange contact data and schedule meetings to gain valuable business leads. The 2019 app also gained a completely fresh look as we constantly developed the CI further.",
+        images:['1.jpg','2-scaled.jpg','3-2.jpg','4-2-scaled.jpg','5.jpg','6.jpg','7.jpg'],
+        facts:[{l:'Year',v:'2017–2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Award',v:'Red Dot Design Award'}],
+        myRole:'My role was conception, wireframing, screen design, prototyping, client communication and strategic planning, as well as accompanying the development process, testing and quality assurance.',
+        links:[{t:'Visit the Website',u:'https://www.dmexco.com'},{t:'Next Project',u:'#'}],
+      },
+      'the-makery': {
+        bg:'#DCD8D3',
+        hero: BASE+'Header-the-makery.jpg', client:'The Makery', year:'2018–2019',
+        title:'Website relaunch for a local arts and crafts workshop platform',
+        text:"The Makery is a platform of workshops hosted by local artists and craftsmen. The Makery is all about community building around activities. We constructed a new narrative to reflect this and made the communication clearer and more engaging so people would understand the concept and participate. For the website, we did a whole relaunch and simplified the process of finding a workshop and booking a ticket.\n\nThe project started in 2018. In 2019 we decided for a mobile-first approach based on analytics and redesigned the main page, switched to a one-page checkout, and added a system of category, subcategory, and occasion landing pages, and improved the search, menus, and footer.",
+        images:['The-Makery_1.jpg','The-Makery_2.jpg','The-Makery_3.jpg','The-Makery_4.jpg','The-Makery_5.jpg','The-Makery_6.jpg','The-Makery_7.jpg','The-Makery_8.jpg','The-Makery_9.jpg'],
+        facts:[{l:'Year',v:'2018–2019'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Developer',v:'External, hired by the client'}],
+        myRole:'My role was conception, creation of the user interface and experience design, client communication, strategic planning, instructing a digital design intern, and development handoff.',
+        links:[{t:'Visit the Website',u:'https://themakery.de'},{t:'Next Project',u:'#'}],
+      },
+    };
+
+    // === MODAL HELPERS ===
+    function buildBlocks(imgs) {
+      return imgs.map((f,i) => {
+        const ar = (i % 3 === 0) ? 'ar-16-7' : 'ar-4-3';
+        return `<div class="block block-image ${ar}"><img src="${BASE+f}" alt="" loading="lazy"></div>`;
+      }).join('');
+    }
+    function buildText(t) {
+      return t.split('\n\n').filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('');
+    }
+
+    // === OPEN MODAL ===
+    function openModal(key) {
+      const p = PROJECTS[key]; if (!p) return;
+      document.getElementById('modal-hero').src      = p.hero;
+      document.getElementById('modal-client').textContent = p.client;
+      document.getElementById('modal-year').textContent   = p.year;
+      document.getElementById('modal-title').textContent  = p.title;
+      document.getElementById('modal-desc').innerHTML     = buildText(p.text);
+      document.getElementById('modal-blocks').innerHTML   = buildBlocks(p.images);
+      document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
+        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
+      document.getElementById('modal-role').textContent   = p.myRole;
+      document.getElementById('modal-links').innerHTML    = p.links.map(l =>
+        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const modal = document.getElementById('projectModal');
+      const bg = p.bg || '#f2f2f2';
+      modal.querySelector('.modal__scroll').style.background = bg;
+      modal.querySelector('.page-header').style.background   = bg;
+      modal.classList.remove('is-hidden');
+      modal.querySelector('.modal__scroll').scrollTop = 0;
+      const modalTop = window.innerHeight - modal.offsetHeight;
+      document.querySelector('.page-wrapper').style.maxHeight = Math.max(0,(modalTop-16)/0.92)+'px';
+      document.body.classList.add('modal-open');
+    }
+
+    // === CLOSE MODAL ===
+    document.querySelector('.btn-close').addEventListener('click', () => {
+      document.getElementById('projectModal').classList.add('is-hidden');
+      document.body.classList.remove('modal-open');
+      document.querySelector('.page-wrapper').style.maxHeight = '';
+    });
+
+    // === WORK ITEM CLICKS ===
+    document.querySelectorAll('.work-item[data-project]').forEach(item => {
+      item.addEventListener('click', () => openModal(item.dataset.project));
+    });
+
+  </script>
+</body>
+</html>

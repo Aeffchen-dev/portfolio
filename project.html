@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Douglas Premium Relaunch — Jana Gramlich</title>
+  <style>
+    /* === FONTS === */
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-Regular.otf') format('opentype');
+      font-weight: 400; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-RegularIt.otf') format('opentype');
+      font-weight: 400; font-style: italic;
+    }
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-Medium.otf') format('opentype');
+      font-weight: 500; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-MediumIt.otf') format('opentype');
+      font-weight: 500; font-style: italic;
+    }
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-Bold.otf') format('opentype');
+      font-weight: 700; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SuisseIntl';
+      src: url('fonts/SuisseIntlTest-BoldIt.otf') format('opentype');
+      font-weight: 700; font-style: italic;
+    }
+
+    /* === RESET === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
+    body { font-family: 'SuisseIntl', -apple-system, 'Helvetica Neue', sans-serif; background: #fff; color: #fff; }
+    img, video { display: block; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    a { text-decoration: none; }
+
+    /* === MODAL === */
+    .modal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 95vw; height: 95vh;
+      z-index: 50;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    }
+    .modal.is-hidden { display: none; }
+    .modal__scroll { height: 100%; overflow-y: auto; overflow-x: hidden; background: #0D0D0D; }
+
+    /* === PAGE HEADER === */
+    .page-header { padding: 80px 32px 64px; background: #0D0D0D; }
+
+    .header-eyebrow {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .eyebrow-left { display: flex; align-items: baseline; gap: 20px; }
+    .eyebrow-client { font-size: 15px; font-weight: 400; color: #fff; }
+    .eyebrow-year   { font-size: 15px; font-weight: 400; color: rgba(255,255,255,.35); }
+
+    .btn-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #fff; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s; cursor: pointer;
+    }
+    .btn-close:hover { background: rgba(255,255,255,.8); }
+
+    .hero__title {
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; color: #fff;
+    }
+
+    .hero__desc {
+      margin-top: 56px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px;
+      max-width: 960px;
+    }
+    .hero__desc p {
+      font-size: 17px; font-weight: 400; line-height: 1.65; color: rgba(255,255,255,.6);
+    }
+    .hero__desc p + p { color: rgba(255,255,255,.45); }
+
+    /* === BLOCKS GRID === */
+    .blocks { background: #1A1A1A; padding: 8px; margin: 8px 0; }
+    .blocks__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    /* === BASE BLOCK === */
+    .block { border-radius: 16px; overflow: hidden; position: relative; }
+    .block--full { grid-column: span 4; }
+    .block--half { grid-column: span 2; }
+
+    /* Aspect ratio helpers */
+    .ar-16-7 { aspect-ratio: 16 / 7; }
+    .ar-16-8 { aspect-ratio: 16 / 8; }
+    .ar-4-3  { aspect-ratio: 4 / 3; }
+
+    /* === IMAGE BLOCK === */
+    .block-image { background: #1A1A1A; }
+    .block-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* === TEXT BLOCK === */
+    .block-text { background: transparent; border-radius: 0; display: flex; flex-direction: column; }
+    .text-inner { padding: 0; display: flex; flex-direction: column; height: 100%; }
+    .text-body { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: rgba(255,255,255,.5); }
+
+    /* === FOOTER === */
+    .footer-rule { height: 1px; background: rgba(255,255,255,.1); margin: 0; }
+    .footer { padding: 64px 32px 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .footer__next-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 16px; }
+    .footer__next-title {
+      font-size: clamp(32px, 4.5vw, 64px);
+      font-weight: 700; letter-spacing: -.04em; line-height: .95; color: #fff; margin-bottom: 28px;
+    }
+    .footer__next-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 500; color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.25); padding-bottom: 2px; transition: border-color .15s;
+    }
+    .footer__next-link:hover { border-color: #fff; }
+    .footer__nav { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .footer__nav a {
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,.4);
+      letter-spacing: .07em; text-transform: uppercase; transition: color .15s;
+    }
+    .footer__nav a:hover { color: #fff; }
+    .footer-bottom {
+      padding: 20px 32px; display: flex; justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,.08); margin: 0 8px;
+    }
+    .footer-bottom span { font-size: 11px; color: rgba(255,255,255,.3); }
+
+    /* === MOBILE === */
+    @media (max-width: 639px) {
+      /* Modal */
+      .modal { width: 100vw; height: 100vh; border-radius: 0; top: 0; left: 0; transform: none; }
+
+      /* Page header */
+      .page-header { padding: 72px 20px 48px; }
+      .header-eyebrow { margin-bottom: 24px; }
+      .eyebrow-client, .eyebrow-year { font-size: 14px; }
+      .hero__title { font-size: clamp(36px, 11vw, 56px); max-width: none; }
+      .hero__desc { grid-template-columns: 1fr; gap: 16px; margin-top: 40px; }
+      .hero__desc p { font-size: 16px; }
+
+      /* Blocks */
+      .blocks { padding: 8px; }
+      .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
+      .block--full  { grid-column: span 1; }
+      .block--half  { grid-column: span 1; }
+      .ar-16-7 { aspect-ratio: 4 / 3; }
+      .text-inner { padding: 0; }
+
+      /* Footer */
+      .footer { flex-direction: column; align-items: flex-start; gap: 40px; padding: 48px 16px 24px; }
+      .footer__nav { align-items: flex-start; flex-direction: row; gap: 20px; }
+      .footer-rule { margin: 0; }
+      .footer-bottom { padding: 16px 16px; flex-direction: column; gap: 6px; }
+    }
+
+    /* === TABLET === */
+    @media (min-width: 640px) and (max-width: 1023px) {
+      .page-header { padding: 80px 24px 56px; }
+      .hero__title { font-size: clamp(40px, 7vw, 72px); }
+      .hero__desc { grid-template-columns: 1fr; gap: 16px; }
+      .blocks__grid { grid-template-columns: repeat(4, 1fr); }
+      .text-inner { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal" id="projectModal">
+    <div class="modal__scroll">
+
+      <!-- PAGE HEADER -->
+      <header class="page-header">
+        <div class="header-eyebrow">
+          <div class="eyebrow-left">
+            <span class="eyebrow-client">Douglas</span>
+            <span class="eyebrow-year">2023</span>
+          </div>
+          <button class="btn-close" aria-label="Close project">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M1 1L11 11M11 1L1 11" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <h1 class="hero__title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
+        <div class="hero__desc">
+          <p>Douglas strengthened its positioning as an upscale cosmetics retailer through comprehensive interface modernization. The previous design featured excessive visual complexity and color saturation, undermining brand coherence and diminishing perceived exclusivity.</p>
+          <p>As Teamlead UI/UX at Thalia Digital Retail Solutions, I led implementation of the DEPT design draft — mapping visual direction onto the existing design system while testing UI improvements to protect the established user experience.</p>
+        </div>
+      </header>
+
+      <!-- CONTENT BLOCKS -->
+      <main class="blocks">
+        <div class="blocks__grid">
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">The redesign prioritized enhanced brand recognition and premium appeal, improved omnichannel service opportunities, and an emotionally engaging beauty experience.</p>
+            </div>
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">Accessibility compliance with the European Accessibility Act 2025 was a core requirement, shaping contrast decisions, interaction patterns, and semantic structure throughout.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium2.jpg" alt="Douglas UI Overview" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium3-1.jpg" alt="Douglas Premium Detail" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium4.jpg" alt="Douglas Premium Detail" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium5.jpg" alt="Douglas Premium Detail" loading="lazy">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">Implementation required careful mapping of the new visual language onto hundreds of existing components — balancing the agency's creative direction with the technical constraints of the live product.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium6.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium7.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium8.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium9.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium10.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-text">
+            <div class="text-inner">
+              <p class="text-body">The redesign delivered a cohesive, accessible digital experience across app and webshop — elevating the brand's premium positioning while maintaining the usability of the existing platform.</p>
+            </div>
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium11.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium12.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--half block-image ar-4-3">
+            <img src="https://janagramlich.com/wp-content/uploads/premium13.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+          <div class="block block--full block-image ar-16-7">
+            <img src="https://janagramlich.com/wp-content/uploads/premium14.jpg" alt="Douglas Premium" loading="lazy">
+          </div>
+
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <div class="footer-rule"></div>
+      <footer>
+        <div class="footer">
+          <div class="footer__next">
+            <p class="footer__next-label">Next Project</p>
+            <h2 class="footer__next-title">Motion Design<br>Language</h2>
+            <a href="#" class="footer__next-link">View project →</a>
+          </div>
+          <nav class="footer__nav">
+            <a href="/work">Work</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+          </nav>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2025 Jana Gramlich. All rights reserved.</span>
+          <span>Design &amp; Code by Jana Gramlich</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    // === MODAL CLOSE ===
+    document.querySelector('.btn-close').addEventListener('click', () => {
+      document.getElementById('projectModal').classList.add('is-hidden');
+    });
+  </script>
+</body>
+</html>
