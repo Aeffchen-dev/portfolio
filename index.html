@@ -28,7 +28,7 @@
       left:50%; transform:translateX(-50%);
       width:200px;
       border-radius:24px;
-      background:rgba(255,255,255,0.11);
+      background:rgba(255,255,255,0.15);
       backdrop-filter:blur(20px) saturate(180%);
       -webkit-backdrop-filter:blur(20px) saturate(180%);
       overflow:hidden;
@@ -42,11 +42,11 @@
       width:164%; height:227%;
       left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:0.95;
+      opacity:1;
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
       z-index:-1;
     }
-    .nav.is-open::before { opacity:0.95; }
+    .nav.is-open::before { opacity:1; }
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:center;
       padding:0 20px; cursor:pointer;
@@ -243,9 +243,12 @@
     .block { border-radius:8px; overflow:hidden; }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
-    .block-video { background:#000; aspect-ratio:16/9; position:relative; }
-    .block-video iframe,
-    .block-video video { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+    .block-video-embed { background:#000; aspect-ratio:16/9; position:relative; overflow:hidden; }
+    .block-video-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+    .block-video-mp4 { background:#000; }
+    .block-video-mp4 video { width:100%; height:auto; display:block; }
+    .block-figma { background:#e8e8e8; position:relative; overflow:hidden; }
+    .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -293,8 +296,6 @@
       .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:40px; max-height:95vh; }
       .modal__hero { margin:-40px -40px 40px; }
-      .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
-      .info-meta { margin-bottom:0; }
       .project-links { margin-top:64px; }
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
@@ -304,6 +305,9 @@
       .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
       .work-item:nth-child(3n+2)  { margin-top:40px; }
       .work-item:nth-child(3n)    { margin-top:0; }
+      .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
+      .info-meta { margin-bottom:0; }
+      .cv-section { max-width:580px; margin-left:auto; margin-right:auto; }
     }
   </style>
 </head>
@@ -594,20 +598,25 @@
 
     // === MODAL HELPERS ===
     // media[] items: string = image filename (prefixed with BASE)
-    //                {v:'url'} = video (mp4 → autoplay/muted/loop; youtube/vimeo → iframe)
+    //   {v:'url'}          = video/embed (mp4 → autoplay; youtube/vimeo → iframe; figma → proto embed)
+    //   {v:'url', ar:'w/h'} = override aspect-ratio (e.g. for Figma: '9/19' for portrait app)
     function buildMedia(media) {
       return (media || []).map(item => {
         if (typeof item === 'object' && item.v) {
           const url = item.v;
+          if (url.includes('figma.com')) {
+            const ar = item.ar || '9/19';
+            return `<div class="block block-figma" style="aspect-ratio:${ar}"><iframe src="${url}" frameborder="0" allowfullscreen loading="lazy" title="Figma Prototype"></iframe></div>`;
+          }
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             const id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || '';
-            return `<div class="block block-video"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Video"></iframe></div>`;
+            return `<div class="block block-video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Video"></iframe></div>`;
           }
           if (url.includes('vimeo.com')) {
             const id = url.match(/vimeo\.com\/(\d+)/)?.[1] || '';
-            return `<div class="block block-video"><iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1" frameborder="0" allow="autoplay" allowfullscreen title="Video"></iframe></div>`;
+            return `<div class="block block-video-embed"><iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1" frameborder="0" allow="autoplay" allowfullscreen title="Video"></iframe></div>`;
           }
-          return `<div class="block block-video"><video src="${url}" autoplay muted loop playsinline></video></div>`;
+          return `<div class="block block-video-mp4"><video src="${url}" autoplay muted loop playsinline></video></div>`;
         }
         return `<div class="block block-image"><img src="${BASE+item}" alt="" loading="lazy"></div>`;
       }).join('');
@@ -653,15 +662,16 @@
 
     // === TILE PARALLAX ===
     function updateTileParallax() {
-      const imgs = document.querySelectorAll('.work-item__image img');
       const vh = window.innerHeight;
-      imgs.forEach(img => {
-        const rect = img.closest('.work-item__image').getBoundingClientRect();
-        const centerY = rect.top + rect.height / 2;
-        // ratio: +1 when tile at bottom of screen, -1 when at top
-        const ratio = (centerY / vh - 0.5) * 2;
-        const shift = ratio * 13;
-        img.style.transform = `translateY(${shift}%)`;
+      document.querySelectorAll('.work-item__image').forEach(container => {
+        const img = container.querySelector('img'); if (!img) return;
+        const rect = container.getBoundingClientRect();
+        const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
+        const center = -extra / 2;               // center image in container
+        const ratio  = (rect.top + rect.height / 2) / vh - 0.5; // -0.5..+0.5
+        const raw    = center + ratio * extra * 2.5;             // parallax drive
+        const shift  = Math.max(-extra, Math.min(0, raw));       // clamp: no gaps ever
+        img.style.transform = `translateY(${shift}px)`;
       });
     }
     window.addEventListener('scroll', updateTileParallax, { passive: true });

@@ -21,7 +21,7 @@
       left:50%; transform:translateX(-50%);
       width:200px;
       border-radius:24px;
-      background:rgba(255,255,255,0.11);
+      background:rgba(255,255,255,0.15);
       backdrop-filter:blur(20px) saturate(180%);
       -webkit-backdrop-filter:blur(20px) saturate(180%);
       overflow:hidden;
@@ -35,11 +35,11 @@
       width:164%; height:227%;
       left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:0.95;
+      opacity:1;
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
       z-index:-1;
     }
-    .nav.is-open::before { opacity:0.95; }
+    .nav.is-open::before { opacity:1; }
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:center;
       padding:0 20px; cursor:pointer;
