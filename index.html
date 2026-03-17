@@ -683,6 +683,57 @@
     document.querySelector('.btn-close').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
 
+    // === SWIPE DOWN TO CLOSE ===
+    (function() {
+      const modalEl  = document.getElementById('projectModal');
+      const scrollEl = modalEl.querySelector('.modal__scroll');
+      const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
+
+      modalEl.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'touch' || scrollEl.scrollTop > 0) return;
+        sy = e.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
+        modalEl.setPointerCapture(e.pointerId);
+      }, { passive: true });
+
+      modalEl.addEventListener('pointermove', e => {
+        if (!active) return;
+        const d = e.clientY - sy; if (d <= 0) return;
+        vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
+        dy = d; pt = e.timeStamp;
+        modalEl.style.transition = 'none';
+        modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
+      });
+
+      function snapBack() {
+        modalEl.style.transition = '';
+        modalEl.style.transform  = '';
+      }
+
+      modalEl.addEventListener('pointerup', () => {
+        if (!active) return; active = false;
+        if (dy > 100 || vy > 8) {
+          // animate off-screen from current position, then clean up
+          modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+          modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
+          modalEl.addEventListener('transitionend', () => {
+            modalEl.style.visibility = 'hidden'; // hide before resetting transform
+            modalEl.style.transition = '';
+            modalEl.style.transform  = '';
+            modalEl.querySelector('.modal__scroll').style.background = '';
+            modalEl.querySelector('.page-header').style.background   = '';
+            modalEl.classList.remove('is-open');
+            document.getElementById('modalBackdrop').classList.remove('is-active');
+            document.body.style.overflow = '';
+            document.body.style.background = '#171717';
+            document.documentElement.style.background = '#171717';
+          }, { once: true });
+        } else { snapBack(); }
+      });
+
+      modalEl.addEventListener('pointercancel', () => { active = false; snapBack(); });
+    })();
+
     // === WORK ITEM CLICKS ===
     document.querySelectorAll('.work-item[data-project]').forEach(item => {
       item.addEventListener('click', () => openModal(item.dataset.project));
