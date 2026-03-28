@@ -36,7 +36,7 @@
       z-index:100;
       transition:width .4s cubic-bezier(.4,0,.2,1);
     }
-    /* nav width stays fixed — only expands vertically */
+    .nav.is-open { width:min(calc(100vw - 16px), 560px); }
     .nav::before {
       content:'';
       position:absolute;
@@ -51,6 +51,7 @@
     .nav__bar {
       height:33px; display:flex; align-items:center; justify-content:space-between;
       padding:0 16px; cursor:pointer;
+      width:200px; margin:0 auto;
     }
     .nav__logo {
       font-size:14px; font-weight:500; color:#fff;
@@ -303,7 +304,7 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
-      /* nav width stays fixed on larger screens too */
+      .nav.is-open { width:min(calc(100vw - 16px), 680px); }
       .home-content { padding:100px 60px 60px; }
       .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
