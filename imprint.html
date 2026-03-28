@@ -47,13 +47,25 @@
     }
     .nav.is-open::before { opacity:0.65; }
     .nav__bar {
-      height:33px; display:flex; align-items:center; justify-content:center;
-      padding:0 20px; cursor:pointer;
+      height:33px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; cursor:pointer;
     }
     .nav__logo {
       font-size:14px; font-weight:500; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase;
     }
+    .nav__menu {
+      display:flex; flex-direction:column; justify-content:center; gap:4px;
+      width:18px; height:18px; flex-shrink:0;
+    }
+    .nav__menu span {
+      display:block; height:1.5px; width:100%;
+      background:#fff; border-radius:1px;
+      transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+    }
+    .nav.is-open .nav__menu span:nth-child(1) { transform:translateY(5.5px) rotate(45deg); }
+    .nav.is-open .nav__menu span:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .nav.is-open .nav__menu span:nth-child(3) { transform:translateY(-5.5px) rotate(-45deg); }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
@@ -156,6 +168,7 @@
   <nav class="nav" id="mainNav">
     <div class="nav__bar">
       <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
