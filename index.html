@@ -544,6 +544,10 @@
     nav.querySelector('.nav__logo').addEventListener('click', e => {
       if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
     });
+    nav.querySelector('.nav__menu').addEventListener('click', e => {
+      e.stopPropagation();
+      nav.classList.toggle('is-open');
+    });
     nav.addEventListener('click', e => {
       if (e.pointerType !== 'touch') return;
       const onBar = e.target.closest('.nav__bar');
