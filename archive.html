@@ -30,7 +30,7 @@
       z-index:100;
       transition:width .4s cubic-bezier(.4,0,.2,1);
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 560px); }
+    /* nav width stays fixed — only expands vertically */
     .nav::before {
       content:'';
       position:absolute;
@@ -51,17 +51,17 @@
       letter-spacing:0.56px; text-transform:uppercase;
     }
     .nav__menu {
-      display:flex; flex-direction:column; justify-content:center; gap:4px;
-      width:18px; height:18px; flex-shrink:0;
+      display:flex; flex-direction:column; justify-content:center; gap:3px;
+      width:13px; height:13px; flex-shrink:0;
     }
     .nav__menu span {
       display:block; height:1.5px; width:100%;
       background:#fff; border-radius:1px;
       transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
     }
-    .nav.is-open .nav__menu span:nth-child(1) { transform:translateY(5.5px) rotate(45deg); }
+    .nav.is-open .nav__menu span:nth-child(1) { transform:translateY(4.5px) rotate(45deg); }
     .nav.is-open .nav__menu span:nth-child(2) { opacity:0; transform:scaleX(0); }
-    .nav.is-open .nav__menu span:nth-child(3) { transform:translateY(-5.5px) rotate(-45deg); }
+    .nav.is-open .nav__menu span:nth-child(3) { transform:translateY(-4.5px) rotate(-45deg); }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
