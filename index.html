@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#171717" id="themeColor">
+  <meta name="theme-color" content="#060606" id="themeColor">
   <title>Jana Gramlich — Product Designer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
     body {
       font-family:'DM Sans', sans-serif;
       font-optical-sizing:auto;
-      background:#171717;
+      background:#060606;
       color:#fff;
       overflow-x:hidden;
     }
@@ -27,56 +27,67 @@
     .nav {
       position:fixed; top:8px;
       left:50%; transform:translateX(-50%);
-      width:200px;
-      border-radius:24px;
-      background:rgba(255,255,255,0.15);
-      backdrop-filter:blur(20px) saturate(180%);
-      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      width:calc(100vw - 16px);
+      border-radius:0;
+      background:transparent;
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
       overflow:hidden;
       z-index:100;
-      transition:width .4s cubic-bezier(.4,0,.2,1);
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 560px); }
+    .nav.is-open { width:min(calc(100vw - 16px), 560px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
       width:164%; height:227%;
       left:-28%; top:-8%;
       background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:0.65;
+      opacity:var(--nav-bg-opacity, 0);
       transition:opacity .4s cubic-bezier(.4,0,.2,1);
       z-index:-1;
     }
     .nav.is-open::before { opacity:0.65; }
     .nav__bar {
-      height:33px; display:flex; align-items:center; justify-content:space-between;
+      height:33px; display:flex; align-items:center;
       padding:0 16px; cursor:pointer;
-      width:200px; margin:0 auto;
+      width:100%;
+    }
+    .nav.is-open .nav__bar {
+      padding-left:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:14px; font-weight:500; color:#fff;
-      letter-spacing:0.56px; text-transform:uppercase;
+      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
-      display:flex; flex-direction:column; justify-content:center; gap:3px;
-      width:13px; height:13px; flex-shrink:0;
+      display:flex; flex-direction:row; align-items:center; gap:3px;
+      width:15px; height:13px; flex-shrink:0; position:relative;
+      margin-left:auto;
     }
     .nav__menu span {
-      display:block; height:1.5px; width:100%;
-      background:#fff; border-radius:1px;
-      transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+      display:block; width:3px; height:3px; border-radius:50%;
+      background:#fff; flex-shrink:0;
+      transition:opacity .25s ease;
     }
-    .nav.is-open .nav__menu span:nth-child(1) { transform:translateY(4.5px) rotate(45deg); }
-    .nav.is-open .nav__menu span:nth-child(2) { opacity:0; transform:scaleX(0); }
-    .nav.is-open .nav__menu span:nth-child(3) { transform:translateY(-4.5px) rotate(-45deg); }
+    .nav__menu::after {
+      content:'×'; position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:28px; font-weight:400; line-height:1; color:#fff; transform:translateY(-2px);
+      opacity:0; transition:opacity .25s ease;
+    }
+    .nav.is-open .nav__menu span { opacity:0; }
+    .nav.is-open .nav__menu::after { opacity:1; }
+    .modal-open #mainNav { pointer-events:none; }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
     }
+    .nav.is-open .nav__expand { padding-top:33px; }
     .nav.is-open .nav__expand { grid-template-rows:1fr; }
     .nav__expand-inner { overflow:hidden; }
 
-    .nav__links { padding:32px 24px 0; display:flex; flex-direction:column; }
+    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
     .nav__link {
       display:block;
       font-size:32px; font-weight:400; color:#fff; line-height:1.4;
@@ -97,7 +108,7 @@
     .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
 
     .nav__contact {
-      padding:40px 24px 24px;
+      padding:40px 16px 24px;
       opacity:0; transform:translateY(6px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -106,7 +117,7 @@
       transition:opacity .2s ease .34s, transform .25s ease .34s;
     }
     .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
-    .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
+    .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#989898; margin-top:4px; }
     .nav__linkedin {
       display:inline-flex; align-items:center; justify-content:center;
       background:#acb0ff; color:#171717;
@@ -116,31 +127,31 @@
     }
 
     /* === PAGE WRAPPER === */
-    .page-wrapper { background:#171717; }
+    .page-wrapper { background:#060606; }
 
     /* === HOME CONTENT === */
     .home-content {
-      padding:80px 24px 40px;
+      padding:100px 16px 40px;
       min-height:100dvh;
       display:flex; flex-direction:column;
     }
     .home-hero { max-width:580px; margin-left:auto; margin-right:auto; width:100%; }
     .home-intro {
       font-size:21px; font-weight:400;
-      line-height:1.4; color:#6b6b6b;
-      margin-bottom:32px;
+      line-height:1.4; color:#989898;
+      margin-bottom:0;
     }
     .btn-about {
       display:inline-flex; align-items:center; gap:8px;
-      border:1px solid #6b6b6b; border-radius:999px;
-      padding:16px 20px;
+      border:1px solid rgba(255,255,255,0.15); border-radius:999px;
+      padding:8px 10px;
       font-size:12px; font-weight:500; color:#fff;
       letter-spacing:0.48px; text-transform:uppercase;
       width:fit-content;
       margin-bottom:48px;
-      transition:border-color .15s;
+      transition:border-color .4s ease-in-out;
     }
-    .btn-about:hover { border-color:rgba(255,255,255,.6); }
+    .btn-about:hover { border-color:#989898; }
     .btn-about__dot {
       width:8px; height:8px; border-radius:50%;
       background:#acb0ff;
@@ -148,44 +159,86 @@
     }
 
     /* === WORK LIST === */
-    .work-list { display:flex; flex-direction:column; gap:8px; }
-    .work-item {
-      cursor:pointer;
-      padding:12px 0 16px;
-    }
+    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:40px; margin-bottom:16px; }
+    .section-label__prefix { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
+    .section-label__links { display:flex; gap:16px; flex-wrap:wrap; }
+    .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; }
+    .section-label__link:hover { color:#fff; }
+    .work-list { display:flex; flex-direction:column; gap:8px; margin-left:-8px; margin-right:-8px; }
+    .work-item { cursor:pointer; }
     .work-item__image {
-      width:100%; aspect-ratio:3/2;
-      border-radius:8px; overflow:hidden;
-      background:#2a2a2a;
-      margin-bottom:12px;
+      width:100%; height:55vh;
+      border-radius:4px; overflow:hidden;
+      background:#141414; margin-bottom:8px;
     }
     .work-item__image img { width:100%; height:130%; object-fit:cover; will-change:transform; }
-    .work-item__row { display:flex; justify-content:space-between; align-items:baseline; }
-    .work-item__client { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
-    .work-item__view { font-size:12px; font-weight:500; color:#6b6b6b; letter-spacing:0.48px; text-transform:uppercase; }
-    .work-item__arrow { display:inline-block; transition:transform .2s ease, color .2s ease; }
-    .work-item:hover .work-item__arrow { transform:translateX(4px); color:rgba(255,255,255,0.45); }
-    .work-item__title { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
+    .work-item__body {
+      background:#141414; border-radius:4px;
+      padding:8px; aspect-ratio:4/3;
+      display:flex; flex-direction:column;
+    }
+    .work-item__year { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; }
+    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:56px; }
+    .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
+    .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
+    .work-item__view { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
+    .work-item__arrow { display:inline-flex; align-self:center; color:rgba(255,255,255,0.5); transition:transform .4s ease-in-out, color .4s ease-in-out; }
+    .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
+    .work-item, .cv-card { opacity:0; transform:translateY(48px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+    .work-item.is-visible, .cv-card.is-visible { opacity:1; transform:translateY(0); }
+    @media (min-width:640px) { .work-item__image { height:45vh; } .work-item__body { aspect-ratio:auto; min-height:160px; } }
 
     /* === CV SECTION === */
-    .cv-section { margin-top:48px; width:100%; max-width:580px; margin-left:auto; margin-right:auto; }
-    .cv-section .cv-row:first-child { border-top:none; }
+    .cv-section { margin-top:120px; width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
+    .cv-section-heading { color:#fff; margin-bottom:40px; font-size:21px; font-weight:400; line-height:1.4; padding-left:8px; padding-right:8px; }
+    .cv-section-sub { color:#989898; }
+    @media (min-width:640px) { .cv-section-heading { margin-bottom:32px; font-size:clamp(19px,1.8vw,22px); } }
+    @media (min-width:640px) { .cv-section { width:100%; max-width:580px; margin-left:auto; margin-right:auto; } }
+    .cta-section {
+      margin-top:120px;
+      padding-left:8px; padding-right:8px; padding-bottom:16px;
+      display:flex; flex-direction:column;
+    }
+    .cta-section__texts { margin-bottom:40px; }
+    .cta-section__label {
+      font-size:21px; font-weight:400; line-height:1.1; color:#989898;
+      margin-bottom:4px;
+    }
+    .cta-section__heading {
+      font-size:21px; font-weight:400; line-height:1.1; color:#fff;
+    }
+    @media (min-width:640px) {
+      .cta-section__label, .cta-section__heading { font-size:clamp(19px,1.8vw,22px); }
+      .cta-section { max-width:580px; margin-left:auto; margin-right:auto; }
+    }
     .cv-section-label {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
       letter-spacing:0.48px; text-transform:uppercase;
-      margin-top:32px; margin-bottom:4px;
+      margin-top:32px; margin-bottom:8px; padding-left:16px; padding-right:16px;
     }
-    .cv-row {
-      display:flex; justify-content:space-between; align-items:flex-end;
-      padding:16px 0;
-      border-top:1px solid rgba(255,255,255,0.12);
-      gap:16px;
+    .cv-card {
+      display:flex; align-items:flex-start; gap:16px;
+      padding:8px; background:#141414;
+      border-radius:4px; margin-bottom:8px;
+      text-decoration:none; color:inherit;
     }
-    .cv-row:last-child { border-bottom:1px solid rgba(255,255,255,0.12); }
-    .cv-left { min-width:0; }
-    .cv-company { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
-    .cv-role { font-size:16px; font-weight:500; color:#6b6b6b; margin-top:4px; }
-    .cv-date { font-size:12px; font-weight:500; color:#6b6b6b; white-space:nowrap; flex-shrink:0; letter-spacing:0; }
+    a.cv-card { transition:background .4s ease-in-out; }
+    a.cv-card:hover { background:rgba(255,255,255,0.1); }
+    .cv-card__logo {
+      width:60px; height:60px; background:#000;
+      border-radius:2px; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; overflow:hidden;
+    }
+    .cv-card__logo img { width:32px; height:32px; object-fit:contain; }
+    .cv-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; }
+    .cv-card__company { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .cv-card__role { font-size:14px; font-weight:400; color:#989898; margin-top:1px; }
+    .cv-card__date {
+      font-size:9px; font-weight:500; color:#989898;
+      margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
+    }
+    .cv-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; line-height:1; display:flex; }
+    .arrow-icon { display:block; }
 
     /* === HOME FOOTER === */
     .home-footer {
@@ -193,7 +246,7 @@
       padding-top:40px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
     }
-    .home-footer a { color:#fff; transition:opacity .15s; }
+    .home-footer a { color:#fff; transition:opacity .4s ease-in-out; }
     .home-footer a:hover { opacity:.5; }
 
     /* === MODAL === */
@@ -201,7 +254,7 @@
       position:fixed;
       bottom:0; left:0;
       width:100vw; max-height:95dvh;
-      z-index:110;
+      z-index:200;
       border-radius:16px 16px 0 0;
       overflow:hidden;
       transform:translateY(100%);
@@ -241,7 +294,7 @@
     .btn-close:hover { background:rgba(255,255,255,0.9); }
     .hero__title { display:none; }
     .modal-name {
-      font-size:16px; font-weight:500; color:#6b6b6b;
+      font-size:16px; font-weight:500; color:#989898;
       margin-bottom:16px;
     }
     .hero__desc {
@@ -278,7 +331,7 @@
       font-weight:400; line-height:1;
       text-align:center; text-transform:uppercase; color:#111;
       border-top:1px solid rgba(0,0,0,.2); padding:0;
-      transition:opacity .15s;
+      transition:opacity .4s ease-in-out;
     }
     .project-link:last-child { border-bottom:1px solid rgba(0,0,0,.2); }
     .project-link:hover { opacity:.5; }
@@ -289,7 +342,7 @@
 
     /* === MODAL BACKDROP === */
     .modal-backdrop {
-      position:fixed; inset:0; z-index:109;
+      position:fixed; inset:0; z-index:199;
       background:transparent;
       pointer-events:none;
       transition:background .5s cubic-bezier(.4,0,.2,1);
@@ -306,7 +359,7 @@
     @media (min-width:640px) {
       .nav.is-open { width:min(calc(100vw - 16px), 680px); }
       .home-content { padding:100px 60px 60px; }
-      .home-intro { font-size:clamp(19px, 1.8vw, 22px); }
+      .home-intro { font-size:clamp(18px, 1.8vw, 21px); }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item:nth-child(even) { margin-top:48px; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
@@ -356,139 +409,215 @@
   <!-- HOMEPAGE CONTENT -->
   <div class="home-content">
     <div class="home-hero">
-      <p class="home-intro">I design digital products and services across app and web with over 10 years of experience. I focus on building scalable systems and processes that enable teams to work more efficiently and create intuitive, high-quality and fun-to-use experiences. I break down complexity into solutions that teams can easily build on, using global patterns and components to ensure flexibility so products can evolve over time.</p>
-      <p class="home-intro">I establish data-informed decision-making and discovery practices, working across product management, design, engineering, quality assurance, and management to increase design maturity. I approach team leadership with empathy and positivity, creating an environment where everyone can grow, deliver their best, and have fun.</p>
+      <p class="home-intro" style="font-size:21px"><span style="color:#fff">I design digital products and services</span> <span style="color:#989898">with over 10 years of experience.</span></p>
     </div>
 
+    <div class="section-label">
+      <span class="section-label__prefix">(Jump to)</span>
+      <div class="section-label__links">
+        <a href="#work" class="section-label__link">Work</a>
+        <a href="#about" class="section-label__link">About</a>
+        <a href="archive.html" class="section-label__link">Archive</a>
+        <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact</a>
+      </div>
+    </div>
     <div class="work-list" id="work">
       <article class="work-item" data-project="douglas-premium-relaunch">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">Douglas</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2023</span>
+          <p class="work-item__client">Douglas</p>
+          <p class="work-item__title">Elevating the luxury beauty shopping experience across web and app. Redesigning the end-to-end customer journey for Europe's leading perfumery.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Premium Relaunch</p>
       </article>
       <article class="work-item" data-project="about-you">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/About-Header-1.jpg" alt="About You Design System" loading="lazy">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">About You</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2024</span>
+          <p class="work-item__client">About You</p>
+          <p class="work-item__title">Building a scalable design system for a fashion platform used by millions. Establishing shared foundations to accelerate product teams across the organisation.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Design System</p>
       </article>
       <article class="work-item" data-project="douglas-hybrid">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">Douglas</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2022</span>
+          <p class="work-item__client">Douglas</p>
+          <p class="work-item__title">Bridging online and in-store experiences through a seamless hybrid app. Empowering beauty consultants and customers with tools that connect both worlds.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Hybrid App</p>
       </article>
       <article class="work-item" data-project="zalando">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">Zalando</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2020</span>
+          <p class="work-item__client">Zalando</p>
+          <p class="work-item__title">Connecting independent retailers to Europe's largest fashion platform. Helping local stores grow their business through seamless digital integration.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Connected Retail</p>
       </article>
       <article class="work-item" data-project="dmexco">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">DMEXCO</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2023</span>
+          <p class="work-item__client">DMEXCO</p>
+          <p class="work-item__title">Designing the digital event experience for Europe's leading marketing conference. Creating an intuitive platform for 40,000+ attendees to navigate sessions, speakers, and partners.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Digital Experience</p>
       </article>
       <article class="work-item" data-project="the-makery">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
         </div>
-        <div class="work-item__row">
-          <span class="work-item__client">The Makery</span>
-          <span class="work-item__view">View <span class="work-item__arrow">↗</span></span>
+        <div class="work-item__body">
+          <span class="work-item__year">2019</span>
+          <p class="work-item__client">The Makery</p>
+          <p class="work-item__title">Relaunching the brand and website for a Berlin-based creative marketplace. Crafting a visual identity and digital experience that connects local makers with their community.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
         </div>
-        <p class="work-item__title">Website Relaunch</p>
       </article>
     </div>
 
     <!-- CV SECTION -->
     <div class="cv-section" id="about">
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">About You</p>
-          <p class="cv-role">UI/UX Lead Designer</p>
+      <p class="home-intro cv-section-heading">Experience<span class="cv-section-sub"> across branding and products with millions of users</span></p>
+      <a class="cv-card" href="https://aboutyou.com" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=aboutyou.com&sz=64" alt="About You">
         </div>
-        <span class="cv-date">Nov 24 – today</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">Thalia / Douglas</p>
-          <p class="cv-role">Teamlead UI/UX Design</p>
+        <div class="cv-card__body">
+          <p class="cv-card__company">About You</p>
+          <p class="cv-card__role">UI/UX Lead Designer</p>
+          <p class="cv-card__date">Nov 24 – today</p>
         </div>
-        <span class="cv-date">Jul 23 – Oct 24</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">Thalia / Douglas</p>
-          <p class="cv-role">Senior UI/UX Designer</p>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.douglas.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=douglas.de&sz=64" alt="Douglas">
         </div>
-        <span class="cv-date">Feb 21 – Jun 23</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">Navarra.is</p>
-          <p class="cv-role">UX / UI Designer</p>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Thalia / Douglas</p>
+          <p class="cv-card__role">Teamlead UI/UX Design</p>
+          <p class="cv-card__date">Jul 23 – Oct 24</p>
         </div>
-        <span class="cv-date">Jul 17 – Dec 20</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">ag-prop</p>
-          <p class="cv-role">UX / UI Designer, Internship</p>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.douglas.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=douglas.de&sz=64" alt="Douglas">
         </div>
-        <span class="cv-date">Oct 16 – Nov 16</span>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Thalia / Douglas</p>
+          <p class="cv-card__role">Senior UI/UX Designer</p>
+          <p class="cv-card__date">Feb 21 – Jun 23</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://navarra.is" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=navarra.is&sz=64" alt="Navarra.is">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Navarra.is</p>
+          <p class="cv-card__role">UX / UI Designer</p>
+          <p class="cv-card__date">Jul 17 – Dec 20</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <div class="cv-card">
+        <div class="cv-card__logo"></div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">ag-prop</p>
+          <p class="cv-card__role">UX / UI Designer, Internship</p>
+          <p class="cv-card__date">Oct 16 – Nov 16</p>
+        </div>
       </div>
 
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">DHBW Mediendesign</p>
-          <p class="cv-role">Bachelor of Arts</p>
+      <a class="cv-card" href="https://www.dhbw-stuttgart.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=dhbw-stuttgart.de&sz=64" alt="DHBW">
         </div>
-        <span class="cv-date">Oct 14 – Sept 17</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">Kunsthøgskolen Oslo</p>
-          <p class="cv-role">Semester Abroad</p>
+        <div class="cv-card__body">
+          <p class="cv-card__company">DHBW Mediendesign</p>
+          <p class="cv-card__role">Bachelor of Arts</p>
+          <p class="cv-card__date">Oct 14 – Sept 17</p>
         </div>
-        <span class="cv-date">Aug 16 – Dec 16</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">University of Stuttgart</p>
-          <p class="cv-role">Architecture</p>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.khio.no" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=khio.no&sz=64" alt="KHiO">
         </div>
-        <span class="cv-date">Oct 12 – Dec 13</span>
-      </div>
-      <div class="cv-row">
-        <div class="cv-left">
-          <p class="cv-company">attraktive grautöne</p>
-          <p class="cv-role">Spatial Design</p>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Kunsthøgskolen Oslo</p>
+          <p class="cv-card__role">Semester Abroad</p>
+          <p class="cv-card__date">Aug 16 – Dec 16</p>
         </div>
-        <span class="cv-date">Jan 14 – Jun 17</span>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.uni-stuttgart.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=uni-stuttgart.de&sz=64" alt="Uni Stuttgart">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">University of Stuttgart</p>
+          <p class="cv-card__role">Architecture</p>
+          <p class="cv-card__date">Oct 12 – Dec 13</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <div class="cv-card">
+        <div class="cv-card__logo"></div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">attraktive grautöne</p>
+          <p class="cv-card__role">Spatial Design</p>
+          <p class="cv-card__date">Jan 14 – Jun 17</p>
+        </div>
       </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="cta-section">
+      <div class="cta-section__texts">
+        <p class="cta-section__label">Sounds interesting?</p>
+        <p class="cta-section__heading">Let's have a conversation</p>
+      </div>
+      <a href="mailto:hello@janagramlich.com" class="btn-about">
+        <span class="btn-about__dot"></span>
+        Contact
+      </a>
     </div>
 
     <footer class="home-footer">
@@ -569,6 +698,77 @@
         window.scrollTo({ top, behavior: 'smooth' });
       });
     });
+
+    // === SCROLL-DRIVEN NAV ===
+    (function() {
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      const navBar = nav.querySelector('.nav__bar');
+
+      function updateNavScroll() {
+        if (nav.classList.contains('is-open')) return;
+        const t = Math.min(window.scrollY / 120, 1);
+        const fullW = window.innerWidth;
+        const pillW = 168;
+        nav.style.width = lerp(fullW, pillW, t) + 'px';
+        nav.style.top = lerp(0, 8, t) + 'px';
+        nav.style.borderRadius = lerp(0, 24, t) + 'px';
+        nav.style.background = `rgba(255,255,255,${lerp(0, 0.06, t)})`;
+        const blur = lerp(0, 8, t);
+        const sat = lerp(100, 140, t);
+        const filterVal = t > 0.01 ? `blur(${blur}px) saturate(${sat}%)` : 'none';
+        nav.style.backdropFilter = filterVal;
+        nav.style.webkitBackdropFilter = filterVal;
+        nav.style.setProperty('--nav-bg-opacity', lerp(0, 0.65, t));
+        nav.style.setProperty('--pill-w', pillW + 'px');
+        const hPad = lerp(16, 16, t) + 'px';
+        navBar.style.paddingLeft = hPad;
+        navBar.style.paddingRight = hPad;
+        navBar.style.paddingTop = lerp(8, 0, t) + 'px';
+        navBar.style.paddingBottom = '0';
+      }
+
+      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
+      const BAR_TRANS = `padding-left .4s ${EASE}, padding-right .4s ${EASE}`;
+
+      // Animate open/close; clear inline styles on open so CSS .is-open rules apply; restore on close
+      new MutationObserver(() => {
+        nav.style.transition = NAV_TRANS;
+        navBar.style.transition = BAR_TRANS;
+        void nav.offsetHeight; // lock current computed values as "from" state
+        if (nav.classList.contains('is-open')) {
+          nav.style.width = '';
+          nav.style.top = '';
+          nav.style.borderRadius = '';
+          nav.style.background = '';
+          nav.style.backdropFilter = '';
+          nav.style.webkitBackdropFilter = '';
+          nav.style.removeProperty('--nav-bg-opacity');
+          navBar.style.paddingLeft = '';
+          navBar.style.paddingRight = '';
+        } else {
+          updateNavScroll();
+        }
+        setTimeout(() => { nav.style.transition = ''; navBar.style.transition = ''; }, 450);
+      }).observe(nav, { attributes: true, attributeFilter: ['class'] });
+
+      window.addEventListener('scroll', updateNavScroll, { passive: true });
+      window.addEventListener('resize', updateNavScroll);
+      updateNavScroll();
+    })();
+
+    // === SCROLL REVEAL ===
+    (function() {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.work-item, .cv-card').forEach(el => obs.observe(el));
+    })();
 
     // === PROJECT DATA ===
     const BASE = 'https://janagramlich.com/wp-content/uploads/';
@@ -696,6 +896,7 @@
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
     }
 
     // === CLOSE MODAL ===
@@ -706,6 +907,7 @@
       modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
       document.getElementById('themeColor').content = '#171717';
       document.documentElement.style.backgroundColor = '#171717';
       modal.addEventListener('transitionend', () => {
@@ -739,8 +941,9 @@
           modalEl.classList.remove('is-open');
           document.getElementById('modalBackdrop').classList.remove('is-active');
           document.body.style.overflow = '';
-          document.getElementById('themeColor').content = '#171717';
-          document.documentElement.style.backgroundColor = '#171717';
+          document.body.classList.remove('modal-open');
+          document.getElementById('themeColor').content = '#060606';
+          document.documentElement.style.backgroundColor = '#060606';
         }, { once: true });
       }
 
