@@ -164,6 +164,7 @@
     .imprint-footer {
       display:none;
     }
+    @media (min-width:640px) { .nav { top:8px; } }
   </style>
 </head>
 <body>
@@ -278,7 +279,7 @@
         const fullW = window.innerWidth;
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = lerp(fullW, targetW, t) + 'px';
-        nav.style.top = '4px';
+        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
         nav.style.borderRadius = lerp(0, 24, t) + 'px';
         nav.style.background = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
         nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));

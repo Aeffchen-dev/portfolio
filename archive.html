@@ -144,7 +144,7 @@
       -webkit-user-select:none;
       -webkit-user-drag:none;
     }
-
+    @media (min-width:640px) { .nav { top:8px; } }
   </style>
 </head>
 <body>
@@ -212,7 +212,7 @@
       function setPillState() {
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = targetW + 'px';
-        nav.style.top = '4px';
+        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
         nav.style.borderRadius = '24px';
         nav.style.background = 'rgba(255,255,255,0.05)';
         nav.style.setProperty('--nav-bg-opacity', '0.65');

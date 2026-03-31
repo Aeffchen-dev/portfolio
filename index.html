@@ -360,12 +360,15 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
+      .nav { top:8px; }
       .home-content { padding:100px 60px 60px; }
       .home-intro { text-align:center; font-size:clamp(21px, 2.5vw, 32px); }
       .desktop-br { display:block; }
-      .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
+      .work-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
       .work-item + .work-item { margin-top:0; }
-      .work-item:nth-child(even) { margin-top:48px; }
+      .work-item:nth-child(even) { margin-top:0; }
+      .work-item:nth-child(6n+1) { grid-column: span 2; }
+      .work-item:nth-child(6n+4) { grid-column: span 2; }
       .work-item__footer { margin-top:40px; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
@@ -377,9 +380,10 @@
     @media (min-width:1024px) {
       .home-content { padding:100px 80px 60px; }
       .work-list { grid-template-columns:repeat(3, 1fr); }
-      .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
-      .work-item:nth-child(3n+2)  { margin-top:40px; }
+      .work-item:nth-child(even)  { margin-top:0; }
+      .work-item:nth-child(3n+2)  { margin-top:0; }
       .work-item:nth-child(3n)    { margin-top:0; }
+      .work-item:nth-child(6n+5) { grid-column: span 2; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
       .info-meta { margin-bottom:0; }
     }
@@ -734,7 +738,7 @@
         // Hug-content pill: 16px pad + logo + 8px gap + 8px dot + 16px pad
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = lerp(fullW, targetW, t) + 'px';
-        nav.style.top = '4px';
+        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
         nav.style.borderRadius = lerp(0, 24, t) + 'px';
         nav.style.background = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
         nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
