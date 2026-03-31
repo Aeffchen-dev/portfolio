@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#060606" id="themeColor">
   <title>Jana Gramlich — Product Designer</title>
-  <link rel="icon" id="favicon" href="https://janagramlich.com/favicon.ico">
+  <link rel="icon" id="favicon" href="https://janagramlich.com/favicon.ico" type="image/x-icon">
   <meta property="og:image" id="ogImage" content="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -210,8 +210,8 @@
       font-size:21px; font-weight:400; line-height:1.1; color:#fff;
     }
     @media (min-width:640px) {
-      .cta-section__label, .cta-section__heading { font-size:clamp(19px,1.8vw,22px); }
-      .cta-section { max-width:580px; margin-left:auto; margin-right:auto; }
+      .cta-section__label, .cta-section__heading { font-size:clamp(21px, 2.5vw, 32px); text-align:center; }
+      .cta-section { max-width:580px; margin-left:auto; margin-right:auto; align-items:center; }
     }
     .cv-section-label {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
@@ -264,7 +264,7 @@
       pointer-events:none;
     }
     .modal.is-open {
-      transform:translateY(0);
+      transform:translateY(-10px);
       pointer-events:auto;
     }
     .modal__scroll {
@@ -285,7 +285,7 @@
     .eyebrow-client { font-size:12px; font-weight:500; color:#000; letter-spacing:0.48px; text-transform:uppercase; }
     .eyebrow-year   { font-size:12px; font-weight:400; color:rgba(0,0,0,.5); }
     .btn-close {
-      position:absolute; top:20px; right:12px; z-index:10;
+      position:absolute; top:16px; right:16px; z-index:10;
       width:24px; height:24px; border-radius:50%;
       background:rgba(255,255,255,0.7);
       border:1px solid rgba(0,0,0,.08);
@@ -359,12 +359,13 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
-      .nav.is-open { width:min(calc(100vw - 16px), 680px); }
+      .nav.is-open { width:calc(100vw - 120px); }
       .home-content { padding:100px 60px 60px; }
-      .home-intro { font-size:clamp(18px, 1.8vw, 21px); }
+      .home-intro { font-size:clamp(21px, 2.5vw, 32px); text-align:center; }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item + .work-item { margin-top:0; }
       .work-item:nth-child(even) { margin-top:48px; }
+      .work-item__footer { margin-top:40px; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:40px; max-height:95dvh; }
@@ -373,6 +374,7 @@
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
     @media (min-width:1024px) {
+      .nav.is-open { width:calc(100vw - 160px); }
       .home-content { padding:100px 80px 60px; }
       .work-list { grid-template-columns:repeat(3, 1fr); }
       .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
@@ -412,7 +414,7 @@
   <!-- HOMEPAGE CONTENT -->
   <div class="home-content">
     <div class="home-hero">
-      <p class="home-intro" style="font-size:21px"><span style="color:#fff">I design digital products and services,</span> <span style="color:#989898">with over 10 years of experience.</span></p>
+      <p class="home-intro"><span style="color:#fff">I design digital products and services,</span> <span style="color:#989898">with over 10 years of experience.</span></p>
     </div>
 
     <div class="section-label">
@@ -778,7 +780,7 @@
           nav.style.backdropFilter = '';
           nav.style.webkitBackdropFilter = '';
           // Use full menu width (15px) + 8px gap for pill-w in expanded state
-          nav.style.setProperty('--pill-w', (logoEl.offsetWidth + 55) + 'px');
+          nav.style.setProperty('--pill-w', (logoEl.offsetWidth + (window.innerWidth >= 640 ? 63 : 55)) + 'px');
           navBar.style.paddingLeft = '';
           navBar.style.paddingRight = '';
           navBar.style.paddingTop = '';
@@ -1126,7 +1128,10 @@
       // Project hero images + og:image: fetch from WP REST API
       for (const [slug, project] of Object.entries(PROJECTS)) {
         try {
-          const posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`).then(r => r.json());
+          let posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`).then(r => r.json());
+          if (!posts[0]?.featured_media) {
+            posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`).then(r => r.json());
+          }
           if (!posts[0]?.featured_media) continue;
           const media = await fetch(`https://janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`).then(r => r.json());
           if (!media.source_url) continue;
