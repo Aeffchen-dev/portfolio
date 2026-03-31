@@ -68,16 +68,17 @@
     .nav__menu span {
       display:block; width:3px; height:3px; border-radius:50%;
       background:#fff; flex-shrink:0;
-      transition:opacity .25s ease;
+      transition:opacity .3s ease, width .3s ease, height .3s ease, background .3s ease, margin .3s ease;
     }
-    .nav__menu::after {
-      content:'×'; position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      font-size:28px; font-weight:400; line-height:1; color:#fff; transform:translateY(-2px);
+    .nav.is-pill .nav__menu span:not(:first-child) { opacity:0; width:0; margin:0; }
+    .nav.is-pill .nav__menu span:first-child { width:8px; height:8px; background:#acb0ff; }
+    .nav__close {
+      position:absolute; inset:0; margin:auto;
       opacity:0; transition:opacity .25s ease;
+      pointer-events:none;
     }
     .nav.is-open .nav__menu span { opacity:0; }
-    .nav.is-open .nav__menu::after { opacity:1; }
+    .nav.is-open .nav__close { opacity:1; }
     .modal-open #mainNav { pointer-events:none; }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
@@ -164,8 +165,8 @@
     .section-label__links { display:flex; gap:16px; flex-wrap:wrap; }
     .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; }
     .section-label__link:hover { color:#fff; }
-    .section-label__dot { width:0; height:6px; border-radius:50%; background:#acb0ff; flex-shrink:0; overflow:hidden; opacity:0; margin-right:0; transition:width .3s ease, opacity .3s ease, margin-right .3s ease; }
-    .section-label__link.is-active .section-label__dot { width:6px; opacity:1; margin-right:5px; }
+    .section-label__dot { width:0; height:8px; border-radius:50%; background:#acb0ff; flex-shrink:0; overflow:hidden; opacity:0; margin-right:0; transition:width .3s ease, opacity .3s ease, margin-right .3s ease; }
+    .section-label__link.is-active .section-label__dot { width:8px; opacity:1; margin-right:5px; }
     /* === WORK SCROLL STACK === */
     .work-scroll { position:relative; margin-left:-8px; margin-right:-8px; }
     .work-sticky { position:sticky; top:0; height:100dvh; overflow:hidden; z-index:1; }
@@ -377,7 +378,7 @@
   <nav class="nav" id="mainNav">
     <div class="nav__bar">
       <a href="index.html" class="nav__logo">Jana Gramlich</a>
-      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span><svg class="nav__close" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="1" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></div>
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
@@ -683,6 +684,7 @@
         navBar.style.paddingRight = hPad;
         navBar.style.paddingTop = lerp(8, 0, t) + 'px';
         navBar.style.paddingBottom = '0';
+        nav.classList.toggle('is-pill', t >= 1);
       }
 
       const EASE = 'cubic-bezier(.4,0,.2,1)';
@@ -770,14 +772,9 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
-        // animStart: delay card animation until section-label fully leaves viewport
-        const label = document.querySelector('.section-label');
-        animStart = label
-          ? label.getBoundingClientRect().bottom + window.scrollY + 120
-          : sectionTop;
-
-        const holdPeriod = Math.max(0, animStart - sectionTop);
-        scroll.style.height = (holdPeriod + cumulative + window.innerHeight) + 'px';
+        // animStart: cards start animating as soon as section sticks
+        animStart = sectionTop;
+        scroll.style.height = (cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
       }
 
