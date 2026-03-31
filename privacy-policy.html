@@ -309,12 +309,35 @@
       updateNavScroll();
     })();
 
-    // === FETCH PRIVACY POLICY FROM WP REST API ===
+    // === FETCH PRIVACY POLICY CONTENT ===
+    // Tries HTML scraping first (works on same-origin / production),
+    // falls back to WP REST API (returns structured data; content may be empty if page builder is used).
     (async function() {
       const body = document.getElementById('privacy-body');
       const footer = document.getElementById('privacy-footer');
+
+      // 1. Try HTML scraping (works when served from same domain as WP)
+      try {
+        const html = await fetch('https://janagramlich.com/privacy-policy/', { cache: 'no-store' }).then(r => r.text());
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const content = doc.querySelector('.entry-content, .wp-block-post-content, .elementor-section-wrap, .elementor-widget-container, article .content, .post-content, main article');
+        const titleEl = doc.querySelector('h1.entry-title, h1.wp-block-post-title, .page-title h1, h1');
+        if (content && content.textContent.trim().length > 50) {
+          const title = titleEl ? titleEl.textContent.trim() : 'Privacy Policy';
+          content.querySelectorAll('script, style, iframe').forEach(el => el.remove());
+          body.innerHTML = `<h1>${title}</h1>` + content.innerHTML;
+          const time = doc.querySelector('time[datetime]');
+          if (time) {
+            const d = new Date(time.getAttribute('datetime'));
+            if (!isNaN(d)) footer.textContent = 'Zuletzt aktualisiert: ' + d.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
+          }
+          return;
+        }
+      } catch(e) {}
+
+      // 2. Fall back to WP REST API
       const base = 'https://janagramlich.com/wp-json/wp/v2/pages';
-      const slugs = ['privacy-policy', 'datenschutz', 'datenschutzerklarung', 'datenschutzerklarung'];
+      const slugs = ['privacy-policy', 'datenschutz', 'datenschutzerklarung'];
       let page = null;
       for (const slug of slugs) {
         try {
@@ -325,17 +348,15 @@
       if (page) {
         const title = page.title?.rendered || 'Privacy Policy';
         const content = page.content?.rendered || '';
-        if (content.trim()) {
-          body.innerHTML = `<h1>${title}</h1>${content}`;
-        } else {
-          body.innerHTML = `<h1>${title}</h1><p>Please read our full privacy policy at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>`;
-        }
+        body.innerHTML = content.trim()
+          ? `<h1>${title}</h1>${content}`
+          : `<h1>${title}</h1><p>The full privacy policy is available at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>`;
         if (page.modified) {
           const d = new Date(page.modified);
           footer.textContent = 'Zuletzt aktualisiert: ' + d.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
         }
       } else {
-        body.innerHTML = '<h1>Privacy Policy</h1><p>Please read our full privacy policy at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>';
+        body.innerHTML = '<h1>Privacy Policy</h1><p>The full privacy policy is available at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>';
       }
     })();
   </script>

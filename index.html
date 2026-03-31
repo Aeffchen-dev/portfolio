@@ -359,9 +359,12 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
-      .nav.is-open { width:calc(100vw - 120px); }
+      .nav.is-open { width:min(calc(100vw - 120px), 1280px); }
+      .nav.is-open .nav__bar { padding-left:24px; padding-right:24px; }
+      .nav__links { padding-left:24px; padding-right:24px; }
+      .nav__contact { padding-left:24px; padding-right:24px; }
       .home-content { padding:100px 60px 60px; }
-      .home-intro { font-size:clamp(21px, 2.5vw, 32px); text-align:center; }
+      .home-intro { font-size:clamp(24px, 3.5vw, 44px); text-align:center; }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item + .work-item { margin-top:0; }
       .work-item:nth-child(even) { margin-top:48px; }
@@ -374,7 +377,7 @@
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
     @media (min-width:1024px) {
-      .nav.is-open { width:calc(100vw - 160px); }
+      .nav.is-open { width:min(calc(100vw - 160px), 1280px); }
       .home-content { padding:100px 80px 60px; }
       .work-list { grid-template-columns:repeat(3, 1fr); }
       .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
@@ -1113,14 +1116,21 @@
 
     // === FETCH DYNAMIC DATA FROM BACKEND ===
     (async function() {
-      // Favicon: parse from WP homepage HTML
+      // Favicon: parse from WP homepage HTML and replace <link> element (Chrome needs new element, not href update)
       try {
         const html = await fetch('https://janagramlich.com/', { cache: 'no-store' }).then(r => r.text());
         const tags = html.match(/<link[^>]+>/gi) || [];
         for (const tag of tags) {
           if (/rel=["'][^"']*icon[^"']*["']/i.test(tag)) {
             const m = tag.match(/href=["']([^"']+)["']/i);
-            if (m) { document.getElementById('favicon').href = m[1]; break; }
+            if (m) {
+              const old = document.getElementById('favicon');
+              if (old) old.remove();
+              const lnk = document.createElement('link');
+              lnk.rel = 'icon'; lnk.href = m[1];
+              document.head.appendChild(lnk);
+              break;
+            }
           }
         }
       } catch(e) {}
@@ -1129,8 +1139,15 @@
       for (const [slug, project] of Object.entries(PROJECTS)) {
         try {
           let posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`).then(r => r.json());
+          if (!posts[0]?.featured_media) posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`).then(r => r.json());
           if (!posts[0]?.featured_media) {
-            posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`).then(r => r.json());
+            // Fallback: search by slug keyword across posts and pages
+            const kw = encodeURIComponent(slug.replace(/-/g, ' '));
+            const [sp, sg] = await Promise.all([
+              fetch(`https://janagramlich.com/wp-json/wp/v2/posts?search=${kw}&per_page=5&_fields=featured_media`).then(r => r.json()),
+              fetch(`https://janagramlich.com/wp-json/wp/v2/pages?search=${kw}&per_page=5&_fields=featured_media`).then(r => r.json()),
+            ]);
+            posts = [...sp, ...sg].filter(p => p.featured_media);
           }
           if (!posts[0]?.featured_media) continue;
           const media = await fetch(`https://janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`).then(r => r.json());
