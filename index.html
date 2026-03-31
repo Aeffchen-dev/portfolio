@@ -169,7 +169,7 @@
     .section-label__link.is-active .section-label__dot { width:8px; opacity:1; margin-right:5px; }
     /* === WORK SCROLL STACK === */
     .work-scroll { position:relative; margin-left:-8px; margin-right:-8px; }
-    .work-sticky { position:sticky; top:0; height:100dvh; overflow:hidden; z-index:1; } /* top overridden by JS */
+    .work-sticky { position:sticky; top:0; height:100dvh; overflow:hidden; z-index:1; }
     .work-list { position:relative; }
     .work-img { position:absolute; left:8px; right:8px; top:0; height:45vh; border-radius:4px; overflow:hidden; background:#141414; cursor:pointer; will-change:transform; transform-origin:center bottom; }
     .work-img img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -753,10 +753,6 @@
       function init() {
         sectionTop = scroll.getBoundingClientRect().top + window.scrollY;
 
-        const stickyEl = document.querySelector('.work-sticky');
-        // Lock section at its natural viewport position (sectionTop = document Y of work-scroll)
-        if (stickyEl) stickyEl.style.top = sectionTop + 'px';
-
         const imgEl = els.find(e => e.classList.contains('work-img'));
         if (imgEl) imgH = imgEl.offsetHeight;
         // Use max desc height so all stacked cards are uniform
@@ -769,10 +765,8 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
-        // animStart: section sticks at sectionTop, then 80px grace before stagger begins
-        animStart = sectionTop + 80;
-        const holdPeriod = animStart - sectionTop; // = 80
-        scroll.style.height = (holdPeriod + cumulative + window.innerHeight) + 'px';
+        animStart = sectionTop;
+        scroll.style.height = (cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
       }
 
