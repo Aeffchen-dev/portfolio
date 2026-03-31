@@ -37,7 +37,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 560px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 32px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -55,8 +55,8 @@
       width:100%;
     }
     .nav.is-open .nav__bar {
-      padding-left:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
-      padding-right:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
+      padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
       font-size:12px; font-weight:500; line-height:1; color:#fff;
@@ -142,6 +142,7 @@
       line-height:1.4; color:#989898;
       margin-bottom:0;
     }
+    .desktop-br { display:none; }
     .btn-about {
       display:inline-flex; align-items:center; gap:8px;
       border:1px solid rgba(255,255,255,0.15); border-radius:999px;
@@ -359,12 +360,9 @@
 
     /* === DESKTOP === */
     @media (min-width:640px) {
-      .nav.is-open { width:min(calc(100vw - 120px), 1280px); }
-      .nav.is-open .nav__bar { padding-left:24px; padding-right:24px; }
-      .nav__links { padding-left:24px; padding-right:24px; }
-      .nav__contact { padding-left:24px; padding-right:24px; }
       .home-content { padding:100px 60px 60px; }
-      .home-intro { font-size:clamp(24px, 3.5vw, 44px); text-align:center; }
+      .home-intro { text-align:center; font-size:clamp(21px, 2.5vw, 32px); }
+      .desktop-br { display:block; }
       .work-list { display:grid; grid-template-columns:1fr 1fr; column-gap:32px; }
       .work-item + .work-item { margin-top:0; }
       .work-item:nth-child(even) { margin-top:48px; }
@@ -377,7 +375,6 @@
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
     @media (min-width:1024px) {
-      .nav.is-open { width:min(calc(100vw - 160px), 1280px); }
       .home-content { padding:100px 80px 60px; }
       .work-list { grid-template-columns:repeat(3, 1fr); }
       .work-item:nth-child(even)  { margin-top:0; }        /* reset 2-col stagger */
@@ -417,7 +414,7 @@
   <!-- HOMEPAGE CONTENT -->
   <div class="home-content">
     <div class="home-hero">
-      <p class="home-intro"><span style="color:#fff">I design digital products and services,</span> <span style="color:#989898">with over 10 years of experience.</span></p>
+      <p class="home-intro"><span style="color:#fff">I design digital products and services,<br class="desktop-br"></span> <span style="color:#989898">with over 10 years of experience.</span></p>
     </div>
 
     <div class="section-label">
@@ -431,7 +428,7 @@
     <div class="work-list" id="work">
       <article class="work-item" data-project="about-you">
         <div class="work-item__image">
-          <img src="https://janagramlich.com/wp-content/uploads/About-Header-1.jpg" alt="About You Design System" loading="eager">
+          <img src="https://janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2024</span>
@@ -732,7 +729,7 @@
 
       function updateNavScroll() {
         if (nav.classList.contains('is-open')) return;
-        const t = Math.min(window.scrollY / 120, 1);
+        const t = 1;
         const fullW = window.innerWidth;
         // Hug-content pill: 16px pad + logo + 8px gap + 8px dot + 16px pad
         const targetW = logoEl.offsetWidth + 48;
@@ -750,7 +747,6 @@
         const hPad = '16px';
         navBar.style.paddingLeft = hPad;
         navBar.style.paddingRight = hPad;
-        navBar.style.paddingTop = lerp(8, 0, t) + 'px';
         navBar.style.paddingBottom = '0';
         // Dot merge: outer 2 fade + slide toward center, middle grows and turns purple
         dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
@@ -768,12 +764,10 @@
 
       const EASE = 'cubic-bezier(.4,0,.2,1)';
       const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
-      const BAR_TRANS = `padding-left .4s ${EASE}, padding-right .4s ${EASE}`;
 
       // Animate open/close; clear inline styles on open so CSS .is-open rules apply; restore on close
       new MutationObserver(() => {
         nav.style.transition = NAV_TRANS;
-        navBar.style.transition = BAR_TRANS;
         void nav.offsetHeight; // lock current computed values as "from" state
         if (nav.classList.contains('is-open')) {
           nav.style.width = '';
@@ -782,8 +776,6 @@
           nav.style.background = '';
           nav.style.backdropFilter = '';
           nav.style.webkitBackdropFilter = '';
-          // Use full menu width (15px) + 8px gap for pill-w in expanded state
-          nav.style.setProperty('--pill-w', (logoEl.offsetWidth + (window.innerWidth >= 640 ? 63 : 55)) + 'px');
           navBar.style.paddingLeft = '';
           navBar.style.paddingRight = '';
           navBar.style.paddingTop = '';
@@ -793,7 +785,7 @@
         } else {
           updateNavScroll();
         }
-        setTimeout(() => { nav.style.transition = ''; navBar.style.transition = ''; }, 450);
+        setTimeout(() => { nav.style.transition = ''; }, 450);
       }).observe(nav, { attributes: true, attributeFilter: ['class'] });
 
       window.addEventListener('scroll', updateNavScroll, { passive: true });
@@ -921,7 +913,7 @@
       },
       'about-you': {
         bg:'#F2F2F2',
-        hero: BASE+'About-Header-1.jpg', client:'About You', year:'2025',
+        hero: BASE+'753805-men-streetwear-accessories-06-scaled.jpg', client:'About You', year:'2025',
         name:'Design System',
         title:'About You Design System',
         text:'I was responsible for creating the About You Figma Design System, a comprehensive framework designed to elevate the brand\'s digital experience. The primary goal was to ensure consistency across all major touchpoints — specifically the app and website — by unifying their visual language and interaction patterns.\n\nAnother key objective was to streamline the design and development processes to significantly reduce time to market. By providing a library of reusable components, clear guidelines, and structured workflows, the system enabled teams to work more efficiently and focus on delivering high-quality solutions faster.\n\nAccessibility was also a central pillar of the project, with an emphasis on adhering to modern standards to make the platform more inclusive for all users. The design system was built to empower designers with a state-of-the-art toolkit that simplifies their work, fosters collaboration, and allows them to focus on innovation and creativity.',
@@ -1138,19 +1130,11 @@
       // Project hero images + og:image: fetch from WP REST API
       for (const [slug, project] of Object.entries(PROJECTS)) {
         try {
-          let posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`).then(r => r.json());
-          if (!posts[0]?.featured_media) posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`).then(r => r.json());
-          if (!posts[0]?.featured_media) {
-            // Fallback: search by slug keyword across posts and pages
-            const kw = encodeURIComponent(slug.replace(/-/g, ' '));
-            const [sp, sg] = await Promise.all([
-              fetch(`https://janagramlich.com/wp-json/wp/v2/posts?search=${kw}&per_page=5&_fields=featured_media`).then(r => r.json()),
-              fetch(`https://janagramlich.com/wp-json/wp/v2/pages?search=${kw}&per_page=5&_fields=featured_media`).then(r => r.json()),
-            ]);
-            posts = [...sp, ...sg].filter(p => p.featured_media);
-          }
+          const opts = { cache: 'no-store' };
+          let posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
+          if (!posts[0]?.featured_media) posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
           if (!posts[0]?.featured_media) continue;
-          const media = await fetch(`https://janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`).then(r => r.json());
+          const media = await fetch(`https://janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`, opts).then(r => r.json());
           if (!media.source_url) continue;
           project.hero = media.source_url;
           const img = document.querySelector(`.work-item[data-project="${slug}"] .work-item__image img`);

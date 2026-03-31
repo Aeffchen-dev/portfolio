@@ -34,7 +34,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 560px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 32px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -51,8 +51,8 @@
       width:100%;
     }
     .nav.is-open .nav__bar {
-      padding-left:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
-      padding-right:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
+      padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
       font-size:12px; font-weight:500; line-height:1; color:#fff;
@@ -155,9 +155,7 @@
       margin:40px 0 0;
     }
     .imprint-footer {
-      padding-top:40px;
-      font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
-      letter-spacing:0.48px; text-transform:uppercase;
+      display:none;
     }
 
     /* WP content resets */
@@ -245,7 +243,7 @@
 
       function updateNavScroll() {
         if (nav.classList.contains('is-open')) return;
-        const t = Math.min(window.scrollY / 120, 1);
+        const t = 1;
         const fullW = window.innerWidth;
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = lerp(fullW, targetW, t) + 'px';
@@ -261,7 +259,6 @@
         nav.style.setProperty('--pill-w', targetW + 'px');
         navBar.style.paddingLeft = '16px';
         navBar.style.paddingRight = '16px';
-        navBar.style.paddingTop = lerp(8, 0, t) + 'px';
         navBar.style.paddingBottom = '0';
         dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
         dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
@@ -278,11 +275,9 @@
 
       const EASE = 'cubic-bezier(.4,0,.2,1)';
       const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
-      const BAR_TRANS = `padding-left .4s ${EASE}, padding-right .4s ${EASE}`;
 
       new MutationObserver(() => {
         nav.style.transition = NAV_TRANS;
-        navBar.style.transition = BAR_TRANS;
         void nav.offsetHeight;
         if (nav.classList.contains('is-open')) {
           nav.style.width = '';
@@ -291,7 +286,6 @@
           nav.style.background = '';
           nav.style.backdropFilter = '';
           nav.style.webkitBackdropFilter = '';
-          nav.style.setProperty('--pill-w', (logoEl.offsetWidth + (window.innerWidth >= 640 ? 63 : 55)) + 'px');
           navBar.style.paddingLeft = '';
           navBar.style.paddingRight = '';
           navBar.style.paddingTop = '';
@@ -301,7 +295,7 @@
         } else {
           updateNavScroll();
         }
-        setTimeout(() => { nav.style.transition = ''; navBar.style.transition = ''; }, 450);
+        setTimeout(() => { nav.style.transition = ''; }, 450);
       }).observe(nav, { attributes: true, attributeFilter: ['class'] });
 
       window.addEventListener('scroll', updateNavScroll, { passive: true });
@@ -320,7 +314,7 @@
       try {
         const html = await fetch('https://janagramlich.com/privacy-policy/', { cache: 'no-store' }).then(r => r.text());
         const doc = new DOMParser().parseFromString(html, 'text/html');
-        const content = doc.querySelector('.entry-content, .wp-block-post-content, .elementor-section-wrap, .elementor-widget-container, article .content, .post-content, main article');
+        const content = doc.querySelector('.entry-content, .wp-block-post-content, .elementor-section-wrap, .elementor, [data-elementor-type], .elementor-widget-text-editor .elementor-widget-container, article .content, .post-content, main article, .page-content');
         const titleEl = doc.querySelector('h1.entry-title, h1.wp-block-post-title, .page-title h1, h1');
         if (content && content.textContent.trim().length > 50) {
           const title = titleEl ? titleEl.textContent.trim() : 'Privacy Policy';

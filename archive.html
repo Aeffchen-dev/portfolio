@@ -29,7 +29,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 560px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 32px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -47,8 +47,8 @@
       width:100%;
     }
     .nav.is-open .nav__bar {
-      padding-left:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
-      padding-right:calc((min(calc(100vw - 16px), 560px) - var(--pill-w, 168px)) / 2 + 16px);
+      padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
       font-size:12px; font-weight:500; line-height:1; color:#fff;
@@ -145,7 +145,6 @@
       -webkit-user-drag:none;
     }
 
-    @media (min-width:640px) { .nav.is-open { width:min(calc(100vw - 16px), 680px); } }
   </style>
 </head>
 <body>
@@ -236,11 +235,9 @@
 
       const EASE = 'cubic-bezier(.4,0,.2,1)';
       const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
-      const BAR_TRANS = `padding-left .4s ${EASE}, padding-right .4s ${EASE}`;
 
       new MutationObserver(() => {
         nav.style.transition = NAV_TRANS;
-        navBar.style.transition = BAR_TRANS;
         void nav.offsetHeight;
         if (nav.classList.contains('is-open')) {
           nav.style.width = '';
@@ -249,7 +246,6 @@
           nav.style.background = '';
           nav.style.backdropFilter = '';
           nav.style.webkitBackdropFilter = '';
-          nav.style.setProperty('--pill-w', (logoEl.offsetWidth + 55) + 'px');
           navBar.style.paddingLeft = '';
           navBar.style.paddingRight = '';
           navBar.style.paddingTop = '';
@@ -259,7 +255,7 @@
         } else {
           setPillState();
         }
-        setTimeout(() => { nav.style.transition = ''; navBar.style.transition = ''; }, 450);
+        setTimeout(() => { nav.style.transition = ''; }, 450);
       }).observe(nav, { attributes: true, attributeFilter: ['class'] });
 
       window.addEventListener('resize', setPillState);
