@@ -765,8 +765,8 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
-        animStart = sectionTop;
-        scroll.style.height = (cumulative + window.innerHeight) + 'px';
+        animStart = 0;
+        scroll.style.height = (sectionTop + cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
       }
 
