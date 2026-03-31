@@ -759,7 +759,7 @@
         // Clip image cards to descH (uniform stack height, no peeking)
         els.forEach(el => {
           if (el.classList.contains('work-img') && imgH > descH) {
-            el.style.clipPath = `inset(0 0 ${imgH - descH}px 0)`;
+            el.style.clipPath = `inset(0 0 ${imgH - descH}px 0 round 4px)`;
           }
         });
 
@@ -789,15 +789,16 @@
       }
 
       function tick() {
+        const holdOffset = Math.min(window.scrollY, 120);
         for (let k = 0; k < N; k++) {
           currents[k] = lerp(currents[k], targets[k], 0.08);
-          els[k].style.transform = `translateY(${currents[k]}px)`;
+          els[k].style.transform = `translateY(${holdOffset + currents[k]}px)`;
           // Image cards: expand from descH → imgH via clip-path as they move up
           if (els[k].classList.contains('work-img') && imgH > descH) {
             const moved   = Math.max(0, startY - currents[k]);
             const progress = Math.min(1, moved / imgH);
             const clipBottom = Math.max(0, (imgH - descH) * (1 - progress));
-            els[k].style.clipPath = `inset(0 0 ${clipBottom}px 0)`;
+            els[k].style.clipPath = `inset(0 0 ${clipBottom}px 0 round 4px)`;
           }
         }
         requestAnimationFrame(tick);
