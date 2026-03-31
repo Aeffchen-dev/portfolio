@@ -769,9 +769,10 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
-        // animStart: cards start animating as soon as section sticks
-        animStart = sectionTop;
-        scroll.style.height = (cumulative + window.innerHeight) + 'px';
+        // animStart: section sticks at sectionTop, then 80px grace before stagger begins
+        animStart = sectionTop + 80;
+        const holdPeriod = animStart - sectionTop; // = 80
+        scroll.style.height = (holdPeriod + cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
       }
 
