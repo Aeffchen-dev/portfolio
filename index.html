@@ -1056,22 +1056,6 @@
       el.addEventListener('click', () => openModal(el.dataset.project));
     });
 
-    // === TILE PARALLAX ===
-    function updateTileParallax() {
-      const vh = window.innerHeight;
-      document.querySelectorAll('.work-item__image').forEach(container => {
-        const img = container.querySelector('img'); if (!img) return;
-        const rect = container.getBoundingClientRect();
-        const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
-        const center = -extra / 2;               // center image in container
-        const ratio  = (rect.top + rect.height / 2) / vh - 0.5; // -0.5..+0.5
-        const raw    = center + ratio * extra * 0.8;             // parallax drive
-        const shift  = Math.max(-extra, Math.min(0, raw));       // clamp: no gaps ever
-        img.style.transform = `translateY(${shift}px)`;
-      });
-    }
-    window.addEventListener('scroll', updateTileParallax, { passive: true });
-    updateTileParallax();
   </script>
 </body>
 </html>
