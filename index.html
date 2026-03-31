@@ -797,20 +797,6 @@
       tick();
     })();
 
-    // === PILL HOLD ===
-    (function() {
-      // Hold all non-work-scroll children of home-content fixed during pill animation (0→120)
-      const holdEls = [...document.querySelectorAll(
-        '.home-hero, .section-label, .cv-section, .cta-section, .home-footer'
-      )];
-      if (!holdEls.length) return;
-      function update() {
-        const hold = Math.min(window.scrollY, 120);
-        holdEls.forEach(el => { el.style.transform = `translateY(${hold}px)`; });
-      }
-      window.addEventListener('scroll', update, { passive: true });
-      update();
-    })();
 
     // === ACTIVE NAV DOTS ===
     (function() {
