@@ -725,8 +725,7 @@
       if (!scroll || !N) return;
 
       const numProj = N / 2;
-      let descH = 0, imgH = 0, sectionTop = 0, animStart = 0;
-      const startY = 0;  // all cards start at top of sticky container
+      let descH = 0, imgH = 0, sectionTop = 0, animStart = 0, startY = 0;
 
       // z-index: img[i]=2*(numProj-i) (on top), desc[i]=2*(numProj-i)-1 (behind)
       const zIdx = new Array(N);
@@ -767,6 +766,9 @@
 
         const stickyEl = document.querySelector('.work-sticky');
         if (stickyEl) stickyEl.style.top = sectionTop + 'px';
+
+        // Cards bottom-aligned to viewport bottom at rest
+        startY = window.innerHeight - sectionTop - imgH;
 
         animStart = 0;
         scroll.style.height = (sectionTop + cumulative + window.innerHeight) + 'px';
