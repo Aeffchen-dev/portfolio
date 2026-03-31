@@ -626,7 +626,7 @@
     </div>
 
     <footer class="home-footer">
-      <a href="mailto:hello@janagramlich.com">Contact</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
       <a href="imprint.html">Imprint</a>
     </footer>
   </div>
@@ -857,7 +857,7 @@
           el._cvT = 0;
         });
         // Trigger when card is 40% into viewport (reveal a bit later/more visible)
-        const revealOffset = vH * 0.25;
+        const revealOffset = vH * 0.2;
         const baseScroll = cvCards[0]._naturalAbsTop - vH + revealOffset;
         const scrollNeeded = baseScroll + (cvCards.length - 1) * STRIDE + CV_WINDOW;
         const maxScroll = document.documentElement.scrollHeight - vH;
@@ -868,7 +868,7 @@
 
       function updateCvCards() {
         const sy = window.scrollY;
-        const revealOffset = vH * 0.25;
+        const revealOffset = vH * 0.2;
         const baseScroll = cvCards[0]._naturalAbsTop - vH + revealOffset;
         const sectionEnters = sy >= cvCards[0]._naturalAbsTop - vH;
         // First pass: compute t values
