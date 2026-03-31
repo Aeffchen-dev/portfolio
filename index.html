@@ -765,6 +765,10 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
+        // Set sticky top to sectionTop so section is locked in place from page load
+        const stickyEl = document.querySelector('.work-sticky');
+        if (stickyEl) stickyEl.style.top = sectionTop + 'px';
+
         animStart = sectionTop;
         scroll.style.height = (cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
