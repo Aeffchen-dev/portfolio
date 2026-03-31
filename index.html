@@ -723,7 +723,7 @@
       if (!scroll || !N) return;
 
       const numProj = N / 2;
-      let descH = 0, imgH = 0, sectionTop = 0;
+      let descH = 0, imgH = 0, sectionTop = 0, animStart = 0;
       const startY = 0;  // all cards start at top of sticky container
 
       // z-index: desc[i]=2*(numProj-i), img[i]=2*(numProj-i)-1
@@ -770,12 +770,19 @@
           cumulative += els[k].classList.contains('work-img') ? imgH : els[k].offsetHeight;
         });
 
-        scroll.style.height = (cumulative + window.innerHeight) + 'px';
+        // animStart: delay card animation until section-label fully leaves viewport
+        const label = document.querySelector('.section-label');
+        animStart = label
+          ? label.getBoundingClientRect().bottom + window.scrollY + 120
+          : sectionTop;
+
+        const holdPeriod = Math.max(0, animStart - sectionTop);
+        scroll.style.height = (holdPeriod + cumulative + window.innerHeight) + 'px';
         for (let k = 0; k < N; k++) currents[k] = targets[k] = startY;
       }
 
       function onScroll() {
-        const delta = Math.max(0, window.scrollY - sectionTop);
+        const delta = Math.max(0, window.scrollY - animStart);
         for (let k = 0; k < N; k++) {
           targets[k] = startY - Math.max(0, delta - staggerThresh[k]);
         }
