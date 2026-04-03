@@ -27,7 +27,7 @@
 
     /* === NAV === */
     .nav {
-      position:fixed; top:4px;
+      position:fixed; top:8px;
       left:50%; transform:translateX(-50%);
       width:calc(100vw - 16px);
       border-radius:0;
@@ -37,7 +37,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 32px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -53,6 +53,7 @@
       height:33px; display:flex; align-items:center;
       padding:0 16px; cursor:pointer;
       width:100%;
+      transition:padding .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open .nav__bar {
       padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
@@ -189,19 +190,20 @@
     .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
     .work-item + .work-item .work-item__image { margin-top:8px; }
     .cv-card { opacity:0; }
-    @media (min-width:640px) { .work-item__image { height:45vh; } }
     @media (min-width:640px) {
       .work-item { display:flex; flex-direction:column; }
-      .work-item__image { flex:1; min-height:160px; height:auto; }
+      .work-item__image { flex:1; min-height:0; height:auto; aspect-ratio:3/4; }
+      .work-item__image img { width:100%; height:100%; object-fit:cover; }
       .work-item__body {
         background:none; border-radius:0; padding:8px 0 0; flex:0 0 auto;
         aspect-ratio:auto; min-height:auto;
-        display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; row-gap:4px; align-items:start;
+        display:grid; grid-template-columns:auto 1fr; column-gap:32px; row-gap:2px; align-items:baseline;
       }
-      .work-item__year { grid-column:1; grid-row:1; }
-      .work-item__client { grid-column:2; grid-row:1; margin-top:0; }
-      .work-item__title { grid-column:2; grid-row:2; }
-      .work-item__footer { grid-column:3; grid-row:1; margin-top:0; }
+      .work-item__client { grid-column:1; grid-row:1; margin-top:0; }
+      .work-item__year { grid-column:1; grid-row:2; }
+      .work-item__footer { grid-column:1/3; grid-row:4; justify-content:flex-end; margin-top:8px; }
+      .work-item__title { grid-column:2; grid-row:1/4; align-self:start; max-width:280px; }
+      .view-text { display:none; }
     }
 
     /* === CV SECTION === */
@@ -225,7 +227,7 @@
     }
     @media (min-width:640px) {
       .cta-section__label, .cta-section__heading { font-size:clamp(21px, 2.5vw, 32px); text-align:center; }
-      .cta-section { max-width:580px; margin-left:auto; margin-right:auto; align-items:center; }
+      .cta-section { max-width:none; margin-left:0; margin-right:0; margin-top:0; align-items:flex-start; }
     }
     .cv-section-label {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
@@ -278,7 +280,7 @@
       pointer-events:none;
     }
     .modal.is-open {
-      transform:translateY(-10px);
+      transform:translateY(0);
       pointer-events:auto;
     }
     .modal__scroll {
@@ -373,13 +375,11 @@
 
     /* === TABLET + DESKTOP === */
     @media (min-width:640px) {
-      .nav { top:8px; }
-      .home-content { padding:100px 8px 60px; }
-      .home-intro { text-align:center; font-size:clamp(21px, 2.5vw, 32px); }
+      .nav { top:8px; left:50%; transform:translateX(-50%); }
+      .home-content { padding:0 8px 8px; }
+      .home-intro { text-align:left; font-size:clamp(21px, 2.5vw, 32px); }
       .desktop-br { display:block; }
-      .work-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:start; }
-      .work-item + .work-item { margin-top:0; }
-      .work-item:nth-child(even) { margin-top:0; }
+      .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:40px; max-height:95dvh; }
@@ -387,19 +387,80 @@
       .project-links { margin-top:64px; }
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
-    /* Bento: tablet only */
+    /* === MOBILE ONLY === */
+    @media (max-width:639px) {
+      /* 8px side padding; work-list flattened so Douglas PR can interleave */
+      .home-content { display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
+      .home-hero          { order:1; }
+      .section-label      { order:2; }
+      .work-list          { display:contents; }
+      .cv-section-wrap    { order:9; }
+      .cta-section        { order:10; padding-left:8px; padding-right:8px; }
+      .home-footer        { order:11; }
+      /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
+      .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
+      .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
+      .work-list .work-item:nth-child(5) { order:5; } /* Douglas Hybrid 2022 */
+      .work-list .work-item:nth-child(3) { order:6; } /* Zalando 2020 */
+      .work-list .work-item:nth-child(2) { order:7; } /* DMEXCO 2020 */
+      .work-list .work-item:nth-child(4) { order:8; } /* The Makery 2019 */
+      /* no line break in grey experience text */
+      .cv-section-heading br { display:none; }
+    }
+    /* Tablet only */
     @media (min-width:640px) and (max-width:1023px) {
-      .work-item:nth-child(6n+1) { grid-column: span 2; }
-      .work-item:nth-child(6n+4) { grid-column: span 2; }
+      /* 2-col grid; work-list uses display:contents so its items join the grid alongside hero-side */
+      .home-content { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+      .home-hero     { grid-column:1/3; order:1; }
+      .section-label { grid-column:1/3; order:2; margin-top:0; }
+      /* Flatten work-list children into home-content grid */
+      .work-list { display:contents; }
+      /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
+      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; } /* About You 2024 — full width */
+      .work-list .work-item:nth-child(1) .work-item__image { aspect-ratio:16/9; }
+      .work-item--hero-side { order:4; display:flex; }  /* Douglas PR 2023 */
+      .work-list .work-item:nth-child(5) { order:5; display:flex; } /* Douglas Hybrid 2022 */
+      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; } /* Zalando 2020 — full width */
+      .work-list .work-item:nth-child(3) .work-item__image { aspect-ratio:16/9; }
+      .work-list .work-item:nth-child(2) { order:7; }  /* DMEXCO 2020 */
+      .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
+      /* Full-width sections */
+      .cv-section-wrap { grid-column:1/3; order:9; }
+      .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
+      .cta-section     { grid-column:1/3; order:10; margin-top:100px; justify-content:center; align-items:center; }
+      .cta-section__label, .cta-section__heading { text-align:center; }
+      .home-footer     { grid-column:1/3; order:11; padding-bottom:8px; }
+      /* My Experience heading centered */
+      .cv-section-heading { text-align:center; }
+      .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
     }
     @media (min-width:1024px) {
-      .home-content { padding:100px 8px 60px; }
-      .work-list { grid-template-columns:repeat(3, 1fr); }
-      .work-item:nth-child(even)  { margin-top:0; }
-      .work-item:nth-child(3n+2)  { margin-top:0; }
-      .work-item:nth-child(3n)    { margin-top:0; }
-      /* Portrait images */
-      .work-item__image { height:auto; aspect-ratio:3/4; }
+      .home-content {
+        padding:0 8px 8px;
+        display:grid;
+        grid-template-columns:1fr 300px;
+        column-gap:8px;
+        align-items:start;
+      }
+      .home-hero          { grid-column:1; grid-row:1; }
+      .home-intro         { text-align:left; }
+      .section-label      { grid-column:1; grid-row:2; }
+      .work-item--hero-side { grid-column:1; grid-row:3; }
+      .work-item--hero-side .work-item__image { aspect-ratio:16/9; }
+      .work-list          { grid-column:1; grid-row:4; grid-template-columns:repeat(3,1fr); align-items:stretch; }
+      .cv-section-wrap    { grid-column:2; grid-row:1 / span 999; align-self:stretch; min-height:0; }
+      .cv-section         { position:sticky; top:0; height:100dvh; overflow-y:auto; padding-top:0; max-width:none; width:100%; display:flex; flex-direction:column; justify-content:flex-start; }
+      .cv-section-heading { font-size:20px; text-align:left; padding-left:0; padding-right:0; line-height:1.5; margin-top:8px; margin-bottom:16px; }
+      .home-intro.cv-section-heading { text-align:left; font-size:20px; }
+      .cv-section-heading br { display:none; }
+      .cta-section        { grid-column:1; justify-content:center; align-items:center; }
+      .cta-section__label, .cta-section__heading { text-align:center; }
+      .home-footer        { grid-column:1; padding-top:16px; }
+      /* Bento 2+1 for work-list: About You(1), The Makery(4) span 2 */
+      .work-list .work-item:nth-child(6n+1) { grid-column: span 2; }
+      .work-list .work-item:nth-child(6n+4) { grid-column: span 2; }
+      .work-list .work-item:nth-child(6n+1) .work-item__image,
+      .work-list .work-item:nth-child(6n+4) .work-item__image { aspect-ratio:4/3; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:60px; align-items:center; }
       .info-meta { margin-bottom:0; }
     }
@@ -445,6 +506,19 @@
         <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
       </div>
     </div>
+    <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
+      <div class="work-item__image">
+        <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
+      </div>
+      <div class="work-item__body">
+        <span class="work-item__year">2023</span>
+        <p class="work-item__client">Douglas</p>
+        <p class="work-item__title">Elevating the luxury beauty shopping experience across web and app. Redesigning the end-to-end customer journey for Europe's leading perfumery.</p>
+        <div class="work-item__footer">
+          <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+        </div>
+      </div>
+    </article>
     <div class="work-list" id="work">
       <article class="work-item" data-project="about-you">
         <div class="work-item__image">
@@ -455,33 +529,20 @@
           <p class="work-item__client">About You</p>
           <p class="work-item__title">Building a scalable design system for a fashion platform used by millions. Establishing shared foundations to accelerate product teams across the organisation.</p>
           <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
           </div>
         </div>
       </article>
-      <article class="work-item" data-project="douglas-premium-relaunch">
+      <article class="work-item" data-project="dmexco">
         <div class="work-item__image">
-          <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
+          <img src="https://janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
         </div>
         <div class="work-item__body">
-          <span class="work-item__year">2023</span>
-          <p class="work-item__client">Douglas</p>
-          <p class="work-item__title">Elevating the luxury beauty shopping experience across web and app. Redesigning the end-to-end customer journey for Europe's leading perfumery.</p>
+          <span class="work-item__year">2020</span>
+          <p class="work-item__client">DMEXCO</p>
+          <p class="work-item__title">Designing the digital event experience for Europe's leading marketing conference. Creating an intuitive platform for 40,000+ attendees to navigate sessions, speakers, and partners.</p>
           <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
-          </div>
-        </div>
-      </article>
-      <article class="work-item" data-project="douglas-hybrid">
-        <div class="work-item__image">
-          <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
-        </div>
-        <div class="work-item__body">
-          <span class="work-item__year">2022</span>
-          <p class="work-item__client">Douglas</p>
-          <p class="work-item__title">Bridging online and in-store experiences through a seamless hybrid app. Empowering beauty consultants and customers with tools that connect both worlds.</p>
-          <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
           </div>
         </div>
       </article>
@@ -494,20 +555,7 @@
           <p class="work-item__client">Zalando</p>
           <p class="work-item__title">Connecting independent retailers to Europe's largest fashion platform. Helping local stores grow their business through seamless digital integration.</p>
           <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
-          </div>
-        </div>
-      </article>
-      <article class="work-item" data-project="dmexco">
-        <div class="work-item__image">
-          <img src="https://janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
-        </div>
-        <div class="work-item__body">
-          <span class="work-item__year">2023</span>
-          <p class="work-item__client">DMEXCO</p>
-          <p class="work-item__title">Designing the digital event experience for Europe's leading marketing conference. Creating an intuitive platform for 40,000+ attendees to navigate sessions, speakers, and partners.</p>
-          <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
           </div>
         </div>
       </article>
@@ -520,15 +568,30 @@
           <p class="work-item__client">The Makery</p>
           <p class="work-item__title">Relaunching the brand and website for a Berlin-based creative marketplace. Crafting a visual identity and digital experience that connects local makers with their community.</p>
           <div class="work-item__footer">
-            <span class="work-item__view">View project <span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
           </div>
         </div>
       </article>
+      <article class="work-item" data-project="douglas-hybrid">
+        <div class="work-item__image">
+          <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2022</span>
+          <p class="work-item__client">Douglas</p>
+          <p class="work-item__title">Bridging online and in-store experiences through a seamless hybrid app. Empowering beauty consultants and customers with tools that connect both worlds.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+
     </div>
 
     <!-- CV SECTION -->
+    <div class="cv-section-wrap">
     <div class="cv-section" id="about">
-      <p class="home-intro cv-section-heading">My Experience<span class="cv-section-sub"> combines branding and product design for products used by millions of users.</span></p>
+      <p class="home-intro cv-section-heading">My Experience<span class="cv-section-sub"> combines branding and product design<br> for products used by millions of users.</span></p>
       <a class="cv-card" href="https://aboutyou.com" target="_blank" rel="noopener">
         <div class="cv-card__logo">
           <img src="https://www.google.com/s2/favicons?domain=aboutyou.com&sz=64" alt="About You">
@@ -634,6 +697,7 @@
         </div>
       </div>
     </div>
+    </div><!-- /.cv-section-wrap -->
 
     <!-- CTA SECTION -->
     <div class="cta-section">
@@ -749,12 +813,15 @@
 
       function updateNavScroll() {
         if (nav.classList.contains('is-open')) return;
-        const t = 1;
-        const fullW = window.innerWidth;
+        const isMobile = window.innerWidth < 640;
+        // On mobile: t=0 at very top (full-width transparent), t=1 when scrolled
+        // On tablet/desktop: always pill (t=1)
+        const t = isMobile ? Math.min(1, window.scrollY / 40) : 1;
+        const fullW = isMobile ? window.innerWidth - 16 : window.innerWidth;
         // Hug-content pill: 16px pad + logo + 8px gap + 8px dot + 16px pad
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = lerp(fullW, targetW, t) + 'px';
-        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
+        nav.style.top = '8px';
         nav.style.borderRadius = lerp(0, 24, t) + 'px';
         nav.style.background = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
         nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
@@ -796,8 +863,14 @@
           nav.style.background = '';
           nav.style.backdropFilter = '';
           nav.style.webkitBackdropFilter = '';
-          navBar.style.paddingLeft = '';
-          navBar.style.paddingRight = '';
+          // Pre-compute final bar padding as fixed px so the transition target
+          // doesn't chase the calc(100%-…) while the nav width is also animating
+          const openNavW = Math.min(window.innerWidth - 16, 580);
+          const barOffset = 16;
+          const pillW = logoEl.offsetWidth + 48;
+          const openPad = Math.max(barOffset, Math.round((openNavW - pillW) / 2) + barOffset);
+          navBar.style.paddingLeft = openPad + 'px';
+          navBar.style.paddingRight = openPad + 'px';
           navBar.style.paddingTop = '';
           navBar.style.paddingBottom = '';
           dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; d.style.background = ''; d.style.width = ''; d.style.height = ''; });
@@ -870,13 +943,16 @@
         cvSection.style.paddingBottom = '';
         cvCards.forEach(el => {
           el._naturalAbsTop = naturalAbsTop(el);
-          el._initY = -(el.offsetHeight * 0.9);
-          el._cvT = 0;
+          // Cards already in viewport on load: no animation
+          el._initY = el._naturalAbsTop < vH ? null : -(el.offsetHeight * 0.9);
+          el._cvT = el._initY === null ? 1 : 0;
         });
-        // Trigger when card is 40% into viewport (reveal a bit later/more visible)
+        const firstAnim = cvCards.find(el => el._initY !== null);
+        if (!firstAnim) return;
         const revealOffset = vH * 0.2;
-        const baseScroll = cvCards[0]._naturalAbsTop - vH + revealOffset;
-        const scrollNeeded = baseScroll + (cvCards.length - 1) * STRIDE + CV_WINDOW;
+        const baseScroll = firstAnim._naturalAbsTop - vH + revealOffset;
+        const animCount = cvCards.filter(el => el._initY !== null).length;
+        const scrollNeeded = baseScroll + (animCount - 1) * STRIDE + CV_WINDOW;
         const maxScroll = document.documentElement.scrollHeight - vH;
         if (scrollNeeded > maxScroll) {
           cvSection.style.paddingBottom = (scrollNeeded - maxScroll + 40) + 'px';
@@ -886,21 +962,23 @@
       function updateCvCards() {
         const sy = window.scrollY;
         const revealOffset = vH * 0.2;
-        const baseScroll = cvCards[0]._naturalAbsTop - vH + revealOffset;
-        const sectionEnters = sy >= cvCards[0]._naturalAbsTop - vH;
+        const firstAnim = cvCards.find(el => el._initY !== null);
         // First pass: compute t values
-        cvCards.forEach((el, i) => {
-          if (i === 0) {
-            el._cvT = sectionEnters ? 1 : 0;
-          } else {
-            const triggerStart = baseScroll + i * STRIDE;
-            el._cvT = Math.min(1, Math.max(0, (sy - triggerStart) / CV_WINDOW));
-          }
+        let animIdx = 0;
+        cvCards.forEach(el => {
+          if (el._initY === null) { el._cvT = 1; return; }
+          const baseScroll = firstAnim._naturalAbsTop - vH + revealOffset;
+          const triggerStart = baseScroll + animIdx * STRIDE;
+          el._cvT = Math.min(1, Math.max(0, (sy - triggerStart) / CV_WINDOW));
+          animIdx++;
         });
         // Find the first card not yet fully in (t < 1) — its predecessor gets the highlight
         const firstIncompleteIdx = cvCards.findIndex(el => el._cvT < 1);
         cvCards.forEach((el, i) => {
           const t = el._cvT;
+          if (el._initY === null) {
+            el.style.opacity = '1'; el.style.transform = 'none'; el.style.background = ''; return;
+          }
           el.style.opacity   = String(Math.min(1, t * 1.5));
           el.style.transform = `translateY(${el._initY * (1 - t)}px) scale(${0.75 + 0.25 * t})`;
           el.style.background = (firstIncompleteIdx > 0 && i === firstIncompleteIdx - 1) ? '#232323' : '';
