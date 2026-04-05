@@ -58,6 +58,7 @@
     .nav.is-open .nav__bar {
       padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      /* mobile override below in @media (max-width:639px) */
     }
     .nav__logo {
       font-size:12px; font-weight:500; line-height:1; color:#fff;
@@ -406,6 +407,9 @@
       .work-list .work-item:nth-child(4) { order:8; } /* The Makery 2019 */
       /* no line break in grey experience text */
       .cv-section-heading br { display:none; }
+      /* expanded nav: 8px side padding */
+      .nav__links  { padding-left:8px; padding-right:8px; }
+      .nav__contact { padding-left:8px; padding-right:8px; }
     }
     /* Tablet only */
     @media (min-width:640px) and (max-width:1023px) {
@@ -817,7 +821,7 @@
         // On mobile: t=0 at very top (full-width transparent), t=1 when scrolled
         // On tablet/desktop: always pill (t=1)
         const t = isMobile ? Math.min(1, window.scrollY / 40) : 1;
-        const fullW = isMobile ? window.innerWidth - 16 : window.innerWidth;
+        const fullW = window.innerWidth; // mobile: flush to viewport at top (0px margin)
         // Hug-content pill: 16px pad + logo + 8px gap + 8px dot + 16px pad
         const targetW = logoEl.offsetWidth + 48;
         nav.style.width = lerp(fullW, targetW, t) + 'px';
@@ -831,9 +835,9 @@
         nav.style.backdropFilter = filterVal;
         nav.style.webkitBackdropFilter = filterVal;
         nav.style.setProperty('--pill-w', targetW + 'px');
-        const hPad = '16px';
-        navBar.style.paddingLeft = hPad;
-        navBar.style.paddingRight = hPad;
+        const hPad = isMobile ? Math.round(lerp(8, 16, t)) : 16;
+        navBar.style.paddingLeft = hPad + 'px';
+        navBar.style.paddingRight = hPad + 'px';
         navBar.style.paddingBottom = '0';
         // Dot merge: outer 2 fade + slide toward center, middle grows and turns purple
         dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
@@ -857,6 +861,9 @@
         nav.style.transition = NAV_TRANS;
         void nav.offsetHeight; // lock current computed values as "from" state
         if (nav.classList.contains('is-open')) {
+          // Read pill width NOW — inline style still holds targetW, overriding CSS,
+          // so this gives the true pre-transition nav width regardless of scroll position
+          const pillW = nav.offsetWidth;
           nav.style.width = '';
           nav.style.top = '';
           nav.style.borderRadius = '';
@@ -866,8 +873,9 @@
           // Pre-compute final bar padding as fixed px so the transition target
           // doesn't chase the calc(100%-…) while the nav width is also animating
           const openNavW = Math.min(window.innerWidth - 16, 580);
-          const barOffset = 16;
-          const pillW = logoEl.offsetWidth + 48;
+          // If pill was wider than open nav (flushed to viewport at top), use 8px offset
+          // so the logo shifts only 8px inward; when scrolled, use 16px for stationarity
+          const barOffset = pillW >= openNavW ? 8 : 16;
           const openPad = Math.max(barOffset, Math.round((openNavW - pillW) / 2) + barOffset);
           navBar.style.paddingLeft = openPad + 'px';
           navBar.style.paddingRight = openPad + 'px';
