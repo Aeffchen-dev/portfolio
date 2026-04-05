@@ -190,7 +190,7 @@
     .work-item__arrow { display:inline-flex; align-self:center; color:rgba(255,255,255,0.5); transition:transform .4s ease-in-out, color .4s ease-in-out; }
     .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
     .work-item + .work-item .work-item__image { margin-top:8px; }
-    .cv-card { opacity:0.15; }
+    .cv-card { opacity:0; }
     @media (min-width:640px) {
       .work-item { display:flex; flex-direction:column; }
       .work-item__image { flex:1; min-height:0; height:auto; aspect-ratio:3/4; }
@@ -396,6 +396,8 @@
       .section-label      { order:2; }
       .work-list          { display:contents; }
       .cv-section-wrap    { order:9; }
+      /* cards fill viewport to 8px from bottom */
+      .cv-section         { min-height:calc(100dvh - 8px); }
       .cta-section        { order:10; padding-left:8px; padding-right:8px; }
       .home-footer        { order:11; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
@@ -954,7 +956,7 @@
         cvCards.forEach(el => {
           el._naturalAbsTop = naturalAbsTop(el);
           // Cards already in viewport on load: no animation
-          el._initY = el._naturalAbsTop < vH ? null : 0; // 0 = needs animation (no off-screen translate)
+          el._initY = el._naturalAbsTop < vH ? null : -(el.offsetHeight);
           el._cvT = el._initY === null ? 1 : 0;
         });
         const firstAnim = cvCards.find(el => el._initY !== null);
@@ -963,7 +965,11 @@
         const baseScroll = firstAnim._naturalAbsTop - vH + revealOffset;
         const animCount = cvCards.filter(el => el._initY !== null).length;
         const scrollNeeded = baseScroll + (animCount - 1) * STRIDE + CV_WINDOW;
-        // No paddingBottom needed — cards stay in layout position, no off-screen translate
+        // Add just enough scroll space for the animation to complete
+        const maxScroll = document.documentElement.scrollHeight - vH;
+        if (scrollNeeded > maxScroll) {
+          cvSection.style.paddingBottom = (scrollNeeded - maxScroll) + 'px';
+        }
       }
 
       function updateCvCards() {
@@ -986,9 +992,8 @@
           if (el._initY === null) {
             el.style.opacity = '1'; el.style.transform = 'none'; el.style.background = ''; return;
           }
-          // Porto Rocha style: cards always occupy layout space, brighten as they scroll in
-          el.style.opacity   = String(0.15 + 0.85 * Math.min(1, t * 2));
-          el.style.transform = `scale(${0.97 + 0.03 * t})`;
+          el.style.opacity   = String(Math.min(1, t * 1.5));
+          el.style.transform = `translateY(${el._initY * (1 - t)}px) scale(${0.92 + 0.08 * t})`;
           el.style.background = (firstIncompleteIdx > 0 && i === firstIncompleteIdx - 1) ? '#232323' : '';
         });
       }
