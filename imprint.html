@@ -165,7 +165,7 @@
       display:none;
     }
     #imprint-body h1 { font-size:21px; font-weight:400; color:#fff; line-height:1.4; margin-bottom:16px; }
-    #imprint-body h2 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
+    #imprint-body h2, #imprint-body h5 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #imprint-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
     #imprint-body p { font-size:14px; font-weight:400; color:#6b6b6b; line-height:1.65; }
     #imprint-body p + p { margin-top:12px; }
@@ -313,7 +313,12 @@
       .then(data => {
         const el = document.getElementById('imprint-body');
         if (el && data.acf && data.acf.editor) {
-          el.innerHTML = '<h1>Impressum</h1>' + data.acf.editor;
+          const doc = new DOMParser().parseFromString(data.acf.editor, 'text/html');
+          // Strip wrapper divs — collect all h5 and p elements in order
+          const nodes = doc.querySelectorAll('h5, p');
+          let html = '';
+          nodes.forEach(n => { html += n.outerHTML; });
+          el.innerHTML = '<h1>Impressum</h1>' + (html || data.acf.editor);
         }
       })
       .catch(() => {});
