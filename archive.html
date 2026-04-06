@@ -11,8 +11,8 @@
   <style>
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html  { width:100%; height:100%; background:#171717; }
-    body  { width:100%; height:100%; overflow:hidden; background:#171717; }
+    html  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
+    body  { width:100%; min-height:100lvh; background:#171717; }
     body { font-family:'DM Sans', sans-serif; font-optical-sizing:auto; color:#fff; }
     img { display:block; }
     a { text-decoration:none; color:inherit; }
@@ -29,7 +29,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 32px), 580px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 32px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -116,8 +116,12 @@
 
     /* === CANVAS === */
     #canvas {
-      position:fixed; top:0; left:0; right:0;
-      /* 100lvh = large viewport height = full screen incl. behind browser bars */
+      position:fixed;
+      /* edge-to-edge: zero insets, extend under status bar + home indicator */
+      top:0; left:0; right:0; bottom:0;
+      width:100vw;
+      /* lvh = large viewport = full screen behind browser bars */
+      height:100dvh; /* fallback */
       height:100lvh;
       cursor:grab;
       user-select:none;
@@ -266,11 +270,10 @@
     const canvas = document.getElementById('canvas');
 
     // CW/CH must cover the full physical screen including behind browser bars.
-    // canvas.offsetHeight may be 0 before 100lvh resolves; screen.height is the reliable
-    // full-screen value on mobile. On desktop, window.innerHeight is correct.
-    const CW = canvas.offsetWidth || window.innerWidth;
-    const _oh = canvas.offsetHeight;
-    const CH = _oh > 200 ? _oh : (CW < 640 ? screen.height : window.innerHeight);
+    // canvas uses position:fixed top/left/right/bottom:0 so offsetWidth/Height
+    // reflect 100lvh — the true full-screen size. screen.height is the safe fallback.
+    const CW = canvas.offsetWidth  || window.innerWidth;
+    const CH = canvas.offsetHeight || screen.height;
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
