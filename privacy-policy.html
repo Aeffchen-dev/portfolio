@@ -125,8 +125,8 @@
       padding:100px 24px 80px;
     }
     .imprint-content h1 {
-      font-size:21px; font-weight:400; color:#6b6b6b;
-      line-height:1.4; margin-bottom:48px;
+      font-size:21px; font-weight:400; color:#fff;
+      line-height:1.4; margin-bottom:16px;
     }
     .imprint-content h2 {
       font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
@@ -159,9 +159,10 @@
     }
 
     /* WP content resets */
-    #privacy-body h1 { font-size:21px; font-weight:400; color:#6b6b6b; line-height:1.4; margin-bottom:48px; }
+    #privacy-body h1 { font-size:21px; font-weight:400; color:#fff; line-height:1.4; margin-bottom:16px; }
     #privacy-body h2 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #privacy-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
+    #privacy-body h4, #privacy-body h5, #privacy-body h6 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
     #privacy-body p { font-size:14px; font-weight:400; color:#6b6b6b; line-height:1.65; }
     #privacy-body p + p { margin-top:12px; }
     #privacy-body ul, #privacy-body ol { font-size:14px; color:#6b6b6b; line-height:1.65; padding-left:20px; margin-top:8px; }
@@ -202,8 +203,6 @@
       <h1>Privacy Policy</h1>
       <p style="color:rgba(255,255,255,0.2)">Loading…</p>
     </div>
-    <hr class="imprint-divider">
-    <p class="imprint-footer" id="privacy-footer"></p>
   </div>
 
   <script>
@@ -304,27 +303,38 @@
       updateNavScroll();
     })();
 
-    // === FETCH PRIVACY POLICY CONTENT FROM WP REST API ===
+    // === FETCH PRIVACY POLICY CONTENT (scrape via proxy — Elementor page) ===
     (async function() {
-      const body   = document.getElementById('privacy-body');
-      const footer = document.getElementById('privacy-footer');
+      const body = document.getElementById('privacy-body');
       try {
-        const page = await fetch(
-          'https://janagramlich.com/wp-json/wp/v2/pages/105?_fields=title,content,modified',
-          { cache: 'no-store' }
-        ).then(r => r.json());
-        const title   = page.title?.rendered   || 'Privacy Policy';
-        const content = page.content?.rendered || '';
-        body.innerHTML = content.trim()
-          ? `<h1>${title}</h1>${content}`
-          : `<h1>${title}</h1><p>The full privacy policy is available at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>`;
-        if (page.modified) {
-          const d = new Date(page.modified);
-          footer.textContent = 'Zuletzt aktualisiert: ' + d.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
-          footer.style.display = 'block';
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://janagramlich.com/privacy-policy/');
+        const html = await fetch(proxyUrl, { cache: 'no-store' }).then(r => r.text());
+        const doc  = new DOMParser().parseFromString(html, 'text/html');
+        // Elementor stores content in widget containers; collect all text widgets
+        const selectors = [
+          '.elementor-widget-text-editor .elementor-widget-container',
+          '.entry-content',
+          '.wp-block-post-content',
+          '.elementor-section-wrap',
+          'article .content',
+          '.page-content'
+        ];
+        let content = null;
+        for (const sel of selectors) {
+          const els = doc.querySelectorAll(sel);
+          if (els.length) {
+            const combined = document.createElement('div');
+            els.forEach(el => { const c = el.cloneNode(true); c.querySelectorAll('script,style,iframe').forEach(x => x.remove()); combined.appendChild(c); });
+            if (combined.textContent.trim().length > 100) { content = combined; break; }
+          }
+        }
+        if (content) {
+          body.innerHTML = '<h1>Privacy Policy</h1>' + content.innerHTML;
+        } else {
+          body.innerHTML = '<h1>Privacy Policy</h1><p>Datenschutzerklärung: <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a></p>';
         }
       } catch(e) {
-        body.innerHTML = '<h1>Privacy Policy</h1><p>The full privacy policy is available at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>';
+        body.innerHTML = '<h1>Privacy Policy</h1><p>Datenschutzerklärung: <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a></p>';
       }
     })();
   </script>
