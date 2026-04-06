@@ -201,6 +201,18 @@
     .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
     .work-item + .work-item .work-item__image { margin-top:8px; }
     .cv-card { opacity:0; }
+    .cv-card--about  { opacity:1; }
+    .cv-card--quotes { opacity:1; }
+
+    /* === QUOTES CARD === */
+    .cv-card.cv-card--quotes  { display:block; padding:8px 8px 8px; position:relative; overflow:hidden; height:auto; text-align:center; }
+    .cv-quotes__label { font-size:14px; font-weight:500; color:#989898; margin:0 0 40px; }
+    .cv-quotes__text  { font-size:14px; font-weight:400; line-height:1.4; color:#fff; font-style:normal; margin:0 0 40px; padding:0 16px; transition:opacity .35s ease; overflow:hidden; }
+    .cv-quotes__name  { display:block; font-size:11px; font-weight:500; color:#989898; transition:opacity .35s ease; }
+    .cv-quotes__pos   { display:block; font-size:11px; font-weight:400; color:#989898; transition:opacity .35s ease; }
+    /* Circle progress indicator */
+    .cv-quotes__ring-wrap { position:absolute; bottom:10px; right:10px; width:24px; height:24px; cursor:pointer; }
+    .cv-quotes__ring-wrap svg { width:24px; height:24px; display:block; }
     @media (min-width:640px) {
       .work-item { display:flex; flex-direction:column; }
       .work-item__image { flex:1; min-height:0; height:auto; aspect-ratio:3/4; }
@@ -280,6 +292,9 @@
     .cv-award { display:contents; }
     .cv-award__title { font-size:14px; font-weight:400; color:#989898; white-space:nowrap; }
     .cv-award__company { font-size:14px; font-weight:400; color:#989898; }
+
+    /* === CTA FOOTER BOX === */
+    .cta-footer-box { display:contents; }
 
     /* === HOME FOOTER === */
     .home-footer {
@@ -422,9 +437,11 @@
       .home-hero          { order:1; }
       .section-label      { order:2; }
       .work-list          { display:contents; }
-      .cv-section-wrap    { order:9; }
+      .exp-quotes-row     { order:9; display:flex; flex-direction:column; }
+      .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
+      .cta-footer-box     { order:10; display:contents; }
       .cta-section        { order:10; padding-left:8px; padding-right:8px; }
       .home-footer        { order:11; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
@@ -459,12 +476,23 @@
       .work-list .work-item:nth-child(3) .work-item__image { aspect-ratio:16/9; }
       .work-list .work-item:nth-child(2) { order:7; }  /* DMEXCO 2020 */
       .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
-      /* Full-width sections */
+      /* Experience full-width; about+quotes side by side below */
+      .exp-quotes-row  { display:contents; }
       .cv-section-wrap { grid-column:1/3; order:9; }
       .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
-      .cta-section     { grid-column:1/3; order:10; margin-top:100px; justify-content:center; align-items:center; }
+      .about-quotes-row { grid-column:1/3; order:10; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-24px; }
+      .cv-section .cv-card:last-child { margin-bottom:8px; padding-bottom:8px; }
+      .cv-card--about { padding-top:8px; }
+      .cv-card.cv-card--quotes  { align-self:stretch; height:auto; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; box-sizing:border-box; padding-top:8px; padding-bottom:8px; }
+      .cv-card.cv-card--quotes .cv-quotes__label { font-size:14px; text-align:center; margin-bottom:0; width:100%; }
+      .cv-card.cv-card--quotes .cv-quotes__text  { margin-top:auto; margin-bottom:16px; width:100%; padding:0; }
+      .cv-card.cv-card--quotes .cv-quotes__attr  { margin-bottom:auto; text-align:center; width:100%; }
+      /* Widen experience cards but not the about/quotes cards */
+      .cv-section .cv-card { width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
+      .cta-footer-box  { grid-column:1/3; order:11; display:contents; }
+      .cta-section     { grid-column:1/3; order:11; margin-top:100px; justify-content:center; align-items:center; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer     { grid-column:1/3; order:11; padding-bottom:8px; }
+      .home-footer     { grid-column:1/3; order:12; padding-bottom:8px; }
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
       /* No description text on half-width (2-col) tiles */
@@ -485,7 +513,7 @@
       /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
       .nav { top:16px; left:calc(50% - 154px); transform:translateX(-50%); }
       .home-content {
-        padding:0 16px 16px;
+        padding:0 16px 0;
         display:grid;
         grid-template-columns:repeat(6,1fr) 300px;
         column-gap:16px;
@@ -514,16 +542,22 @@
       .work-item__image img { height:130%; }
       /* 50px bottom margin between project rows */
       .work-item { margin-bottom:50px; }
-      /* CV sidebar */
-      .cv-section-wrap    { grid-column:7; grid-row:1/span 999; align-self:stretch; min-height:0; }
-      .cv-section         { position:sticky; top:0; height:100dvh; overflow-y:auto; padding:16px 0 0; margin-top:0; max-width:none; width:100%; display:flex; flex-direction:column; justify-content:flex-start; }
+      /* CV sidebar — exp-quotes-row is the sticky scroll container */
+      .exp-quotes-row     { grid-column:7; grid-row:1/span 999; align-self:stretch; min-height:0; position:sticky; top:0; height:100dvh; overflow-y:auto; display:flex; flex-direction:column; justify-content:flex-start; padding:16px 0 16px; }
+      .cv-section         { position:static; height:auto; overflow-y:visible; padding:0; margin-top:0; max-width:none; width:100%; display:flex; flex-direction:column; justify-content:flex-start; }
+      .about-quotes-row   { display:flex; flex-direction:column; }
       .cv-section-heading { font-size:16px; text-align:left; padding-left:0; padding-right:0; line-height:1.5; margin-top:0; margin-bottom:16px; }
       .home-intro.cv-section-heading { text-align:left; font-size:16px; }
       .cv-card:last-child { margin-bottom:0; }
       .cv-section-heading br { display:none; }
-      .cta-section        { grid-column:1/7; justify-content:center; align-items:center; margin-top:30px; }
+      .cv-card--about  { margin-top:8px; }
+      .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
+      .cta-footer-box     { grid-column:1/7; background:#141414; border-radius:4px; padding:74px 24px 24px; display:flex; flex-direction:column; margin-bottom:16px; }
+      .work-list .work-item:nth-child(4),
+      .work-list .work-item:nth-child(3) { margin-bottom:16px; }
+      .cta-section        { margin-top:0; justify-content:center; align-items:center; padding:0; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer        { grid-column:1/7; padding-top:16px; }
+      .home-footer        { padding-top:16px; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
       .info-meta { margin-bottom:0; }
       .modal__hero img { aspect-ratio:16/7; }
@@ -565,7 +599,7 @@
       <p class="home-intro"><span style="color:#fff">I design digital products and services,<br class="desktop-br"></span> <span style="color:#989898">with over 10 years of experience.</span></p>
     </div>
 
-    <div class="section-label">
+    <div class="section-label" id="work">
       <div class="section-label__links">
         <a href="#work" class="section-label__link">Work <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="#about" class="section-label__link">About <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
@@ -586,7 +620,7 @@
         </div>
       </div>
     </article>
-    <div class="work-list" id="work">
+    <div class="work-list">
       <article class="work-item" data-project="about-you">
         <div class="work-item__image">
           <img src="https://janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
@@ -655,6 +689,8 @@
 
     </div>
 
+    <!-- EXPERIENCE + QUOTES ROW -->
+    <div class="exp-quotes-row">
     <!-- CV SECTION -->
     <div class="cv-section-wrap">
     <div class="cv-section" id="about">
@@ -764,6 +800,12 @@
         </div>
       </div>
 
+    </div>
+    </div><!-- /.cv-section-wrap -->
+
+    <!-- ABOUT + QUOTES ROW -->
+    <div class="about-quotes-row">
+
       <!-- About + Awards box -->
       <div class="cv-card cv-card--about">
         <p class="cv-about__section-label">About</p>
@@ -785,25 +827,55 @@
         </div>
       </div>
 
-    </div>
-    </div><!-- /.cv-section-wrap -->
-
-    <!-- CTA SECTION -->
-    <div class="cta-section">
-      <div class="cta-section__texts">
-        <p class="cta-section__label">Sounds interesting?</p>
-        <p class="cta-section__heading">Let's have a conversation</p>
+      <!-- Quotes card -->
+      <div class="cv-card cv-card--quotes">
+        <p class="cv-quotes__label">Nice Words</p>
+        <blockquote id="cv-quote-text" class="cv-quotes__text"></blockquote>
+        <div class="cv-quotes__attr">
+          <span id="cv-quote-name" class="cv-quotes__name"></span>
+          <span id="cv-quote-pos"  class="cv-quotes__pos"></span>
+        </div>
+        <div class="cv-quotes__ring-wrap">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- track -->
+            <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <!-- progress arc -->
+            <circle id="cv-quote-ring" cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.7)" stroke-width="1"
+              stroke-dasharray="56.55" stroke-dashoffset="56.55" stroke-linecap="round"
+              transform="rotate(-90 12 12)"/>
+            <!-- pause bars (shown while playing) -->
+            <g id="cv-icon-pause">
+              <rect x="9.25" y="8" width="1.5" height="8" rx="0.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+              <rect x="13.25" y="8" width="1.5" height="8" rx="0.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+            </g>
+            <!-- play triangle (shown while paused) -->
+            <polygon id="cv-icon-play" points="10,8 10,16 17,12" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5" stroke-linejoin="round" display="none"/>
+          </svg>
+        </div>
       </div>
-      <a href="mailto:hello@janagramlich.com" class="btn-about">
-        <span class="btn-about__dot"></span>
-        Contact
-      </a>
-    </div>
 
-    <footer class="home-footer">
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="imprint.html">Imprint</a>
-    </footer>
+    </div><!-- /.about-quotes-row -->
+
+    </div><!-- /.exp-quotes-row -->
+
+    <!-- CTA + FOOTER BOX -->
+    <div class="cta-footer-box">
+      <div class="cta-section">
+        <div class="cta-section__texts">
+          <p class="cta-section__label">Sounds interesting?</p>
+          <p class="cta-section__heading">Let's have a conversation</p>
+        </div>
+        <a href="mailto:hello@janagramlich.com" class="btn-about">
+          <span class="btn-about__dot"></span>
+          Contact
+        </a>
+      </div>
+
+      <footer class="home-footer">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="imprint.html">Imprint</a>
+      </footer>
+    </div>
   </div>
 
   </div><!-- /.page-wrapper -->
@@ -890,11 +962,14 @@
       if (!e.target.closest('#mainNav')) { _openedByHover = false; nav.classList.remove('is-open'); }
     });
     // Anchor links: explicit scroll so iOS fires correctly, close nav cleanly
-    const SCROLL_OFFSETS = { '#work': -4, '#about': -57 };
     function smoothScrollTo(href) {
       const target = document.querySelector(href);
       if (!target) return;
-      const offset = SCROLL_OFFSETS[href] || 0;
+      const isDesktop = window.innerWidth >= 1024;
+      // On desktop #about is in the sticky sidebar — scroll to top to reveal it
+      if (isDesktop && href === '#about') { window.scrollTo({ top:0, behavior:'smooth' }); return; }
+      // Offset = nav height (mobile/tablet: 49px, desktop: 57px)
+      const offset = isDesktop ? -57 : -49;
       const top = target.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top, behavior: 'smooth' });
     }
@@ -1072,8 +1147,102 @@
         })
         .catch(() => {}); // fail silently if offline
 
+      // ── Quotes rotator ──────────────────────────────────────────────
+      const QUOTES = [
+        {
+          text: 'Jana has an exceptional ability to bridge brand vision and product thinking. Her premium redesign work transformed how we present beauty to millions of customers.',
+          name: 'Matthias K.',
+          pos:  'VP Product Design · Douglas'
+        },
+        {
+          text: 'Working with Jana is a pleasure — she combines strategic clarity with beautiful, precise execution. She always keeps the big picture while obsessing over every detail.',
+          name: 'Laura S.',
+          pos:  'Head of Brand · ABOUT YOU'
+        },
+        {
+          text: 'Jana translates complex requirements into elegant, intuitive solutions faster than anyone I\'ve worked with. She raised the design bar for our entire organisation.',
+          name: 'Felix B.',
+          pos:  'Creative Director · navarra.'
+        }
+      ];
+      const quoteText    = document.getElementById('cv-quote-text');
+      const quoteName    = document.getElementById('cv-quote-name');
+      const quotePos     = document.getElementById('cv-quote-pos');
+      const quoteRing    = document.getElementById('cv-quote-ring');
+      const iconPause    = document.getElementById('cv-icon-pause');
+      const iconPlay     = document.getElementById('cv-icon-play');
+      const ringWrap     = document.querySelector('.cv-quotes__ring-wrap');
+      const CIRC         = 56.55; // 2π × r(9)
+      const QUOTE_MS     = 6000;
+      let   qIndex       = 0;
+      let   qStart       = null;
+      let   qRafId       = null;
+      let   qPaused      = false;
+      let   qProgressAtPause = 0; // 0–1
+
+      function setIcon(playing) {
+        if (iconPause) iconPause.style.display = playing  ? '' : 'none';
+        if (iconPlay)  iconPlay.setAttribute('display',  playing  ? 'none' : '');
+      }
+      function setQuote(i) {
+        const q = QUOTES[i];
+        quoteText.textContent = q.text;
+        quoteName.textContent = q.name;
+        quotePos.textContent  = q.pos;
+      }
+      function tickQuote(ts) {
+        if (!qStart) qStart = ts - qProgressAtPause * QUOTE_MS;
+        const p = Math.min((ts - qStart) / QUOTE_MS, 1);
+        if (quoteRing) quoteRing.style.strokeDashoffset = (CIRC * (1 - p)).toFixed(3);
+        if (p < 1) {
+          qRafId = requestAnimationFrame(tickQuote);
+        } else {
+          qProgressAtPause = 0;
+          quoteText.style.opacity = '0';
+          quoteName.style.opacity = '0';
+          quotePos.style.opacity  = '0';
+          setTimeout(() => {
+            qIndex = (qIndex + 1) % QUOTES.length;
+            setQuote(qIndex);
+            if (quoteRing) quoteRing.style.strokeDashoffset = CIRC;
+            quoteText.style.opacity = '1';
+            quoteName.style.opacity = '1';
+            quotePos.style.opacity  = '1';
+            qStart = null;
+            if (!qPaused) qRafId = requestAnimationFrame(tickQuote);
+          }, 350);
+        }
+      }
+      if (ringWrap) {
+        ringWrap.addEventListener('click', () => {
+          if (qPaused) {
+            // resume
+            qPaused = false;
+            qStart  = null; // recalculate from qProgressAtPause in tickQuote
+            setIcon(true);
+            qRafId = requestAnimationFrame(tickQuote);
+          } else {
+            // pause
+            qPaused = true;
+            const offset = quoteRing ? parseFloat(quoteRing.style.strokeDashoffset) || CIRC : CIRC;
+            qProgressAtPause = 1 - offset / CIRC;
+            if (qRafId) { cancelAnimationFrame(qRafId); qRafId = null; }
+            setIcon(false);
+          }
+        });
+      }
+      if (quoteText) {
+        setQuote(0);
+        quoteText.style.transition = 'opacity .35s ease';
+        quoteName.style.transition = 'opacity .35s ease';
+        quotePos.style.transition  = 'opacity .35s ease';
+        setIcon(true);
+        qRafId = requestAnimationFrame(tickQuote);
+      }
+      // ── End quotes rotator ──────────────────────────────────────────
+
       // CV cards: stacked sequential reveal with overlap — 2 cards can animate simultaneously
-      const cvCards = [...document.querySelectorAll('.cv-card')];
+      const cvCards = [...document.querySelectorAll('.cv-card:not(.cv-card--about):not(.cv-card--quotes)')];
       const cvSection = document.querySelector('.cv-section');
       // Desktop: show all cards immediately, no reveal animation
       if (window.innerWidth >= 1024) {
