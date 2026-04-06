@@ -134,7 +134,7 @@
       margin-top:32px; margin-bottom:8px;
     }
     .imprint-content p {
-      font-size:16px; font-weight:400; color:#6b6b6b;
+      font-size:14px; font-weight:400; color:#6b6b6b;
       line-height:1.65;
     }
     .imprint-content p + p { margin-top:12px; }
@@ -162,9 +162,9 @@
     #privacy-body h1 { font-size:21px; font-weight:400; color:#6b6b6b; line-height:1.4; margin-bottom:48px; }
     #privacy-body h2 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #privacy-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
-    #privacy-body p { font-size:16px; font-weight:400; color:#6b6b6b; line-height:1.65; }
+    #privacy-body p { font-size:14px; font-weight:400; color:#6b6b6b; line-height:1.65; }
     #privacy-body p + p { margin-top:12px; }
-    #privacy-body ul, #privacy-body ol { font-size:16px; color:#6b6b6b; line-height:1.65; padding-left:20px; margin-top:8px; }
+    #privacy-body ul, #privacy-body ol { font-size:14px; color:#6b6b6b; line-height:1.65; padding-left:20px; margin-top:8px; }
     #privacy-body li + li { margin-top:6px; }
     #privacy-body a { color:#6b6b6b; text-decoration:underline; text-underline-offset:3px; }
     #privacy-body a:hover { color:#fff; }
@@ -304,46 +304,16 @@
       updateNavScroll();
     })();
 
-    // === FETCH PRIVACY POLICY CONTENT ===
-    // Tries HTML scraping first (works on same-origin / production),
-    // falls back to WP REST API (returns structured data; content may be empty if page builder is used).
+    // === FETCH PRIVACY POLICY CONTENT FROM WP REST API ===
     (async function() {
-      const body = document.getElementById('privacy-body');
+      const body   = document.getElementById('privacy-body');
       const footer = document.getElementById('privacy-footer');
-
-      // 1. Try HTML scraping via CORS proxy (works cross-domain)
       try {
-        const target = 'https://janagramlich.com/privacy-policy/';
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`;
-        const html = await fetch(proxyUrl, { cache: 'no-store' }).then(r => r.text());
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const content = doc.querySelector('.entry-content, .wp-block-post-content, .elementor-section-wrap, .elementor, [data-elementor-type], .elementor-widget-text-editor .elementor-widget-container, article .content, .post-content, main article, .page-content');
-        const titleEl = doc.querySelector('h1.entry-title, h1.wp-block-post-title, .page-title h1, h1');
-        if (content && content.textContent.trim().length > 50) {
-          const title = titleEl ? titleEl.textContent.trim() : 'Privacy Policy';
-          content.querySelectorAll('script, style, iframe').forEach(el => el.remove());
-          body.innerHTML = `<h1>${title}</h1>` + content.innerHTML;
-          const time = doc.querySelector('time[datetime]');
-          if (time) {
-            const d = new Date(time.getAttribute('datetime'));
-            if (!isNaN(d)) footer.textContent = 'Zuletzt aktualisiert: ' + d.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
-          }
-          return;
-        }
-      } catch(e) {}
-
-      // 2. Fall back to WP REST API
-      const base = 'https://janagramlich.com/wp-json/wp/v2/pages';
-      const slugs = ['privacy-policy', 'datenschutz', 'datenschutzerklarung'];
-      let page = null;
-      for (const slug of slugs) {
-        try {
-          const data = await fetch(`${base}?slug=${encodeURIComponent(slug)}&_fields=title,content,modified`).then(r => r.json());
-          if (data[0]) { page = data[0]; break; }
-        } catch(e) {}
-      }
-      if (page) {
-        const title = page.title?.rendered || 'Privacy Policy';
+        const page = await fetch(
+          'https://janagramlich.com/wp-json/wp/v2/pages/105?_fields=title,content,modified',
+          { cache: 'no-store' }
+        ).then(r => r.json());
+        const title   = page.title?.rendered   || 'Privacy Policy';
         const content = page.content?.rendered || '';
         body.innerHTML = content.trim()
           ? `<h1>${title}</h1>${content}`
@@ -351,8 +321,9 @@
         if (page.modified) {
           const d = new Date(page.modified);
           footer.textContent = 'Zuletzt aktualisiert: ' + d.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' });
+          footer.style.display = 'block';
         }
-      } else {
+      } catch(e) {
         body.innerHTML = '<h1>Privacy Policy</h1><p>The full privacy policy is available at <a href="https://janagramlich.com/privacy-policy/" target="_blank" rel="noopener">janagramlich.com/privacy-policy</a>.</p>';
       }
     })();
