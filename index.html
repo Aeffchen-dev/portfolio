@@ -1151,7 +1151,7 @@
       }
 
       // Fetch about text from WordPress ACF
-      fetch('https://janagramlich.com/wp-json/wp/v2/pages/7?_fields=acf')
+      fetch('https://cms.janagramlich.com/wp-json/wp/v2/pages/7?_fields=acf')
         .then(r => r.json())
         .then(data => {
           const el = document.getElementById('cv-about-text');
@@ -1590,10 +1590,10 @@
       for (const [slug, project] of Object.entries(PROJECTS)) {
         try {
           const opts = { cache: 'no-store' };
-          let posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
-          if (!posts[0]?.featured_media) posts = await fetch(`https://janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
+          let posts = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
+          if (!posts[0]?.featured_media) posts = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
           if (!posts[0]?.featured_media) continue;
-          const media = await fetch(`https://janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`, opts).then(r => r.json());
+          const media = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`, opts).then(r => r.json());
           if (!media.source_url) continue;
           project.hero = media.source_url;
           const img = document.querySelector(`.work-item[data-project="${slug}"] .work-item__image img`);
