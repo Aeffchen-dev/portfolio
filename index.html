@@ -331,13 +331,10 @@
 
     /* === PAGE HEADER (modal) === */
     .page-header { background:#f2f2f2; }
-    .header-eyebrow {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:4px; max-width:400px; margin-left:auto; margin-right:auto;
-    }
-    .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
-    .eyebrow-client { font-size:11px; font-weight:500; color:#000; letter-spacing:0.48px; text-transform:uppercase; }
-    .eyebrow-year   { font-size:11px; font-weight:400; color:rgba(0,0,0,.5); }
+    .modal-header-left { display:flex; flex-direction:column; }
+    .eyebrow-client { font-size:14px; font-weight:500; color:#111; line-height:1.3; }
+    .modal-year { font-size:14px; font-weight:400; color:rgba(0,0,0,.5); line-height:1.3; margin-top:4px; }
+    .modal-header-arrow { display:none; color:#111; opacity:0.5; flex-shrink:0; align-self:start; padding-top:2px; }
     .modal-close-bar {
       position:fixed; top:0; left:0; right:0; height:5vh;
       background:#000; color:#fff;
@@ -355,9 +352,7 @@
     .modal-close-bar__icon svg { display:block; }
     .hero__title { display:none; }
     .modal-name {
-      font-size:16px; font-weight:500; color:#111;
-      max-width:400px; margin-left:auto; margin-right:auto;
-      margin-bottom:16px;
+      display:none;
     }
     .hero__desc {
       margin-top:16px;
@@ -428,7 +423,9 @@
       .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:24px 8px; max-height:95dvh; }
       .modal__hero { margin:-24px -8px 8px; }
-      .header-eyebrow, .modal-name, .hero__desc { max-width:none; margin-left:0; margin-right:0; }
+      .page-header { display:grid; grid-template-columns:auto 1fr auto; column-gap:80px; align-items:start; }
+      .hero__desc { max-width:none; margin-left:0; margin-right:0; }
+      .modal-header-arrow { display:flex; }
       .project-links { margin-top:64px; }
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
@@ -567,7 +564,9 @@
       .modal__hero img { aspect-ratio:16/7; }
       .modal__scroll { padding:24px 16px; }
       .modal__hero { margin:-24px -16px 8px; }
-      .header-eyebrow, .modal-name, .hero__desc { max-width:none; margin-left:0; margin-right:0; }
+      .page-header { display:grid; grid-template-columns:auto 1fr auto; column-gap:80px; align-items:start; }
+      .hero__desc { max-width:none; margin-left:0; margin-right:0; }
+      .modal-header-arrow { display:flex; }
       .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
     }
   </style>
@@ -902,13 +901,14 @@
     <div class="modal__scroll">
       <div class="modal__hero"><img id="modal-hero" src="" alt=""></div>
       <header class="page-header">
-        <div class="header-eyebrow">
-          <div class="eyebrow-left">
-            <span class="eyebrow-client" id="modal-client"></span>
-          </div>
+        <div class="modal-header-left">
+          <span class="eyebrow-client" id="modal-client"></span>
+          <span class="modal-year" id="modal-year"></span>
         </div>
-        <p class="modal-name" id="modal-name"></p>
-        <div class="hero__desc"  id="modal-desc"></div>
+        <div class="hero__desc" id="modal-desc"></div>
+        <a class="modal-header-arrow" id="modal-header-arrow" href="#" target="_blank" rel="noopener" aria-label="View project">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </header>
       <main class="blocks">
         <div class="blocks__grid" id="modal-blocks"></div>
@@ -1453,7 +1453,10 @@
       const p = PROJECTS[key]; if (!p) return;
       document.getElementById('modal-hero').src      = p.hero;
       document.getElementById('modal-client').textContent = p.client;
-      document.getElementById('modal-name').textContent   = p.name || '';
+      document.getElementById('modal-year').textContent   = p.year || '';
+      const arrowEl = document.getElementById('modal-header-arrow');
+      if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
+      else { arrowEl.style.display = 'none'; }
       document.getElementById('modal-desc').innerHTML     = buildText(p.text);
       document.getElementById('modal-blocks').innerHTML   = buildMedia(p.media);
       document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
