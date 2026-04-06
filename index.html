@@ -4,9 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#060606" id="themeColor">
-  <title>Jana Gramlich — Product Designer</title>
+  <title>Jana Gramlich – Product Designer based in Berlin</title>
+  <meta name="description" content="Hi there! I am Jana, a product designer based in Berlin. I create data-driven digital experiences with a touch of motion and joy of use.">
+  <link rel="canonical" href="https://portfolio.janagramlich.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jana Gramlich • Portfolio">
+  <meta property="og:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
+  <meta property="og:url" content="https://portfolio.janagramlich.com/">
+  <meta property="og:image" id="ogImage" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jana Gramlich • Portfolio">
+  <meta name="twitter:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
+  <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
   <link rel="icon" id="favicon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
-  <meta property="og:image" id="ogImage" content="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -376,7 +386,7 @@
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
-    .info-meta { margin-bottom:16px; width:300px; }
+    .info-meta { margin-bottom:16px; width:max-content; }
     .info-row { display:grid; grid-template-columns:80px 1fr; gap:0 20px; padding:2px 0; }
     .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
@@ -423,9 +433,9 @@
       .modal.is-open { transform:translateX(-50%) translateY(0); }
       .modal__scroll { padding:24px 8px; max-height:95dvh; }
       .modal__hero { margin:-24px -8px 8px; }
-      .page-header { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
-      .hero__desc { max-width:none; margin-left:0; margin-right:0; }
-      .project-links { margin-top:64px; }
+      .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
+      .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
+      .project-links { margin-top:64px; text-align:center; }
       .project-link { font-size:clamp(56px, 6vw, 96px); }
     }
     /* === MOBILE ONLY === */
@@ -504,7 +514,7 @@
       /* Portrait images (3/4) with parallax re-enabled — start showing bottom of image */
       .work-item__image img { height:130%; }
       /* Info: meta col left, description text floats right (same as desktop) */
-      .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
+      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
       .info-meta { margin-bottom:0; }
       /* My Experience heading centered */
       .cv-section-heading { text-align:center; }
@@ -553,21 +563,22 @@
       .cv-section-heading br { display:none; }
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
-      .cta-footer-box     { grid-column:1/7; background:#141414; border-radius:4px; padding:74px 24px 24px; display:flex; flex-direction:column; margin-bottom:16px; }
+      .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .work-list .work-item:nth-child(4),
-      .work-list .work-item:nth-child(3) { margin-bottom:16px; }
-      .cta-section        { margin-top:0; justify-content:center; align-items:center; padding:0; }
+      .work-list .work-item:nth-child(3) { margin-bottom:50px; }
+      .cta-section        { margin-top:50px; justify-content:center; align-items:center; padding:0; }
       .cta-section__label, .cta-section__heading { text-align:center; }
       .home-footer        { padding-top:16px; }
       .nav__link[href="#about"],
       .section-label__link[href="#about"] { display:none; }
-      .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
+      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
       .modal__hero img { aspect-ratio:16/7; }
       .modal__scroll { padding:24px 16px; }
       .modal__hero { margin:-24px -16px 8px; }
-      .page-header { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
-      .hero__desc { max-width:none; margin-left:0; margin-right:0; }
+      .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
+      .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
       .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
     }
   </style>
@@ -1262,6 +1273,20 @@
       }
       if (quoteText) {
         setQuote(0);
+        // Lock card height to tallest quote so it never reflows
+        const qCard = document.querySelector('.cv-card--quotes');
+        if (qCard) {
+          qCard.style.minHeight = '';
+          let maxH = 0;
+          QUOTES.forEach(q => {
+            quoteText.textContent = q.text;
+            quoteName.textContent = q.name;
+            quotePos.textContent  = q.pos;
+            maxH = Math.max(maxH, qCard.scrollHeight);
+          });
+          setQuote(0);
+          qCard.style.minHeight = maxH + 'px';
+        }
         quoteText.style.transition = 'opacity .35s ease';
         quoteName.style.transition = 'opacity .35s ease';
         quotePos.style.transition  = 'opacity .35s ease';
