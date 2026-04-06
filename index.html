@@ -558,6 +558,8 @@
       .cta-section        { margin-top:0; justify-content:center; align-items:center; padding:0; }
       .cta-section__label, .cta-section__heading { text-align:center; }
       .home-footer        { padding-top:16px; }
+      .nav__link[href="#about"],
+      .section-label__link[href="#about"] { display:none; }
       .project-info { display:grid; grid-template-columns:auto 1fr; column-gap:80px; align-items:start; }
       .info-meta { margin-bottom:0; }
       .modal__hero img { aspect-ratio:16/7; }
@@ -966,8 +968,16 @@
       const target = document.querySelector(href);
       if (!target) return;
       const isDesktop = window.innerWidth >= 1024;
-      // On desktop #about is in the sticky sidebar — scroll to top to reveal it
-      if (isDesktop && href === '#about') { window.scrollTo({ top:0, behavior:'smooth' }); return; }
+      // On desktop #about is inside the sticky sidebar scroll container — scroll the sidebar itself
+      if (isDesktop && href === '#about') {
+        const sidebar = document.querySelector('.exp-quotes-row');
+        const aboutRow = document.querySelector('.about-quotes-row');
+        if (sidebar && aboutRow) {
+          const scrollTo = aboutRow.getBoundingClientRect().top - sidebar.getBoundingClientRect().top + sidebar.scrollTop;
+          sidebar.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        }
+        return;
+      }
       // Offset = nav height (mobile/tablet: 49px, desktop: 57px)
       const offset = isDesktop ? -57 : -49;
       const top = target.getBoundingClientRect().top + window.scrollY + offset;
