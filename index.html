@@ -1154,7 +1154,8 @@
           const t    = Math.min(1, Math.max(0, (vH - nTop) / endDist));
           const isBody = el.classList.contains('work-item__body');
           const isDesktop = window.innerWidth >= 1024;
-          const bodyMult = (isBody && isDesktop) ? 3 : 1.5;
+          const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
+          const bodyMult = isDesktop ? 3 : isTablet ? 2.5 : 1.5;
           const opacityT = isDesktop ? Math.min(1, t * 2) : t;
           el.style.opacity   = String(isBody ? Math.min(1, t * bodyMult) : opacityT);
           el.style.transform = `translateY(${el._initY * (1 - t)}px)`;
