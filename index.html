@@ -1495,8 +1495,7 @@
         links:[{t:'Visit the Website',u:'https://themakery.de'}],
       },
     };
-    // Seed PROJECTS with fallback data so modal works even before fetch
-    Object.assign(PROJECTS, PROJECTS_FALLBACK);
+    // PROJECTS_FALLBACK kept for reference only — not seeded into PROJECTS
 
     // === MODAL HELPERS ===
     // media[] items: string = image filename (prefixed with BASE)
@@ -1687,10 +1686,10 @@
               const clientEl = tile.querySelector('.work-item__client');
               const yearEl   = tile.querySelector('.work-item__year');
               const titleEl  = tile.querySelector('.work-item__title');
-              if (imgEl    && p.hero)   imgEl.src              = p.hero;
-              if (clientEl && p.client) clientEl.textContent   = p.client;
-              if (yearEl   && p.year)   yearEl.textContent     = p.year;
-              if (titleEl  && p.desc)   titleEl.textContent    = p.desc;
+              if (imgEl    && p.hero)   imgEl.src            = p.hero;
+              if (clientEl && p.client) clientEl.textContent = p.client;
+              if (yearEl   && p.year)   yearEl.textContent   = p.year;
+              // tile description kept as static HTML (curated summaries)
             }
             if (key === 'about-you') {
               const og = document.getElementById('ogImage');
