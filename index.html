@@ -405,7 +405,8 @@
 
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
-    .modal__hero img { width:100%; display:block; aspect-ratio:8/5; object-fit:cover; }
+    .modal__hero img,
+    .modal__hero video { width:100%; display:block; aspect-ratio:8/5; object-fit:cover; }
 
     /* === MODAL BACKDROP === */
     .modal-backdrop {
@@ -574,7 +575,8 @@
       .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
-      .modal__hero img { aspect-ratio:16/7; }
+      .modal__hero img,
+      .modal__hero video { aspect-ratio:16/7; }
       .modal__scroll { padding:24px 16px; }
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
@@ -911,7 +913,10 @@
   </div>
   <div class="modal is-hidden" id="projectModal">
     <div class="modal__scroll">
-      <div class="modal__hero"><img id="modal-hero" src="" alt=""></div>
+      <div class="modal__hero">
+        <img id="modal-hero" src="" alt="">
+        <video id="modal-hero-video" autoplay muted loop playsinline style="display:none"></video>
+      </div>
       <header class="page-header">
         <div class="modal-header-left">
           <span class="eyebrow-client" id="modal-client"></span>
@@ -1412,10 +1417,16 @@
       const descMatch = plain.match(/^(.*?[.!?](?:\s|$)){1,2}/);
       const desc = descMatch ? descMatch[0].trim() : plain.slice(0, 200);
 
+      const heroVideoSection = (acf.section || []).find(s => s.acf_fc_layout === 'video');
+      const heroVideo = heroVideoSection
+        ? (heroVideoSection._video_file_desktop?.url || heroVideoSection._video_file_mobile?.url || '')
+        : '';
+
       return {
         bg:        acf.background_color || '#F2F2F2',
         textColor: acf['text-color']    || '#000000',
         hero:      acf.hero_image?.url  || '',
+        heroVideo,
         client, year,
         name:   acf.title || data.title?.rendered || '',
         text:   acf.text  || '',
@@ -1535,7 +1546,17 @@
     // === OPEN MODAL ===
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
-      document.getElementById('modal-hero').src      = p.hero;
+      const heroImg   = document.getElementById('modal-hero');
+      const heroVideo = document.getElementById('modal-hero-video');
+      if (p.hero) {
+        heroImg.src = p.hero; heroImg.style.display = '';
+        heroVideo.style.display = 'none'; heroVideo.src = '';
+      } else if (p.heroVideo) {
+        heroVideo.src = p.heroVideo; heroVideo.style.display = '';
+        heroImg.style.display = 'none'; heroImg.src = '';
+      } else {
+        heroImg.style.display = 'none'; heroVideo.style.display = 'none';
+      }
       document.getElementById('modal-client').textContent = p.client;
       document.getElementById('modal-year').textContent   = p.year || '';
       const arrowEl = document.getElementById('modal-header-arrow');
