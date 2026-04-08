@@ -1417,10 +1417,13 @@
       const descMatch = plain.match(/^(.*?[.!?](?:\s|$)){1,2}/);
       const desc = descMatch ? descMatch[0].trim() : plain.slice(0, 200);
 
+      // Hero video: top-level ACF fields take priority, then first video section
+      // Values may be a string URL or an object with .url
+      const getVidUrl = v => !v ? '' : (typeof v === 'string' ? v : (v.url || ''));
       const heroVideoSection = (acf.section || []).find(s => s.acf_fc_layout === 'video');
-      const heroVideo = heroVideoSection
-        ? (heroVideoSection._video_file_desktop?.url || heroVideoSection._video_file_mobile?.url || '')
-        : '';
+      const heroVideo = getVidUrl(acf._video_file_desktop) || getVidUrl(acf._video_file_mobile)
+        || getVidUrl(heroVideoSection?._video_file_desktop) || getVidUrl(heroVideoSection?._video_file_mobile)
+        || '';
 
       return {
         bg:        acf.background_color || '#F2F2F2',
