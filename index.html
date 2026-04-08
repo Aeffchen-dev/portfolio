@@ -1372,7 +1372,62 @@
 
     // === PROJECT DATA ===
     const BASE = 'https://cms.janagramlich.com/wp-content/uploads/';
-    const PROJECTS = {
+    const API  = 'https://cms.janagramlich.com/wp-json/wp/v2';
+
+    // Map from data-project key → WordPress project ID
+    const WP_PROJECT_IDS = {
+      'douglas-premium-relaunch': 791,
+      'about-you':                796,
+      'douglas-hybrid':           650,
+      'zalando':                  864,
+      'dmexco':                   451,
+      'the-makery':               345,
+    };
+
+    // Populated asynchronously from backend; keyed by data-project value
+    let PROJECTS = {};
+
+    function mapACFProject(data) {
+      const acf   = data.acf || {};
+      const facts = (acf.shortfacts || []).map(f => ({
+        l: (f.label || '').replace(/:$/, '').trim(),
+        v: f.value || ''
+      }));
+      const client = facts.find(f => f.l === 'Brand')?.v || '';
+      const year   = facts.find(f => f.l === 'Year')?.v  || '';
+
+      const media = (acf.section || []).flatMap(s => {
+        if (s.acf_fc_layout === 'video') {
+          const url = s._video_file_desktop?.url || s._video_file_mobile?.url || '';
+          return url ? [{ v: url }] : [];
+        }
+        if (s.acf_fc_layout === 'image') {
+          return (s.image || []).map(i => i.image?.url).filter(Boolean);
+        }
+        return [];
+      });
+
+      const plain = (acf.text || '').replace(/<[^>]+>/g, '').trim();
+      const descMatch = plain.match(/^(.*?[.!?](?:\s|$)){1,2}/);
+      const desc = descMatch ? descMatch[0].trim() : plain.slice(0, 200);
+
+      return {
+        bg:        acf.background_color || '#F2F2F2',
+        textColor: acf['text-color']    || '#000000',
+        hero:      acf.hero_image?.url  || '',
+        client, year,
+        name:   acf.title || data.title?.rendered || '',
+        text:   acf.text  || '',
+        desc,
+        facts,
+        myRole: acf.my_role || '',
+        links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
+        media,
+      };
+    }
+
+    // Placeholder PROJECTS kept for reference during initial load — will be overwritten
+    const PROJECTS_FALLBACK = {
       'douglas-premium-relaunch': {
         bg:'#F2F2F2',
         hero: BASE+'Dgls-hybrid-Header-1.jpg', client:'Douglas', year:'2023',
@@ -1440,6 +1495,8 @@
         links:[{t:'Visit the Website',u:'https://themakery.de'}],
       },
     };
+    // Seed PROJECTS with fallback data so modal works even before fetch
+    Object.assign(PROJECTS, PROJECTS_FALLBACK);
 
     // === MODAL HELPERS ===
     // media[] items: string = image filename (prefixed with BASE)
@@ -1467,7 +1524,8 @@
           }
           return `<div class="block block-video-mp4"><video src="${url}" autoplay muted loop playsinline></video></div>`;
         }
-        return `<div class="block block-image"><img src="${BASE+item}" alt="" loading="lazy"></div>`;
+        const src = (typeof item === 'string' && item.startsWith('http')) ? item : BASE + item;
+        return `<div class="block block-image"><img src="${src}" alt="" loading="lazy"></div>`;
       }).join('');
     }
     function buildText(t) {
@@ -1483,7 +1541,7 @@
       const arrowEl = document.getElementById('modal-header-arrow');
       if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
       else { arrowEl.style.display = 'none'; }
-      document.getElementById('modal-desc').innerHTML     = buildText(p.text);
+      document.getElementById('modal-desc').innerHTML     = p.text || '';
       document.getElementById('modal-blocks').innerHTML   = buildMedia(p.media);
       document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
@@ -1592,7 +1650,7 @@
 
     // === FETCH DYNAMIC DATA FROM BACKEND ===
     (async function() {
-      // Favicon: parse from WP homepage HTML and replace <link> element (Chrome needs new element, not href update)
+      // Favicon: parse from WP homepage HTML
       try {
         const html = await fetch('https://cms.janagramlich.com/', { cache: 'no-store' }).then(r => r.text());
         const tags = html.match(/<link[^>]+>/gi) || [];
@@ -1611,21 +1669,36 @@
         }
       } catch(e) {}
 
-      // Project hero images + og:image: fetch from WP REST API
-      for (const [slug, project] of Object.entries(PROJECTS)) {
-        try {
-          const opts = { cache: 'no-store' };
-          let posts = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/posts?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
-          if (!posts[0]?.featured_media) posts = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/pages?slug=${slug}&_fields=featured_media`, opts).then(r => r.json());
-          if (!posts[0]?.featured_media) continue;
-          const media = await fetch(`https://cms.janagramlich.com/wp-json/wp/v2/media/${posts[0].featured_media}?_fields=source_url`, opts).then(r => r.json());
-          if (!media.source_url) continue;
-          project.hero = media.source_url;
-          const img = document.querySelector(`.work-item[data-project="${slug}"] .work-item__image img`);
-          if (img) img.src = media.source_url;
-          if (slug === 'about-you') document.getElementById('ogImage').content = media.source_url;
-        } catch(e) {}
-      }
+      // Fetch all project content from ACF in parallel
+      await Promise.all(
+        Object.entries(WP_PROJECT_IDS).map(async ([key, id]) => {
+          try {
+            const data = await fetch(
+              `${API}/projects/${id}?_fields=id,title,acf`,
+              { cache: 'no-store' }
+            ).then(r => r.json());
+            const p = mapACFProject(data);
+            PROJECTS[key] = p;
+
+            // Update work tile with live data
+            const tile = document.querySelector(`.work-item[data-project="${key}"]`);
+            if (tile) {
+              const imgEl    = tile.querySelector('.work-item__image img');
+              const clientEl = tile.querySelector('.work-item__client');
+              const yearEl   = tile.querySelector('.work-item__year');
+              const titleEl  = tile.querySelector('.work-item__title');
+              if (imgEl    && p.hero)   imgEl.src              = p.hero;
+              if (clientEl && p.client) clientEl.textContent   = p.client;
+              if (yearEl   && p.year)   yearEl.textContent     = p.year;
+              if (titleEl  && p.desc)   titleEl.textContent    = p.desc;
+            }
+            if (key === 'about-you') {
+              const og = document.getElementById('ogImage');
+              if (og && p.hero) og.content = p.hero;
+            }
+          } catch(e) { console.warn(`Failed to load project "${key}":`, e); }
+        })
+      );
     })();
 
     // === TILE PARALLAX ===
