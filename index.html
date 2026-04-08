@@ -195,7 +195,8 @@
       border-radius:4px; overflow:hidden;
       background:#141414; margin-bottom:0; position:relative; z-index:2; will-change:transform,opacity;
     }
-    .work-item__image img { width:100%; height:130%; object-fit:cover; will-change:transform; }
+    .work-item__image img,
+    .work-item__image video { width:100%; height:130%; object-fit:cover; will-change:transform; }
     .work-item__body {
       background:#141414; border-radius:4px;
       padding:8px; aspect-ratio:4/3;
@@ -628,6 +629,7 @@
     <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
       <div class="work-item__image">
         <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
+        <video autoplay muted loop playsinline style="display:none"></video>
       </div>
       <div class="work-item__body">
         <span class="work-item__year">2023</span>
@@ -642,6 +644,7 @@
       <article class="work-item" data-project="about-you">
         <div class="work-item__image">
           <img src="https://cms.janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
+          <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2024</span>
@@ -655,6 +658,7 @@
       <article class="work-item" data-project="dmexco">
         <div class="work-item__image">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2020</span>
@@ -668,6 +672,7 @@
       <article class="work-item" data-project="zalando">
         <div class="work-item__image">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2020</span>
@@ -681,6 +686,7 @@
       <article class="work-item" data-project="the-makery">
         <div class="work-item__image">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2019</span>
@@ -694,6 +700,7 @@
       <article class="work-item" data-project="douglas-hybrid">
         <div class="work-item__image">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
           <span class="work-item__year">2022</span>
@@ -1711,7 +1718,14 @@
               const clientEl = tile.querySelector('.work-item__client');
               const yearEl   = tile.querySelector('.work-item__year');
               const titleEl  = tile.querySelector('.work-item__title');
-              if (imgEl    && p.hero)   imgEl.src            = p.hero;
+              const videoEl = tile.querySelector('.work-item__image video');
+              if (p.hero) {
+                if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
+                if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
+              } else if (p.heroVideo) {
+                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
+                if (imgEl)   { imgEl.style.display = 'none'; imgEl.src = ''; }
+              }
               if (clientEl && p.client) clientEl.textContent = p.client;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
               // tile description kept as static HTML (curated summaries)
