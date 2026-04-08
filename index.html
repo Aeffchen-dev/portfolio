@@ -1537,7 +1537,7 @@
       const p = PROJECTS[key]; if (!p) return;
       document.getElementById('modal-hero').src      = p.hero;
       document.getElementById('modal-client').textContent = p.client;
-      document.getElementById('modal-year').textContent   = p.name || '';
+      document.getElementById('modal-year').textContent   = p.year || '';
       const arrowEl = document.getElementById('modal-header-arrow');
       if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
       else { arrowEl.style.display = 'none'; }
