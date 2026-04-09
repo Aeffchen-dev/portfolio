@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProject, projects } from "@/data/projects";
 import { BlockGrid } from "@/components/BlockGrid";
+import { ProjectBottomSheet } from "@/components/ProjectBottomSheet";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -167,6 +168,9 @@ export default async function ProjectPage({ params }: Props) {
 
       {/* Content blocks */}
       <BlockGrid blocks={project.blocks} />
+
+      {/* Next project — bottom sheet trigger */}
+      <ProjectBottomSheet currentSlug={project.slug} />
     </main>
   );
 }
