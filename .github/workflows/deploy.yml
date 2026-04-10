@@ -8,11 +8,7 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Only one deployment at a time; don't cancel in-progress so we don't
-# leave the site in a broken state.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -22,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - uses: actions/setup-node@v4
         with:
@@ -47,6 +46,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
