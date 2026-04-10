@@ -128,7 +128,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
         ))}
       </div>
 
-      <BottomSheet project={selected} onClose={close} />
+      <BottomSheet project={selected} projects={projects} onClose={close} />
     </>
   );
 }
