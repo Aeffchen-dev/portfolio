@@ -361,6 +361,27 @@
       flex-shrink:0;
     }
     .modal-close-bar__icon svg { display:block; }
+
+    /* === NEXT PROJECT BUTTON === */
+    .next-project-btn {
+      display:block; width:100%; text-align:center; cursor:pointer;
+      padding:64px 16px 48px; background:none; color:inherit;
+      border-top:1px solid rgba(0,0,0,.1); margin-top:24px;
+      font-family:'DM Sans',sans-serif;
+    }
+    .next-project-btn__label {
+      display:block;
+      font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+      color:rgba(0,0,0,.35); margin-bottom:12px;
+    }
+    .next-project-btn__title {
+      display:block;
+      font-size:clamp(36px,8vw,64px); font-weight:400; line-height:1;
+      letter-spacing:-0.02em; color:#111;
+      transition:opacity .2s;
+    }
+    .next-project-btn:hover .next-project-btn__title { opacity:.5; }
+
     .hero__title { display:none; }
     .modal-name {
       display:none;
@@ -1553,37 +1574,135 @@
       return t.split('\n\n').filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('');
     }
 
-    // === OPEN MODAL ===
-    function openModal(key) {
+    // === NEXT PROJECT SETUP ===
+    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
+    let currentProjectKey = null;
+    let _isTransitioning  = false;
+
+    function getNextProjectKey(key) {
+      const idx = PROJECT_ORDER.indexOf(key);
+      return idx >= 0 ? PROJECT_ORDER[(idx + 1) % PROJECT_ORDER.length] : null;
+    }
+
+    // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
+    function fillModalContent(key) {
       const p = PROJECTS[key]; if (!p) return;
-      const heroImg   = document.getElementById('modal-hero');
-      const heroVideo = document.getElementById('modal-hero-video');
+      const modal   = document.getElementById('projectModal');
+      const heroImg = document.getElementById('modal-hero');
+      const heroVid = document.getElementById('modal-hero-video');
       if (p.hero) {
         heroImg.src = p.hero; heroImg.style.display = '';
-        heroVideo.style.display = 'none'; heroVideo.src = '';
+        heroVid.style.display = 'none'; heroVid.src = '';
       } else if (p.heroVideo) {
-        heroVideo.src = p.heroVideo; heroVideo.style.display = '';
+        heroVid.src = p.heroVideo; heroVid.style.display = '';
         heroImg.style.display = 'none'; heroImg.src = '';
       } else {
-        heroImg.style.display = 'none'; heroVideo.style.display = 'none';
+        heroImg.style.display = 'none'; heroVid.style.display = 'none';
       }
       document.getElementById('modal-client').textContent = p.client;
       document.getElementById('modal-year').textContent   = p.year || '';
       const arrowEl = document.getElementById('modal-header-arrow');
       if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
       else { arrowEl.style.display = 'none'; }
-      document.getElementById('modal-desc').innerHTML     = p.text || '';
-      document.getElementById('modal-blocks').innerHTML   = buildMedia(p.media);
-      document.getElementById('modal-facts').innerHTML    = p.facts.map(f =>
+      document.getElementById('modal-desc').innerHTML   = p.text || '';
+      document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
+      document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      document.getElementById('modal-role').textContent   = p.myRole;
-      document.getElementById('modal-links').innerHTML    = p.links.map(l =>
+      document.getElementById('modal-role').textContent = p.myRole || '';
+      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l =>
         `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
-      const modal = document.getElementById('projectModal');
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
+      currentProjectKey = key;
+      // Refresh next-project button
+      const oldBtn = modal.querySelector('.next-project-btn');
+      if (oldBtn) oldBtn.remove();
+      injectNextBtn(key);
+    }
+
+    function injectNextBtn(key) {
+      const nextKey = getNextProjectKey(key);
+      if (!nextKey) return;
+      const nextP = PROJECTS[nextKey];
+      const btn = document.createElement('button');
+      btn.className = 'next-project-btn';
+      btn.innerHTML =
+        `<span class="next-project-btn__label">Next Project</span>` +
+        `<span class="next-project-btn__title">${nextP ? nextP.client : '→'}</span>`;
+      btn.addEventListener('click', () => goToNextProject(nextKey));
+      document.getElementById('modal-links').insertAdjacentElement('afterend', btn);
+    }
+
+    function goToNextProject(nextKey) {
+      if (_isTransitioning) return;
+      const p = PROJECTS[nextKey]; if (!p) return;
+      _isTransitioning = true;
+      const modalEl = document.getElementById('projectModal');
+      const txPfx   = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const bg      = p.bg || '#f2f2f2';
+      // Build display-only entering panel (shown during transition only)
+      const heroHTML = p.hero
+        ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
+        : p.heroVideo
+        ? `<div class="modal__hero"><video src="${p.heroVideo}" autoplay muted loop playsinline></video></div>`
+        : '';
+      const factsHTML = (p.facts||[]).map(f =>
+        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
+      const linksHTML = (p.links||[]).map(l =>
+        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const panel = document.createElement('div');
+      panel.style.cssText =
+        'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
+        'overscroll-behavior:contain;scrollbar-width:none;' +
+        `background:${bg};color:#111;padding:24px 8px;` +
+        "font-family:'DM Sans',sans-serif;transform:translateY(100%);";
+      panel.innerHTML =
+        heroHTML +
+        `<header class="page-header" style="background:${bg}">` +
+          `<div class="modal-header-left">` +
+            `<span class="eyebrow-client">${p.client}</span>` +
+            `<span class="modal-year">${p.year||''}</span>` +
+          `</div>` +
+          `<div class="hero__desc">${p.text||''}</div>` +
+        `</header>` +
+        `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
+        `<section class="project-info">` +
+          `<div class="info-meta">${factsHTML}</div>` +
+          `<p class="info-desc">${p.myRole||''}</p>` +
+        `</section>` +
+        `<nav class="project-links">${linksHTML}</nav>`;
+      document.body.appendChild(panel);
+      // Double rAF: mount at start position, then kick off animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const dur  = 460;
+          const ease = 'cubic-bezier(0.32,0.72,0,1)';
+          modalEl.style.transition = `transform ${dur}ms ${ease}`;
+          modalEl.style.transform  = `${txPfx()}translateY(-108%)`;
+          panel.style.transition   = `transform ${dur}ms ${ease}`;
+          panel.style.transform    = 'translateY(0)';
+          setTimeout(() => {
+            // Swap real modal content silently behind the covering panel
+            fillModalContent(nextKey);
+            modalEl.style.transition = 'none';
+            modalEl.style.transform  = txPfx() + 'translateY(0)';
+            panel.remove();
+            requestAnimationFrame(() => {
+              modalEl.style.transition = '';
+              _isTransitioning = false;
+            });
+          }, dur + 20);
+        });
+      });
+    }
+
+    // === OPEN MODAL ===
+    function openModal(key) {
+      const p = PROJECTS[key]; if (!p) return;
+      fillModalContent(key);
+      const modal = document.getElementById('projectModal');
       modal.style.visibility = 'visible';
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
@@ -1594,12 +1713,14 @@
 
     // === CLOSE MODAL ===
     function closeModal() {
-      const modal = document.getElementById('projectModal');
+      const modal    = document.getElementById('projectModal');
+      const closeBar = document.getElementById('modalCloseBar');
       modal.querySelector('.modal__scroll').style.background = '';
       modal.querySelector('.page-header').style.background   = '';
       modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
-      document.getElementById('modalCloseBar').classList.remove('is-active');
+      closeBar.classList.remove('is-active');
+      closeBar.style.height = '';
       document.body.style.overflow = '';
       document.body.classList.remove('modal-open');
       _openedByHover = false;
@@ -1618,15 +1739,19 @@
     (function() {
       const modalEl  = document.getElementById('projectModal');
       const scrollEl = modalEl.querySelector('.modal__scroll');
+      const closeBar = document.getElementById('modalCloseBar');
       const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
-      let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
+      let sy = 0, dy = 0, vy = 0, pt = 0, active = false, baseCloseH = 0;
 
       function snapBack() {
         modalEl.style.transition = '';
         modalEl.style.transform  = '';
+        closeBar.style.height    = '';
       }
 
       function doClose() {
+        closeBar.style.height = '';
+        closeBar.classList.remove('is-active');
         modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
@@ -1650,6 +1775,7 @@
       // Use touch events (not pointer) so touchmove can be non-passive and call preventDefault
       modalEl.addEventListener('touchstart', e => {
         if (scrollEl.scrollTop > 0) return;
+        baseCloseH = closeBar.getBoundingClientRect().height;
         const t = e.touches[0];
         sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
       }, { passive: true });
@@ -1664,6 +1790,7 @@
         dy = d; pt = e.timeStamp;
         modalEl.style.transition = 'none';
         modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
+        closeBar.style.height    = (baseCloseH + dy) + 'px';
       }, { passive: false });
 
       modalEl.addEventListener('touchend', () => {
