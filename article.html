@@ -366,26 +366,32 @@
   // layout 'image'/'img'/'photo'     → image field (object or attachment ID)
   async function renderSections(sections) {
     if (!Array.isArray(sections) || sections.length === 0) return '';
-    console.log('[article] renderSections layouts:', sections.map(s => s.acf_fc_layout));
+    console.log('[article] renderSections:', sections.length, 'rows');
     const parts = await Promise.all(sections.map(async (s, i) => {
+      console.log(`[article] row[${i}]:`, JSON.stringify(s));
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      if (layout === 'editor' || layout === 'wysiwyg' || layout === 'text') {
-        const html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || '';
-        console.log(`[article] [${i}] ${layout}:`, html ? html.slice(0, 80) + '…' : '(empty)');
-        return html;
-      }
+
       if (layout === 'image' || layout === 'img' || layout === 'photo') {
         const raw = s.img || s.image || s.photo || s.src || null;
         const url = await resolveImgUrl(raw);
-        console.log(`[article] [${i}] image:`, url || '(none)');
         if (!url) return '';
         const cap = s.caption || s.alt || '';
         return `<figure><img src="${url}" alt="${cap}" loading="lazy">${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
       }
-      // Unknown layout — try any text field
-      const html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || '';
-      if (html) console.log(`[article] [${i}] unknown layout "${layout}", using text content`);
-      return html;
+
+      // For editor/text layouts AND any unknown layout:
+      // 1. Try known field names
+      const known = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
+      if (known) { console.log(`[article] row[${i}] "${layout}" via known field`); return known; }
+      // 2. Catch-all: scan every string-valued field in the row
+      for (const [k, v] of Object.entries(s)) {
+        if (k === 'acf_fc_layout') continue;
+        if (typeof v === 'string' && v.trim().length > 0) {
+          console.log(`[article] row[${i}] "${layout}" via field "${k}"`);
+          return v;
+        }
+      }
+      return '';
     }));
     return parts.filter(Boolean).join('\n');
   }
