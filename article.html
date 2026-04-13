@@ -442,6 +442,13 @@
     }).filter(Boolean).join('\n');
   }
 
+  const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+    'tags','categories','users','comments','settings','themes','plugins','blocks',
+    'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+    'menu-items','menu-locations','templates','template-parts','global-styles',
+    'navigation','font-families','font-collections','pattern-directory',
+    'block-types','block-patterns','block-pattern-categories']);
+
   const params = new URLSearchParams(window.location.search);
   const slug   = params.get('slug');
   const postId = params.get('id');
@@ -449,32 +456,43 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
-    // Try 'article' (singular) then 'articles' (plural) — WP CPT REST base may differ.
-    // acf_format=standard returns full ACF image objects instead of just IDs.
     const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
-    const BASES  = ['article', 'articles'];
 
-    function buildUrls(base) {
+    function buildUrl(base) {
       return slug
         ? `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true&acf_format=standard`
         : `${API}/${base}/${postId}?_fields=${FIELDS}&_embed=true&acf_format=standard`;
     }
 
-    // Walk bases; skip on rest_no_route (wrong endpoint), throw on any other error
-    (async () => {
+    async function fetchArticle() {
+      // Discover non-core CPT routes from WP REST API root
+      let bases = [];
+      try {
+        const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+        if (idx?.routes) {
+          bases = Object.keys(idx.routes)
+            .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$$/)?.[1])
+            .filter(b => b && !WP_CORE.has(b));
+          console.log('[article] discovered CPT bases:', bases);
+        }
+      } catch(e) {}
+      for (const b of ['articles','article']) { if (!bases.includes(b)) bases.push(b); }
+
       let lastErr;
-      for (const base of BASES) {
-        const r = await fetch(buildUrls(base), { signal: AbortSignal.timeout(10000) });
+      for (const base of bases) {
+        const r = await fetch(buildUrl(base), { signal: AbortSignal.timeout(10000) });
         if (!r.ok) {
           const body = await r.json().catch(() => ({}));
           lastErr = new Error(`HTTP ${r.status}${body?.code ? ' · ' + body.code : ''}`);
-          if (body?.code === 'rest_no_route') continue; // try next base
+          if (body?.code === 'rest_no_route') continue;
           throw lastErr;
         }
         return r.json();
       }
-      throw lastErr || new Error('Article endpoint not found');
-    })()
+      throw lastErr || new Error('rest_no_route');
+    }
+
+    fetchArticle()
       .then(data => {
         const post = Array.isArray(data) ? data[0] : data;
         if (!post) throw new Error('Article not found');
@@ -482,25 +500,21 @@
         console.log('[article] post:', post);
 
         const acf = post.acf || {};
+        // ACF: text field 'test', flexible content field 'content'
+        // layouts: 'editor' (field: wysiwyg), 'image' (field: img)
+        const flexRows = Array.isArray(acf.content) && 'acf_fc_layout' in (acf.content[0] || {})
+                       ? acf.content : [];
 
-        // ACF structure: text field 'test' + flexible content field 'content'
-        // with layouts 'editor' (field: wysiwyg) and 'image' (field: img)
-        const flexRows = Array.isArray(acf.content) && acf.content.length &&
-                         'acf_fc_layout' in (acf.content[0] || {})
-                         ? acf.content : [];
-
-        const title   = stripHtml(post.title?.rendered || 'Untitled');
-        // content.rendered → acf 'test' text field → flexible content rows
-        const content = (post.content?.rendered || '').trim()
-                     || (acf.test || '').trim()
-                     || renderSections(flexRows);
-        const excerpt = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
-        const date    = formatDate(post.date);
+        const title    = stripHtml(post.title?.rendered || 'Untitled');
+        const content  = (post.content?.rendered || '').trim()
+                      || (acf.test || '').trim()
+                      || renderSections(flexRows);
+        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
+        const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        // Hero: WP featured media → first image row in flexible content
-        const heroImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                     || (flexRows.find(s => s.acf_fc_layout === 'image')?.img?.url)
-                     || '';
+        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
+                      || flexRows.find(s => s.acf_fc_layout === 'image')?.img?.url
+                      || '';
 
         document.title = title + ' — Jana Gramlich';
 
@@ -512,11 +526,8 @@
         document.getElementById('articleTitle').textContent = title;
 
         const excerptEl = document.getElementById('articleExcerpt');
-        if (excerpt && excerpt.length > 20) {
-          excerptEl.textContent = excerpt;
-        } else {
-          excerptEl.style.display = 'none';
-        }
+        if (excerpt && excerpt.length > 20) excerptEl.textContent = excerpt;
+        else excerptEl.style.display = 'none';
 
         if (heroImg) {
           document.getElementById('articleHeroImg').src = heroImg;
@@ -527,7 +538,6 @@
         document.getElementById('articleBody').innerHTML = content;
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleWrap').classList.add('is-loaded');
-
         document.querySelectorAll('.article-body img').forEach(img => {
           if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
         });

@@ -405,11 +405,34 @@
 </a>`;
   }
 
-  // Try 'article' (singular) then 'articles' — WP CPT REST base may differ
-  const LIST_FIELDS = 'id,title,date,slug,acf,_links';
-  ;(async () => {
+  // Core WP v2 endpoints — exclude from CPT discovery
+  const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+    'tags','categories','users','comments','settings','themes','plugins','blocks',
+    'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+    'menu-items','menu-locations','templates','template-parts','global-styles',
+    'navigation','font-families','font-collections','pattern-directory',
+    'block-types','block-patterns','block-pattern-categories']);
+
+  // Query the WP REST API root to discover registered CPT routes,
+  // then try each one until we get a successful response.
+  async function fetchArticleList() {
+    const LIST_FIELDS = 'id,title,date,slug,acf,_links';
+    // Discover non-core routes from WP REST index
+    let bases = [];
+    try {
+      const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+      if (idx?.routes) {
+        bases = Object.keys(idx.routes)
+          .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$$/)?.[1])
+          .filter(b => b && !WP_CORE.has(b));
+        console.log('[articles] discovered CPT bases:', bases);
+      }
+    } catch(e) {}
+    // Always include known guesses as fallback
+    for (const b of ['articles','article']) { if (!bases.includes(b)) bases.push(b); }
+
     let lastErr;
-    for (const base of ['article', 'articles']) {
+    for (const base of bases) {
       const r = await fetch(
         `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true&acf_format=standard`,
         { signal: AbortSignal.timeout(10000) }
@@ -420,30 +443,25 @@
         if (body?.code === 'rest_no_route') continue;
         throw lastErr;
       }
-      return r.json();
+      const posts = await r.json();
+      if (!Array.isArray(posts)) throw new Error(posts?.code || posts?.message || 'unexpected response');
+      return posts;
     }
-    throw lastErr || new Error('Article endpoint not found');
-  })()
-    .then(posts => {
-      const list  = document.getElementById('articleList');
-      const count = document.getElementById('articleCount');
-      if (!Array.isArray(posts)) {
-        const code = posts?.code || posts?.message || 'unexpected response';
-        throw new Error(code);
-      }
-      if (posts.length === 0) {
-        list.innerHTML = '<div class="articles-empty">No articles yet.</div>';
-        return;
-      }
-      count.textContent = posts.length + (posts.length === 1 ? ' article' : ' articles');
-      list.innerHTML = posts.map(buildCard).join('');
-    })
-    .catch(err => {
-      console.error('[articles] fetch failed:', err);
-      const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
-      document.getElementById('articleList').innerHTML =
-        `<div class="articles-empty">Could not load articles — ${msg}</div>`;
-    });
+    throw lastErr || new Error('rest_no_route');
+  }
+
+  fetchArticleList().then(posts => {
+    const list  = document.getElementById('articleList');
+    const count = document.getElementById('articleCount');
+    if (posts.length === 0) { list.innerHTML = '<div class="articles-empty">No articles yet.</div>'; return; }
+    count.textContent = posts.length + (posts.length === 1 ? ' article' : ' articles');
+    list.innerHTML = posts.map(buildCard).join('');
+  }).catch(err => {
+    console.error('[articles] fetch failed:', err);
+    const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
+    document.getElementById('articleList').innerHTML =
+      `<div class="articles-empty">Could not load articles — ${msg}</div>`;
+  });
 </script>
 </body>
 </html>
