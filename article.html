@@ -443,12 +443,21 @@
         const post = Array.isArray(data) ? data[0] : data;
         if (!post) throw new Error('Article not found');
 
-        const title    = stripHtml(post.title?.rendered || 'Untitled');
-        const content  = post.content?.rendered || '';
-        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[\&hellip;\]|\[…\]/g, '').trim();
+        const acf      = post.acf || {};
+        const title    = stripHtml(post.title?.rendered || acf.title || 'Untitled');
+        // content.rendered is empty for ACF-heavy posts → fall back to acf.text
+        const content  = (post.content?.rendered || '').trim() || (acf.text || '');
+        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
-        const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+        // Category from WP terms, or from ACF shortfacts, or from client field
+        const category = post._embedded?.['wp:term']?.[0]?.[0]?.name
+                      || (acf.shortfacts || []).find(f => /brand|client|category/i.test(f.label || ''))?.value
+                      || '';
+        // Hero: prefer WP featured media → acf.hero_image → first acf section image
+        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
+                      || acf.hero_image?.url
+                      || (acf.section || []).find(s => s.acf_fc_layout === 'image')?.image?.[0]?.image?.url
+                      || '';
 
         // Update <title> and meta
         document.title = title + ' — Jana Gramlich';
