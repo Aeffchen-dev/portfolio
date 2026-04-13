@@ -431,9 +431,11 @@
       ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true&acf_format=standard`
       : `${API}/posts/${postId}?_embed=true&acf_format=standard`;
 
-    fetch(endpoint)
+    fetch(endpoint, { signal: AbortSignal.timeout(10000) })
       .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        if (!r.ok) return r.json()
+          .then(err => { throw new Error(`HTTP ${r.status}${err?.code ? ' · ' + err.code : ''}`); })
+          .catch(e => { if (e.message.startsWith('HTTP')) throw e; throw new Error(`HTTP ${r.status}`); });
         return r.json();
       })
       .then(data => {
@@ -490,7 +492,8 @@
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
-        showError('Could not load article — ' + (err.message || 'network error') + '.');
+        const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
+        showError('Could not load article — ' + msg);
       });
   }
 </script>

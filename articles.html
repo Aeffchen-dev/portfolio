@@ -402,15 +402,20 @@
 </a>`;
   }
 
-  fetch(`${API}/posts?per_page=20&_embed=true&acf_format=standard`)
+  fetch(`${API}/posts?per_page=20&_embed=true&acf_format=standard`, { signal: AbortSignal.timeout(10000) })
     .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      if (!r.ok) return r.json()
+        .then(err => { throw new Error(`HTTP ${r.status}${err?.code ? ' · ' + err.code : ''}`); })
+        .catch(e => { if (e.message.startsWith('HTTP')) throw e; throw new Error(`HTTP ${r.status}`); });
       return r.json();
     })
     .then(posts => {
       const list  = document.getElementById('articleList');
       const count = document.getElementById('articleCount');
-      if (!Array.isArray(posts)) throw new Error('Unexpected response');
+      if (!Array.isArray(posts)) {
+        const code = posts?.code || posts?.message || 'unexpected response';
+        throw new Error(code);
+      }
       if (posts.length === 0) {
         list.innerHTML = '<div class="articles-empty">No articles yet.</div>';
         return;
@@ -420,7 +425,9 @@
     })
     .catch(err => {
       console.error('[articles] fetch failed:', err);
-      document.getElementById('articleList').innerHTML = '<div class="articles-empty">Could not load articles — ' + (err.message || 'network error') + '.</div>';
+      const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
+      document.getElementById('articleList').innerHTML =
+        `<div class="articles-empty">Could not load articles — ${msg}</div>`;
     });
 </script>
 </body>
