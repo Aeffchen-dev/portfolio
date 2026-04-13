@@ -37,5 +37,6 @@ export interface Project {
   year: string;
   tags: string[];
   description: string;
+  coverImage?: string;
   blocks: ContentBlock[];
 }
