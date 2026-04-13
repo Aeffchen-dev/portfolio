@@ -420,6 +420,36 @@
       `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
   }
 
+  // Render ACF flexible-content sections as HTML (fallback when content.rendered is empty)
+  function renderSections(sections) {
+    if (!Array.isArray(sections) || sections.length === 0) return '';
+    return sections.map(s => {
+      const layout = (s.acf_fc_layout || '').toLowerCase();
+      // Try common text-field names first
+      const textHtml = s.text || s.content || s.body || s.description || '';
+      if (textHtml) return textHtml;
+      // Image layout
+      if (layout === 'image' || s.image) {
+        const img = s.image;
+        let url = '';
+        if (typeof img === 'string') url = img;
+        else if (img && typeof img === 'object') {
+          url = img.url || img.source_url
+             || (Array.isArray(img) && img[0] && (img[0].url || img[0].image?.url || img[0].source_url))
+             || '';
+        }
+        return url ? `<figure><img src="${url}" alt=""></figure>` : '';
+      }
+      // Quote layout
+      if ((layout === 'quote' || s.quote) && s.quote) {
+        return `<blockquote><p>${s.quote}</p>${s.author ? `<cite>${s.author}</cite>` : ''}</blockquote>`;
+      }
+      // Headline layout
+      if (s.headline) return `<h2>${s.headline}</h2>`;
+      return '';
+    }).filter(Boolean).join('\n');
+  }
+
   const params = new URLSearchParams(window.location.search);
   const slug   = params.get('slug');
   const postId = params.get('id');
@@ -427,9 +457,12 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
+    // Note: acf_format=standard removed — can cause WP API failures on some configurations.
+    // ACF text/wysiwyg fields are returned as plain strings regardless; only relationship
+    // fields differ, and we don't rely on those here.
     const endpoint = slug
-      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true&acf_format=standard`
-      : `${API}/posts/${postId}?_embed=true&acf_format=standard`;
+      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true`
+      : `${API}/posts/${postId}?_embed=true`;
 
     fetch(endpoint, { signal: AbortSignal.timeout(10000) })
       .then(r => {
@@ -443,19 +476,23 @@
         const post = Array.isArray(data) ? data[0] : data;
         if (!post) throw new Error('Article not found');
 
+        console.log('[article] post data:', post);
+
         const acf      = post.acf || {};
         const title    = stripHtml(post.title?.rendered || acf.title || 'Untitled');
-        // content.rendered is empty for ACF-heavy posts → fall back to acf.text
-        const content  = (post.content?.rendered || '').trim() || (acf.text || '');
+        // content.rendered → acf.text → rendered ACF sections
+        const content  = (post.content?.rendered || '').trim()
+                      || (acf.text || '').trim()
+                      || renderSections(acf.section);
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
-        // Category from WP terms, or from ACF shortfacts, or from client field
+        // Category from WP terms, or from ACF shortfacts client/category field
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name
                       || (acf.shortfacts || []).find(f => /brand|client|category/i.test(f.label || ''))?.value
                       || '';
-        // Hero: prefer WP featured media → acf.hero_image → first acf section image
+        // Hero: WP featured media → acf.hero_image (object or ID ignored) → first section image
         const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                      || acf.hero_image?.url
+                      || (acf.hero_image && typeof acf.hero_image === 'object' ? acf.hero_image.url : '')
                       || (acf.section || []).find(s => s.acf_fc_layout === 'image')?.image?.[0]?.image?.url
                       || '';
 
