@@ -458,46 +458,40 @@
     }
 
     async function fetchArticle() {
-      const knownFirst = ['articles', 'article'];
-      const SKIP = new Set(['projects', 'project']);
-      let discoveredOther = [];
+      const bases = ['articles', 'article'];
       try {
         const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
         if (idx?.routes) {
-          const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+          const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
             'tags','categories','users','comments','settings','themes','plugins','blocks',
             'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
             'menu-items','menu-locations','templates','template-parts','global-styles',
             'navigation','font-families','font-collections','pattern-directory',
-            'block-types','block-patterns','block-pattern-categories']);
-          discoveredOther = Object.keys(idx.routes)
+            'block-types','block-patterns','block-pattern-categories','projects','project']);
+          const others = Object.keys(idx.routes)
             .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
-            .filter(b => b && !WP_CORE.has(b) && !SKIP.has(b) && !knownFirst.includes(b));
+            .filter(b => b && !SKIP.has(b));
+          bases.push(...others);
         }
       } catch(e) {}
-      const bases = [...knownFirst, ...discoveredOther];
+      bases.push('posts'); // final fallback
 
-      let lastErr;
       for (const base of bases) {
-        const r = await fetch(buildUrl(base), { signal: AbortSignal.timeout(10000) });
-        if (!r.ok) {
-          const body = await r.json().catch(() => ({}));
-          lastErr = new Error(`HTTP ${r.status}${body?.code ? ' · ' + body.code : ''}`);
-          if (body?.code === 'rest_no_route') continue;
-          throw lastErr;
+        const r = await fetch(buildUrl(base), { signal: AbortSignal.timeout(10000) }).catch(() => null);
+        if (!r || !r.ok) {
+          const code = r ? (await r.json().catch(() => ({}))).code : null;
+          if (!r || code === 'rest_no_route') continue;
+          throw new Error(`HTTP ${r.status}${code ? ' · ' + code : ''}`);
         }
-        return r.json();
+        const data = await r.json();
+        const post = Array.isArray(data) ? data[0] : data;
+        if (post?.id) { console.log(`[article] loaded from /${base}`, post); return post; }
       }
-      throw lastErr || new Error('rest_no_route');
+      throw new Error('Article not found');
     }
 
     fetchArticle()
-      .then(data => {
-        const post = Array.isArray(data) ? data[0] : data;
-        if (!post) throw new Error('Article not found');
-
-        console.log('[article] post:', post);
-
+      .then(post => {
         const acf = post.acf || {};
         console.log('[article] acf keys:', Object.keys(acf), JSON.stringify(acf).slice(0, 500));
 

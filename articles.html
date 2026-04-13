@@ -405,51 +405,47 @@
 </a>`;
   }
 
-  // Known non-article CPTs to skip during discovery
-  const SKIP_BASES = new Set(['projects','project']);
-
   async function fetchArticleList() {
     const LIST_FIELDS = 'id,title,date,slug,acf,_links';
-
-    // Try known article bases first, then fall back to any other discovered CPT
-    // (excluding projects and other known non-article types)
-    const knownFirst = ['articles', 'article'];
-    let discoveredOther = [];
+    // Priority order: dedicated CPT names first, then any other discovered CPT, posts as last resort
+    const bases = ['articles', 'article'];
     try {
       const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
       if (idx?.routes) {
-        const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+        const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
           'tags','categories','users','comments','settings','themes','plugins','blocks',
           'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
           'menu-items','menu-locations','templates','template-parts','global-styles',
           'navigation','font-families','font-collections','pattern-directory',
-          'block-types','block-patterns','block-pattern-categories']);
-        discoveredOther = Object.keys(idx.routes)
+          'block-types','block-patterns','block-pattern-categories','projects','project']);
+        const others = Object.keys(idx.routes)
           .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
-          .filter(b => b && !WP_CORE.has(b) && !SKIP_BASES.has(b) && !knownFirst.includes(b));
-        console.log('[articles] discovered other CPT bases:', discoveredOther);
+          .filter(b => b && !SKIP.has(b));
+        bases.push(...others);
+        console.log('[articles] trying bases:', bases);
       }
     } catch(e) {}
+    bases.push('posts'); // final fallback — articles may live in standard posts
 
-    const bases = [...knownFirst, ...discoveredOther];
-    let lastErr;
     for (const base of bases) {
       const r = await fetch(
         `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true&acf_format=standard`,
         { signal: AbortSignal.timeout(10000) }
-      );
-      if (!r.ok) {
-        const body = await r.json().catch(() => ({}));
-        lastErr = new Error(`HTTP ${r.status}${body?.code ? ' · ' + body.code : ''}`);
-        if (body?.code === 'rest_no_route') continue;
-        throw lastErr;
+      ).catch(() => null);
+      if (!r || !r.ok) {
+        const code = r ? (await r.json().catch(() => ({}))).code : null;
+        if (!r || code === 'rest_no_route') continue;
+        throw new Error(`HTTP ${r.status}${code ? ' · ' + code : ''}`);
       }
       const posts = await r.json();
-      if (!Array.isArray(posts)) throw new Error(posts?.code || posts?.message || 'unexpected response');
-      console.log(`[articles] loaded ${posts.length} posts from /${base}`);
+      if (!Array.isArray(posts) || posts.length === 0) continue;
+      // Confirm these are articles by checking for ACF fields
+      const hasAcf = posts.some(p => p.acf && (p.acf.test !== undefined || p.acf.content !== undefined));
+      if (!hasAcf && base === 'posts') continue; // posts but no article ACF — skip
+      console.log(`[articles] loaded ${posts.length} items from /${base}`);
       return posts;
     }
-    throw lastErr || new Error('rest_no_route — enable REST API for the articles post type in WordPress');
+    throw new Error('No articles found — check the WordPress REST API settings for the articles post type');
   }
 
   fetchArticleList().then(posts => {
