@@ -86,33 +86,18 @@
     .article-wrap { display:none; }
     .article-wrap.is-loaded { display:block; }
 
-    /* === HERO (full-bleed, tall, title overlaid) === */
-    .article-hero {
-      position:relative; width:100%;
-      height:68dvh; min-height:340px;
-      overflow:hidden; background:#111;
-    }
-    .article-hero img { width:100%; height:100%; object-fit:cover; display:block; }
-    .article-hero__overlay {
-      position:absolute; inset:0;
-      display:flex; flex-direction:column; justify-content:flex-end;
-      padding:0 24px 40px;
-      background:linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%);
-    }
-    /* meta inside overlay — white */
-    .article-hero__overlay .article-meta { margin-bottom:14px; }
-    .article-hero__overlay .article-category { color:rgba(255,255,255,.85); border-color:rgba(255,255,255,.22); }
-    .article-hero__overlay .article-meta-sep { background:rgba(255,255,255,.3); }
-    .article-hero__overlay .article-date { color:rgba(255,255,255,.6); }
-    /* title inside overlay — white */
-    .article-hero__overlay .article-title { color:#fff; }
-
-    /* === HEADER (below hero, or top when no hero) === */
+    /* === HEADER (always at top, nav clearance) === */
     .article-header {
-      padding:32px 24px 0;
+      padding:max(72px,10dvh) 24px 0;
       max-width:860px; margin:0 auto;
     }
-    .article-header.no-hero { padding-top:max(72px,10dvh); }
+
+    /* === HERO (below header, full-bleed) === */
+    .article-hero {
+      width:100%; margin-top:40px;
+      max-height:560px; overflow:hidden;
+    }
+    .article-hero img { width:100%; height:100%; object-fit:cover; display:block; }
 
     /* === TITLE === */
     .article-title {
@@ -189,13 +174,11 @@
 
     /* === RESPONSIVE === */
     @media (min-width:640px) {
-      .article-hero { height:72dvh; }
-      .article-hero__overlay { padding:0 40px 48px; }
+      .article-hero { max-height:600px; }
       .article-header { padding-left:40px; padding-right:40px; }
     }
     @media (min-width:1024px) {
-      .article-hero { height:76dvh; max-height:840px; }
-      .article-hero__overlay { padding:0 60px 60px; }
+      .article-hero { max-height:680px; }
       .article-header { max-width:1000px; padding-left:60px; padding-right:60px; }
       .article-body { max-width:740px; padding:0 60px 100px; }
       .article-divider { max-width:1000px; }
@@ -241,18 +224,17 @@
   <!-- ARTICLE (shown after load) -->
   <div class="article-wrap" id="articleWrap">
 
-    <!-- Hero: full-bleed image with title + meta overlaid at bottom (populated by JS) -->
-    <div class="article-hero" id="articleHero" style="display:none">
-      <img id="articleHeroImg" src="" alt="" loading="eager">
-      <div class="article-hero__overlay" id="articleHeroOverlay"></div>
-    </div>
-
-    <!-- Header: meta + title shown here only when no hero image -->
+    <!-- Header: meta + title always at top -->
     <header class="article-header" id="articleHeader">
       <div class="article-meta" id="articleMeta"></div>
       <h1 class="article-title" id="articleTitle"></h1>
       <p class="article-excerpt" id="articleExcerpt"></p>
     </header>
+
+    <!-- Hero image below header -->
+    <div class="article-hero" id="articleHero" style="display:none">
+      <img id="articleHeroImg" src="" alt="" loading="eager">
+    </div>
 
     <div class="article-divider"></div>
 
@@ -490,10 +472,7 @@
         })();
 
         const title   = stripHtml(post.title?.rendered || 'Untitled');
-        // Render all flexible content rows (text + images); fall back to WP content field
-        const content = await renderSections(flexRows)
-                     || (post.content?.rendered || '').trim()
-                     || '';
+        const content = await renderSections(flexRows);
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
@@ -504,34 +483,28 @@
 
         document.title = title + ' — Jana Gramlich';
 
-        const metaHtml = (category
+        // Header: always meta + title at top
+        document.getElementById('articleMeta').innerHTML = (category
           ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
           + `<span class="article-date">${date}</span>`;
-
-        const headerEl = document.getElementById('articleHeader');
-
-        if (heroImg) {
-          // Hero exists: title + meta overlaid on image, header shows only excerpt
-          document.getElementById('articleHeroImg').src = heroImg;
-          document.getElementById('articleHeroImg').alt = title;
-          document.getElementById('articleHeroOverlay').innerHTML =
-            `<div class="article-meta">${metaHtml}</div><h1 class="article-title">${title}</h1>`;
-          document.getElementById('articleHero').style.display = '';
-          document.getElementById('articleMeta').style.display = 'none';
-          document.getElementById('articleTitle').style.display = 'none';
-          headerEl.classList.add('has-hero');
-        } else {
-          // No hero: title + meta in header with nav-clearance padding
-          document.getElementById('articleMeta').innerHTML = metaHtml;
-          document.getElementById('articleTitle').textContent = title;
-          headerEl.classList.add('no-hero');
-        }
+        document.getElementById('articleTitle').textContent = title;
 
         const excerptEl = document.getElementById('articleExcerpt');
         if (excerpt && excerpt.length > 20) excerptEl.textContent = excerpt;
         else excerptEl.style.display = 'none';
 
-        document.getElementById('articleBody').innerHTML = content;
+        // Hero image below header
+        if (heroImg) {
+          document.getElementById('articleHeroImg').src = heroImg;
+          document.getElementById('articleHeroImg').alt = title;
+          document.getElementById('articleHero').style.display = '';
+        }
+
+        // test2 field prepended before flexible content
+        const test2 = acf.test2 ? `<p>${acf.test2}</p>` : '';
+        const fullContent = test2 + content || (post.content?.rendered || '').trim();
+
+        document.getElementById('articleBody').innerHTML = fullContent;
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleWrap').classList.add('is-loaded');
         document.querySelectorAll('.article-body img').forEach(img => {
