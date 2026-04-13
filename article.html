@@ -436,18 +436,30 @@
   }
 
   // Render ALL flexible content rows in order.
-  // layout 'editor' → wysiwyg field (HTML)
-  // layout 'image'  → img field (object or attachment ID)
+  // layout 'editor'/'wysiwyg'/'text' → text field (HTML)
+  // layout 'image'/'img'/'photo'     → image field (object or attachment ID)
   async function renderSections(sections) {
     if (!Array.isArray(sections) || sections.length === 0) return '';
-    const parts = await Promise.all(sections.map(async s => {
+    console.log('[article] renderSections layouts:', sections.map(s => s.acf_fc_layout));
+    const parts = await Promise.all(sections.map(async (s, i) => {
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      if (layout === 'editor') return s.wysiwyg || s.text || s.content || '';
-      if (layout === 'image') {
-        const url = await resolveImgUrl(s.img || s.image);
-        return url ? `<figure><img src="${url}" alt="${s.caption || ''}" loading="lazy"></figure>` : '';
+      if (layout === 'editor' || layout === 'wysiwyg' || layout === 'text') {
+        const html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || '';
+        console.log(`[article] [${i}] ${layout}:`, html ? html.slice(0, 80) + '…' : '(empty)');
+        return html;
       }
-      return s.wysiwyg || ''; // any other layout — try wysiwyg
+      if (layout === 'image' || layout === 'img' || layout === 'photo') {
+        const raw = s.img || s.image || s.photo || s.src || null;
+        const url = await resolveImgUrl(raw);
+        console.log(`[article] [${i}] image:`, url || '(none)');
+        if (!url) return '';
+        const cap = s.caption || s.alt || '';
+        return `<figure><img src="${url}" alt="${cap}" loading="lazy">${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+      }
+      // Unknown layout — try any text field
+      const html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || '';
+      if (html) console.log(`[article] [${i}] unknown layout "${layout}", using text content`);
+      return html;
     }));
     return parts.filter(Boolean).join('\n');
   }
@@ -496,8 +508,22 @@
           throw new Error(`HTTP ${r.status}${code ? ' · ' + code : ''}`);
         }
         const data = await r.json();
-        const post = Array.isArray(data) ? data[0] : data;
-        if (post?.id) { console.log(`[article] loaded from /${base}`, post); return post; }
+        let post = Array.isArray(data) ? data[0] : data;
+        if (!post?.id) continue;
+        // If ACF is empty, retry with acf_format=standard
+        // (some WP/ACF setups require this param to expose ACF fields)
+        const acfKeys = post.acf ? Object.keys(post.acf) : [];
+        if (acfKeys.length === 0) {
+          console.log(`[article] ACF empty from /${base}, retrying with acf_format=standard`);
+          const r2 = await fetch(buildUrl(base) + '&acf_format=standard', { signal: AbortSignal.timeout(10000) }).catch(() => null);
+          if (r2?.ok) {
+            const data2 = await r2.json();
+            const post2 = Array.isArray(data2) ? data2[0] : data2;
+            if (post2?.acf && Object.keys(post2.acf).length > 0) post = post2;
+          }
+        }
+        console.log(`[article] loaded from /${base}`, post);
+        return post;
       }
       throw new Error('Article not found');
     }
@@ -507,11 +533,16 @@
         const acf = post.acf || {};
 
         // Find flexible content: check known field 'content' first, then scan all ACF fields
+        console.log('[article] ACF keys:', Object.keys(acf));
+        console.log('[article] ACF data:', JSON.stringify(acf));
         const flexRows = (() => {
           const check = v => Array.isArray(v) && v.length > 0
-                          && typeof v[0] === 'object' && 'acf_fc_layout' in v[0];
-          if (check(acf.content)) return acf.content;
-          for (const v of Object.values(acf)) { if (check(v)) return v; }
+                          && typeof v[0] === 'object' && v[0] !== null && 'acf_fc_layout' in v[0];
+          if (check(acf.content)) { console.log('[article] using acf.content'); return acf.content; }
+          for (const [k, v] of Object.entries(acf)) {
+            if (check(v)) { console.log(`[article] using acf.${k}`); return v; }
+          }
+          console.log('[article] no flexible content found in ACF');
           return [];
         })();
 
