@@ -420,48 +420,25 @@
       `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
   }
 
-  // Scan all ACF fields to find the flexible content array (field name may vary).
-  // Returns the first field that is an array of objects with acf_fc_layout set.
-  function findFlexibleContent(acf) {
-    for (const val of Object.values(acf)) {
-      if (Array.isArray(val) && val.length > 0
-          && val[0] && typeof val[0] === 'object'
-          && 'acf_fc_layout' in val[0]) {
-        return val;
-      }
-    }
-    return [];
-  }
-
-  // Render ACF flexible-content rows as HTML.
-  // Handles 'text' layout (and common variants) plus image/quote/headline fallbacks.
+  // Render ACF flexible content rows.
+  // Knows the exact field structure: layout 'editor' → field 'wysiwyg' (HTML),
+  // layout 'image' → field 'img' (ACF image object with .url via acf_format=standard).
   function renderSections(sections) {
     if (!Array.isArray(sections) || sections.length === 0) return '';
     return sections.map(s => {
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      // 'text' layout — try every common wysiwyg/textarea field name
-      const textHtml = s.text || s.content || s.body || s.description || s.copy || '';
-      if (textHtml) return textHtml;
-      // 'image' layout
-      if (layout === 'image' || s.image) {
-        const img = s.image;
-        let url = '';
-        if (typeof img === 'string') url = img;
-        else if (img && typeof img === 'object') {
-          url = img.url || img.source_url
-             || (Array.isArray(img) && img[0]
-                  ? (img[0].url || img[0].image?.url || img[0].source_url || '') : '');
-        }
-        const caption = s.caption || '';
-        return url ? `<figure><img src="${url}" alt="${caption}"></figure>` : '';
+      if (layout === 'editor') {
+        return s.wysiwyg || s.text || s.content || '';
       }
-      // 'quote' layout
-      if (s.quote) {
-        return `<blockquote><p>${s.quote}</p>${s.author ? `<cite>${s.author}</cite>` : ''}</blockquote>`;
+      if (layout === 'image') {
+        const img = s.img || s.image;
+        const url = img && typeof img === 'object'
+          ? (img.url || img.source_url || '')
+          : (typeof img === 'string' ? img : '');
+        return url ? `<figure><img src="${url}" alt="${s.caption || ''}"></figure>` : '';
       }
-      // 'headline' layout
-      if (s.headline) return `<h2>${s.headline}</h2>`;
-      return '';
+      // Generic fallback for any other layouts
+      return s.wysiwyg || s.text || s.content || s.body || '';
     }).filter(Boolean).join('\n');
   }
 
@@ -472,59 +449,68 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
-    // Explicitly request the acf field so ACF REST API returns it — same pattern as project fetch.
-    // _links is required for _embed (featured media + terms) to work alongside _fields.
+    // Try 'article' (singular) then 'articles' (plural) — WP CPT REST base may differ.
+    // acf_format=standard returns full ACF image objects instead of just IDs.
     const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
-    const endpoint = slug
-      ? `${API}/articles?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
-      : `${API}/articles/${postId}?_fields=${FIELDS}&_embed=true`;
+    const BASES  = ['article', 'articles'];
 
-    fetch(endpoint, { signal: AbortSignal.timeout(10000) })
-      .then(r => {
-        if (!r.ok) return r.json()
-          .then(err => { throw new Error(`HTTP ${r.status}${err?.code ? ' · ' + err.code : ''}`); })
-          .catch(e => { if (e.message.startsWith('HTTP')) throw e; throw new Error(`HTTP ${r.status}`); });
+    function buildUrls(base) {
+      return slug
+        ? `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true&acf_format=standard`
+        : `${API}/${base}/${postId}?_fields=${FIELDS}&_embed=true&acf_format=standard`;
+    }
+
+    // Walk bases; skip on rest_no_route (wrong endpoint), throw on any other error
+    (async () => {
+      let lastErr;
+      for (const base of BASES) {
+        const r = await fetch(buildUrls(base), { signal: AbortSignal.timeout(10000) });
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          lastErr = new Error(`HTTP ${r.status}${body?.code ? ' · ' + body.code : ''}`);
+          if (body?.code === 'rest_no_route') continue; // try next base
+          throw lastErr;
+        }
         return r.json();
-      })
+      }
+      throw lastErr || new Error('Article endpoint not found');
+    })()
       .then(data => {
-        // Slug lookup returns array; ID lookup returns single object
         const post = Array.isArray(data) ? data[0] : data;
         if (!post) throw new Error('Article not found');
 
-        console.log('[article] post data:', post);
+        console.log('[article] post:', post);
 
-        const acf      = post.acf || {};
-        // Find the flexible content field regardless of its ACF field name
-        const flexRows = findFlexibleContent(acf);
-        console.log('[article] acf fields:', Object.keys(acf), '| flex rows:', flexRows.length);
+        const acf = post.acf || {};
 
-        const title    = stripHtml(post.title?.rendered || acf.title || 'Untitled');
-        // content.rendered → acf.text (top-level) → flexible content rows
-        const content  = (post.content?.rendered || '').trim()
-                      || (acf.text || '').trim()
-                      || renderSections(flexRows);
-        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
-        const date     = formatDate(post.date);
-        // Category from WP terms
+        // ACF structure: text field 'test' + flexible content field 'content'
+        // with layouts 'editor' (field: wysiwyg) and 'image' (field: img)
+        const flexRows = Array.isArray(acf.content) && acf.content.length &&
+                         'acf_fc_layout' in (acf.content[0] || {})
+                         ? acf.content : [];
+
+        const title   = stripHtml(post.title?.rendered || 'Untitled');
+        // content.rendered → acf 'test' text field → flexible content rows
+        const content = (post.content?.rendered || '').trim()
+                     || (acf.test || '').trim()
+                     || renderSections(flexRows);
+        const excerpt = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
+        const date    = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        // Hero: WP featured media → acf.hero_image → first image row in flexible content
-        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                      || (acf.hero_image && typeof acf.hero_image === 'object' ? acf.hero_image.url : '')
-                      || '';
+        // Hero: WP featured media → first image row in flexible content
+        const heroImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
+                     || (flexRows.find(s => s.acf_fc_layout === 'image')?.img?.url)
+                     || '';
 
-        // Update <title> and meta
         document.title = title + ' — Jana Gramlich';
 
-        // Meta row (category + date)
         const metaEl = document.getElementById('articleMeta');
         metaEl.innerHTML = (category
           ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
           + `<span class="article-date">${date}</span>`;
 
-        // Title
         document.getElementById('articleTitle').textContent = title;
 
-        // Excerpt — only show if content starts with it
         const excerptEl = document.getElementById('articleExcerpt');
         if (excerpt && excerpt.length > 20) {
           excerptEl.textContent = excerpt;
@@ -532,22 +518,16 @@
           excerptEl.style.display = 'none';
         }
 
-        // Hero image
         if (heroImg) {
-          const heroEl = document.getElementById('articleHero');
-          document.getElementById('articleHeroImg').src  = heroImg;
-          document.getElementById('articleHeroImg').alt  = title;
-          heroEl.style.display = '';
+          document.getElementById('articleHeroImg').src = heroImg;
+          document.getElementById('articleHeroImg').alt = title;
+          document.getElementById('articleHero').style.display = '';
         }
 
-        // Body
         document.getElementById('articleBody').innerHTML = content;
-
-        // Show article, hide loader
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleWrap').classList.add('is-loaded');
 
-        // Make images inside body lazy
         document.querySelectorAll('.article-body img').forEach(img => {
           if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
         });
