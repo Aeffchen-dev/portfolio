@@ -420,26 +420,36 @@
       `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
   }
 
-  // Render ACF flexible content rows.
-  // Knows the exact field structure: layout 'editor' → field 'wysiwyg' (HTML),
-  // layout 'image' → field 'img' (ACF image object with .url via acf_format=standard).
-  function renderSections(sections) {
+  // Resolve an ACF image field to a URL.
+  // acf_format=standard → object with .url; without it → integer attachment ID.
+  async function resolveImgUrl(img) {
+    if (!img) return '';
+    if (typeof img === 'object') return img.url || img.source_url || '';
+    // Integer or numeric string → attachment ID, fetch the URL
+    const id = parseInt(img, 10);
+    if (!id) return typeof img === 'string' ? img : '';
+    try {
+      const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(6000) });
+      if (r.ok) return (await r.json()).source_url || '';
+    } catch(e) {}
+    return '';
+  }
+
+  // Render ALL flexible content rows in order.
+  // layout 'editor' → wysiwyg field (HTML)
+  // layout 'image'  → img field (object or attachment ID)
+  async function renderSections(sections) {
     if (!Array.isArray(sections) || sections.length === 0) return '';
-    return sections.map(s => {
+    const parts = await Promise.all(sections.map(async s => {
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      if (layout === 'editor') {
-        return s.wysiwyg || s.text || s.content || '';
-      }
+      if (layout === 'editor') return s.wysiwyg || '';
       if (layout === 'image') {
-        const img = s.img || s.image;
-        const url = img && typeof img === 'object'
-          ? (img.url || img.source_url || '')
-          : (typeof img === 'string' ? img : '');
-        return url ? `<figure><img src="${url}" alt="${s.caption || ''}"></figure>` : '';
+        const url = await resolveImgUrl(s.img || s.image);
+        return url ? `<figure><img src="${url}" alt="${s.caption || ''}" loading="lazy"></figure>` : '';
       }
-      // Generic fallback for any other layouts
-      return s.wysiwyg || s.text || s.content || s.body || '';
-    }).filter(Boolean).join('\n');
+      return s.wysiwyg || ''; // any other layout — try wysiwyg
+    }));
+    return parts.filter(Boolean).join('\n');
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -491,9 +501,8 @@
     }
 
     fetchArticle()
-      .then(post => {
+      .then(async post => {
         const acf = post.acf || {};
-        console.log('[article] acf keys:', Object.keys(acf), JSON.stringify(acf).slice(0, 500));
 
         // Find flexible content: check known field 'content' first, then scan all ACF fields
         const flexRows = (() => {
@@ -504,14 +513,11 @@
           return [];
         })();
 
-        const title    = stripHtml(post.title?.rendered || 'Untitled');
-        // 1. WP standard content  2. ACF text field 'test'  3. flexible content rows
-        // 4. any ACF field that looks like HTML content
-        const content  = (post.content?.rendered || '').trim()
-                      || (acf.test || '').trim()
-                      || renderSections(flexRows)
-                      || Object.values(acf).find(v => typeof v === 'string' && v.length > 20 && /<[a-z]/i.test(v))
-                      || '';
+        const title   = stripHtml(post.title?.rendered || 'Untitled');
+        // Render all flexible content rows (text + images); fall back to WP content field
+        const content = await renderSections(flexRows)
+                     || (post.content?.rendered || '').trim()
+                     || '';
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';

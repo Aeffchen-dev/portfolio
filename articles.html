@@ -378,16 +378,28 @@
     return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
   }
 
-  function buildCard(post) {
+  async function resolveImgUrl(img) {
+    if (!img) return '';
+    if (typeof img === 'object') return img.url || img.source_url || '';
+    const id = parseInt(img, 10);
+    if (!id) return typeof img === 'string' ? img : '';
+    try {
+      const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(5000) });
+      if (r.ok) return (await r.json()).source_url || '';
+    } catch(e) {}
+    return '';
+  }
+
+  async function buildCard(post) {
     const title    = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered,'text/html').body.textContent : 'Untitled';
     const slug     = post.slug || '';
     const date     = formatDate(post.date);
     const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
     const acf      = post.acf || {};
-    const flexRows = Array.isArray(acf.content) ? acf.content : [];
+    const imgRow   = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
     const thumb    = post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail?.source_url
                   || post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                  || flexRows.find(s => s.acf_fc_layout === 'image')?.img?.url
+                  || await resolveImgUrl(imgRow?.img || imgRow?.image)
                   || '';
 
     const thumbHtml = thumb
@@ -448,12 +460,12 @@
     throw new Error('No articles found — check the WordPress REST API settings for the articles post type');
   }
 
-  fetchArticleList().then(posts => {
+  fetchArticleList().then(async posts => {
     const list  = document.getElementById('articleList');
     const count = document.getElementById('articleCount');
     if (posts.length === 0) { list.innerHTML = '<div class="articles-empty">No articles yet.</div>'; return; }
     count.textContent = posts.length + (posts.length === 1 ? ' article' : ' articles');
-    list.innerHTML = posts.map(buildCard).join('');
+    list.innerHTML = (await Promise.all(posts.map(buildCard))).join('');
   }).catch(err => {
     console.error('[articles] fetch failed:', err);
     const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
