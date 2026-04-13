@@ -442,13 +442,6 @@
     }).filter(Boolean).join('\n');
   }
 
-  const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
-    'tags','categories','users','comments','settings','themes','plugins','blocks',
-    'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
-    'menu-items','menu-locations','templates','template-parts','global-styles',
-    'navigation','font-families','font-collections','pattern-directory',
-    'block-types','block-patterns','block-pattern-categories']);
-
   const params = new URLSearchParams(window.location.search);
   const slug   = params.get('slug');
   const postId = params.get('id');
@@ -465,18 +458,24 @@
     }
 
     async function fetchArticle() {
-      // Discover non-core CPT routes from WP REST API root
-      let bases = [];
+      const knownFirst = ['articles', 'article'];
+      const SKIP = new Set(['projects', 'project']);
+      let discoveredOther = [];
       try {
         const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
         if (idx?.routes) {
-          bases = Object.keys(idx.routes)
-            .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$$/)?.[1])
-            .filter(b => b && !WP_CORE.has(b));
-          console.log('[article] discovered CPT bases:', bases);
+          const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+            'tags','categories','users','comments','settings','themes','plugins','blocks',
+            'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+            'menu-items','menu-locations','templates','template-parts','global-styles',
+            'navigation','font-families','font-collections','pattern-directory',
+            'block-types','block-patterns','block-pattern-categories']);
+          discoveredOther = Object.keys(idx.routes)
+            .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+            .filter(b => b && !WP_CORE.has(b) && !SKIP.has(b) && !knownFirst.includes(b));
         }
       } catch(e) {}
-      for (const b of ['articles','article']) { if (!bases.includes(b)) bases.push(b); }
+      const bases = [...knownFirst, ...discoveredOther];
 
       let lastErr;
       for (const base of bases) {

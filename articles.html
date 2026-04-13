@@ -405,32 +405,33 @@
 </a>`;
   }
 
-  // Core WP v2 endpoints — exclude from CPT discovery
-  const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
-    'tags','categories','users','comments','settings','themes','plugins','blocks',
-    'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
-    'menu-items','menu-locations','templates','template-parts','global-styles',
-    'navigation','font-families','font-collections','pattern-directory',
-    'block-types','block-patterns','block-pattern-categories']);
+  // Known non-article CPTs to skip during discovery
+  const SKIP_BASES = new Set(['projects','project']);
 
-  // Query the WP REST API root to discover registered CPT routes,
-  // then try each one until we get a successful response.
   async function fetchArticleList() {
     const LIST_FIELDS = 'id,title,date,slug,acf,_links';
-    // Discover non-core routes from WP REST index
-    let bases = [];
+
+    // Try known article bases first, then fall back to any other discovered CPT
+    // (excluding projects and other known non-article types)
+    const knownFirst = ['articles', 'article'];
+    let discoveredOther = [];
     try {
       const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
       if (idx?.routes) {
-        bases = Object.keys(idx.routes)
-          .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$$/)?.[1])
-          .filter(b => b && !WP_CORE.has(b));
-        console.log('[articles] discovered CPT bases:', bases);
+        const WP_CORE = new Set(['posts','pages','media','types','statuses','taxonomies',
+          'tags','categories','users','comments','settings','themes','plugins','blocks',
+          'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+          'menu-items','menu-locations','templates','template-parts','global-styles',
+          'navigation','font-families','font-collections','pattern-directory',
+          'block-types','block-patterns','block-pattern-categories']);
+        discoveredOther = Object.keys(idx.routes)
+          .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+          .filter(b => b && !WP_CORE.has(b) && !SKIP_BASES.has(b) && !knownFirst.includes(b));
+        console.log('[articles] discovered other CPT bases:', discoveredOther);
       }
     } catch(e) {}
-    // Always include known guesses as fallback
-    for (const b of ['articles','article']) { if (!bases.includes(b)) bases.push(b); }
 
+    const bases = [...knownFirst, ...discoveredOther];
     let lastErr;
     for (const base of bases) {
       const r = await fetch(
@@ -445,9 +446,10 @@
       }
       const posts = await r.json();
       if (!Array.isArray(posts)) throw new Error(posts?.code || posts?.message || 'unexpected response');
+      console.log(`[articles] loaded ${posts.length} posts from /${base}`);
       return posts;
     }
-    throw lastErr || new Error('rest_no_route');
+    throw lastErr || new Error('rest_no_route — enable REST API for the articles post type in WordPress');
   }
 
   fetchArticleList().then(posts => {
