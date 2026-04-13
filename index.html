@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060606" id="themeColor">
+  <title>Jana Gramlich – Product Designer based in Berlin</title>
+  <meta name="description" content="Hi there! I am Jana, a product designer based in Berlin. I create data-driven digital experiences with a touch of motion and joy of use.">
+  <link rel="canonical" href="https://portfolio.janagramlich.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jana Gramlich • Portfolio">
+  <meta property="og:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
+  <meta property="og:url" content="https://portfolio.janagramlich.com/">
+  <meta property="og:image" id="ogImage" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jana Gramlich • Portfolio">
+  <meta name="twitter:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
+  <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <link rel="icon" id="favicon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
+    body {
+      font-family:'DM Sans', sans-serif;
+      font-optical-sizing:auto;
+      background:#060606;
+      color:#fff;
+      overflow-x:hidden;
+    }
+    img { display:block; }
+    button { cursor:pointer; border:none; background:none; font-family:inherit; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV === */
+    .nav {
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:calc(100vw - 16px);
+      border-radius:0;
+      background:transparent;
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      overflow:hidden;
+      z-index:100;
+    }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
+    .nav::before {
+      content:'';
+      position:absolute;
+      width:164%; height:227%;
+      left:-28%; top:-8%;
+      background:url('images/nav-bg.png') center/cover no-repeat;
+      opacity:var(--nav-bg-opacity, 0);
+      z-index:-1;
+    }
+    .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); }
+    .nav.is-open::before { opacity:0.65; }
+    .nav__bar {
+      height:33px; display:flex; align-items:center;
+      padding:0 16px; cursor:pointer;
+      width:100%;
+      transition:padding .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__bar {
+      padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      /* mobile override below in @media (max-width:639px) */
+    }
+    .nav__logo {
+      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
+    }
+    .nav__menu {
+      display:flex; flex-direction:row; align-items:center; gap:3px;
+      width:15px; height:13px; flex-shrink:0; position:relative;
+      margin-left:auto; overflow:visible;
+    }
+    .nav__menu > span:not(.nav__close-icon) {
+      display:block; width:3px; height:3px; border-radius:50%;
+      background:#fff; flex-shrink:0;
+      transition:opacity .25s ease;
+    }
+    .nav__close-icon {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff;
+      transform:rotate(-45deg) scale(0.7);
+    }
+    .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
+    /* hover / tap feedback */
+    .nav__menu { transition:transform .2s cubic-bezier(.4,0,.2,1); }
+    .nav__menu:hover { transform:scale(1.15); }
+    .nav__menu:active { transform:scale(0.9); }
+    .nav__link:active { opacity:0.5 !important; transform:translateY(0) !important; }
+    .nav__linkedin { transition:opacity .2s ease, transform .2s cubic-bezier(.4,0,.2,1); }
+    .nav__linkedin:hover { opacity:0.8; }
+    .nav__linkedin:active { transform:scale(0.95); }
+    .modal-open #mainNav { pointer-events:none; }
+    .nav__expand {
+      display:grid; grid-template-rows:0fr;
+      transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__expand { padding-top:33px; }
+    .nav.is-open .nav__expand { grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+
+    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__link {
+      display:block;
+      font-size:32px; font-weight:400; color:#fff; line-height:1.4;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease, color .15s;
+    }
+    .nav.is-open .nav__link {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s;
+    }
+    .nav__link:hover { color:rgba(255,255,255,.5); }
+
+    .nav__divider {
+      height:1px; background:rgba(255,255,255,0.12);
+      margin:16px 0;
+      opacity:0; transition:opacity .2s ease;
+    }
+    .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
+
+    .nav__contact {
+      padding:40px 16px 24px;
+      opacity:0; transform:translateY(6px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__contact {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .34s, transform .25s ease .34s;
+    }
+    .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
+    .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#989898; margin-top:4px; }
+    .nav__linkedin {
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#acb0ff; color:#171717;
+      border-radius:999px; padding:8px 10px;
+      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      margin-top:40px;
+    }
+
+    /* === PAGE WRAPPER === */
+    .page-wrapper { background:#060606; }
+
+    /* === HOME CONTENT === */
+    .home-content {
+      padding:max(40px, 8dvh) 16px 40px;
+      min-height:100dvh;
+      display:flex; flex-direction:column;
+    }
+    .home-hero { max-width:580px; margin-left:auto; margin-right:auto; width:100%; min-height:32dvh; display:flex; flex-direction:column; justify-content:center; padding-bottom:4dvh; }
+    .home-intro {
+      font-size:21px; font-weight:400;
+      line-height:1.4; color:#989898;
+      margin-bottom:0;
+    }
+    .desktop-br { display:none; }
+    .btn-about {
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(255,255,255,0.15); border-radius:999px;
+      padding:8px 10px;
+      font-size:12px; font-weight:500; color:#fff;
+      letter-spacing:0.48px; text-transform:uppercase;
+      width:fit-content;
+      margin-bottom:48px;
+      transition:border-color .4s ease-in-out;
+    }
+    .btn-about:hover { border-color:#989898; }
+    .btn-about__dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#acb0ff;
+      flex-shrink:0;
+    }
+
+    /* === WORK LIST === */
+    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; }
+    .section-label__prefix { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
+    .section-label__links { display:flex; gap:20px; flex-wrap:nowrap; }
+    .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
+    .section-label__link:hover { color:#fff; }
+    .work-list { display:flex; flex-direction:column; gap:0; margin-left:-8px; margin-right:-8px; }
+    .work-item { cursor:pointer; position:relative; }
+    .work-item__image {
+      width:100%; height:55vh;
+      border-radius:4px; overflow:hidden;
+      background:#141414; margin-bottom:0; position:relative; z-index:2; will-change:transform,opacity;
+    }
+    .work-item__image img,
+    .work-item__image video { width:100%; height:130%; object-fit:cover; will-change:transform; }
+    .work-item__body {
+      background:#141414; border-radius:4px;
+      padding:8px; aspect-ratio:4/3;
+      position:relative; z-index:1; margin-top:8px; will-change:transform,opacity;
+      display:flex; flex-direction:column;
+    }
+    .work-item__year { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; }
+    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:56px; }
+    .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
+    .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
+    .work-item__view { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
+    .work-item__arrow { display:inline-flex; align-self:center; color:rgba(255,255,255,0.5); transition:transform .4s ease-in-out, color .4s ease-in-out; }
+    .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
+    .work-item + .work-item .work-item__image { margin-top:8px; }
+    .cv-card { opacity:0; }
+    .cv-card--about  { opacity:1; }
+    .cv-card--quotes { opacity:1; }
+
+    /* === QUOTES CARD === */
+    .cv-card.cv-card--quotes  { display:block; padding:8px 8px 8px; position:relative; overflow:hidden; height:auto; text-align:left; }
+    .cv-quotes__label { font-size:14px; font-weight:500; color:#fff; margin:0 0 40px; }
+    .cv-quotes__text  { font-size:14px; font-weight:400; line-height:1.4; color:#989898; font-style:normal; margin:0 0 40px; padding:0; transition:opacity .35s ease; overflow:hidden; }
+    .cv-quotes__name  { display:block; font-size:11px; font-weight:500; color:#989898; transition:opacity .35s ease; }
+    .cv-quotes__pos   { display:block; font-size:11px; font-weight:400; color:#989898; transition:opacity .35s ease; }
+    /* Circle progress indicator */
+    .cv-quotes__ring-wrap { position:absolute; bottom:10px; right:10px; width:24px; height:24px; cursor:pointer; }
+    .cv-quotes__ring-wrap svg { width:24px; height:24px; display:block; }
+    @media (min-width:640px) {
+      .work-item { display:flex; flex-direction:column; }
+      .work-item__image { flex:1; min-height:0; height:auto; aspect-ratio:3/4; }
+      .work-item__image img { width:100%; height:100%; object-fit:cover; }
+      .work-item__body {
+        background:none; border-radius:0; padding:8px 0 0; flex:0 0 auto;
+        aspect-ratio:auto; min-height:auto;
+        display:grid; grid-template-columns:auto 1fr auto; column-gap:80px; row-gap:2px; align-items:start;
+      }
+      .work-item__client { grid-column:1; grid-row:1; margin-top:0; }
+      .work-item__year { grid-column:1; grid-row:2; }
+      .work-item__footer { grid-column:3; grid-row:1; justify-content:flex-end; margin-top:0; }
+      .work-item__title { grid-column:2; grid-row:1 / span 3; align-self:start; max-width:280px; }
+      .view-text { display:none; }
+    }
+
+    /* === CV SECTION === */
+    .cv-section { margin-top:120px; width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; padding-left:8px; padding-right:8px; }
+    .cv-section-heading { color:#fff; margin-bottom:40px; font-size:21px; font-weight:400; line-height:1.4; padding-left:8px; padding-right:8px; }
+    .cv-section-sub { color:#989898; }
+    @media (min-width:640px) { .cv-section-heading { margin-bottom:32px; font-size:clamp(19px,1.8vw,22px); } }
+    @media (min-width:640px) { .cv-section { width:100%; max-width:580px; margin-left:auto; margin-right:auto; } }
+    .cta-section {
+      margin-top:100px;
+      padding-left:8px; padding-right:8px; padding-bottom:16px;
+      display:flex; flex-direction:column;
+    }
+    .cta-section__texts { margin-bottom:40px; }
+    .cta-section__label {
+      font-size:21px; font-weight:400; line-height:1.1; color:#989898;
+      margin-bottom:4px;
+    }
+    .cta-section__heading {
+      font-size:21px; font-weight:400; line-height:1.1; color:#fff;
+    }
+    @media (min-width:640px) {
+      .cta-section__label, .cta-section__heading { font-size:clamp(21px, 2.5vw, 32px); text-align:center; }
+      .cta-section { max-width:none; margin-left:0; margin-right:0; margin-top:0; align-items:flex-start; }
+    }
+    .cv-section-label {
+      font-size:12px; font-weight:500; color:rgba(255,255,255,0.35);
+      letter-spacing:0.48px; text-transform:uppercase;
+      margin-top:32px; margin-bottom:8px; padding-left:16px; padding-right:16px;
+    }
+    .cv-card {
+      display:flex; align-items:flex-start; gap:16px;
+      padding:8px; background:#141414;
+      border-radius:4px; margin-bottom:8px;
+      text-decoration:none; color:inherit;
+    }
+    a.cv-card { transition:background .4s ease-in-out; }
+    a.cv-card:hover { background:rgba(255,255,255,0.1); }
+    .cv-card__logo {
+      width:60px; height:60px; background:#000;
+      border-radius:2px; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; overflow:hidden;
+    }
+    .cv-card__logo img { width:32px; height:32px; object-fit:contain; }
+    .cv-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; }
+    .cv-card__company { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .cv-card__role { font-size:14px; font-weight:400; color:#989898; margin-top:1px; }
+    .cv-card__date {
+      font-size:9px; font-weight:500; color:#989898;
+      margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
+    }
+    .cv-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; line-height:1; display:flex; }
+    .arrow-icon { display:block; }
+    /* About + Awards card */
+    .cv-card--about { display:block; padding:12px 8px; }
+    .cv-about__section-label { font-size:14px; font-weight:500; color:#fff; margin:0 0 4px; }
+    #cv-about-text { max-width:420px; }
+    #cv-about-text p { font-size:14px; font-weight:400; color:#989898; line-height:1.3; margin:0 0 6px; }
+    #cv-about-text p:last-child { margin-bottom:0; }
+    .cv-about__awards-label { font-size:14px; font-weight:500; color:#fff !important; margin:32px 0 4px !important; }
+    /* shared grid so col 2 has one consistent left edge across all rows */
+    .cv-awards-grid { display:grid; grid-template-columns:max-content 1fr; row-gap:2px; column-gap:32px; }
+    .cv-award { display:contents; }
+    .cv-award__title { font-size:14px; font-weight:400; color:#989898; white-space:nowrap; }
+    .cv-award__company { font-size:14px; font-weight:400; color:#989898; }
+
+    /* === CTA FOOTER BOX === */
+    .cta-footer-box { display:contents; }
+
+    /* === HOME FOOTER === */
+    .home-footer {
+      display:flex; justify-content:space-between; align-items:center;
+      padding-top:40px;
+      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+    }
+    .home-footer a { color:#fff; transition:opacity .4s ease-in-out; }
+    .home-footer a:hover { opacity:.5; }
+
+    /* === MODAL === */
+    .modal {
+      position:fixed;
+      bottom:0; left:0;
+      width:100vw; max-height:95dvh;
+      z-index:200;
+      border-radius:16px 16px 0 0;
+      overflow:hidden;
+      transform:translateY(100%);
+      transition:transform .5s cubic-bezier(.4,0,.2,1);
+      pointer-events:none;
+    }
+    .modal.is-open {
+      transform:translateY(0);
+      pointer-events:auto;
+    }
+    .modal__scroll {
+      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+      background:#f2f2f2; padding:24px 8px;
+      scrollbar-width:none;
+      color:#111;
+    }
+    .modal__scroll::-webkit-scrollbar { display:none; }
+
+    /* === PAGE HEADER (modal) === */
+    .page-header { background:#f2f2f2; }
+    .modal-header-left { display:flex; flex-direction:column; }
+    .eyebrow-client { font-size:14px; font-weight:500; color:#111; line-height:1.3; }
+    .modal-year { font-size:14px; font-weight:400; color:#555; line-height:1.3; margin-top:4px; }
+    .modal-header-arrow { display:none !important; }
+    .modal-close-bar {
+      position:fixed; top:0; left:0; right:0; height:5vh;
+      background:#000; color:#fff;
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      font-size:11px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      z-index:201; cursor:pointer;
+      opacity:0; pointer-events:none;
+      transition:opacity .5s cubic-bezier(.4,0,.2,1);
+    }
+    .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
+    .modal-close-bar__icon {
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .modal-close-bar__icon svg { display:block; }
+
+    /* === NEXT PROJECT BUTTON === */
+    .next-project-btn {
+      display:block; width:100%; text-align:center; cursor:pointer;
+      padding:64px 16px 48px; background:none; color:inherit;
+      border-top:1px solid rgba(0,0,0,.1); margin-top:24px;
+      font-family:'DM Sans',sans-serif;
+    }
+    .next-project-btn__label {
+      display:block;
+      font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+      color:rgba(0,0,0,.35); margin-bottom:12px;
+    }
+    .next-project-btn__title {
+      display:block;
+      font-size:clamp(36px,8vw,64px); font-weight:400; line-height:1;
+      letter-spacing:-0.02em; color:#111;
+      transition:opacity .2s;
+    }
+    .next-project-btn:hover .next-project-btn__title { opacity:.5; }
+
+    .hero__title { display:none; }
+    .modal-name {
+      display:none;
+    }
+    .hero__desc {
+      margin-top:16px;
+      display:grid; grid-template-columns:1fr; gap:16px;
+      max-width:400px; margin-left:auto; margin-right:auto; text-align:left;
+    }
+    .hero__desc p { font-size:14px; font-weight:400; line-height:1.3; color:#111; }
+
+    /* === BLOCKS GRID === */
+    .blocks { padding:24px 0; }
+    .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:72px; }
+    .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
+    .block-image { background:#e8e8e8; }
+    .block-image img { width:100%; height:auto; display:block; }
+    .block-video-embed { background:#000; aspect-ratio:16/9; position:relative; overflow:hidden; }
+    .block-video-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+    .block-video-mp4 { background:#000; }
+    .block-video-mp4 video { width:100%; height:auto; display:block; }
+    .block-figma { background:#e8e8e8; position:relative; overflow:hidden; }
+    .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+
+    /* === PROJECT INFO & LINKS === */
+    .project-info { color:#111; padding:0; }
+    .info-meta { margin-bottom:16px; width:max-content; }
+    .info-row { display:grid; grid-template-columns:80px 1fr; gap:0 20px; padding:2px 0; }
+    .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
+    .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
+    .info-desc { font-size:14px; font-weight:400; line-height:1.3; color:#111; margin-top:0; max-width:500px; }
+    .project-links { margin-top:32px; }
+    .project-link {
+      display:block;
+      font-size:clamp(40px, 8vw, 60px);
+      font-weight:400; line-height:1;
+      text-align:center; text-transform:uppercase; color:#111;
+      border-top:1px solid rgba(0,0,0,.2); padding:0;
+      transition:opacity .4s ease-in-out;
+    }
+    .project-link:last-child { border-bottom:1px solid rgba(0,0,0,.2); }
+    .project-link:hover { opacity:.5; }
+
+    /* === MODAL HERO === */
+    .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
+    .modal__hero img,
+    .modal__hero video { width:100%; display:block; aspect-ratio:8/5; object-fit:cover; }
+
+    /* === MODAL BACKDROP === */
+    .modal-backdrop {
+      position:fixed; inset:0; z-index:199;
+      background:transparent;
+      pointer-events:none;
+      transition:background .5s cubic-bezier(.4,0,.2,1);
+    }
+    .modal-backdrop.is-active {
+      background:rgba(0,0,0,0.6);
+      pointer-events:auto;
+    }
+    @media (max-width:1023px) {
+      .modal-backdrop.is-active { background:transparent; pointer-events:auto; }
+    }
+
+    /* === TABLET + DESKTOP === */
+    @media (min-width:640px) {
+      .nav { top:8px; left:50%; transform:translateX(-50%); }
+      .home-content { padding:0 8px 8px; }
+      .home-intro { text-align:left; font-size:clamp(21px, 2.5vw, 32px); }
+      .desktop-br { display:block; }
+      .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
+      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
+      .modal.is-open { transform:translateX(-50%) translateY(0); }
+      .modal__scroll { padding:24px 8px; max-height:95dvh; }
+      .modal__hero { margin:-24px -8px 8px; }
+      .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
+      .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
+      .project-links { margin-top:64px; text-align:center; }
+      .project-link { font-size:clamp(56px, 6vw, 96px); }
+    }
+    /* === MOBILE ONLY === */
+    @media (max-width:639px) {
+      /* 8px side padding; work-list flattened so Douglas PR can interleave */
+      .home-content { display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
+      .home-hero          { order:1; }
+      .section-label      { order:2; }
+      .work-list          { display:contents; }
+      .exp-quotes-row     { order:9; display:flex; flex-direction:column; }
+      .about-quotes-row   { display:flex; flex-direction:column; }
+      /* cards fill viewport to 8px from bottom */
+      .cv-section         { min-height:calc(100dvh - 8px); }
+      .cta-footer-box     { order:10; display:contents; }
+      .cta-section        { order:10; padding-left:8px; padding-right:8px; }
+      .home-footer        { order:11; }
+      /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
+      .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
+      .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
+      .work-list .work-item:nth-child(5) { order:5; } /* Douglas Hybrid 2022 */
+      .work-list .work-item:nth-child(3) { order:6; } /* Zalando 2020 */
+      .work-list .work-item:nth-child(2) { order:7; } /* DMEXCO 2020 */
+      .work-list .work-item:nth-child(4) { order:8; } /* The Makery 2019 */
+      /* no line break in grey experience text */
+      .cv-section-heading br { display:none; }
+      /* modal header: client + title inline */
+      .modal-header-left { flex-direction:row; align-items:baseline; gap:16px; }
+      .modal-year { margin-top:0; }
+      /* nav bar starts at 8px so JS doesn't cause a flash on load */
+      .nav__bar { padding-left:8px; padding-right:8px; }
+      /* expanded nav: 8px side padding */
+      .nav__links  { padding-left:8px; padding-right:8px; }
+      .nav__contact { padding-left:8px; padding-right:8px; }
+    }
+    /* Tablet only */
+    @media (min-width:640px) and (max-width:1023px) {
+      /* 2-col grid; work-list uses display:contents so its items join the grid alongside hero-side */
+      .home-content { display:grid; grid-template-columns:1fr 1fr; column-gap:8px; row-gap:32px; padding-left:8px; padding-right:8px; }
+      .home-hero     { grid-column:1/3; order:1; margin-top:80px; max-width:none; margin-left:0; margin-right:0; }
+      .section-label { grid-column:1/3; order:2; margin-top:0; }
+      /* Flatten work-list children into home-content grid */
+      .work-list { display:contents; }
+      /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
+      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; margin-top:-32px; } /* About You 2024 — full width */
+      .work-list .work-item:nth-child(1) .work-item__image { aspect-ratio:16/9; }
+      .work-item--hero-side { order:4; display:flex; }  /* Douglas PR 2023 */
+      .work-list .work-item:nth-child(5) { order:5; display:flex; } /* Douglas Hybrid 2022 */
+      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; } /* Zalando 2020 — full width */
+      .work-list .work-item:nth-child(3) .work-item__image { aspect-ratio:16/9; }
+      .work-list .work-item:nth-child(2) { order:7; }  /* DMEXCO 2020 */
+      .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
+      /* Experience full-width; about+quotes side by side below */
+      .exp-quotes-row  { display:contents; }
+      .cv-section-wrap { grid-column:1/3; order:9; }
+      .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
+      .about-quotes-row { grid-column:1/3; order:10; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; }
+      .cv-section .cv-card:last-child { margin-bottom:8px; padding-bottom:8px; }
+      .cv-card--about { padding-top:8px; }
+      .cv-card.cv-card--quotes  { align-self:stretch; height:auto; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; box-sizing:border-box; padding-top:8px; padding-bottom:8px; }
+      .cv-card.cv-card--quotes .cv-quotes__label { font-size:14px; text-align:left; margin-bottom:0; width:100%; }
+      .cv-card.cv-card--quotes .cv-quotes__text  { margin-top:auto; margin-bottom:16px; width:100%; padding:0; }
+      .cv-card.cv-card--quotes .cv-quotes__attr  { margin-bottom:auto; text-align:left; width:100%; }
+      /* Widen experience cards but not the about/quotes cards */
+      .cv-section .cv-card { width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
+      .cta-footer-box  { grid-column:1/3; order:11; display:contents; }
+      .cta-section     { grid-column:1/3; order:11; margin-top:70px; justify-content:center; align-items:center; }
+      .cta-section__label, .cta-section__heading { text-align:center; }
+      .home-footer     { grid-column:1/3; order:12; padding-bottom:8px; }
+      /* nav bar starts at 8px so JS doesn't cause a flash on load */
+      .nav__bar { padding-left:8px; padding-right:8px; }
+      /* No description text on half-width (2-col) tiles */
+      .work-item--hero-side .work-item__title,
+      .work-list .work-item:nth-child(5) .work-item__title,
+      .work-list .work-item:nth-child(2) .work-item__title,
+      .work-list .work-item:nth-child(4) .work-item__title { display:none; }
+      /* Portrait images (3/4) with parallax re-enabled — start showing bottom of image */
+      .work-item__image img { height:130%; }
+      /* Info: meta col left, description text floats right (same as desktop) */
+      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .info-meta { margin-bottom:0; }
+      /* My Experience heading centered */
+      .cv-section-heading { text-align:center; }
+      .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
+    }
+    @media (min-width:1024px) {
+      /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
+      .nav { top:16px; left:calc(50% - 154px); transform:translateX(-50%); }
+      .home-content {
+        padding:0 16px 0;
+        display:grid;
+        grid-template-columns:repeat(6,1fr) 300px;
+        column-gap:16px;
+        align-items:start;
+      }
+      .home-hero  { grid-column:1/7; grid-row:1; max-width:none; margin-left:0; margin-right:0; margin-top:80px; margin-bottom:0; display:flex; align-items:center; justify-content:center; }
+      .home-intro { text-align:center; font-size:clamp(21px,2.5vw,32px); line-height:1.15; }
+      .section-label { grid-column:1/7; grid-row:2; margin-top:0; }
+      /* Project layout: work-list flattened into home-content grid */
+      .work-list { display:contents; }
+      /* Row 1 — About You 2/3 · Douglas PR 1/3 */
+      .work-list .work-item:nth-child(1) { grid-column:1/5; grid-row:3; }
+      .work-item--hero-side              { grid-column:5/7; grid-row:3; }
+      /* Row 2 — Douglas Hybrid 1/2 · DMEXCO 1/2 */
+      .work-list .work-item:nth-child(5) { grid-column:1/4; grid-row:4; }
+      .work-list .work-item:nth-child(2) { grid-column:4/7; grid-row:4; }
+      /* Row 3 — The Makery 1/3 · Zalando 2/3 */
+      .work-list .work-item:nth-child(4) { grid-column:1/3; grid-row:5; }
+      .work-list .work-item:nth-child(3) { grid-column:3/7; grid-row:5; }
+      /* All project images same fixed height */
+      .work-item__image { aspect-ratio:unset; height:500px; flex:none; }
+      /* 1/3 tiles: hide description only */
+      .work-item--hero-side .work-item__title,
+      .work-list .work-item:nth-child(4) .work-item__title  { display:none; }
+      /* Restore 130% image height for parallax (≥640px rule sets 100%) */
+      .work-item__image img { height:130%; }
+      /* 50px bottom margin between project rows */
+      .work-item { margin-bottom:50px; }
+      /* CV sidebar — exp-quotes-row is the sticky scroll container */
+      .exp-quotes-row     { grid-column:7; grid-row:1/span 999; align-self:stretch; min-height:0; position:sticky; top:0; height:100dvh; overflow-y:auto; display:flex; flex-direction:column; justify-content:flex-start; padding:16px 0 16px; }
+      .cv-section         { position:static; height:auto; overflow-y:visible; padding:0; margin-top:0; max-width:none; width:100%; display:flex; flex-direction:column; justify-content:flex-start; }
+      .about-quotes-row   { display:flex; flex-direction:column; }
+      .cv-section-heading { font-size:16px; text-align:left; padding-left:0; padding-right:0; line-height:1.5; margin-top:0; margin-bottom:16px; }
+      .home-intro.cv-section-heading { text-align:left; font-size:16px; }
+      .cv-card:last-child { margin-bottom:0; }
+      .cv-section-heading br { display:none; }
+      .cv-card--about  { margin-top:8px; }
+      .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
+      .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
+      .work-list .work-item:nth-child(4),
+      .work-list .work-item:nth-child(3) { margin-bottom:50px; }
+      .cta-section        { margin-top:50px; justify-content:center; align-items:center; padding:0; }
+      .cta-section__label, .cta-section__heading { text-align:center; }
+      .home-footer        { padding-top:16px; }
+      .nav__link[href="#about"],
+      .section-label__link[href="#about"] { display:none; }
+      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .info-desc { max-width:none; }
+      .info-meta { margin-bottom:0; }
+      .modal__hero img,
+      .modal__hero video { aspect-ratio:16/7; }
+      .modal__scroll { padding:24px 16px; }
+      .modal__hero { margin:-24px -16px 8px; }
+      .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
+      .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
+      .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span><span class="nav__close-icon"><svg width="7" height="7" viewBox="0 0 7 7" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="1" y1="1" x2="6" y2="6"/><line x1="6" y1="1" x2="1" y2="6"/></svg></span></div>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__links">
+          <a href="#work" class="nav__link">Work</a>
+          <a href="#about" class="nav__link">About</a>
+          <a href="archive.html" class="nav__link">Archive</a>
+          <a href="articles.html" class="nav__link">Articles</a>
+        </div>
+        <div class="nav__contact">
+          <p class="nav__contact-label">Contact</p>
+          <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
+          <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HOMEPAGE CONTENT -->
+  <div class="home-content">
+    <div class="home-hero">
+      <p class="home-intro"><span style="color:#fff">I design digital products and services,<br class="desktop-br"></span> <span style="color:#989898">with over 10 years of experience.</span></p>
+    </div>
+
+    <div class="section-label" id="work">
+      <div class="section-label__links">
+        <a href="#work" class="section-label__link">Work <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#about" class="section-label__link">About <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="archive.html" class="section-label__link">Archive <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="articles.html" class="section-label__link">Articles <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+      </div>
+    </div>
+    <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
+      <div class="work-item__image">
+        <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
+        <video autoplay muted loop playsinline style="display:none"></video>
+      </div>
+      <div class="work-item__body">
+        <span class="work-item__year">2023</span>
+        <p class="work-item__client">Douglas</p>
+        <p class="work-item__title">Elevating the luxury beauty shopping experience across web and app. Redesigning the end-to-end customer journey for Europe's leading perfumery.</p>
+        <div class="work-item__footer">
+          <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+        </div>
+      </div>
+    </article>
+    <div class="work-list">
+      <article class="work-item" data-project="about-you">
+        <div class="work-item__image">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2024</span>
+          <p class="work-item__client">About You</p>
+          <p class="work-item__title">Building a scalable design system for a fashion platform used by millions. Establishing shared foundations to accelerate product teams across the organisation.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+      <article class="work-item" data-project="dmexco">
+        <div class="work-item__image">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2020</span>
+          <p class="work-item__client">DMEXCO</p>
+          <p class="work-item__title">Designing the digital event experience for Europe's leading marketing conference. Creating an intuitive platform for 40,000+ attendees to navigate sessions, speakers, and partners.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+      <article class="work-item" data-project="zalando">
+        <div class="work-item__image">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2020</span>
+          <p class="work-item__client">Zalando</p>
+          <p class="work-item__title">Connecting independent retailers to Europe's largest fashion platform. Helping local stores grow their business through seamless digital integration.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+      <article class="work-item" data-project="the-makery">
+        <div class="work-item__image">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2019</span>
+          <p class="work-item__client">The Makery</p>
+          <p class="work-item__title">Relaunching the brand and website for a Berlin-based creative marketplace. Crafting a visual identity and digital experience that connects local makers with their community.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+      <article class="work-item" data-project="douglas-hybrid">
+        <div class="work-item__image">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2022</span>
+          <p class="work-item__client">Douglas</p>
+          <p class="work-item__title">Bridging online and in-store experiences through a seamless hybrid app. Empowering beauty consultants and customers with tools that connect both worlds.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- EXPERIENCE + QUOTES ROW -->
+    <div class="exp-quotes-row">
+    <!-- CV SECTION -->
+    <div class="cv-section-wrap">
+    <div class="cv-section" id="about">
+      <p class="home-intro cv-section-heading">My Experience<span class="cv-section-sub"> combines branding and product design<br> for products used by millions of users.</span></p>
+      <a class="cv-card" href="https://aboutyou.com" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=aboutyou.com&sz=64" alt="About You">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">About You</p>
+          <p class="cv-card__role">UI/UX Lead Designer</p>
+          <p class="cv-card__date">Nov 24 – today</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.douglas.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo" style="background:#9bdcd2">
+          <img src="https://www.google.com/s2/favicons?domain=douglas.de&sz=64" alt="Douglas">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Thalia / Douglas</p>
+          <p class="cv-card__role">Teamlead UI/UX Design</p>
+          <p class="cv-card__date">Jul 23 – Oct 24</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.thalia.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo" style="background:#007A47">
+          <img src="https://www.google.com/s2/favicons?domain=thalia.de&sz=64" alt="Thalia" style="filter:brightness(0) invert(1)">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Thalia / Douglas</p>
+          <p class="cv-card__role">Senior UI/UX Designer</p>
+          <p class="cv-card__date">Feb 21 – Jun 23</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://navarra.is" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="images/navarra-favicon.svg" alt="Navarra.is" style="width:40px;height:40px">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Navarra.is</p>
+          <p class="cv-card__role">UX / UI Designer</p>
+          <p class="cv-card__date">Jul 17 – Dec 20</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://ag-prop.com/" target="_blank" rel="noopener">
+        <div class="cv-card__logo">
+          <img src="https://www.google.com/s2/favicons?domain=ag-prop.com&sz=64" alt="ag-prop">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">ag-prop</p>
+          <p class="cv-card__role">UX / UI Designer, Internship</p>
+          <p class="cv-card__date">Oct 16 – Nov 16</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.dhbw-stuttgart.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo" style="background:#fff">
+          <img src="https://www.google.com/s2/favicons?domain=dhbw-stuttgart.de&sz=64" alt="DHBW">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">DHBW Mediendesign</p>
+          <p class="cv-card__role">Bachelor of Arts</p>
+          <p class="cv-card__date">Oct 14 – Sept 17</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.khio.no" target="_blank" rel="noopener">
+        <div class="cv-card__logo" style="background:#fff">
+          <img src="https://www.google.com/s2/favicons?domain=khio.no&sz=64" alt="KHiO">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">Kunsthøgskolen Oslo</p>
+          <p class="cv-card__role">Semester Abroad</p>
+          <p class="cv-card__date">Aug 16 – Dec 16</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <a class="cv-card" href="https://www.uni-stuttgart.de" target="_blank" rel="noopener">
+        <div class="cv-card__logo" style="background:#fff">
+          <img src="https://www.google.com/s2/favicons?domain=uni-stuttgart.de&sz=64" alt="Uni Stuttgart">
+        </div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">University of Stuttgart</p>
+          <p class="cv-card__role">Architecture</p>
+          <p class="cv-card__date">Oct 12 – Dec 13</p>
+        </div>
+        <span class="cv-card__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+      </a>
+
+      <div class="cv-card">
+        <div class="cv-card__logo"></div>
+        <div class="cv-card__body">
+          <p class="cv-card__company">attraktive grautöne</p>
+          <p class="cv-card__role">Spatial Design</p>
+          <p class="cv-card__date">Jan 14 – Jun 17</p>
+        </div>
+      </div>
+
+    </div>
+    </div><!-- /.cv-section-wrap -->
+
+    <!-- ABOUT + QUOTES ROW -->
+    <div class="about-quotes-row">
+
+      <!-- About + Awards box -->
+      <div class="cv-card cv-card--about">
+        <p class="cv-about__section-label">About</p>
+        <div id="cv-about-text"></div>
+        <p class="cv-about__awards-label">Awards</p>
+        <div class="cv-awards-grid">
+          <div class="cv-award">
+            <span class="cv-award__title">Red Dot Award</span>
+            <span class="cv-award__company">DMEXCO</span>
+          </div>
+          <div class="cv-award">
+            <span class="cv-award__title">Red Dot Award</span>
+            <span class="cv-award__company">Atlantic Food Labs</span>
+          </div>
+          <div class="cv-award">
+            <span class="cv-award__title">German Design Award</span>
+            <span class="cv-award__company">Stenon</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quotes card -->
+      <div class="cv-card cv-card--quotes">
+        <p class="cv-quotes__label">Nice Words</p>
+        <blockquote id="cv-quote-text" class="cv-quotes__text"></blockquote>
+        <div class="cv-quotes__attr">
+          <span id="cv-quote-name" class="cv-quotes__name"></span>
+          <span id="cv-quote-pos"  class="cv-quotes__pos"></span>
+        </div>
+        <div class="cv-quotes__ring-wrap">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- track -->
+            <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <!-- progress arc -->
+            <circle id="cv-quote-ring" cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.7)" stroke-width="1"
+              stroke-dasharray="56.55" stroke-dashoffset="56.55" stroke-linecap="round"
+              transform="rotate(-90 12 12)"/>
+            <!-- pause bars (shown while playing) -->
+            <g id="cv-icon-pause">
+              <rect x="9.25" y="8" width="1.5" height="8" rx="0.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+              <rect x="13.25" y="8" width="1.5" height="8" rx="0.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+            </g>
+            <!-- play triangle (shown while paused) -->
+            <polygon id="cv-icon-play" points="10,8 10,16 17,12" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5" stroke-linejoin="round" display="none"/>
+          </svg>
+        </div>
+      </div>
+
+    </div><!-- /.about-quotes-row -->
+
+    </div><!-- /.exp-quotes-row -->
+
+    <!-- CTA + FOOTER BOX -->
+    <div class="cta-footer-box">
+      <div class="cta-section">
+        <div class="cta-section__texts">
+          <p class="cta-section__label">Sounds interesting?</p>
+          <p class="cta-section__heading">Let's have a conversation</p>
+        </div>
+        <a href="mailto:hello@janagramlich.com" class="btn-about">
+          <span class="btn-about__dot"></span>
+          Contact
+        </a>
+      </div>
+
+      <footer class="home-footer">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="imprint.html">Imprint</a>
+      </footer>
+    </div>
+  </div>
+
+  </div><!-- /.page-wrapper -->
+
+  <!-- MODAL BACKDROP -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal-close-bar" id="modalCloseBar">
+    <span>Close</span>
+    <span class="modal-close-bar__icon">
+      <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0.5" y1="0.5" x2="6.5" y2="6.5" stroke="white" stroke-width="1" stroke-linecap="round"/>
+        <line x1="6.5" y1="0.5" x2="0.5" y2="6.5" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </span>
+  </div>
+  <div class="modal is-hidden" id="projectModal">
+    <div class="modal__scroll">
+      <div class="modal__hero">
+        <img id="modal-hero" src="" alt="">
+        <video id="modal-hero-video" autoplay muted loop playsinline style="display:none"></video>
+      </div>
+      <header class="page-header">
+        <div class="modal-header-left">
+          <span class="eyebrow-client" id="modal-client"></span>
+          <span class="modal-year" id="modal-year"></span>
+        </div>
+        <div class="hero__desc" id="modal-desc"></div>
+        <a class="modal-header-arrow" id="modal-header-arrow" href="#" target="_blank" rel="noopener" aria-label="View project">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </header>
+      <main class="blocks">
+        <div class="blocks__grid" id="modal-blocks"></div>
+      </main>
+      <section class="project-info">
+        <div class="info-meta" id="modal-facts"></div>
+        <p class="info-desc"    id="modal-role"></p>
+      </section>
+      <nav class="project-links" id="modal-links"></nav>
+    </div>
+  </div>
+
+  <script>
+    // === NAV ===
+    const nav = document.getElementById('mainNav');
+    // Hover opens/closes on tablet+desktop; click-opened nav ignores mouseleave
+    let _mlSuppress = false;
+    let _openedByHover = false;
+    let _hoverAllowAfter = 0; // timestamp: ignore mouseenter until this time passes
+    function closeByHover() {
+      _openedByHover = false;
+      // Block re-open for longer than the close animation (450ms) so the nav
+      // finishes expanding before any mouseenter can fire again
+      _hoverAllowAfter = Date.now() + 600;
+      nav.classList.remove('is-open');
+    }
+    nav.addEventListener('mouseenter', () => {
+      if (window.innerWidth < 640) return;          // no hover on mobile
+      if (Date.now() < _hoverAllowAfter) return;    // post-close suppression window
+      _openedByHover = true;
+      nav.classList.add('is-open');
+    });
+    nav.addEventListener('mouseleave', () => {
+      if (window.innerWidth >= 640 && !_mlSuppress && _openedByHover) closeByHover();
+    });
+    nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
+    nav.querySelector('.nav__logo').addEventListener('touchend', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); _openedByHover = false; nav.classList.add('is-open'); }
+    });
+    nav.querySelector('.nav__logo').addEventListener('click', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); _openedByHover = false; nav.classList.add('is-open'); }
+    });
+    nav.querySelector('.nav__menu').addEventListener('click', e => {
+      e.stopPropagation();
+      _openedByHover = false;
+      nav.classList.toggle('is-open');
+    });
+    nav.addEventListener('click', e => {
+      if (e.pointerType !== 'touch') return;
+      const onBar = e.target.closest('.nav__bar');
+      const isOpen = nav.classList.contains('is-open');
+      if (onBar && !isOpen) { e.preventDefault(); _openedByHover = false; nav.classList.add('is-open'); }
+      else if (onBar && !e.target.closest('a')) { _openedByHover = false; nav.classList.remove('is-open'); }
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#mainNav')) { _openedByHover = false; nav.classList.remove('is-open'); }
+    });
+    // Anchor links: explicit scroll so iOS fires correctly, close nav cleanly
+    function smoothScrollTo(href) {
+      const target = document.querySelector(href);
+      if (!target) return;
+      const isDesktop = window.innerWidth >= 1024;
+      // On desktop #about is inside the sticky sidebar scroll container — scroll the sidebar itself
+      if (isDesktop && href === '#about') {
+        const sidebar = document.querySelector('.exp-quotes-row');
+        const aboutRow = document.querySelector('.about-quotes-row');
+        if (sidebar && aboutRow) {
+          const scrollTo = aboutRow.getBoundingClientRect().top - sidebar.getBoundingClientRect().top + sidebar.scrollTop;
+          sidebar.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        }
+        return;
+      }
+      // Offset = nav height (mobile/tablet: 49px, desktop: 57px)
+      const offset = isDesktop ? -57 : -49;
+      const top = target.getBoundingClientRect().top + window.scrollY + offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+    nav.querySelectorAll('.nav__link[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        nav.classList.remove('is-open');
+        smoothScrollTo(link.getAttribute('href'));
+      });
+    });
+    document.querySelectorAll('.section-label__link[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        smoothScrollTo(link.getAttribute('href'));
+      });
+    });
+
+    // === SCROLL-DRIVEN NAV ===
+    (function() {
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      const navBar = nav.querySelector('.nav__bar');
+      const navMenu = nav.querySelector('.nav__menu');
+      const dots = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
+
+      const logoEl = navBar.querySelector('.nav__logo');
+
+      function updateNavScroll() {
+        if (nav.classList.contains('is-open')) return;
+        const isMobile = window.innerWidth < 1024;
+        // On mobile/tablet: t=0 at very top (full-width transparent), t=1 when scrolled
+        // On desktop: always pill (t=1)
+        const t = isMobile ? Math.min(1, window.scrollY / 40) : 1;
+        const fullW = window.innerWidth; // mobile: flush to viewport at top (0px margin)
+        // Hug-content pill: 16px pad + logo + 8px gap + 8px dot + 16px pad
+        const targetW = logoEl.offsetWidth + 48;
+        nav.style.width = lerp(fullW, targetW, t) + 'px';
+        nav.style.top = window.innerWidth >= 1024 ? '16px' : '8px';
+        nav.style.borderRadius = lerp(0, 24, t) + 'px';
+        nav.style.background = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
+        nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
+        const blur = lerp(0, 20, t);
+        const sat = lerp(100, 180, t);
+        const filterVal = t > 0.01 ? `blur(${blur}px) saturate(${sat}%)` : 'none';
+        nav.style.backdropFilter = filterVal;
+        nav.style.webkitBackdropFilter = filterVal;
+        nav.style.setProperty('--pill-w', targetW + 'px');
+        const hPad = isMobile ? Math.round(lerp(8, 16, t)) : 16;
+        navBar.style.paddingLeft = hPad + 'px';
+        navBar.style.paddingRight = hPad + 'px';
+        navBar.style.paddingBottom = '0';
+        // Dot merge: outer 2 fade + slide toward center, middle grows and turns purple
+        dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
+        dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
+        dots[0].style.transform = `translateX(${lerp(0, 6, t)}px)`;
+        dots[2].style.transform = `translateX(${lerp(0, -6, t)}px)`;
+        const r = Math.round(lerp(255, 172, t));
+        const g = Math.round(lerp(255, 176, t));
+        dots[1].style.background = `rgb(${r},${g},255)`;
+        const dotSz = lerp(3, 8, t) + 'px';
+        dots[1].style.width = dotSz;
+        dots[1].style.height = dotSz;
+        navMenu.style.width = lerp(15, 8, t) + 'px';
+      }
+
+      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
+
+      // Animate open/close; clear inline styles on open so CSS .is-open rules apply; restore on close
+      new MutationObserver(() => {
+        if (nav.classList.contains('is-open')) {
+          // Snap to pill instantly so open always starts from pill (not full-width)
+          const pillW = logoEl.offsetWidth + 48;
+          const currentW = parseFloat(nav.style.width) || pillW;
+          const needsSnap = currentW < pillW * 1.5; // only snap when already near pill size (scrolled)
+          if (needsSnap) {
+            nav.style.transition = 'none';
+            nav.style.width = pillW + 'px';
+            nav.style.borderRadius = '24px';
+            void nav.offsetHeight; // lock pill as animation "from" state
+          } else {
+            // Full-width state: suppress mouseleave during animation in case open width
+            // is narrower than current nav and cursor temporarily falls outside
+            _mlSuppress = true;
+            setTimeout(() => {
+              _mlSuppress = false;
+              if (_openedByHover && !nav.matches(':hover')) closeByHover();
+            }, 500);
+          }
+          nav.style.transition = NAV_TRANS;
+          nav.style.width = '';
+          nav.style.top = '';
+          nav.style.borderRadius = '';
+          nav.style.background = '';
+          nav.style.backdropFilter = '';
+          nav.style.webkitBackdropFilter = '';
+          // Pad so logo/dot stay at their pill viewport positions despite the wider background
+          const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+          const openNavW = isTablet ? window.innerWidth - 16 : Math.min(window.innerWidth - 16, 400);
+          const openPad = Math.max(16, Math.round((openNavW - pillW) / 2) + 16);
+          navBar.style.paddingLeft = openPad + 'px';
+          navBar.style.paddingRight = openPad + 'px';
+          navBar.style.paddingTop = '';
+          navBar.style.paddingBottom = '';
+          dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; d.style.background = ''; d.style.width = ''; d.style.height = ''; });
+          navMenu.style.width = '8px';
+        } else {
+          nav.style.transition = NAV_TRANS;
+          void nav.offsetHeight;
+          updateNavScroll();
+          setTimeout(() => { nav.style.transition = ''; }, 450);
+        }
+      }).observe(nav, { attributes: true, attributeFilter: ['class'] });
+
+      window.addEventListener('scroll', updateNavScroll, { passive: true });
+      window.addEventListener('resize', updateNavScroll);
+      updateNavScroll();
+    })();
+
+    // === SCROLL REVEAL ===
+    (function() {
+      // Earlier work-items sit on top (incoming cards slide in from behind)
+      const items = [...document.querySelectorAll('.work-item')];
+      items.forEach((el, i) => { el.style.zIndex = items.length - i; });
+
+      let vH = window.innerHeight;
+
+      function naturalAbsTop(el) {
+        let y = 0, e = el;
+        while (e) { y += e.offsetTop; e = e.offsetParent; }
+        return y;
+      }
+
+      // Work item cards: 16px peek slide-in, no scale
+      const cards = [...document.querySelectorAll('.work-item__image, .work-item__body')];
+
+      function getPrevCard(el) {
+        if (el.classList.contains('work-item__body')) return el.previousElementSibling;
+        const prevItem = el.closest('.work-item').previousElementSibling;
+        return prevItem ? prevItem.querySelector('.work-item__body') : null;
+      }
+
+      function computeOffsets() {
+        cards.forEach(el => {
+          const prev = getPrevCard(el);
+          el._naturalAbsTop = naturalAbsTop(el);
+          el._initY = prev ? -16 : null;
+        });
+      }
+
+      function updateCards() {
+        const endDist = 0.85 * vH;
+        const sy = window.scrollY;
+        cards.forEach(el => {
+          if (el._initY === null) { el.style.opacity = '1'; el.style.transform = 'none'; return; }
+          const nTop = el._naturalAbsTop - sy;
+          const t    = Math.min(1, Math.max(0, (vH - nTop) / endDist));
+          const isBody = el.classList.contains('work-item__body');
+          const isDesktop = window.innerWidth >= 1024;
+          const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
+          const bodyMult = isDesktop ? 3 : isTablet ? 3.33 : 1.5;
+          const opacityT = isDesktop ? Math.min(1, t * 2) : t;
+          el.style.opacity   = String(isBody ? Math.min(1, t * bodyMult) : opacityT);
+          el.style.transform = `translateY(${el._initY * (1 - t)}px)`;
+        });
+      }
+
+      // Fetch about text from WordPress ACF
+      fetch('https://cms.janagramlich.com/wp-json/wp/v2/pages/7?_fields=acf')
+        .then(r => r.json())
+        .then(data => {
+          const el = document.getElementById('cv-about-text');
+          if (el && data.acf && data.acf.about_text) {
+            el.innerHTML = data.acf.about_text;
+          }
+        })
+        .catch(() => {}); // fail silently if offline
+
+      // ── Quotes rotator ──────────────────────────────────────────────
+      const QUOTES = [
+        {
+          text: 'Her strongest skill is probably the ability to understand the needs of her clients, guide them to the right solution, translate their wishes into successful screen designs and ship them to the development team. She is able to easily break down complex technical tasks and structures them in a clear roadmap.',
+          name: 'Milko Malev',
+          pos:  'VP Marketing & Corporate Communications · ENERTRAG'
+        },
+        {
+          text: 'In addition to being a great digital designer Jana has incredible management skills — planning the whole design process from conception, prototyping, test and launch. She was dealing with all the communication between the creative department and the developers.',
+          name: 'Mattia Losa',
+          pos:  'Design and Product Lead · BCG X'
+        },
+        {
+          text: 'Her deep understanding of various aspects involved in product design is evident in her work, and I was highly impressed with her ability to manage stakeholders and guide clients through design decisions which had substantial impact on their business.',
+          name: 'Nicolai Fleischhauer',
+          pos:  'Design Lead · AutoScout24'
+        },
+        {
+          text: 'When everyone is tangled up in details, Jana reminds everyone of the big picture to re-align on what really matters — when a debate gets vague and theoretical, she gets specific and figures out the details with a keen eye and laser-sharp focus.',
+          name: 'Philipp Köller',
+          pos:  'Head of UX · BITMARCK'
+        },
+        {
+          text: 'Jana is incredibly structured in her approach, which allows her to manage complex projects seamlessly while maintaining a high standard of quality. Her genuine empathy shines through her designs, creating user experiences that are not only functional but deeply engaging.',
+          name: 'Julia Klein-Klute',
+          pos:  'Senior Product Designer · Douglas'
+        },
+        {
+          text: 'She is a highly empathetic human-being who understands how to communicate with stakeholders, to find diplomatic yet efficient approaches, to align people and to really focus on the common goal. Jana is a true UX leader — highly effective and impactful in her work; inspiring and influential in driving positive change.',
+          name: 'Julia Klein-Klute',
+          pos:  'Senior Product Designer · Douglas'
+        }
+      ];
+      const quoteText    = document.getElementById('cv-quote-text');
+      const quoteName    = document.getElementById('cv-quote-name');
+      const quotePos     = document.getElementById('cv-quote-pos');
+      const quoteRing    = document.getElementById('cv-quote-ring');
+      const iconPause    = document.getElementById('cv-icon-pause');
+      const iconPlay     = document.getElementById('cv-icon-play');
+      const ringWrap     = document.querySelector('.cv-quotes__ring-wrap');
+      const CIRC         = 56.55; // 2π × r(9)
+      const QUOTE_MS     = 6000;
+      let   qIndex       = 0;
+      let   qStart       = null;
+      let   qRafId       = null;
+      let   qPaused      = false;
+      let   qProgressAtPause = 0; // 0–1
+
+      function setIcon(playing) {
+        if (iconPause) iconPause.style.display = playing  ? '' : 'none';
+        if (iconPlay)  iconPlay.setAttribute('display',  playing  ? 'none' : '');
+      }
+      function setQuote(i) {
+        const q = QUOTES[i];
+        quoteText.textContent = q.text;
+        quoteName.textContent = q.name;
+        quotePos.textContent  = q.pos;
+      }
+      function tickQuote(ts) {
+        if (!qStart) qStart = ts - qProgressAtPause * QUOTE_MS;
+        const p = Math.min((ts - qStart) / QUOTE_MS, 1);
+        if (quoteRing) quoteRing.style.strokeDashoffset = (CIRC * (1 - p)).toFixed(3);
+        if (p < 1) {
+          qRafId = requestAnimationFrame(tickQuote);
+        } else {
+          qProgressAtPause = 0;
+          quoteText.style.opacity = '0';
+          quoteName.style.opacity = '0';
+          quotePos.style.opacity  = '0';
+          setTimeout(() => {
+            qIndex = (qIndex + 1) % QUOTES.length;
+            setQuote(qIndex);
+            if (quoteRing) quoteRing.style.strokeDashoffset = CIRC;
+            quoteText.style.opacity = '1';
+            quoteName.style.opacity = '1';
+            quotePos.style.opacity  = '1';
+            qStart = null;
+            if (!qPaused) qRafId = requestAnimationFrame(tickQuote);
+          }, 350);
+        }
+      }
+      if (ringWrap) {
+        ringWrap.addEventListener('click', () => {
+          if (qPaused) {
+            // resume
+            qPaused = false;
+            qStart  = null; // recalculate from qProgressAtPause in tickQuote
+            setIcon(true);
+            qRafId = requestAnimationFrame(tickQuote);
+          } else {
+            // pause
+            qPaused = true;
+            const offset = quoteRing ? parseFloat(quoteRing.style.strokeDashoffset) || CIRC : CIRC;
+            qProgressAtPause = 1 - offset / CIRC;
+            if (qRafId) { cancelAnimationFrame(qRafId); qRafId = null; }
+            setIcon(false);
+          }
+        });
+      }
+      if (quoteText) {
+        setQuote(0);
+        // Lock card height to tallest quote so it never reflows
+        const qCard = document.querySelector('.cv-card--quotes');
+        if (qCard) {
+          qCard.style.minHeight = '';
+          let maxH = 0;
+          QUOTES.forEach(q => {
+            quoteText.textContent = q.text;
+            quoteName.textContent = q.name;
+            quotePos.textContent  = q.pos;
+            maxH = Math.max(maxH, qCard.scrollHeight);
+          });
+          setQuote(0);
+          qCard.style.minHeight = maxH + 'px';
+        }
+        quoteText.style.transition = 'opacity .35s ease';
+        quoteName.style.transition = 'opacity .35s ease';
+        quotePos.style.transition  = 'opacity .35s ease';
+        setIcon(true);
+        qRafId = requestAnimationFrame(tickQuote);
+      }
+      // ── End quotes rotator ──────────────────────────────────────────
+
+      // CV cards: stacked sequential reveal with overlap — 2 cards can animate simultaneously
+      const cvCards = [...document.querySelectorAll('.cv-card:not(.cv-card--about):not(.cv-card--quotes)')];
+      const cvSection = document.querySelector('.cv-section');
+      // Desktop: show all cards immediately, no reveal animation
+      if (window.innerWidth >= 1024) {
+        cvCards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      } else {
+      // Earlier cv-cards sit on top so incoming cards slide from behind
+      cvCards.forEach((el, i) => { el.style.position = 'relative'; el.style.zIndex = cvCards.length - i; });
+
+      const CV_WINDOW = 80;  // px of scroll to complete one card animation
+      const STRIDE    = 50;  // px of scroll before next card starts
+
+      function computeCvOffsets() {
+        cvSection.style.paddingBottom = '';
+        cvCards.forEach(el => {
+          el._naturalAbsTop = naturalAbsTop(el);
+          // Cards already in viewport on load: no animation
+          el._initY = el._naturalAbsTop < vH ? null : -(el.offsetHeight);
+          el._cvT = el._initY === null ? 1 : 0;
+        });
+        const firstAnim = cvCards.find(el => el._initY !== null);
+        if (!firstAnim) return;
+        const revealOffset = vH * 0.35;
+        const baseScroll = firstAnim._naturalAbsTop - vH + revealOffset;
+        const animCount = cvCards.filter(el => el._initY !== null).length;
+        const scrollNeeded = baseScroll + (animCount - 1) * STRIDE + CV_WINDOW;
+        // Add just enough scroll space for the animation to complete
+        const maxScroll = document.documentElement.scrollHeight - vH;
+        if (scrollNeeded > maxScroll) {
+          cvSection.style.paddingBottom = (scrollNeeded - maxScroll) + 'px';
+        }
+      }
+
+      function updateCvCards() {
+        const sy = window.scrollY;
+        const revealOffset = vH * 0.35;
+        const firstAnim = cvCards.find(el => el._initY !== null);
+        // First pass: compute t values
+        let animIdx = 0;
+        cvCards.forEach(el => {
+          if (el._initY === null) { el._cvT = 1; return; }
+          const baseScroll = firstAnim._naturalAbsTop - vH + revealOffset;
+          const triggerStart = baseScroll + animIdx * STRIDE;
+          el._cvT = Math.min(1, Math.max(0, (sy - triggerStart) / CV_WINDOW));
+          animIdx++;
+        });
+        // Find the first card not yet fully in (t < 1) — its predecessor gets the highlight
+        const firstIncompleteIdx = cvCards.findIndex(el => el._cvT < 1);
+        cvCards.forEach((el, i) => {
+          const t = el._cvT;
+          if (el._initY === null) {
+            el.style.opacity = '1'; el.style.transform = 'none'; el.style.background = ''; return;
+          }
+          el.style.opacity   = String(Math.min(1, t * 1.5));
+          el.style.transform = `translateY(${el._initY * (1 - t)}px) scale(${0.92 + 0.08 * t})`;
+          el.style.background = (firstIncompleteIdx > 0 && i === firstIncompleteIdx - 1) ? '#232323' : '';
+        });
+      }
+
+      window.addEventListener('scroll', () => { updateCards(); if (window.innerWidth < 1024) updateCvCards(); }, { passive: true });
+      window.addEventListener('resize', () => {
+        vH = window.innerHeight;
+        computeOffsets();
+        if (window.innerWidth < 1024) computeCvOffsets();
+        updateCards();
+        if (window.innerWidth < 1024) updateCvCards();
+        else cvCards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      });
+      computeOffsets();
+      if (window.innerWidth < 1024) { computeCvOffsets(); updateCvCards(); }
+      updateCards();
+      } // end mobile/tablet cv animation
+    })();
+
+    // === PROJECT DATA ===
+    const BASE = 'https://cms.janagramlich.com/wp-content/uploads/';
+    const API  = 'https://cms.janagramlich.com/wp-json/wp/v2';
+
+    // Map from data-project key → WordPress project ID
+    const WP_PROJECT_IDS = {
+      'douglas-premium-relaunch': 791,
+      'about-you':                796,
+      'douglas-hybrid':           650,
+      'zalando':                  864,
+      'dmexco':                   451,
+      'the-makery':               345,
+    };
+
+    // Populated asynchronously from backend; keyed by data-project value
+    let PROJECTS = {};
+
+    function mapACFProject(data) {
+      const acf   = data.acf || {};
+      const facts = (acf.shortfacts || []).map(f => ({
+        l: (f.label || '').replace(/:$/, '').trim(),
+        v: f.value || ''
+      }));
+      const client = facts.find(f => f.l === 'Brand')?.v || '';
+      const year   = facts.find(f => f.l === 'Year')?.v  || '';
+
+      const media = (acf.section || []).flatMap(s => {
+        if (s.acf_fc_layout === 'video') {
+          const url = s._video_file_desktop?.url || s._video_file_mobile?.url || '';
+          return url ? [{ v: url }] : [];
+        }
+        if (s.acf_fc_layout === 'image') {
+          return (s.image || []).map(i => i.image?.url).filter(Boolean);
+        }
+        return [];
+      });
+
+      const plain = (acf.text || '').replace(/<[^>]+>/g, '').trim();
+      const descMatch = plain.match(/^(.*?[.!?](?:\s|$)){1,2}/);
+      const desc = descMatch ? descMatch[0].trim() : plain.slice(0, 200);
+
+      // Hero video: top-level ACF fields take priority, then first video section
+      // Values may be a string URL or an object with .url
+      const getVidUrl = v => !v ? '' : (typeof v === 'string' ? v : (v.url || ''));
+      const heroVideoSection = (acf.section || []).find(s => s.acf_fc_layout === 'video');
+      const heroVideo = getVidUrl(acf._video_file_desktop) || getVidUrl(acf._video_file_mobile)
+        || getVidUrl(heroVideoSection?._video_file_desktop) || getVidUrl(heroVideoSection?._video_file_mobile)
+        || '';
+
+      return {
+        bg:        acf.background_color || '#F2F2F2',
+        textColor: acf['text-color']    || '#000000',
+        hero:      acf.hero_image?.url  || '',
+        heroVideo,
+        client, year,
+        name:   acf.title || data.title?.rendered || '',
+        text:   acf.text  || '',
+        desc,
+        facts,
+        myRole: acf.my_role || '',
+        links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
+        media,
+      };
+    }
+
+    // Placeholder PROJECTS kept for reference during initial load — will be overwritten
+    const PROJECTS_FALLBACK = {
+      'douglas-premium-relaunch': {
+        bg:'#F2F2F2',
+        hero: BASE+'Dgls-hybrid-Header-1.jpg', client:'Douglas', year:'2023',
+        name:'Premium Relaunch',
+        title:'Aligning the Douglas app and webshop UI with the premium assortment',
+        text:'Douglas has made significant strides over the past few years to establish itself as a premium brand. So it was time to align the brand UI with the premium assortment and to design a premium user experience. The previous UI was distracting from a cohesive brand identity as it was so busy and colorful. It was lacking the sense of exclusivity and premium, and the disorganized layout made it difficult for customers to focus on key products and features. The objectives of the premium redesign are to enhance brand recognition, identity, and premium appeal, to increase opportunities for better omnichannel service and inspiration and to create an emotionally engaging beauty experience in compliance with European Accessibility Act 2025.',
+        media:[{v:'https://cms.janagramlich.com/wp-content/uploads/Dgls-premium-1.mp4'},'premium2.jpg','premium3-1.jpg','premium4.jpg','premium5.jpg','premium6.jpg','premium7.jpg','premium8.jpg','premium9.jpg','premium10.jpg','premium11.jpg','premium12.jpg','premium13.jpg','premium14.jpg'],
+        facts:[{l:'Year',v:'2023'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'},{l:'Position',v:'Teamlead UI/UX'}],
+        myRole:"I led the implementation of the Dept design draft on a Design System Implementation and mapping side. I applied Dept's visual vision to the current feature set and tested loads of UI improvements and made sure nothing harms the UX in the end.",
+        links:[{t:'Visit the Website',u:'https://www.douglas.de'},{t:'App Download',u:'#'}],
+      },
+      'about-you': {
+        bg:'#F2F2F2',
+        hero: BASE+'753805-men-streetwear-accessories-06-scaled.jpg', client:'About You', year:'2025',
+        name:'Design System',
+        title:'About You Design System',
+        text:'I was responsible for creating the About You Figma Design System, a comprehensive framework designed to elevate the brand\'s digital experience. The primary goal was to ensure consistency across all major touchpoints — specifically the app and website — by unifying their visual language and interaction patterns.\n\nAnother key objective was to streamline the design and development processes to significantly reduce time to market. By providing a library of reusable components, clear guidelines, and structured workflows, the system enabled teams to work more efficiently and focus on delivering high-quality solutions faster.\n\nAccessibility was also a central pillar of the project, with an emphasis on adhering to modern standards to make the platform more inclusive for all users. The design system was built to empower designers with a state-of-the-art toolkit that simplifies their work, fosters collaboration, and allows them to focus on innovation and creativity.',
+        media:['AY1.jpg','AY2.jpg','AY3.jpg','AY4.jpg','AY5.jpg','AY6.jpg','AY7.jpg','AY8.jpg','AY9.jpg','AY10.jpg','AY11.jpg','AY12.jpg'],
+        facts:[{l:'Year',v:'2025'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
+        myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
+        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'}],
+      },
+      'douglas-hybrid': {
+        bg:'#EDD3DE',
+        hero: BASE+'Dgls-hybrid-Header.jpg', client:'Douglas', year:'2021–2022',
+        name:'Hybrid App',
+        title:'Douglas app goes hybrid: Successful transformation of the mobile website as app breakpoint',
+        text:'Douglas is the leading premium beauty retailer in Europe, inspiring customers to live their own kind of beauty through an unparalleled assortment across online stores and around 1,800 physical locations.\n\nIn 2021, Douglas decided to transform its native app into a hybrid app using the mobile website as its foundation. In a joint eight-month project, I analysed both applications and created a master plan of what features and optimisations needed to be made to the mobile website to make the transition as unnoticeable as possible for app users.\n\nI initiated collaboration between the app and web teams and built bridges to understand what differences app design required. I created compelling concepts and screen designs for the new app breakpoint and unified all touchpoints into one Figma space.\n\nWith this project I established a mobile-first mentality company-wide, reduced TTM by 40%, increased the app share by 15%, and implemented company-wide design QA processes. 90% of the optimisations my analyses revealed have been implemented and are still being used 2 years later.',
+        media:['Dgls-hybrid-1.jpg','Dgls-hybrid-2.jpg','Dgls-hybrid-3.jpg',{v:'https://www.figma.com/proto/bOf7SFpD1bMUG7bBrt9qAE/Analyses?page-id=0%3A1&type=design&node-id=3-508&viewport=620%2C-1979%2C0.87&t=GBaCznTyICi4S0ce-1&scaling=min-zoom&mode=design',ar:'16/9'},'Dgls-hybrid-5.jpg','Dgls-hybrid-4.jpg','Dgls-hybrid-6-1.jpg','Dgls-hybrid-7.jpg','Dgls-hybrid-8.jpg','Dgls-hybrid-9.jpg','Dgls-hybrid-10.jpg','Dgls-hybrid-11.jpg',{v:'https://www.figma.com/proto/bOf7SFpD1bMUG7bBrt9qAE/Analyses?page-id=3%3A4411&type=design&node-id=3-4412&viewport=655%2C484%2C1.03&t=zXrPoWWCmGqDeeEg-1&scaling=min-zoom&mode=design',ar:'16/9'},'Dgls-hybrid-12-1.jpg','DOUGLAS-survey-App-vs.-Webshop.png'],
+        facts:[{l:'Year',v:'2021–2022'},{l:'Agency',v:'Thalia Digital Retail Solutions'},{l:'Brand',v:'Douglas'}],
+        myRole:'My role was project lead, user interface and experience design, interdisciplinary communication, and development handoff.',
+        links:[{t:'App Download',u:'http://app.adjust.io/ozz3ic_m0oq2k?campaign=Douglas%20internal&adgroup=App_Page&creative=Default'}],
+      },
+      'zalando': {
+        bg:'#F2F2F2',
+        hero: BASE+'Bildschirmfoto-2025-08-27-um-16.53.19.png', client:'Zalando', year:'2020',
+        name:'Connected Retail',
+        title:"Zalando's Connected Retail — the early beginning of ZEOS",
+        text:"Connected Retail was one of Zalando's very first strategic B2B initiatives, designed to seamlessly connect local fashion stores with Zalando's online platform. It enabled brick-and-mortar retailers to sell their in-store assortment directly to millions of online customers, while Zalando handled payments, marketing, and customer support. Over time, the program grew into one of the largest digital retail networks in Europe and later evolved into ZEOS.\n\nTogether with a team of videographers, illustrators, developers, and a design colleague, I created the branding and designed the UI/UX for the landing page targeted at store owners — including the full onboarding flow for becoming a Zalando retail partner.\n\nThe challenge was that this concept was still very new to the industry, and many brick-and-mortar retailers felt threatened by Zalando's growing dominance. The answer turned out to be simple: for smaller retailers without resources to run their own online shops, access to millions of customers combined with the potential revenue made the opportunity highly attractive.",
+        media:['Z2.jpg','Z3.jpg','Z4-scaled.jpg','Z5.jpg'],
+        facts:[{l:'Year',v:'2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Zalando'}],
+        myRole:'My role was creating and leading the user interface and experience design, interdisciplinary communication, and development handoff.',
+        links:[],
+      },
+      'dmexco': {
+        bg:'#ffffff',
+        hero: BASE+'Header2.jpg', client:'DMEXCO', year:'2017–2020',
+        name:'Digital Experience',
+        title:'Digital experience for Germany\'s largest digital marketing expo and conference',
+        text:"DMEXCO is one of Europe's largest and most prominent digital marketing events. 1000+ companies and more than 40,000 visitors come together every year to make business leads and get the latest trends and tools from the tech industry.\n\nIn 2017 I conceived and designed the new website as part of the first design agency DMEXCO was ever working with. Horizont and many other magazines wrote about our relaunch. Since then I did plenty of ongoing improvements based on DMEXCO's needs and user feedback. My role reached from conception to execution, tackling complex problems into user-friendly solutions. In the meantime, the page grew to a 100+ layouts file.\n\nIn 2018 I planned and designed the first DMEXCO app. In 2019 we launched a new version with many new features — including a networking feature where fair visitors and exhibitors could exchange contact data and schedule meetings to gain valuable business leads. The 2019 app also gained a completely fresh look as we constantly developed the CI further.",
+        media:['1.jpg','2-scaled.jpg','3-2.jpg','4-2-scaled.jpg','5.jpg','6.jpg','7.jpg'],
+        facts:[{l:'Year',v:'2017–2020'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Award',v:'Red Dot Design Award'}],
+        myRole:'My role was conception, wireframing, screen design, prototyping, client communication and strategic planning, as well as accompanying the development process, testing and quality assurance.',
+        links:[{t:'Visit the Website',u:'https://www.dmexco.com'}],
+      },
+      'the-makery': {
+        bg:'#DCD8D3',
+        hero: BASE+'Header-the-makery.jpg', client:'The Makery', year:'2018–2019',
+        name:'Website Relaunch',
+        title:'Website relaunch for a local arts and crafts workshop platform',
+        text:"The Makery is a platform of workshops hosted by local artists and craftsmen. The Makery is all about community building around activities. We constructed a new narrative to reflect this and made the communication clearer and more engaging so people would understand the concept and participate. For the website, we did a whole relaunch and simplified the process of finding a workshop and booking a ticket.\n\nThe project started in 2018. In 2019 we decided for a mobile-first approach based on analytics and redesigned the main page, switched to a one-page checkout, and added a system of category, subcategory, and occasion landing pages, and improved the search, menus, and footer.",
+        media:['The-Makery_1.jpg','The-Makery_2.jpg','The-Makery_3.jpg','The-Makery_4.jpg','The-Makery_5.jpg','The-Makery_6.jpg','The-Makery_7.jpg','The-Makery_8.jpg','The-Makery_9.jpg'],
+        facts:[{l:'Year',v:'2018–2019'},{l:'Agency',v:'Navarra.is'},{l:'Brand',v:'Branding team at Navarra.is'},{l:'Developer',v:'External, hired by the client'}],
+        myRole:'My role was conception, creation of the user interface and experience design, client communication, strategic planning, instructing a digital design intern, and development handoff.',
+        links:[{t:'Visit the Website',u:'https://themakery.de'}],
+      },
+    };
+    // PROJECTS_FALLBACK kept for reference only — not seeded into PROJECTS
+
+    // === MODAL HELPERS ===
+    // media[] items: string = image filename (prefixed with BASE)
+    //   {v:'url'}          = video/embed (mp4 → autoplay; youtube/vimeo → iframe; figma → proto embed)
+    //   {v:'url', ar:'w/h'} = override aspect-ratio (e.g. for Figma: '9/19' for portrait app)
+    function buildMedia(media) {
+      return (media || []).map(item => {
+        if (typeof item === 'object' && item.v) {
+          const url = item.v;
+          if (url.includes('figma.com')) {
+            const ar = item.ar || '16/9';
+            // Use Figma's official embed wrapper — requires the file to be set to "Anyone with the link"
+            const embedUrl = url.includes('figma.com/embed')
+              ? url
+              : `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+            return `<div class="block block-figma" style="aspect-ratio:${ar}"><iframe src="${embedUrl}" allowfullscreen loading="lazy" title="Figma Prototype"></iframe></div>`;
+          }
+          if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            const id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || '';
+            return `<div class="block block-video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Video"></iframe></div>`;
+          }
+          if (url.includes('vimeo.com')) {
+            const id = url.match(/vimeo\.com\/(\d+)/)?.[1] || '';
+            return `<div class="block block-video-embed"><iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1" frameborder="0" allow="autoplay" allowfullscreen title="Video"></iframe></div>`;
+          }
+          return `<div class="block block-video-mp4"><video src="${url}" autoplay muted loop playsinline></video></div>`;
+        }
+        const src = (typeof item === 'string' && item.startsWith('http')) ? item : BASE + item;
+        return `<div class="block block-image"><img src="${src}" alt="" loading="lazy"></div>`;
+      }).join('');
+    }
+    function buildText(t) {
+      return t.split('\n\n').filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('');
+    }
+
+    // === NEXT PROJECT SETUP ===
+    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
+    let currentProjectKey = null;
+    let _isTransitioning  = false;
+
+    function getNextProjectKey(key) {
+      const idx = PROJECT_ORDER.indexOf(key);
+      return idx >= 0 ? PROJECT_ORDER[(idx + 1) % PROJECT_ORDER.length] : null;
+    }
+
+    // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
+    function fillModalContent(key) {
+      const p = PROJECTS[key]; if (!p) return;
+      const modal   = document.getElementById('projectModal');
+      const heroImg = document.getElementById('modal-hero');
+      const heroVid = document.getElementById('modal-hero-video');
+      if (p.hero) {
+        heroImg.src = p.hero; heroImg.style.display = '';
+        heroVid.style.display = 'none'; heroVid.src = '';
+      } else if (p.heroVideo) {
+        heroVid.src = p.heroVideo; heroVid.style.display = '';
+        heroImg.style.display = 'none'; heroImg.src = '';
+      } else {
+        heroImg.style.display = 'none'; heroVid.style.display = 'none';
+      }
+      document.getElementById('modal-client').textContent = p.client;
+      document.getElementById('modal-year').textContent   = p.year || '';
+      const arrowEl = document.getElementById('modal-header-arrow');
+      if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
+      else { arrowEl.style.display = 'none'; }
+      document.getElementById('modal-desc').innerHTML   = p.text || '';
+      document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
+      document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
+        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
+      document.getElementById('modal-role').textContent = p.myRole || '';
+      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l =>
+        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const bg = p.bg || '#f2f2f2';
+      modal.querySelector('.modal__scroll').style.background = bg;
+      modal.querySelector('.page-header').style.background   = bg;
+      modal.querySelector('.modal__scroll').scrollTop = 0;
+      currentProjectKey = key;
+      // Refresh next-project button
+      const oldBtn = modal.querySelector('.next-project-btn');
+      if (oldBtn) oldBtn.remove();
+      injectNextBtn(key);
+    }
+
+    function injectNextBtn(key) {
+      const nextKey = getNextProjectKey(key);
+      if (!nextKey) return;
+      const nextP = PROJECTS[nextKey];
+      const btn = document.createElement('button');
+      btn.className = 'next-project-btn';
+      btn.innerHTML =
+        `<span class="next-project-btn__label">Next Project</span>` +
+        `<span class="next-project-btn__title">${nextP ? nextP.client : '→'}</span>`;
+      btn.addEventListener('click', () => goToNextProject(nextKey));
+      document.getElementById('modal-links').insertAdjacentElement('afterend', btn);
+    }
+
+    function goToNextProject(nextKey) {
+      if (_isTransitioning) return;
+      const p = PROJECTS[nextKey]; if (!p) return;
+      _isTransitioning = true;
+      const modalEl = document.getElementById('projectModal');
+      const txPfx   = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const bg      = p.bg || '#f2f2f2';
+      // Build display-only entering panel (shown during transition only)
+      const heroHTML = p.hero
+        ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
+        : p.heroVideo
+        ? `<div class="modal__hero"><video src="${p.heroVideo}" autoplay muted loop playsinline></video></div>`
+        : '';
+      const factsHTML = (p.facts||[]).map(f =>
+        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
+      const linksHTML = (p.links||[]).map(l =>
+        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const panel = document.createElement('div');
+      panel.style.cssText =
+        'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
+        'overscroll-behavior:contain;scrollbar-width:none;' +
+        `background:${bg};color:#111;padding:24px 8px;` +
+        "font-family:'DM Sans',sans-serif;transform:translateY(100%);";
+      panel.innerHTML =
+        heroHTML +
+        `<header class="page-header" style="background:${bg}">` +
+          `<div class="modal-header-left">` +
+            `<span class="eyebrow-client">${p.client}</span>` +
+            `<span class="modal-year">${p.year||''}</span>` +
+          `</div>` +
+          `<div class="hero__desc">${p.text||''}</div>` +
+        `</header>` +
+        `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
+        `<section class="project-info">` +
+          `<div class="info-meta">${factsHTML}</div>` +
+          `<p class="info-desc">${p.myRole||''}</p>` +
+        `</section>` +
+        `<nav class="project-links">${linksHTML}</nav>`;
+      document.body.appendChild(panel);
+      // Double rAF: mount at start position, then kick off animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const dur  = 460;
+          const ease = 'cubic-bezier(0.32,0.72,0,1)';
+          modalEl.style.transition = `transform ${dur}ms ${ease}`;
+          modalEl.style.transform  = `${txPfx()}translateY(-108%)`;
+          panel.style.transition   = `transform ${dur}ms ${ease}`;
+          panel.style.transform    = 'translateY(0)';
+          setTimeout(() => {
+            // Swap real modal content silently behind the covering panel
+            fillModalContent(nextKey);
+            modalEl.style.transition = 'none';
+            modalEl.style.transform  = txPfx() + 'translateY(0)';
+            panel.remove();
+            requestAnimationFrame(() => {
+              modalEl.style.transition = '';
+              _isTransitioning = false;
+            });
+          }, dur + 20);
+        });
+      });
+    }
+
+    // === OPEN MODAL ===
+    function openModal(key) {
+      const p = PROJECTS[key]; if (!p) return;
+      fillModalContent(key);
+      const modal = document.getElementById('projectModal');
+      modal.style.visibility = 'visible';
+      modal.classList.add('is-open');
+      document.getElementById('modalBackdrop').classList.add('is-active');
+      document.getElementById('modalCloseBar').classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
+    }
+
+    // === CLOSE MODAL ===
+    function closeModal() {
+      const modal    = document.getElementById('projectModal');
+      const closeBar = document.getElementById('modalCloseBar');
+      modal.querySelector('.modal__scroll').style.background = '';
+      modal.querySelector('.page-header').style.background   = '';
+      modal.classList.remove('is-open');
+      document.getElementById('modalBackdrop').classList.remove('is-active');
+      closeBar.classList.remove('is-active');
+      closeBar.style.height = '';
+      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
+      _openedByHover = false;
+      _hoverAllowAfter = Date.now() + 800;
+      nav.classList.remove('is-open');
+      document.getElementById('themeColor').content = '#171717';
+      document.documentElement.style.backgroundColor = '#171717';
+      modal.addEventListener('transitionend', () => {
+        modal.style.visibility = 'hidden';
+      }, { once: true });
+    }
+    document.getElementById('modalCloseBar').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+
+    // === SWIPE DOWN TO CLOSE ===
+    (function() {
+      const modalEl  = document.getElementById('projectModal');
+      const scrollEl = modalEl.querySelector('.modal__scroll');
+      const closeBar = document.getElementById('modalCloseBar');
+      const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      let sy = 0, dy = 0, vy = 0, pt = 0, active = false, baseCloseH = 0;
+
+      function snapBack() {
+        modalEl.style.transition = '';
+        modalEl.style.transform  = '';
+        closeBar.style.height    = '';
+      }
+
+      function doClose() {
+        closeBar.style.height = '';
+        closeBar.classList.remove('is-active');
+        modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+        modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
+        modalEl.addEventListener('transitionend', () => {
+          modalEl.style.visibility = 'hidden';
+          modalEl.style.transition = '';
+          modalEl.style.transform  = '';
+          modalEl.querySelector('.modal__scroll').style.background = '';
+          modalEl.querySelector('.page-header').style.background   = '';
+          modalEl.classList.remove('is-open');
+          document.getElementById('modalBackdrop').classList.remove('is-active');
+          document.body.style.overflow = '';
+          document.body.classList.remove('modal-open');
+          _openedByHover = false;
+          _hoverAllowAfter = Date.now() + 800;
+          nav.classList.remove('is-open');
+          document.getElementById('themeColor').content = '#060606';
+          document.documentElement.style.backgroundColor = '#060606';
+        }, { once: true });
+      }
+
+      // Use touch events (not pointer) so touchmove can be non-passive and call preventDefault
+      modalEl.addEventListener('touchstart', e => {
+        if (scrollEl.scrollTop > 0) return;
+        baseCloseH = closeBar.getBoundingClientRect().height;
+        const t = e.touches[0];
+        sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
+      }, { passive: true });
+
+      modalEl.addEventListener('touchmove', e => {
+        if (!active) return;
+        const t = e.touches[0];
+        const d = t.clientY - sy;
+        if (d <= 0) { active = false; return; }
+        e.preventDefault(); // block scroll — requires non-passive
+        vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
+        dy = d; pt = e.timeStamp;
+        modalEl.style.transition = 'none';
+        modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
+        closeBar.style.height    = (baseCloseH + dy) + 'px';
+      }, { passive: false });
+
+      modalEl.addEventListener('touchend', () => {
+        if (!active) return; active = false;
+        if (dy > 100 || vy > 8) doClose(); else snapBack();
+      });
+
+      modalEl.addEventListener('touchcancel', () => { active = false; snapBack(); });
+    })();
+
+    // === WORK ITEM CLICKS ===
+    document.querySelectorAll('.work-item[data-project]').forEach(item => {
+      item.addEventListener('click', () => openModal(item.dataset.project));
+    });
+
+    // === FETCH DYNAMIC DATA FROM BACKEND ===
+    (async function() {
+      // Favicon: parse from WP homepage HTML
+      try {
+        const html = await fetch('https://cms.janagramlich.com/', { cache: 'no-store' }).then(r => r.text());
+        const tags = html.match(/<link[^>]+>/gi) || [];
+        for (const tag of tags) {
+          if (/rel=["'][^"']*icon[^"']*["']/i.test(tag)) {
+            const m = tag.match(/href=["']([^"']+)["']/i);
+            if (m) {
+              const old = document.getElementById('favicon');
+              if (old) old.remove();
+              const lnk = document.createElement('link');
+              lnk.rel = 'icon'; lnk.href = m[1];
+              document.head.appendChild(lnk);
+              break;
+            }
+          }
+        }
+      } catch(e) {}
+
+      // Fetch all project content from ACF in parallel
+      await Promise.all(
+        Object.entries(WP_PROJECT_IDS).map(async ([key, id]) => {
+          try {
+            const data = await fetch(
+              `${API}/projects/${id}?_fields=id,title,acf`,
+              { cache: 'no-store' }
+            ).then(r => r.json());
+            const p = mapACFProject(data);
+            PROJECTS[key] = p;
+
+            // Update work tile with live data
+            const tile = document.querySelector(`.work-item[data-project="${key}"]`);
+            if (tile) {
+              const imgEl    = tile.querySelector('.work-item__image img');
+              const clientEl = tile.querySelector('.work-item__client');
+              const yearEl   = tile.querySelector('.work-item__year');
+              const titleEl  = tile.querySelector('.work-item__title');
+              const videoEl = tile.querySelector('.work-item__image video');
+              if (p.hero) {
+                if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
+                if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
+              } else if (p.heroVideo) {
+                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
+                if (imgEl)   { imgEl.style.display = 'none'; imgEl.src = ''; }
+              }
+              if (clientEl && p.client) clientEl.textContent = p.client;
+              if (yearEl   && p.year)   yearEl.textContent   = p.year;
+              // tile description kept as static HTML (curated summaries)
+            }
+            if (key === 'about-you') {
+              const og = document.getElementById('ogImage');
+              if (og && p.hero) og.content = p.hero;
+            }
+          } catch(e) { console.warn(`Failed to load project "${key}":`, e); }
+        })
+      );
+    })();
+
+    // === TILE PARALLAX ===
+    function updateTileParallax() {
+      const vh = window.innerHeight;
+      document.querySelectorAll('.work-item__image').forEach(container => {
+        const img = container.querySelector('img'); if (!img) return;
+        const rect = container.getBoundingClientRect();
+        const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
+        const center = -extra / 2;               // center image in container
+        const ratio  = (rect.top + rect.height / 2) / vh - 0.5; // -0.5..+0.5
+        // tablet+desktop: -1 so image bottom fills container on entry; mobile: +1
+        const raw    = center + (window.innerWidth >= 640 ? -1 : 1) * ratio * extra * 0.8;
+        const shift  = Math.max(-extra, Math.min(0, raw));       // clamp: no gaps ever
+        img.style.transform = `translateY(${shift}px)`;
+      });
+    }
+    window.addEventListener('scroll', updateTileParallax, { passive: true });
+    updateTileParallax();
+  </script>
+</body>
+</html>

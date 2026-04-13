@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#171717">
+  <title>Archive — Jana Gramlich</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
+    body  { width:100%; min-height:100lvh; background:#171717; }
+    body { font-family:'DM Sans', sans-serif; font-optical-sizing:auto; color:#fff; }
+    img { display:block; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV === */
+    .nav {
+      position:fixed; top:4px;
+      left:50%; transform:translateX(-50%);
+      width:calc(100vw - 16px);
+      border-radius:0;
+      background:transparent;
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      overflow:hidden;
+      z-index:100;
+    }
+    .nav.is-open { width:min(calc(100vw - 32px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav::before {
+      content:'';
+      position:absolute;
+      width:164%; height:227%;
+      left:-28%; top:-8%;
+      background:url('images/nav-bg.png') center/cover no-repeat;
+      opacity:var(--nav-bg-opacity, 0);
+      z-index:-1;
+    }
+    .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); }
+    .nav.is-open::before { opacity:0.65; }
+    .nav__bar {
+      height:33px; display:flex; align-items:center;
+      padding:0 16px; cursor:pointer;
+      width:100%;
+    }
+    .nav.is-open .nav__bar {
+      padding-left:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
+    }
+    .nav__logo {
+      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
+    }
+    .nav__menu {
+      display:flex; flex-direction:row; align-items:center; gap:3px;
+      width:15px; height:13px; flex-shrink:0; position:relative;
+      margin-left:auto; overflow:visible;
+    }
+    .nav__menu > span:not(.nav__close-icon) {
+      display:block; width:3px; height:3px; border-radius:50%;
+      background:#fff; flex-shrink:0;
+      transition:opacity .25s ease;
+    }
+    .nav__close-icon {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .25s ease; color:#fff;
+    }
+    .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__close-icon { opacity:1; }
+    .nav__expand {
+      display:grid; grid-template-rows:0fr;
+      transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
+    }
+    .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__link {
+      display:block;
+      font-size:32px; font-weight:400; color:#fff; line-height:1.4;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease, color .15s;
+    }
+    .nav.is-open .nav__link {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s;
+    }
+    .nav__link:hover { color:rgba(255,255,255,.5); }
+    .nav__divider {
+      height:1px; background:rgba(255,255,255,0.12);
+      margin:16px 0;
+      opacity:0; transition:opacity .2s ease;
+    }
+    .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
+    .nav__contact {
+      padding:40px 16px 24px;
+      opacity:0; transform:translateY(6px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__contact {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .34s, transform .25s ease .34s;
+    }
+    .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
+    .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#989898; margin-top:4px; }
+    .nav__linkedin {
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#acb0ff; color:#171717;
+      border-radius:999px; padding:8px 10px;
+      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      margin-top:40px;
+    }
+
+    /* === CANVAS === */
+    #canvas {
+      position:fixed;
+      /* edge-to-edge: zero insets, extend under status bar + home indicator */
+      top:0; left:0; right:0; bottom:0;
+      width:100vw;
+      /* lvh = large viewport = full screen behind browser bars */
+      height:100dvh; /* fallback */
+      height:100lvh;
+      cursor:grab;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:none;
+    }
+    #canvas.is-dragging { cursor:grabbing; }
+
+    /* === TILES === */
+    .tile {
+      position:absolute;
+      top:0; left:0;
+      border-radius:12px;
+      overflow:hidden;
+      will-change:transform;
+      background:#2a2a2a;
+    }
+    .tile img {
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      pointer-events:none;
+      user-select:none;
+      -webkit-user-select:none;
+      -webkit-user-drag:none;
+    }
+    @media (min-width:640px) { .nav { top:8px; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span><span class="nav__close-icon"><svg width="7" height="7" viewBox="0 0 7 7" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="1" y1="1" x2="6" y2="6"/><line x1="6" y1="1" x2="1" y2="6"/></svg></span></div>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__links">
+          <a href="index.html#work" class="nav__link">Work</a>
+          <a href="index.html#about" class="nav__link">About</a>
+          <a href="archive.html" class="nav__link">Archive</a>
+          <a href="articles.html" class="nav__link">Articles</a>
+        </div>
+        <div class="nav__contact">
+          <p class="nav__contact-label">Contact</p>
+          <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
+          <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- INFINITE CANVAS -->
+  <div id="canvas"></div>
+
+  <script>
+    // === NAV ===
+    const nav = document.getElementById('mainNav');
+    nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
+    let _mlSuppress = false;
+    nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+    nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
+    nav.querySelector('.nav__logo').addEventListener('touchend', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+    });
+    nav.querySelector('.nav__logo').addEventListener('click', e => {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+    });
+    nav.querySelector('.nav__menu').addEventListener('click', e => {
+      e.stopPropagation();
+      nav.classList.toggle('is-open');
+    });
+    nav.addEventListener('click', e => {
+      if (e.pointerType !== 'touch') return;
+      const onBar = e.target.closest('.nav__bar');
+      const isOpen = nav.classList.contains('is-open');
+      if (onBar && !isOpen) { e.preventDefault(); nav.classList.add('is-open'); }
+      else if (onBar && !e.target.closest('a')) nav.classList.remove('is-open');
+    });
+    document.addEventListener('click', e => {
+      if (e.pointerType === 'touch' && !e.target.closest('#mainNav')) nav.classList.remove('is-open');
+    });
+
+    // Collapsed pill state — no page scroll on archive, always show pill
+    (function() {
+      const navBar = nav.querySelector('.nav__bar');
+      const navMenu = nav.querySelector('.nav__menu');
+      const dots = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
+      const logoEl = navBar.querySelector('.nav__logo');
+
+      function setPillState() {
+        const targetW = logoEl.offsetWidth + 48;
+        nav.style.width = targetW + 'px';
+        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
+        nav.style.borderRadius = '24px';
+        nav.style.background = 'rgba(255,255,255,0.05)';
+        nav.style.setProperty('--nav-bg-opacity', '0.65');
+        nav.style.backdropFilter = 'blur(20px) saturate(180%)';
+        nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+        nav.style.setProperty('--pill-w', targetW + 'px');
+        navBar.style.paddingLeft = '16px';
+        navBar.style.paddingRight = '16px';
+        navBar.style.paddingTop = '0';
+        navBar.style.paddingBottom = '0';
+        dots[0].style.opacity = '0';
+        dots[2].style.opacity = '0';
+        dots[0].style.transform = 'translateX(6px)';
+        dots[2].style.transform = 'translateX(-6px)';
+        dots[1].style.background = 'rgb(172,176,255)';
+        dots[1].style.width = '8px';
+        dots[1].style.height = '8px';
+        navMenu.style.width = '8px';
+      }
+
+      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
+
+      new MutationObserver(() => {
+        nav.style.transition = NAV_TRANS;
+        void nav.offsetHeight;
+        if (nav.classList.contains('is-open')) {
+          nav.style.width = '';
+          nav.style.top = '';
+          nav.style.borderRadius = '';
+          nav.style.background = '';
+          nav.style.backdropFilter = '';
+          nav.style.webkitBackdropFilter = '';
+          navBar.style.paddingLeft = '';
+          navBar.style.paddingRight = '';
+          navBar.style.paddingTop = '';
+          navBar.style.paddingBottom = '';
+          dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; d.style.background = ''; d.style.width = ''; d.style.height = ''; });
+          navMenu.style.width = '8px';
+        } else {
+          setPillState();
+        }
+        setTimeout(() => { nav.style.transition = ''; }, 450);
+      }).observe(nav, { attributes: true, attributeFilter: ['class'] });
+
+      window.addEventListener('resize', setPillState);
+      setPillState();
+    })();
+
+    // === CANVAS ===
+    const canvas = document.getElementById('canvas');
+
+    // CW/CH must cover the full physical screen including behind browser bars.
+    // canvas uses position:fixed top/left/right/bottom:0 so offsetWidth/Height
+    // reflect 100lvh — the true full-screen size. screen.height is the safe fallback.
+    const CW = canvas.offsetWidth  || window.innerWidth;
+    const CH = canvas.offsetHeight || screen.height;
+
+    // Grid config — portrait tiles (9:19 ratio)
+    // Scale so 6 columns always fill exactly 100vw
+    const COLS   = 6;
+    const ROWS   = 5;
+    const BASE_W = 120;
+    const BASE_G = 12;
+    const mult   = CW < 640 ? 2.3 : 1.3;
+    const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
+    const TILE_W = BASE_W * scale;
+    const TILE_H = 253   * scale;
+    const GAP    = BASE_G * scale;
+    const RX     = COLS * (TILE_W + GAP);
+    const RY     = ROWS * (TILE_H + GAP);
+
+    const IMGS = Array.from({length:40}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`)
+      .sort(() => Math.random() - 0.5);
+
+    // Parallax: 3 speed tiers — columns scroll vertically at different speeds
+    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18]; // subtle vertical parallax
+    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15]; // initial vertical offset (fraction of tile+gap)
+
+    // Generate grid positions (store column index for parallax)
+    const DEFS = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const yo = COL_YOFF[c] * (TILE_H + GAP);
+        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP) + yo, w: TILE_W, h: TILE_H, c });
+      }
+    }
+
+    // Create tile DOM elements
+    const tiles = DEFS.map((def, i) => {
+      const el = document.createElement('div');
+      el.className = 'tile';
+      el.style.width  = def.w + 'px';
+      el.style.height = def.h + 'px';
+      const img = document.createElement('img');
+      img.src = IMGS[i % IMGS.length];
+      img.alt = '';
+      img.draggable = false;
+      el.appendChild(img);
+      canvas.appendChild(el);
+      return Object.assign({}, def, { el });
+    });
+
+    // State
+    let ox = 0, oy = 0;       // world offset
+    let vx = 0, vy = 0;       // velocity
+    let dragging = false;
+    let lastX = 0, lastY = 0, lastT = 0;
+
+    // Compute screen position:
+    // - X moves uniformly (no horizontal parallax)
+    // - Y: vertical scroll at per-column speed + horizontal scroll bleeds into vertical drift
+    function tilePos(t) {
+      const cx = CW / 2;
+      const cy = CH / 2;
+      const p  = COL_PAR[t.c];                  // 0.78 | 1.0 | 1.22
+      const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
+      const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
+      const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
+    }
+
+    // Render loop
+    function render() {
+      tiles.forEach(t => {
+        const p = tilePos(t);
+        t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
+      });
+      if (!dragging) {
+        ox += vx; oy += vy;
+        vx *= 0.97; vy *= 0.97;
+        if (Math.abs(vx) < 0.01) vx = 0;
+        if (Math.abs(vy) < 0.01) vy = 0;
+      }
+      requestAnimationFrame(render);
+    }
+
+    // Pointer events
+    canvas.addEventListener('pointerdown', e => {
+      dragging = true;
+      canvas.classList.add('is-dragging');
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      vx = 0; vy = 0;
+      canvas.setPointerCapture(e.pointerId);
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(performance.now() - lastT, 1);
+      vx = dx / dt * 16;
+      vy = dy / dt * 16;
+      ox += dx; oy += dy;
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+    });
+
+    canvas.addEventListener('pointerup',     () => { dragging = false; canvas.classList.remove('is-dragging'); });
+    canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
+
+    // Wheel / trackpad scroll
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      ox -= e.deltaX;
+      oy -= e.deltaY;
+      vx = 0; vy = 0;
+    }, { passive: false });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article — Jana Gramlich</title>
+  <meta name="description" content="">
+  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET === */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-font-smoothing:antialiased; }
+    body {
+      font-family:'DM Sans', sans-serif;
+      font-optical-sizing:auto;
+      background:#fafafa;
+      color:#111;
+      overflow-x:hidden;
+    }
+    img { display:block; }
+    button { cursor:pointer; border:none; background:none; font-family:inherit; }
+    a { text-decoration:none; color:inherit; }
+
+    /* === NAV (dark pill, same as articles.html) === */
+    .nav {
+      position:fixed; top:8px;
+      left:50%; transform:translateX(-50%);
+      width:calc(100vw - 16px);
+      border-radius:0;
+      background:transparent;
+      backdrop-filter:none; -webkit-backdrop-filter:none;
+      overflow:hidden; z-index:100;
+    }
+    .nav.is-open { width:min(calc(100vw - 16px),400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
+    .nav::before {
+      content:''; position:absolute;
+      width:164%; height:227%; left:-28%; top:-8%;
+      background:url('images/nav-bg.png') center/cover no-repeat;
+      opacity:var(--nav-bg-opacity,0); z-index:-1;
+    }
+    .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); opacity:0.65; }
+    .nav__bar {
+      height:33px; display:flex; align-items:center;
+      padding:0 16px; cursor:pointer; width:100%;
+    }
+    .nav.is-open .nav__bar {
+      padding-left:calc((100% - var(--pill-w,168px)) / 2 + 16px);
+      padding-right:calc((100% - var(--pill-w,168px)) / 2 + 16px);
+    }
+    .nav__logo { font-size:12px; font-weight:500; line-height:1; color:#fff; letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap; }
+    .nav__menu { display:flex; flex-direction:row; align-items:center; gap:3px; width:15px; height:13px; flex-shrink:0; position:relative; margin-left:auto; overflow:visible; transition:transform .2s cubic-bezier(.4,0,.2,1); }
+    .nav__menu:hover { transform:scale(1.15); }
+    .nav__menu > span:not(.nav__close-icon) { display:block; width:3px; height:3px; border-radius:50%; background:#fff; flex-shrink:0; transition:opacity .25s ease; }
+    .nav__close-icon { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff; transform:rotate(-45deg) scale(0.7); }
+    .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
+    .nav__expand { display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1); }
+    .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
+    .nav__expand-inner { overflow:hidden; }
+    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__link { display:block; font-size:32px; font-weight:400; color:#fff; line-height:1.4; opacity:0; transform:translateY(8px); transition:opacity .2s ease, transform .25s ease, color .15s; }
+    .nav.is-open .nav__link { opacity:1; transform:translateY(0); transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s; }
+    .nav__link:hover { color:rgba(255,255,255,.5); }
+    .nav__divider { height:1px; background:rgba(255,255,255,0.12); margin:16px 0; opacity:0; transition:opacity .2s ease; }
+    .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
+    .nav__contact { padding:40px 16px 24px; opacity:0; transform:translateY(6px); transition:opacity .2s ease, transform .25s ease; }
+    .nav.is-open .nav__contact { opacity:1; transform:translateY(0); transition:opacity .2s ease .34s, transform .25s ease .34s; }
+    .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
+    .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#989898; margin-top:4px; }
+    .nav__linkedin { display:inline-flex; align-items:center; justify-content:center; background:#acb0ff; color:#171717; border-radius:999px; padding:8px 10px; font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase; margin-top:40px; }
+
+    /* === PAGE WRAPPER === */
+    .page-wrapper { background:#fafafa; min-height:100dvh; }
+
+    /* === BACK LINK === */
+    .article-back {
+      position:fixed; top:0; left:0; right:0;
+      height:49px; /* same as nav bar + top */
+      display:flex; align-items:center;
+      padding:0 16px;
+      pointer-events:none; z-index:90;
+    }
+    .article-back__link {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:500; color:#111;
+      letter-spacing:0.48px; text-transform:uppercase;
+      opacity:0; pointer-events:none;
+      transition:opacity .3s ease;
+    }
+    .article-back__link.is-visible { opacity:1; pointer-events:auto; }
+
+    /* === LOADING / ERROR === */
+    .article-loading {
+      display:flex; align-items:center; justify-content:center;
+      min-height:80dvh; font-size:14px; color:#999; text-align:center;
+    }
+
+    /* === ARTICLE LAYOUT === */
+    .article-wrap { display:none; } /* shown by JS after load */
+    .article-wrap.is-loaded { display:block; }
+
+    /* HEADER */
+    .article-header {
+      padding: max(72px, 10dvh) 16px 0;
+      max-width:800px; margin:0 auto;
+    }
+    .article-meta {
+      display:flex; align-items:center; gap:10px;
+      margin-bottom:24px;
+    }
+    .article-category {
+      font-size:10px; font-weight:500; color:#111;
+      letter-spacing:0.8px; text-transform:uppercase;
+      border:1px solid rgba(0,0,0,0.15); border-radius:999px;
+      padding:4px 10px;
+    }
+    .article-meta-sep { width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,0.2); flex-shrink:0; }
+    .article-date { font-size:11px; font-weight:400; color:#666; }
+    .article-title {
+      font-size:clamp(32px, 6vw, 72px);
+      font-weight:500; line-height:1.05;
+      letter-spacing:-0.03em; color:#111;
+      margin-bottom:0;
+    }
+    .article-excerpt {
+      margin-top:24px;
+      font-size:clamp(16px, 1.6vw, 20px);
+      font-weight:300; line-height:1.6; color:#444;
+      max-width:620px;
+    }
+
+    /* HERO IMAGE */
+    .article-hero {
+      margin-top:48px;
+      width:100%;
+      max-height:600px;
+      overflow:hidden;
+    }
+    .article-hero img {
+      width:100%; height:100%;
+      object-fit:cover; display:block;
+    }
+    .article-hero--full {
+      margin-left:0; margin-right:0;
+    }
+
+    /* DIVIDER */
+    .article-divider {
+      height:1px; background:rgba(0,0,0,0.08);
+      margin:48px 16px 0;
+      max-width:800px; margin-left:auto; margin-right:auto;
+    }
+
+    /* BODY */
+    .article-body {
+      padding:48px 16px 80px;
+      max-width:680px; margin:0 auto;
+    }
+
+    /* Editorial typography for WP rendered content */
+    .article-body p {
+      font-size:17px; font-weight:400; line-height:1.75;
+      color:#222; margin-bottom:28px;
+    }
+    .article-body h2 {
+      font-size:clamp(22px, 3vw, 32px);
+      font-weight:500; letter-spacing:-0.025em; line-height:1.2;
+      color:#111; margin:56px 0 16px;
+    }
+    .article-body h3 {
+      font-size:clamp(18px, 2.2vw, 22px);
+      font-weight:500; line-height:1.3;
+      color:#111; margin:40px 0 12px;
+    }
+    .article-body h4 {
+      font-size:16px; font-weight:500; color:#111;
+      text-transform:uppercase; letter-spacing:0.06em;
+      margin:32px 0 8px;
+    }
+    .article-body img {
+      width:calc(100% + 32px); margin-left:-16px;
+      display:block; margin-bottom:8px; margin-top:8px;
+    }
+    .article-body figure { margin:40px 0; }
+    .article-body figure img { width:calc(100% + 32px); margin-left:-16px; }
+    .article-body figcaption {
+      font-size:12px; color:#999; margin-top:8px;
+      padding-left:0; font-style:italic;
+    }
+    .article-body blockquote {
+      margin:48px 0;
+      padding-left:20px;
+      border-left:2px solid #111;
+    }
+    .article-body blockquote p {
+      font-size:clamp(20px, 2.8vw, 28px);
+      font-weight:400; line-height:1.4; color:#111;
+      font-style:italic; margin-bottom:0;
+    }
+    .article-body blockquote cite {
+      display:block; margin-top:16px;
+      font-size:12px; font-weight:500; color:#666;
+      letter-spacing:0.06em; text-transform:uppercase;
+      font-style:normal;
+    }
+    .article-body ul, .article-body ol {
+      padding-left:24px; margin-bottom:28px;
+    }
+    .article-body li {
+      font-size:17px; line-height:1.75; color:#222; margin-bottom:6px;
+    }
+    .article-body a {
+      color:#111; border-bottom:1px solid rgba(0,0,0,0.25);
+      transition:border-color .15s;
+    }
+    .article-body a:hover { border-color:#111; }
+    .article-body hr {
+      border:none; height:1px;
+      background:rgba(0,0,0,0.1); margin:48px 0;
+    }
+    .article-body .wp-block-image img { width:calc(100% + 32px); margin-left:-16px; margin-bottom:0; }
+    .article-body .wp-block-image figcaption { font-size:12px; color:#999; font-style:italic; padding-top:6px; }
+    .article-body .wp-block-quote { margin:48px 0; padding-left:20px; border-left:2px solid #111; }
+    .article-body .wp-block-quote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
+    .article-body .wp-block-separator { border:none; height:1px; background:rgba(0,0,0,0.1); margin:48px 0; }
+
+    /* FOOTER */
+    .article-footer {
+      padding:0 16px 48px;
+      max-width:680px; margin:0 auto;
+      border-top:1px solid rgba(0,0,0,0.08);
+      padding-top:32px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .article-footer__back {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:11px; font-weight:500; color:#111;
+      letter-spacing:0.48px; text-transform:uppercase;
+      transition:opacity .3s;
+    }
+    .article-footer__back:hover { opacity:0.5; }
+    .article-footer__nav { display:flex; gap:24px; }
+    .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
+    .article-footer__nav a:hover { color:#111; }
+
+    /* === DESKTOP === */
+    @media (min-width:640px) {
+      .article-header { padding-top:max(80px, 12dvh); }
+      .article-hero { max-height:520px; }
+    }
+    @media (min-width:1024px) {
+      .article-header { max-width:1000px; padding:max(100px,12dvh) 40px 0; }
+      .article-body   { max-width:720px; padding:56px 40px 100px; }
+      .article-divider { max-width:1000px; margin-left:auto; margin-right:auto; }
+      .article-footer { max-width:720px; padding-left:40px; padding-right:40px; }
+      .article-hero { margin-left:0; }
+      .article-body img,
+      .article-body .wp-block-image img,
+      .article-body figure img { width:calc(100% + 80px); margin-left:-40px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="nav__bar">
+      <a href="index.html" class="nav__logo">Jana Gramlich</a>
+      <div class="nav__menu" aria-hidden="true"><span></span><span></span><span></span><span class="nav__close-icon"><svg width="7" height="7" viewBox="0 0 7 7" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="1" y1="1" x2="6" y2="6"/><line x1="6" y1="1" x2="1" y2="6"/></svg></span></div>
+    </div>
+    <div class="nav__expand">
+      <div class="nav__expand-inner">
+        <div class="nav__links">
+          <a href="index.html#work" class="nav__link">Work</a>
+          <a href="index.html#about" class="nav__link">About</a>
+          <a href="archive.html" class="nav__link">Archive</a>
+          <a href="articles.html" class="nav__link">Articles</a>
+        </div>
+        <div class="nav__divider"></div>
+        <div class="nav__contact">
+          <p class="nav__contact-label">Contact</p>
+          <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
+          <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" class="nav__linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOADING STATE -->
+  <div class="article-loading" id="articleLoading">
+    <span>Loading…</span>
+  </div>
+
+  <!-- ARTICLE (shown after load) -->
+  <div class="article-wrap" id="articleWrap">
+
+    <header class="article-header" id="articleHeader">
+      <div class="article-meta" id="articleMeta"></div>
+      <h1 class="article-title" id="articleTitle"></h1>
+      <p class="article-excerpt" id="articleExcerpt"></p>
+    </header>
+
+    <div class="article-hero" id="articleHero" style="display:none">
+      <img id="articleHeroImg" src="" alt="">
+    </div>
+
+    <div class="article-divider"></div>
+
+    <main class="article-body" id="articleBody"></main>
+
+    <footer class="article-footer">
+      <a href="articles.html" class="article-footer__back">
+        <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M7.696 2.306L2.611 7.391" stroke-linecap="square"/><path d="M7.696 7.853H2.149V2.306" stroke-linecap="square"/></svg>
+        All Articles
+      </a>
+      <nav class="article-footer__nav">
+        <a href="privacy-policy.html">Privacy</a>
+        <a href="imprint.html">Imprint</a>
+      </nav>
+    </footer>
+
+  </div>
+
+</div><!-- /.page-wrapper -->
+
+<script>
+  // === NAV ===
+  const nav = document.getElementById('mainNav');
+  nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
+  let _mlSuppress = false;
+  nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+  nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive:true });
+  nav.querySelector('.nav__logo').addEventListener('touchend', e => {
+    if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+  });
+  nav.querySelector('.nav__logo').addEventListener('click', e => {
+    if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+  });
+  nav.querySelector('.nav__menu').addEventListener('click', e => {
+    e.stopPropagation(); nav.classList.toggle('is-open');
+  });
+  nav.addEventListener('click', e => {
+    if (e.pointerType !== 'touch') return;
+    const onBar = e.target.closest('.nav__bar');
+    const isOpen = nav.classList.contains('is-open');
+    if (onBar && !isOpen) { e.preventDefault(); nav.classList.add('is-open'); }
+    else if (onBar && !e.target.closest('a')) nav.classList.remove('is-open');
+  });
+  document.addEventListener('click', e => {
+    if (e.pointerType === 'touch' && !e.target.closest('#mainNav')) nav.classList.remove('is-open');
+  });
+
+  (function() {
+    const navBar  = nav.querySelector('.nav__bar');
+    const navMenu = nav.querySelector('.nav__menu');
+    const dots    = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
+    const logoEl  = navBar.querySelector('.nav__logo');
+
+    function setPillState() {
+      const targetW = logoEl.offsetWidth + 48;
+      nav.style.width = targetW + 'px';
+      nav.style.top   = window.innerWidth >= 640 ? '8px' : '4px';
+      nav.style.borderRadius = '24px';
+      nav.style.background   = 'rgba(0,0,0,0.45)';
+      nav.style.setProperty('--nav-bg-opacity','0');
+      nav.style.backdropFilter       = 'blur(20px) saturate(180%)';
+      nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+      nav.style.setProperty('--pill-w', targetW + 'px');
+      navBar.style.paddingLeft  = '16px'; navBar.style.paddingRight = '16px';
+      navBar.style.paddingTop   = '0';   navBar.style.paddingBottom= '0';
+      dots[0].style.opacity = '0'; dots[2].style.opacity = '0';
+      dots[0].style.transform = 'translateX(6px)'; dots[2].style.transform = 'translateX(-6px)';
+      dots[1].style.background = 'rgb(172,176,255)';
+      dots[1].style.width = '8px'; dots[1].style.height = '8px';
+      navMenu.style.width = '8px';
+    }
+
+    const EASE = 'cubic-bezier(.4,0,.2,1)';
+    const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
+
+    new MutationObserver(() => {
+      nav.style.transition = NAV_TRANS;
+      void nav.offsetHeight;
+      if (nav.classList.contains('is-open')) {
+        nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
+        nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
+        navBar.style.paddingLeft=''; navBar.style.paddingRight='';
+        navBar.style.paddingTop=''; navBar.style.paddingBottom='';
+        dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
+        navMenu.style.width = '8px';
+      } else {
+        setPillState();
+      }
+      setTimeout(() => { nav.style.transition = ''; }, 450);
+    }).observe(nav, { attributes:true, attributeFilter:['class'] });
+
+    window.addEventListener('resize', setPillState);
+    setPillState();
+  })();
+
+  // === ARTICLE FETCH ===
+  const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
+
+  function stripHtml(html) {
+    return new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  }
+
+  function showError(msg) {
+    document.getElementById('articleLoading').innerHTML =
+      `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const slug   = params.get('slug');
+  const postId = params.get('id');
+
+  if (!slug && !postId) {
+    showError('No article specified.');
+  } else {
+    const endpoint = slug
+      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true&acf_format=standard`
+      : `${API}/posts/${postId}?_embed=true&acf_format=standard`;
+
+    fetch(endpoint)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        // Slug lookup returns array; ID lookup returns single object
+        const post = Array.isArray(data) ? data[0] : data;
+        if (!post) throw new Error('Article not found');
+
+        const title    = stripHtml(post.title?.rendered || 'Untitled');
+        const content  = post.content?.rendered || '';
+        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[\&hellip;\]|\[…\]/g, '').trim();
+        const date     = formatDate(post.date);
+        const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+
+        // Update <title> and meta
+        document.title = title + ' — Jana Gramlich';
+
+        // Meta row (category + date)
+        const metaEl = document.getElementById('articleMeta');
+        metaEl.innerHTML = (category
+          ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
+          + `<span class="article-date">${date}</span>`;
+
+        // Title
+        document.getElementById('articleTitle').textContent = title;
+
+        // Excerpt — only show if content starts with it
+        const excerptEl = document.getElementById('articleExcerpt');
+        if (excerpt && excerpt.length > 20) {
+          excerptEl.textContent = excerpt;
+        } else {
+          excerptEl.style.display = 'none';
+        }
+
+        // Hero image
+        if (heroImg) {
+          const heroEl = document.getElementById('articleHero');
+          document.getElementById('articleHeroImg').src  = heroImg;
+          document.getElementById('articleHeroImg').alt  = title;
+          heroEl.style.display = '';
+        }
+
+        // Body
+        document.getElementById('articleBody').innerHTML = content;
+
+        // Show article, hide loader
+        document.getElementById('articleLoading').style.display = 'none';
+        document.getElementById('articleWrap').classList.add('is-loaded');
+
+        // Make images inside body lazy
+        document.querySelectorAll('.article-body img').forEach(img => {
+          if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+        });
+      })
+      .catch(err => {
+        console.error('[article] fetch failed:', err);
+        showError('Could not load article — ' + (err.message || 'network error') + '.');
+      });
+  }
+</script>
+</body>
+</html>
