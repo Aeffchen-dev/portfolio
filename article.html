@@ -445,29 +445,28 @@
       bases.push('posts'); // final fallback
 
       for (const base of bases) {
-        const r = await fetch(buildUrl(base), { signal: AbortSignal.timeout(10000) }).catch(() => null);
-        if (!r || !r.ok) {
-          const code = r ? (await r.json().catch(() => ({}))).code : null;
-          if (!r || code === 'rest_no_route') continue;
-          throw new Error(`HTTP ${r.status}${code ? ' · ' + code : ''}`);
-        }
-        const data = await r.json();
-        let post = Array.isArray(data) ? data[0] : data;
-        if (!post?.id) continue;
-        // If ACF is empty, retry with acf_format=standard
-        // (some WP/ACF setups require this param to expose ACF fields)
-        const acfKeys = post.acf ? Object.keys(post.acf) : [];
-        if (acfKeys.length === 0) {
-          console.log(`[article] ACF empty from /${base}, retrying with acf_format=standard`);
-          const r2 = await fetch(buildUrl(base) + '&acf_format=standard', { signal: AbortSignal.timeout(10000) }).catch(() => null);
-          if (r2?.ok) {
-            const data2 = await r2.json();
-            const post2 = Array.isArray(data2) ? data2[0] : data2;
-            if (post2?.acf && Object.keys(post2.acf).length > 0) post = post2;
+        // Try acf_format=standard first (returns full image objects from ACF),
+        // then without it as fallback (some WP configs reject the param).
+        let post = null;
+        for (const acfSuffix of ['&acf_format=standard', '']) {
+          const r = await fetch(buildUrl(base) + acfSuffix, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+          if (!r) continue;
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            if (body.code === 'rest_no_route') { post = null; break; } // skip this base
+            console.warn(`[article] /${base}${acfSuffix}: HTTP ${r.status}`, body.code);
+            continue; // try next suffix
           }
+          const data = await r.json();
+          const candidate = Array.isArray(data) ? data[0] : data;
+          if (!candidate?.id) continue;
+          const hasAcf = candidate.acf && typeof candidate.acf === 'object'
+                      && Object.keys(candidate.acf).length > 0;
+          console.log(`[article] /${base}${acfSuffix ? ' +std' : ''} → id=${candidate.id} hasAcf=${hasAcf}`);
+          if (hasAcf) { post = candidate; break; } // got ACF data — done
+          if (!post) post = candidate;              // keep as fallback
         }
-        console.log(`[article] loaded from /${base}`, post);
-        return post;
+        if (post?.id) { console.log('[article] using post', post); return post; }
       }
       throw new Error('Article not found');
     }
@@ -498,7 +497,7 @@
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        const imgRow   = flexRows.find(s => s.acf_fc_layout === 'image');
+        const imgRow   = flexRows.find(s => ['image','img','photo'].includes((s.acf_fc_layout||'').toLowerCase()));
         const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
                       || await resolveImgUrl(imgRow?.img || imgRow?.image)
                       || '';
