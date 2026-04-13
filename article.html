@@ -461,8 +461,8 @@
     // _links is required for _embed (featured media + terms) to work alongside _fields.
     const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
     const endpoint = slug
-      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
-      : `${API}/posts/${postId}?_fields=${FIELDS}&_embed=true`;
+      ? `${API}/articles?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
+      : `${API}/articles/${postId}?_fields=${FIELDS}&_embed=true`;
 
     fetch(endpoint, { signal: AbortSignal.timeout(10000) })
       .then(r => {

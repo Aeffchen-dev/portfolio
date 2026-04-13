@@ -404,7 +404,7 @@
 </a>`;
   }
 
-  fetch(`${API}/posts?per_page=20&_fields=id,title,date,slug,acf,_links&_embed=true`, { signal: AbortSignal.timeout(10000) })
+  fetch(`${API}/articles?per_page=20&_fields=id,title,date,slug,acf,_links&_embed=true`, { signal: AbortSignal.timeout(10000) })
     .then(r => {
       if (!r.ok) return r.json()
         .then(err => { throw new Error(`HTTP ${r.status}${err?.code ? ' · ' + err.code : ''}`); })
