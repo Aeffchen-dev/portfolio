@@ -420,31 +420,46 @@
       `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
   }
 
-  // Render ACF flexible-content sections as HTML (fallback when content.rendered is empty)
+  // Scan all ACF fields to find the flexible content array (field name may vary).
+  // Returns the first field that is an array of objects with acf_fc_layout set.
+  function findFlexibleContent(acf) {
+    for (const val of Object.values(acf)) {
+      if (Array.isArray(val) && val.length > 0
+          && val[0] && typeof val[0] === 'object'
+          && 'acf_fc_layout' in val[0]) {
+        return val;
+      }
+    }
+    return [];
+  }
+
+  // Render ACF flexible-content rows as HTML.
+  // Handles 'text' layout (and common variants) plus image/quote/headline fallbacks.
   function renderSections(sections) {
     if (!Array.isArray(sections) || sections.length === 0) return '';
     return sections.map(s => {
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      // Try common text-field names first
-      const textHtml = s.text || s.content || s.body || s.description || '';
+      // 'text' layout — try every common wysiwyg/textarea field name
+      const textHtml = s.text || s.content || s.body || s.description || s.copy || '';
       if (textHtml) return textHtml;
-      // Image layout
+      // 'image' layout
       if (layout === 'image' || s.image) {
         const img = s.image;
         let url = '';
         if (typeof img === 'string') url = img;
         else if (img && typeof img === 'object') {
           url = img.url || img.source_url
-             || (Array.isArray(img) && img[0] && (img[0].url || img[0].image?.url || img[0].source_url))
-             || '';
+             || (Array.isArray(img) && img[0]
+                  ? (img[0].url || img[0].image?.url || img[0].source_url || '') : '');
         }
-        return url ? `<figure><img src="${url}" alt=""></figure>` : '';
+        const caption = s.caption || '';
+        return url ? `<figure><img src="${url}" alt="${caption}"></figure>` : '';
       }
-      // Quote layout
-      if ((layout === 'quote' || s.quote) && s.quote) {
+      // 'quote' layout
+      if (s.quote) {
         return `<blockquote><p>${s.quote}</p>${s.author ? `<cite>${s.author}</cite>` : ''}</blockquote>`;
       }
-      // Headline layout
+      // 'headline' layout
       if (s.headline) return `<h2>${s.headline}</h2>`;
       return '';
     }).filter(Boolean).join('\n');
@@ -479,21 +494,22 @@
         console.log('[article] post data:', post);
 
         const acf      = post.acf || {};
+        // Find the flexible content field regardless of its ACF field name
+        const flexRows = findFlexibleContent(acf);
+        console.log('[article] acf fields:', Object.keys(acf), '| flex rows:', flexRows.length);
+
         const title    = stripHtml(post.title?.rendered || acf.title || 'Untitled');
-        // content.rendered → acf.text → rendered ACF sections
+        // content.rendered → acf.text (top-level) → flexible content rows
         const content  = (post.content?.rendered || '').trim()
                       || (acf.text || '').trim()
-                      || renderSections(acf.section);
+                      || renderSections(flexRows);
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
-        // Category from WP terms, or from ACF shortfacts client/category field
-        const category = post._embedded?.['wp:term']?.[0]?.[0]?.name
-                      || (acf.shortfacts || []).find(f => /brand|client|category/i.test(f.label || ''))?.value
-                      || '';
-        // Hero: WP featured media → acf.hero_image (object or ID ignored) → first section image
+        // Category from WP terms
+        const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+        // Hero: WP featured media → acf.hero_image → first image row in flexible content
         const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
                       || (acf.hero_image && typeof acf.hero_image === 'object' ? acf.hero_image.url : '')
-                      || (acf.section || []).find(s => s.acf_fc_layout === 'image')?.image?.[0]?.image?.url
                       || '';
 
         // Update <title> and meta
