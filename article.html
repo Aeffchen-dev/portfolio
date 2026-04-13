@@ -74,117 +74,68 @@
     .nav__linkedin { display:inline-flex; align-items:center; justify-content:center; background:#acb0ff; color:#171717; border-radius:999px; padding:8px 10px; font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase; margin-top:40px; }
 
     /* === PAGE WRAPPER === */
-    .page-wrapper { background:#fafafa; min-height:100dvh; }
+    body { background:#111; color:#fff; }
 
-    /* === LOADING / ERROR === */
-    .article-loading {
-      display:flex; align-items:center; justify-content:center;
-      min-height:80dvh; font-size:14px; color:#999; text-align:center;
-    }
+    /* === LOADING === */
+    .article-loading { display:flex; align-items:center; justify-content:center; min-height:100dvh; font-size:14px; color:rgba(255,255,255,.4); text-align:center; }
 
-    /* === ARTICLE WRAP === */
-    .article-wrap { display:none; }
-    .article-wrap.is-loaded { display:block; }
+    /* === MODAL CARD === */
+    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:95vw; height:95vh; z-index:10; border-radius:20px; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,.5); display:none; }
+    .modal.is-visible { display:block; }
+    .modal__scroll { height:100%; overflow-y:auto; overflow-x:hidden; background:#0D0D0D; }
 
-    /* === HEADER (always at top, nav clearance) === */
-    .article-header {
-      padding:max(72px,10dvh) 24px 0;
-      max-width:860px; margin:0 auto;
-    }
+    /* === PAGE HEADER === */
+    .page-header { padding:80px 32px 64px; background:#0D0D0D; }
+    .header-eyebrow { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+    .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
+    .eyebrow-category { font-size:15px; font-weight:400; color:#fff; }
+    .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.35); }
+    .btn-back { width:36px; height:36px; border-radius:50%; background:#fff; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+    .btn-back:hover { background:rgba(255,255,255,.8); }
+    .hero__title { font-size:clamp(36px,5vw,72px); font-weight:500; letter-spacing:-0.035em; line-height:1.05; color:#fff; }
+    .hero__desc { margin-top:40px; max-width:760px; }
+    .hero__desc p { font-size:17px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.6); }
 
-    /* === HERO (below header, full-bleed) === */
-    .article-hero {
-      width:100%; margin-top:40px;
-      max-height:560px; overflow:hidden;
-    }
-    .article-hero img { width:100%; height:100%; object-fit:cover; display:block; }
-
-    /* === TITLE === */
-    .article-title {
-      font-size:clamp(36px,6vw,88px);
-      font-weight:500; line-height:1.0;
-      letter-spacing:-0.03em; color:#111;
-    }
-
-    /* === META === */
-    .article-meta { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
-    .article-category {
-      font-size:10px; font-weight:500; color:#111;
-      letter-spacing:0.8px; text-transform:uppercase;
-      border:1px solid rgba(0,0,0,0.15); border-radius:999px; padding:4px 10px;
-    }
-    .article-meta-sep { width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,0.2); flex-shrink:0; }
-    .article-date { font-size:11px; font-weight:400; color:#666; }
-
-    /* === EXCERPT === */
-    .article-excerpt {
-      margin-top:20px;
-      font-size:clamp(16px,1.6vw,20px);
-      font-weight:300; line-height:1.6; color:#444; max-width:640px;
-    }
-
-    /* === DIVIDER === */
-    .article-divider { height:1px; background:rgba(0,0,0,0.08); max-width:860px; margin:40px auto; }
-
-    /* === BODY === */
-    .article-body { padding:0 24px 80px; max-width:680px; margin:0 auto; }
-    .article-body p { font-size:17px; font-weight:400; line-height:1.75; color:#222; margin-bottom:28px; }
-    .article-body h2 {
-      font-size:clamp(28px,4.5vw,52px);
-      font-weight:500; letter-spacing:-0.025em; line-height:1.1;
-      color:#111; margin:64px 0 20px;
-    }
-    .article-body h3 {
-      font-size:clamp(22px,3vw,36px);
-      font-weight:500; line-height:1.2; color:#111; margin:48px 0 14px;
-    }
-    .article-body h4 {
-      font-size:13px; font-weight:500; color:#111;
-      text-transform:uppercase; letter-spacing:0.08em; margin:36px 0 8px;
-    }
-    .article-body img { width:calc(100% + 48px); margin-left:-24px; display:block; margin-top:8px; margin-bottom:8px; }
-    .article-body figure { margin:48px 0; }
-    .article-body figure img { width:calc(100% + 48px); margin-left:-24px; margin-top:0; margin-bottom:0; }
-    .article-body figcaption { font-size:12px; color:#999; margin-top:10px; font-style:italic; }
-    .article-body blockquote { margin:56px 0; padding-left:24px; border-left:2px solid #111; }
-    .article-body blockquote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
-    .article-body blockquote cite { display:block; margin-top:16px; font-size:12px; font-weight:500; color:#666; letter-spacing:0.06em; text-transform:uppercase; font-style:normal; }
-    .article-body ul, .article-body ol { padding-left:24px; margin-bottom:28px; }
-    .article-body li { font-size:17px; line-height:1.75; color:#222; margin-bottom:6px; }
-    .article-body a { color:#111; border-bottom:1px solid rgba(0,0,0,.25); transition:border-color .15s; }
-    .article-body a:hover { border-color:#111; }
-    .article-body hr { border:none; height:1px; background:rgba(0,0,0,.1); margin:56px 0; }
-    .article-body .wp-block-image img { width:calc(100% + 48px); margin-left:-24px; margin-bottom:0; }
-    .article-body .wp-block-image figcaption { font-size:12px; color:#999; font-style:italic; padding-top:8px; }
-    .article-body .wp-block-quote { margin:56px 0; padding-left:24px; border-left:2px solid #111; }
-    .article-body .wp-block-quote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
-    .article-body .wp-block-separator { border:none; height:1px; background:rgba(0,0,0,.1); margin:56px 0; }
+    /* === BLOCKS === */
+    .blocks { background:#1A1A1A; padding:8px; margin:8px 0; }
+    .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .block { border-radius:16px; overflow:hidden; }
+    .block--full { grid-column:span 4; }
+    .block--half { grid-column:span 2; }
+    .ar-16-7 { aspect-ratio:16/7; }
+    .ar-4-3  { aspect-ratio:4/3; }
+    .block-image { background:#1A1A1A; }
+    .block-image img { width:100%; height:100%; object-fit:cover; display:block; }
+    .block-text { border-radius:0; }
+    .text-inner { padding:16px 0; }
+    .text-body { font-size:15px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
+    .text-body p { margin-bottom:20px; }
+    .text-body p:last-child { margin-bottom:0; }
+    .text-body h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
+    .text-body h3 { font-size:clamp(15px,1.8vw,20px); font-weight:500; color:#fff; margin:20px 0 8px; }
+    .text-body a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
 
     /* === FOOTER === */
-    .article-footer {
-      padding:32px 24px 48px; max-width:680px; margin:0 auto;
-      border-top:1px solid rgba(0,0,0,0.08);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .article-footer__back { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:500; color:#111; letter-spacing:0.48px; text-transform:uppercase; transition:opacity .3s; }
-    .article-footer__back:hover { opacity:0.5; }
-    .article-footer__nav { display:flex; gap:24px; }
-    .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
-    .article-footer__nav a:hover { color:#111; }
+    .footer-rule { height:1px; background:rgba(255,255,255,.1); }
+    .page-footer { padding:48px 32px 32px; display:flex; justify-content:space-between; align-items:flex-end; }
+    .footer__back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:#fff; border-bottom:1px solid rgba(255,255,255,.25); padding-bottom:2px; transition:border-color .15s; }
+    .footer__back:hover { border-color:#fff; }
+    .footer__nav { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+    .footer__nav a { font-size:11px; font-weight:500; color:rgba(255,255,255,.4); letter-spacing:.07em; text-transform:uppercase; transition:color .15s; }
+    .footer__nav a:hover { color:#fff; }
 
     /* === RESPONSIVE === */
-    @media (min-width:640px) {
-      .article-hero { max-height:600px; }
-      .article-header { padding-left:40px; padding-right:40px; }
+    @media (max-width:639px) {
+      .modal { width:100vw; height:100dvh; border-radius:0; top:0; left:0; transform:none; }
+      .page-header { padding:64px 20px 40px; }
+      .blocks__grid { grid-template-columns:1fr; }
+      .block--full, .block--half { grid-column:span 1; }
+      .ar-16-7 { aspect-ratio:4/3; }
+      .page-footer { flex-direction:column; align-items:flex-start; gap:32px; padding:40px 20px 24px; }
+      .footer__nav { flex-direction:row; align-items:flex-start; gap:20px; }
     }
-    @media (min-width:1024px) {
-      .article-hero { max-height:680px; }
-      .article-header { max-width:1000px; padding-left:60px; padding-right:60px; }
-      .article-body { max-width:740px; padding:0 60px 100px; }
-      .article-divider { max-width:1000px; }
-      .article-body img,
-      .article-body figure img,
-      .article-body .wp-block-image img { width:calc(100% + 120px); margin-left:-60px; }
+    @media (min-width:640px) and (max-width:1023px) {
+      .page-header { padding:80px 24px 56px; }
     }
   </style>
 </head>
@@ -217,40 +168,42 @@
   </nav>
 
   <!-- LOADING STATE -->
-  <div class="article-loading" id="articleLoading">
-    <span>Loading…</span>
-  </div>
+  <div class="article-loading" id="articleLoading"><span>Loading…</span></div>
 
-  <!-- ARTICLE (shown after load) -->
-  <div class="article-wrap" id="articleWrap">
+  <!-- ARTICLE MODAL CARD -->
+  <div class="modal" id="articleModal">
+    <div class="modal__scroll">
 
-    <!-- Header: meta + title always at top -->
-    <header class="article-header" id="articleHeader">
-      <div class="article-meta" id="articleMeta"></div>
-      <h1 class="article-title" id="articleTitle"></h1>
-      <p class="article-excerpt" id="articleExcerpt"></p>
-    </header>
+      <header class="page-header">
+        <div class="header-eyebrow">
+          <div class="eyebrow-left">
+            <span class="eyebrow-category" id="articleCategory"></span>
+            <span class="eyebrow-date" id="articleDate"></span>
+          </div>
+          <a href="articles.html" class="btn-back" aria-label="All articles">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"><path d="M1 1L11 11M11 1L1 11"/></svg>
+          </a>
+        </div>
+        <h1 class="hero__title" id="articleTitle"></h1>
+        <div class="hero__desc" id="articleExcerptWrap" style="display:none">
+          <p id="articleExcerpt"></p>
+        </div>
+      </header>
 
-    <!-- Hero image below header -->
-    <div class="article-hero" id="articleHero" style="display:none">
-      <img id="articleHeroImg" src="" alt="" loading="eager">
+      <main class="blocks">
+        <div class="blocks__grid" id="blocksGrid"></div>
+      </main>
+
+      <div class="footer-rule"></div>
+      <footer class="page-footer">
+        <a href="articles.html" class="footer__back">← All Articles</a>
+        <nav class="footer__nav">
+          <a href="privacy-policy.html">Privacy</a>
+          <a href="imprint.html">Imprint</a>
+        </nav>
+      </footer>
+
     </div>
-
-    <div class="article-divider"></div>
-
-    <main class="article-body" id="articleBody"></main>
-
-    <footer class="article-footer">
-      <a href="articles.html" class="article-footer__back">
-        <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M7.696 2.306L2.611 7.391" stroke-linecap="square"/><path d="M7.696 7.853H2.149V2.306" stroke-linecap="square"/></svg>
-        All Articles
-      </a>
-      <nav class="article-footer__nav">
-        <a href="privacy-policy.html">Privacy</a>
-        <a href="imprint.html">Imprint</a>
-      </nav>
-    </footer>
-
   </div>
 
 </div><!-- /.page-wrapper -->
@@ -361,39 +314,32 @@
     return '';
   }
 
-  // Render ALL flexible content rows in order.
-  // layout 'editor'/'wysiwyg'/'text' → text field (HTML)
-  // layout 'image'/'img'/'photo'     → image field (object or attachment ID)
-  async function renderSections(sections) {
-    if (!Array.isArray(sections) || sections.length === 0) return '';
-    console.log('[article] renderSections:', sections.length, 'rows');
-    const parts = await Promise.all(sections.map(async (s, i) => {
+  // Build project-style blocks from ACF flexible content rows.
+  // Returns HTML string of .block elements for .blocks__grid.
+  async function renderBlocks(sections, test2) {
+    const blocks = [];
+    if (test2) {
+      blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body"><p>${test2}</p></div></div></div>`);
+    }
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
       console.log(`[article] row[${i}]:`, JSON.stringify(s));
       const layout = (s.acf_fc_layout || '').toLowerCase();
-
       if (layout === 'image' || layout === 'img' || layout === 'photo') {
-        const raw = s.img || s.image || s.photo || s.src || null;
-        const url = await resolveImgUrl(raw);
-        if (!url) return '';
-        const cap = s.caption || s.alt || '';
-        return `<figure><img src="${url}" alt="${cap}" loading="lazy">${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
-      }
-
-      // For editor/text layouts AND any unknown layout:
-      // 1. Try known field names
-      const known = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
-      if (known) { console.log(`[article] row[${i}] "${layout}" via known field`); return known; }
-      // 2. Catch-all: scan every string-valued field in the row
-      for (const [k, v] of Object.entries(s)) {
-        if (k === 'acf_fc_layout') continue;
-        if (typeof v === 'string' && v.trim().length > 0) {
-          console.log(`[article] row[${i}] "${layout}" via field "${k}"`);
-          return v;
+        const url = await resolveImgUrl(s.img || s.image || s.photo || s.src || null);
+        if (url) blocks.push(`<div class="block block--full block-image ar-16-7"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+      } else {
+        // Text/editor: try known fields, then scan all string fields
+        let html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
+        if (!html) {
+          for (const [k, v] of Object.entries(s)) {
+            if (k !== 'acf_fc_layout' && typeof v === 'string' && v.trim()) { html = v; break; }
+          }
         }
+        if (html) blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
       }
-      return '';
-    }));
-    return parts.filter(Boolean).join('\n');
+    }
+    return blocks.join('');
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -462,60 +408,36 @@
     fetchArticle()
       .then(async post => {
         const acf = post.acf || {};
-
-        // Find flexible content: check known field 'content' first, then scan all ACF fields
         console.log('[article] ACF keys:', Object.keys(acf));
-        console.log('[article] ACF data:', JSON.stringify(acf));
-        const flexRows = (() => {
-          const check = v => Array.isArray(v) && v.length > 0
-                          && typeof v[0] === 'object' && v[0] !== null && 'acf_fc_layout' in v[0];
-          if (check(acf.content)) { console.log('[article] using acf.content'); return acf.content; }
-          for (const [k, v] of Object.entries(acf)) {
-            if (check(v)) { console.log(`[article] using acf.${k}`); return v; }
-          }
-          console.log('[article] no flexible content found in ACF');
-          return [];
-        })();
 
-        const title   = stripHtml(post.title?.rendered || 'Untitled');
-        const content = await renderSections(flexRows);
+        const check = v => Array.isArray(v) && v.length > 0
+                        && typeof v[0] === 'object' && v[0] !== null && 'acf_fc_layout' in v[0];
+        const flexRows = check(acf.content) ? acf.content
+                       : (Object.values(acf).find(check) || []);
+
+        const title    = stripHtml(post.title?.rendered || 'Untitled');
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        const imgRow   = flexRows.find(s => ['image','img','photo'].includes((s.acf_fc_layout||'').toLowerCase()));
-        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                      || await resolveImgUrl(imgRow?.img || imgRow?.image)
-                      || '';
+        const test2    = acf.test2 || '';
 
         document.title = title + ' — Jana Gramlich';
-
-        // Header: always meta + title at top
-        document.getElementById('articleMeta').innerHTML = (category
-          ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
-          + `<span class="article-date">${date}</span>`;
+        document.getElementById('articleCategory').textContent = category;
+        document.getElementById('articleDate').textContent = date;
         document.getElementById('articleTitle').textContent = title;
 
-        const excerptEl = document.getElementById('articleExcerpt');
-        if (excerpt && excerpt.length > 20) excerptEl.textContent = excerpt;
-        else excerptEl.style.display = 'none';
-
-        // Hero image below header
-        if (heroImg) {
-          document.getElementById('articleHeroImg').src = heroImg;
-          document.getElementById('articleHeroImg').alt = title;
-          document.getElementById('articleHero').style.display = '';
+        if (excerpt && excerpt.length > 20) {
+          document.getElementById('articleExcerpt').textContent = excerpt;
+          document.getElementById('articleExcerptWrap').style.display = '';
         }
 
-        // test2 field prepended before flexible content
-        const test2 = acf.test2 ? `<p>${acf.test2}</p>` : '';
-        const fullContent = test2 + content || (post.content?.rendered || '').trim();
+        const blocks = await renderBlocks(flexRows, test2);
+        const fallback = (post.content?.rendered || '').trim();
+        document.getElementById('blocksGrid').innerHTML = blocks
+          || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
 
-        document.getElementById('articleBody').innerHTML = fullContent;
         document.getElementById('articleLoading').style.display = 'none';
-        document.getElementById('articleWrap').classList.add('is-loaded');
-        document.querySelectorAll('.article-body img').forEach(img => {
-          if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
-        });
+        document.getElementById('articleModal').classList.add('is-visible');
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
