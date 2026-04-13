@@ -457,12 +457,12 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
-    // Note: acf_format=standard removed — can cause WP API failures on some configurations.
-    // ACF text/wysiwyg fields are returned as plain strings regardless; only relationship
-    // fields differ, and we don't rely on those here.
+    // Explicitly request the acf field so ACF REST API returns it — same pattern as project fetch.
+    // _links is required for _embed (featured media + terms) to work alongside _fields.
+    const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
     const endpoint = slug
-      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true`
-      : `${API}/posts/${postId}?_embed=true`;
+      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
+      : `${API}/posts/${postId}?_fields=${FIELDS}&_embed=true`;
 
     fetch(endpoint, { signal: AbortSignal.timeout(10000) })
       .then(r => {

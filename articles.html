@@ -383,8 +383,10 @@
     const slug     = post.slug || '';
     const date     = formatDate(post.date);
     const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+    const acf      = post.acf || {};
     const thumb    = post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail?.source_url
                   || post._embedded?.['wp:featuredmedia']?.[0]?.source_url
+                  || (acf.hero_image && typeof acf.hero_image === 'object' ? acf.hero_image.url : '')
                   || '';
 
     const thumbHtml = thumb
@@ -402,7 +404,7 @@
 </a>`;
   }
 
-  fetch(`${API}/posts?per_page=20&_embed=true`, { signal: AbortSignal.timeout(10000) })
+  fetch(`${API}/posts?per_page=20&_fields=id,title,date,slug,acf,_links&_embed=true`, { signal: AbortSignal.timeout(10000) })
     .then(r => {
       if (!r.ok) return r.json()
         .then(err => { throw new Error(`HTTP ${r.status}${err?.code ? ' · ' + err.code : ''}`); })
