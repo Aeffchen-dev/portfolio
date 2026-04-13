@@ -76,191 +76,132 @@
     /* === PAGE WRAPPER === */
     .page-wrapper { background:#fafafa; min-height:100dvh; }
 
-    /* === BACK LINK === */
-    .article-back {
-      position:fixed; top:0; left:0; right:0;
-      height:49px; /* same as nav bar + top */
-      display:flex; align-items:center;
-      padding:0 16px;
-      pointer-events:none; z-index:90;
-    }
-    .article-back__link {
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:500; color:#111;
-      letter-spacing:0.48px; text-transform:uppercase;
-      opacity:0; pointer-events:none;
-      transition:opacity .3s ease;
-    }
-    .article-back__link.is-visible { opacity:1; pointer-events:auto; }
-
     /* === LOADING / ERROR === */
     .article-loading {
       display:flex; align-items:center; justify-content:center;
       min-height:80dvh; font-size:14px; color:#999; text-align:center;
     }
 
-    /* === ARTICLE LAYOUT === */
-    .article-wrap { display:none; } /* shown by JS after load */
+    /* === ARTICLE WRAP === */
+    .article-wrap { display:none; }
     .article-wrap.is-loaded { display:block; }
 
-    /* HEADER */
+    /* === HERO (full-bleed, tall, title overlaid) === */
+    .article-hero {
+      position:relative; width:100%;
+      height:68dvh; min-height:340px;
+      overflow:hidden; background:#111;
+    }
+    .article-hero img { width:100%; height:100%; object-fit:cover; display:block; }
+    .article-hero__overlay {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:0 24px 40px;
+      background:linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%);
+    }
+    /* meta inside overlay — white */
+    .article-hero__overlay .article-meta { margin-bottom:14px; }
+    .article-hero__overlay .article-category { color:rgba(255,255,255,.85); border-color:rgba(255,255,255,.22); }
+    .article-hero__overlay .article-meta-sep { background:rgba(255,255,255,.3); }
+    .article-hero__overlay .article-date { color:rgba(255,255,255,.6); }
+    /* title inside overlay — white */
+    .article-hero__overlay .article-title { color:#fff; }
+
+    /* === HEADER (below hero, or top when no hero) === */
     .article-header {
-      padding: max(72px, 10dvh) 16px 0;
-      max-width:800px; margin:0 auto;
+      padding:32px 24px 0;
+      max-width:860px; margin:0 auto;
     }
-    .article-meta {
-      display:flex; align-items:center; gap:10px;
-      margin-bottom:24px;
+    .article-header.no-hero { padding-top:max(72px,10dvh); }
+
+    /* === TITLE === */
+    .article-title {
+      font-size:clamp(36px,6vw,88px);
+      font-weight:500; line-height:1.0;
+      letter-spacing:-0.03em; color:#111;
     }
+
+    /* === META === */
+    .article-meta { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
     .article-category {
       font-size:10px; font-weight:500; color:#111;
       letter-spacing:0.8px; text-transform:uppercase;
-      border:1px solid rgba(0,0,0,0.15); border-radius:999px;
-      padding:4px 10px;
+      border:1px solid rgba(0,0,0,0.15); border-radius:999px; padding:4px 10px;
     }
     .article-meta-sep { width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,0.2); flex-shrink:0; }
     .article-date { font-size:11px; font-weight:400; color:#666; }
-    .article-title {
-      font-size:clamp(32px, 6vw, 72px);
-      font-weight:500; line-height:1.05;
-      letter-spacing:-0.03em; color:#111;
-      margin-bottom:0;
-    }
+
+    /* === EXCERPT === */
     .article-excerpt {
-      margin-top:24px;
-      font-size:clamp(16px, 1.6vw, 20px);
-      font-weight:300; line-height:1.6; color:#444;
-      max-width:620px;
+      margin-top:20px;
+      font-size:clamp(16px,1.6vw,20px);
+      font-weight:300; line-height:1.6; color:#444; max-width:640px;
     }
 
-    /* HERO IMAGE */
-    .article-hero {
-      margin-top:48px;
-      width:100%;
-      max-height:600px;
-      overflow:hidden;
-    }
-    .article-hero img {
-      width:100%; height:100%;
-      object-fit:cover; display:block;
-    }
-    .article-hero--full {
-      margin-left:0; margin-right:0;
-    }
+    /* === DIVIDER === */
+    .article-divider { height:1px; background:rgba(0,0,0,0.08); max-width:860px; margin:40px auto; }
 
-    /* DIVIDER */
-    .article-divider {
-      height:1px; background:rgba(0,0,0,0.08);
-      margin:48px 16px 0;
-      max-width:800px; margin-left:auto; margin-right:auto;
-    }
-
-    /* BODY */
-    .article-body {
-      padding:48px 16px 80px;
-      max-width:680px; margin:0 auto;
-    }
-
-    /* Editorial typography for WP rendered content */
-    .article-body p {
-      font-size:17px; font-weight:400; line-height:1.75;
-      color:#222; margin-bottom:28px;
-    }
+    /* === BODY === */
+    .article-body { padding:0 24px 80px; max-width:680px; margin:0 auto; }
+    .article-body p { font-size:17px; font-weight:400; line-height:1.75; color:#222; margin-bottom:28px; }
     .article-body h2 {
-      font-size:clamp(22px, 3vw, 32px);
-      font-weight:500; letter-spacing:-0.025em; line-height:1.2;
-      color:#111; margin:56px 0 16px;
+      font-size:clamp(28px,4.5vw,52px);
+      font-weight:500; letter-spacing:-0.025em; line-height:1.1;
+      color:#111; margin:64px 0 20px;
     }
     .article-body h3 {
-      font-size:clamp(18px, 2.2vw, 22px);
-      font-weight:500; line-height:1.3;
-      color:#111; margin:40px 0 12px;
+      font-size:clamp(22px,3vw,36px);
+      font-weight:500; line-height:1.2; color:#111; margin:48px 0 14px;
     }
     .article-body h4 {
-      font-size:16px; font-weight:500; color:#111;
-      text-transform:uppercase; letter-spacing:0.06em;
-      margin:32px 0 8px;
+      font-size:13px; font-weight:500; color:#111;
+      text-transform:uppercase; letter-spacing:0.08em; margin:36px 0 8px;
     }
-    .article-body img {
-      width:calc(100% + 32px); margin-left:-16px;
-      display:block; margin-bottom:8px; margin-top:8px;
-    }
-    .article-body figure { margin:40px 0; }
-    .article-body figure img { width:calc(100% + 32px); margin-left:-16px; }
-    .article-body figcaption {
-      font-size:12px; color:#999; margin-top:8px;
-      padding-left:0; font-style:italic;
-    }
-    .article-body blockquote {
-      margin:48px 0;
-      padding-left:20px;
-      border-left:2px solid #111;
-    }
-    .article-body blockquote p {
-      font-size:clamp(20px, 2.8vw, 28px);
-      font-weight:400; line-height:1.4; color:#111;
-      font-style:italic; margin-bottom:0;
-    }
-    .article-body blockquote cite {
-      display:block; margin-top:16px;
-      font-size:12px; font-weight:500; color:#666;
-      letter-spacing:0.06em; text-transform:uppercase;
-      font-style:normal;
-    }
-    .article-body ul, .article-body ol {
-      padding-left:24px; margin-bottom:28px;
-    }
-    .article-body li {
-      font-size:17px; line-height:1.75; color:#222; margin-bottom:6px;
-    }
-    .article-body a {
-      color:#111; border-bottom:1px solid rgba(0,0,0,0.25);
-      transition:border-color .15s;
-    }
+    .article-body img { width:calc(100% + 48px); margin-left:-24px; display:block; margin-top:8px; margin-bottom:8px; }
+    .article-body figure { margin:48px 0; }
+    .article-body figure img { width:calc(100% + 48px); margin-left:-24px; margin-top:0; margin-bottom:0; }
+    .article-body figcaption { font-size:12px; color:#999; margin-top:10px; font-style:italic; }
+    .article-body blockquote { margin:56px 0; padding-left:24px; border-left:2px solid #111; }
+    .article-body blockquote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
+    .article-body blockquote cite { display:block; margin-top:16px; font-size:12px; font-weight:500; color:#666; letter-spacing:0.06em; text-transform:uppercase; font-style:normal; }
+    .article-body ul, .article-body ol { padding-left:24px; margin-bottom:28px; }
+    .article-body li { font-size:17px; line-height:1.75; color:#222; margin-bottom:6px; }
+    .article-body a { color:#111; border-bottom:1px solid rgba(0,0,0,.25); transition:border-color .15s; }
     .article-body a:hover { border-color:#111; }
-    .article-body hr {
-      border:none; height:1px;
-      background:rgba(0,0,0,0.1); margin:48px 0;
-    }
-    .article-body .wp-block-image img { width:calc(100% + 32px); margin-left:-16px; margin-bottom:0; }
-    .article-body .wp-block-image figcaption { font-size:12px; color:#999; font-style:italic; padding-top:6px; }
-    .article-body .wp-block-quote { margin:48px 0; padding-left:20px; border-left:2px solid #111; }
+    .article-body hr { border:none; height:1px; background:rgba(0,0,0,.1); margin:56px 0; }
+    .article-body .wp-block-image img { width:calc(100% + 48px); margin-left:-24px; margin-bottom:0; }
+    .article-body .wp-block-image figcaption { font-size:12px; color:#999; font-style:italic; padding-top:8px; }
+    .article-body .wp-block-quote { margin:56px 0; padding-left:24px; border-left:2px solid #111; }
     .article-body .wp-block-quote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
-    .article-body .wp-block-separator { border:none; height:1px; background:rgba(0,0,0,0.1); margin:48px 0; }
+    .article-body .wp-block-separator { border:none; height:1px; background:rgba(0,0,0,.1); margin:56px 0; }
 
-    /* FOOTER */
+    /* === FOOTER === */
     .article-footer {
-      padding:0 16px 48px;
-      max-width:680px; margin:0 auto;
+      padding:32px 24px 48px; max-width:680px; margin:0 auto;
       border-top:1px solid rgba(0,0,0,0.08);
-      padding-top:32px;
       display:flex; align-items:center; justify-content:space-between;
     }
-    .article-footer__back {
-      display:inline-flex; align-items:center; gap:8px;
-      font-size:11px; font-weight:500; color:#111;
-      letter-spacing:0.48px; text-transform:uppercase;
-      transition:opacity .3s;
-    }
+    .article-footer__back { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:500; color:#111; letter-spacing:0.48px; text-transform:uppercase; transition:opacity .3s; }
     .article-footer__back:hover { opacity:0.5; }
     .article-footer__nav { display:flex; gap:24px; }
     .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
     .article-footer__nav a:hover { color:#111; }
 
-    /* === DESKTOP === */
+    /* === RESPONSIVE === */
     @media (min-width:640px) {
-      .article-header { padding-top:max(80px, 12dvh); }
-      .article-hero { max-height:520px; }
+      .article-hero { height:72dvh; }
+      .article-hero__overlay { padding:0 40px 48px; }
+      .article-header { padding-left:40px; padding-right:40px; }
     }
     @media (min-width:1024px) {
-      .article-header { max-width:1000px; padding:max(100px,12dvh) 40px 0; }
-      .article-body   { max-width:720px; padding:56px 40px 100px; }
-      .article-divider { max-width:1000px; margin-left:auto; margin-right:auto; }
-      .article-footer { max-width:720px; padding-left:40px; padding-right:40px; }
-      .article-hero { margin-left:0; }
+      .article-hero { height:76dvh; max-height:840px; }
+      .article-hero__overlay { padding:0 60px 60px; }
+      .article-header { max-width:1000px; padding-left:60px; padding-right:60px; }
+      .article-body { max-width:740px; padding:0 60px 100px; }
+      .article-divider { max-width:1000px; }
       .article-body img,
-      .article-body .wp-block-image img,
-      .article-body figure img { width:calc(100% + 80px); margin-left:-40px; }
+      .article-body figure img,
+      .article-body .wp-block-image img { width:calc(100% + 120px); margin-left:-60px; }
     }
   </style>
 </head>
@@ -300,15 +241,18 @@
   <!-- ARTICLE (shown after load) -->
   <div class="article-wrap" id="articleWrap">
 
+    <!-- Hero: full-bleed image with title + meta overlaid at bottom (populated by JS) -->
+    <div class="article-hero" id="articleHero" style="display:none">
+      <img id="articleHeroImg" src="" alt="" loading="eager">
+      <div class="article-hero__overlay" id="articleHeroOverlay"></div>
+    </div>
+
+    <!-- Header: meta + title shown here only when no hero image -->
     <header class="article-header" id="articleHeader">
       <div class="article-meta" id="articleMeta"></div>
       <h1 class="article-title" id="articleTitle"></h1>
       <p class="article-excerpt" id="articleExcerpt"></p>
     </header>
-
-    <div class="article-hero" id="articleHero" style="display:none">
-      <img id="articleHeroImg" src="" alt="">
-    </div>
 
     <div class="article-divider"></div>
 
@@ -561,22 +505,32 @@
 
         document.title = title + ' — Jana Gramlich';
 
-        const metaEl = document.getElementById('articleMeta');
-        metaEl.innerHTML = (category
+        const metaHtml = (category
           ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
           + `<span class="article-date">${date}</span>`;
 
-        document.getElementById('articleTitle').textContent = title;
+        const headerEl = document.getElementById('articleHeader');
+
+        if (heroImg) {
+          // Hero exists: title + meta overlaid on image, header shows only excerpt
+          document.getElementById('articleHeroImg').src = heroImg;
+          document.getElementById('articleHeroImg').alt = title;
+          document.getElementById('articleHeroOverlay').innerHTML =
+            `<div class="article-meta">${metaHtml}</div><h1 class="article-title">${title}</h1>`;
+          document.getElementById('articleHero').style.display = '';
+          document.getElementById('articleMeta').style.display = 'none';
+          document.getElementById('articleTitle').style.display = 'none';
+          headerEl.classList.add('has-hero');
+        } else {
+          // No hero: title + meta in header with nav-clearance padding
+          document.getElementById('articleMeta').innerHTML = metaHtml;
+          document.getElementById('articleTitle').textContent = title;
+          headerEl.classList.add('no-hero');
+        }
 
         const excerptEl = document.getElementById('articleExcerpt');
         if (excerpt && excerpt.length > 20) excerptEl.textContent = excerpt;
         else excerptEl.style.display = 'none';
-
-        if (heroImg) {
-          document.getElementById('articleHeroImg').src = heroImg;
-          document.getElementById('articleHeroImg').alt = title;
-          document.getElementById('articleHero').style.display = '';
-        }
 
         document.getElementById('articleBody').innerHTML = content;
         document.getElementById('articleLoading').style.display = 'none';
