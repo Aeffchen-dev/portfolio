@@ -441,7 +441,7 @@
 
     for (const base of bases) {
       const r = await fetch(
-        `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true&acf_format=standard`,
+        `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true`,
         { signal: AbortSignal.timeout(10000) }
       ).catch(() => null);
       if (!r || !r.ok) {

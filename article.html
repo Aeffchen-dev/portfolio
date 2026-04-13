@@ -442,7 +442,7 @@
     if (!Array.isArray(sections) || sections.length === 0) return '';
     const parts = await Promise.all(sections.map(async s => {
       const layout = (s.acf_fc_layout || '').toLowerCase();
-      if (layout === 'editor') return s.wysiwyg || '';
+      if (layout === 'editor') return s.wysiwyg || s.text || s.content || '';
       if (layout === 'image') {
         const url = await resolveImgUrl(s.img || s.image);
         return url ? `<figure><img src="${url}" alt="${s.caption || ''}" loading="lazy"></figure>` : '';
@@ -459,12 +459,14 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
+    // acf_format=standard removed — wysiwyg always returns HTML regardless,
+    // and integer image IDs are resolved via resolveImgUrl() → /media/{id}
     const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
 
     function buildUrl(base) {
       return slug
-        ? `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true&acf_format=standard`
-        : `${API}/${base}/${postId}?_fields=${FIELDS}&_embed=true&acf_format=standard`;
+        ? `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
+        : `${API}/${base}/${postId}?_fields=${FIELDS}&_embed=true`;
     }
 
     async function fetchArticle() {
@@ -523,7 +525,7 @@
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
         const imgRow   = flexRows.find(s => s.acf_fc_layout === 'image');
         const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                      || (imgRow?.img?.url || imgRow?.image?.url || '')
+                      || await resolveImgUrl(imgRow?.img || imgRow?.image)
                       || '';
 
         document.title = title + ' — Jana Gramlich';
