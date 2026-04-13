@@ -500,20 +500,31 @@
         console.log('[article] post:', post);
 
         const acf = post.acf || {};
-        // ACF: text field 'test', flexible content field 'content'
-        // layouts: 'editor' (field: wysiwyg), 'image' (field: img)
-        const flexRows = Array.isArray(acf.content) && 'acf_fc_layout' in (acf.content[0] || {})
-                       ? acf.content : [];
+        console.log('[article] acf keys:', Object.keys(acf), JSON.stringify(acf).slice(0, 500));
+
+        // Find flexible content: check known field 'content' first, then scan all ACF fields
+        const flexRows = (() => {
+          const check = v => Array.isArray(v) && v.length > 0
+                          && typeof v[0] === 'object' && 'acf_fc_layout' in v[0];
+          if (check(acf.content)) return acf.content;
+          for (const v of Object.values(acf)) { if (check(v)) return v; }
+          return [];
+        })();
 
         const title    = stripHtml(post.title?.rendered || 'Untitled');
+        // 1. WP standard content  2. ACF text field 'test'  3. flexible content rows
+        // 4. any ACF field that looks like HTML content
         const content  = (post.content?.rendered || '').trim()
                       || (acf.test || '').trim()
-                      || renderSections(flexRows);
+                      || renderSections(flexRows)
+                      || Object.values(acf).find(v => typeof v === 'string' && v.length > 20 && /<[a-z]/i.test(v))
+                      || '';
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+        const imgRow   = flexRows.find(s => s.acf_fc_layout === 'image');
         const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                      || flexRows.find(s => s.acf_fc_layout === 'image')?.img?.url
+                      || (imgRow?.img?.url || imgRow?.image?.url || '')
                       || '';
 
         document.title = title + ' — Jana Gramlich';
