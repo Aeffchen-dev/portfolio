@@ -90,9 +90,9 @@
       }
     }
 
-    /* === INTRO SECTION (100vh) === */
+    /* === INTRO SECTION (100vh + 30vh) === */
     .project-intro {
-      height: 100vh;
+      height: 130vh;
       padding: 32px;
       background: #0D0D0D;
       display: flex;
@@ -100,7 +100,7 @@
       justify-content: space-between;
     }
 
-    /* === BACK LINK === */
+    /* === BACK LINK (top-left corner) === */
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -112,6 +112,8 @@
       color: rgba(255,255,255,.5);
       transition: color .15s;
       align-self: flex-start;
+      position: sticky;
+      top: 32px;
     }
     .back-link:hover { color: #fff; }
     /* Rotate the standard ↗ arrow 180° to point ↙ */
@@ -126,17 +128,14 @@
       color: #fff;
     }
 
-    /* === FIRST IMAGE (max 80vw × max 50vh) === */
+    /* === FIRST IMAGE (100vw - 8px, natural height) === */
     .project-hero-img {
       background: #0D0D0D;
-      padding: 0 32px 32px;
+      padding: 0 4px 8px;
     }
     .project-hero-img img {
-      max-width: 80vw;
-      max-height: 50vh;
       width: 100%;
       height: auto;
-      object-fit: cover;
       border-radius: 16px;
       display: block;
     }
@@ -194,10 +193,10 @@
 
     /* === MOBILE === */
     @media (max-width: 639px) {
-      .project-intro { padding: 24px 20px; }
+      .project-intro { padding: 20px; }
       .project-title { font-size: clamp(40px, 14vw, 100px); line-height: 0.9; }
-      .project-hero-img { padding: 0 8px 8px; }
-      .project-hero-img img { max-width: 100%; border-radius: 12px; }
+      .project-hero-img { padding: 0 4px 4px; }
+      .project-hero-img img { border-radius: 10px; }
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
       .block--full  { grid-column: span 1; }
       .block--half  { grid-column: span 1; }
@@ -210,7 +209,7 @@
     /* === TABLET === */
     @media (min-width: 640px) and (max-width: 1023px) {
       .project-intro { padding: 24px; }
-      .project-hero-img { padding: 0 24px 24px; }
+      .project-hero-img { padding: 0 4px 8px; }
       .blocks__grid { grid-template-columns: repeat(4, 1fr); }
     }
   </style>
@@ -229,7 +228,7 @@
           <path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/>
         </svg>
       </span>
-      <span>Back</span>
+      <span>Edition</span>
     </a>
     <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
   </section>
