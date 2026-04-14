@@ -61,6 +61,35 @@
     @view-transition { navigation: auto; }
     .project-intro { view-transition-name: project-intro; }
 
+    /* === BACKDROP === */
+    .sheet-backdrop {
+      position: fixed; inset: 0;
+      background: #000;
+      z-index: 0;
+      pointer-events: none;
+      will-change: opacity;
+    }
+
+    /* === PROJECT SHEET === */
+    .project-sheet {
+      position: relative; z-index: 1;
+      background: #0D0D0D;
+      min-height: 100dvh;
+      will-change: transform;
+    }
+
+    /* Drag handle on mobile/tablet */
+    @media (max-width: 1023px) {
+      .project-sheet::before {
+        content: '';
+        display: block;
+        width: 36px; height: 4px;
+        background: rgba(255,255,255,.22);
+        border-radius: 2px;
+        margin: 10px auto 0;
+      }
+    }
+
     /* === INTRO SECTION (100vh) === */
     .project-intro {
       height: 100vh;
@@ -188,6 +217,9 @@
 </head>
 <body>
 
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="project-sheet" id="projectSheet">
+
   <!-- INTRO: BACK link (top) + title (bottom) — 100vh container -->
   <section class="project-intro">
     <a href="javascript:history.back()" class="back-link">
@@ -310,6 +342,93 @@
       <span>Design &amp; Code by Jana Gramlich</span>
     </div>
   </footer>
+
+  </div><!-- /.project-sheet -->
+
+<script>
+  (function () {
+    const sheet    = document.getElementById('projectSheet');
+    const backdrop = document.getElementById('sheetBackdrop');
+    const DISMISS_THRESHOLD = 140; // px drag before release triggers back
+    const EASE = 'cubic-bezier(.4,0,.2,1)';
+
+    let startY   = 0;
+    let currentDelta = 0;
+    let dragging = false;
+    let dismissed = false;
+
+    function setSheet(dy) {
+      sheet.style.transform = dy > 0 ? `translateY(${dy}px)` : '';
+      // backdrop opacity: 1 at rest → 0 when sheet reaches ~40% of screen
+      const progress = Math.min(dy / (window.innerHeight * 0.4), 1);
+      backdrop.style.opacity = String(Math.max(0, 1 - progress));
+    }
+
+    function snapBack() {
+      sheet.style.transition    = `transform 0.4s ${EASE}`;
+      backdrop.style.transition = `opacity 0.4s ${EASE}`;
+      setSheet(0);
+      setTimeout(() => {
+        sheet.style.transition    = '';
+        backdrop.style.transition = '';
+      }, 420);
+    }
+
+    function dismiss() {
+      if (dismissed) return;
+      dismissed = true;
+      sheet.style.transition    = `transform 0.32s ${EASE}`;
+      backdrop.style.transition = `opacity 0.32s ${EASE}`;
+      sheet.style.transform     = `translateY(100dvh)`;
+      backdrop.style.opacity    = '0';
+      setTimeout(() => history.back(), 320);
+    }
+
+    document.addEventListener('touchstart', e => {
+      if (dismissed) return;
+      // Only start pull gesture when page is scrolled to top
+      if (window.scrollY > 2) return;
+      startY   = e.touches[0].clientY;
+      currentDelta = 0;
+      dragging = true;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', e => {
+      if (!dragging || dismissed) return;
+      // If user scrolled down mid-gesture, cancel
+      if (window.scrollY > 2) { dragging = false; snapBack(); return; }
+
+      const dy = Math.max(0, e.touches[0].clientY - startY);
+      currentDelta = dy;
+
+      // Apply resistance: slow down beyond threshold
+      const resistedDy = dy < DISMISS_THRESHOLD
+        ? dy
+        : DISMISS_THRESHOLD + (dy - DISMISS_THRESHOLD) * 0.3;
+
+      setSheet(resistedDy);
+
+      if (dy > 0) e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+      if (!dragging || dismissed) return;
+      dragging = false;
+      if (currentDelta > DISMISS_THRESHOLD) {
+        dismiss();
+      } else {
+        snapBack();
+      }
+    });
+
+    // Also cancel on touchcancel
+    document.addEventListener('touchcancel', () => {
+      if (!dragging) return;
+      dragging = false;
+      snapBack();
+    });
+  })();
+</script>
 
 </body>
 </html>
