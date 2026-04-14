@@ -84,17 +84,23 @@
     .modal.is-visible { display:block; }
     .modal__scroll { height:100%; overflow-y:auto; overflow-x:hidden; background:#0D0D0D; }
 
-    /* === PAGE HEADER === */
-    .page-header { padding:80px 32px 64px; background:#0D0D0D; }
-    .header-eyebrow { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+    /* === ARTICLE HERO === */
+    .article-hero { background:#0D0D0D; }
+    .hero-top {
+      height:calc(50dvh - 33px);
+      padding:20px 32px 24px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      overflow:hidden;
+    }
+    .header-eyebrow { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
     .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
     .eyebrow-category { font-size:15px; font-weight:400; color:#fff; }
     .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.35); }
     .btn-back { width:36px; height:36px; border-radius:50%; background:#fff; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .15s; }
     .btn-back:hover { background:rgba(255,255,255,.8); }
-    .hero__title { font-size:clamp(36px,5vw,72px); font-weight:500; letter-spacing:-0.035em; line-height:1.05; color:#fff; }
-    .hero__desc { margin-top:40px; max-width:760px; }
-    .hero__desc p { font-size:17px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.6); }
+    .hero__title { font-size:calc(50dvh - 33px); font-weight:700; letter-spacing:-0.04em; line-height:0.88; color:#fff; }
+    .hero-image { height:50dvh; overflow:hidden; }
+    .hero-image img { width:100%; height:100%; object-fit:cover; object-position:center bottom; display:block; }
 
     /* === BLOCKS === */
     .blocks { background:#1A1A1A; padding:8px; margin:8px 0; }
@@ -108,7 +114,7 @@
     .block-image img { width:100%; height:100%; object-fit:cover; display:block; }
     .block-text { border-radius:0; }
     .text-inner { padding:16px 0; }
-    .text-body { font-size:15px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
+    .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
     .text-body p { margin-bottom:20px; }
     .text-body p:last-child { margin-bottom:0; }
     .text-body h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
@@ -127,7 +133,9 @@
     /* === RESPONSIVE === */
     @media (max-width:639px) {
       .modal { width:100vw; height:100dvh; border-radius:0; top:0; left:0; transform:none; }
-      .page-header { padding:64px 20px 40px; }
+      .hero-top { height:auto; min-height:50dvh; padding:56px 20px 20px; }
+      .hero__title { font-size:clamp(40px,14vw,100px); line-height:0.9; }
+      .hero-image { height:50dvh; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
       .ar-16-7 { aspect-ratio:4/3; }
@@ -135,7 +143,7 @@
       .footer__nav { flex-direction:row; align-items:flex-start; gap:20px; }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .page-header { padding:80px 24px 56px; }
+      .hero-top { padding:20px 24px 24px; }
     }
   </style>
 </head>
@@ -174,21 +182,23 @@
   <div class="modal" id="articleModal">
     <div class="modal__scroll">
 
-      <header class="page-header">
-        <div class="header-eyebrow">
-          <div class="eyebrow-left">
-            <span class="eyebrow-category" id="articleCategory"></span>
-            <span class="eyebrow-date" id="articleDate"></span>
+      <div class="article-hero">
+        <div class="hero-top">
+          <div class="header-eyebrow">
+            <div class="eyebrow-left">
+              <span class="eyebrow-category" id="articleCategory"></span>
+              <span class="eyebrow-date" id="articleDate"></span>
+            </div>
+            <a href="articles.html" class="btn-back" aria-label="All articles">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"><path d="M1 1L11 11M11 1L1 11"/></svg>
+            </a>
           </div>
-          <a href="articles.html" class="btn-back" aria-label="All articles">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"><path d="M1 1L11 11M11 1L1 11"/></svg>
-          </a>
+          <h1 class="hero__title" id="articleTitle"></h1>
         </div>
-        <h1 class="hero__title" id="articleTitle"></h1>
-        <div class="hero__desc" id="articleExcerptWrap" style="display:none">
-          <p id="articleExcerpt"></p>
+        <div class="hero-image" id="heroImageWrap" style="display:none">
+          <img id="heroImage" src="" alt="">
         </div>
-      </header>
+      </div>
 
       <main class="blocks">
         <div class="blocks__grid" id="blocksGrid"></div>
@@ -263,6 +273,27 @@
     const EASE = 'cubic-bezier(.4,0,.2,1)';
     const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
 
+    // Track whether scroll has pushed nav into pill mode
+    let _inScrollPill = false;
+
+    function clearScrollPill() {
+      if (!_inScrollPill) return;
+      _inScrollPill = false;
+      nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
+      nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
+      nav.style.setProperty('--pill-w', '');
+      navBar.style.paddingLeft = ''; navBar.style.paddingRight = '';
+      navBar.style.paddingTop = ''; navBar.style.paddingBottom = '';
+      dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
+      navMenu.style.width = '';
+    }
+
+    function applyScrollPill() {
+      if (_inScrollPill) return;
+      _inScrollPill = true;
+      setPillState();
+    }
+
     new MutationObserver(() => {
       nav.style.transition = NAV_TRANS;
       void nav.offsetHeight;
@@ -274,13 +305,25 @@
         dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
         navMenu.style.width = '8px';
       } else {
-        setPillState();
+        if (_inScrollPill) setPillState();
+        else clearScrollPill();
       }
       setTimeout(() => { nav.style.transition = ''; }, 450);
     }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
-    window.addEventListener('resize', setPillState);
-    setPillState();
+    window.addEventListener('resize', () => { if (_inScrollPill) setPillState(); });
+    // Start full-width transparent — no setPillState() call
+
+    // Scroll-driven nav: attaches after modal is visible
+    window._initScrollNav = function() {
+      const modalScroll = document.querySelector('.modal__scroll');
+      if (!modalScroll) return;
+      const THRESHOLD = 60;
+      modalScroll.addEventListener('scroll', () => {
+        if (modalScroll.scrollTop > THRESHOLD) applyScrollPill();
+        else clearScrollPill();
+      }, { passive: true });
+    };
   })();
 
   // === ARTICLE FETCH ===
@@ -315,9 +358,10 @@
   }
 
   // Build project-style blocks from ACF flexible content rows.
-  // Returns HTML string of .block elements for .blocks__grid.
+  // Returns { html, heroUrl } — first image is extracted for the hero.
   async function renderBlocks(sections, test2) {
     const blocks = [];
+    let heroUrl = '';
     if (test2) {
       blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body"><p>${test2}</p></div></div></div>`);
     }
@@ -327,7 +371,13 @@
       const layout = (s.acf_fc_layout || '').toLowerCase();
       if (layout === 'image' || layout === 'img' || layout === 'photo') {
         const url = await resolveImgUrl(s.img || s.image || s.photo || s.src || null);
-        if (url) blocks.push(`<div class="block block--full block-image ar-16-7"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+        if (url) {
+          if (!heroUrl) {
+            heroUrl = url; // first image goes to hero
+          } else {
+            blocks.push(`<div class="block block--full block-image ar-16-7"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+          }
+        }
       } else {
         // Text/editor: try known fields, then scan all string fields
         let html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
@@ -339,7 +389,7 @@
         if (html) blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
       }
     }
-    return blocks.join('');
+    return { html: blocks.join(''), heroUrl };
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -431,13 +481,19 @@
           document.getElementById('articleExcerptWrap').style.display = '';
         }
 
-        const blocks = await renderBlocks(flexRows, test2);
+        const { html: blocksHtml, heroUrl } = await renderBlocks(flexRows, test2);
         const fallback = (post.content?.rendered || '').trim();
-        document.getElementById('blocksGrid').innerHTML = blocks
+        document.getElementById('blocksGrid').innerHTML = blocksHtml
           || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
+
+        if (heroUrl) {
+          document.getElementById('heroImage').src = heroUrl;
+          document.getElementById('heroImageWrap').style.display = '';
+        }
 
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
+        if (window._initScrollNav) window._initScrollNav();
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
