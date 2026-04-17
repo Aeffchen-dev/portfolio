@@ -91,8 +91,6 @@
       padding:24px 32px 28px;
       display:flex; flex-direction:column;
     }
-    .header-eyebrow { flex-shrink:0; }
-    .eyebrow-category { font-size:13px; font-weight:400; color:rgba(255,255,255,.4); }
 
     /* center zone: must fit within 90vh — min-height:0 allows shrinking */
     .hero-main {
@@ -217,9 +215,6 @@
 
       <div class="article-hero">
         <div class="hero-top">
-          <div class="header-eyebrow">
-            <span class="eyebrow-category" id="articleCategory"></span>
-          </div>
           <div class="hero-main">
             <h1 class="hero__title" id="articleTitle"></h1>
             <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
@@ -353,7 +348,7 @@
     }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
     window.addEventListener('resize', () => { if (_inScrollPill) setPillState(); });
-    // Start full-width transparent — no setPillState() call
+    setPillState();
 
     // Scroll-driven nav: listens to window scroll (no modal overlay)
     window._initScrollNav = function() {
@@ -511,7 +506,6 @@
         const test2    = acf.test2 || '';
 
         document.title = title + ' — Jana Gramlich';
-        document.getElementById('articleCategory').textContent = category;
         document.getElementById('articleTitle').textContent = title;
 
         // Subtitle from ACF subtitle field
