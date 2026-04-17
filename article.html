@@ -505,8 +505,15 @@
           el.style.display = '';
         }
 
-        // Summary: WP excerpt below subtitle
-        const summary = excerpt.length > 20 ? excerpt : '';
+        // Summary: WP excerpt, or first text block from ACF, or first content paragraph
+        const firstTextBlock = flexRows.find(r => {
+          const l = (r.acf_fc_layout||'').toLowerCase();
+          return l === 'text' || l === 'wysiwyg' || l === 'paragraph' || l === 'copy';
+        });
+        const firstTextFallback = firstTextBlock
+          ? stripHtml(firstTextBlock.text || firstTextBlock.wysiwyg || firstTextBlock.content || '').slice(0, 220).trim()
+          : stripHtml((post.content?.rendered || '').replace(/<\/p>/gi, ' ')).slice(0, 220).trim();
+        const summary = excerpt.length > 5 ? excerpt : firstTextFallback;
         if (summary) {
           const el = document.getElementById('articleSummary');
           el.textContent = summary;
