@@ -383,10 +383,21 @@
     }
     .modal-page-end .page-links__all:hover { color: #000; }
     .modal-next-reveal {
-      overflow: hidden; cursor: pointer;
+      position: relative; overflow: hidden; cursor: pointer;
+    }
+    .modal-next-reveal__bg {
+      position: absolute; inset: 0; opacity: 0;
+    }
+    .modal-next-reveal__bg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .modal-next-reveal__bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.2) 100%);
     }
 
     .modal-next-reveal__inner {
+      position: relative; z-index: 1;
       height: 100%;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       padding: 32px; text-align: center;
@@ -1660,6 +1671,9 @@
         `</div>` +
         (nextP
           ? `<div class="modal-next-reveal" style="height:${MIN_H}px">` +
+              `<div class="modal-next-reveal__bg">` +
+                (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` : '') +
+              `</div>` +
               `<div class="modal-next-reveal__inner">` +
                 `<p class="modal-next-reveal__label">Up Next</p>` +
                 `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
@@ -1673,15 +1687,30 @@
       if (!nextP) return;
 
       const revealEl   = pageEnd.querySelector('.modal-next-reveal');
-      const THRESHOLD  = modalH * 0.72; // drag to 72% modal height → navigate
+      const bgEl       = revealEl.querySelector('.modal-next-reveal__bg');
+      const labelEl    = revealEl.querySelector('.modal-next-reveal__label');
+      const titleEl    = revealEl.querySelector('.modal-next-reveal__title');
+      const THRESHOLD  = modalH * 0.72;
       let navigating   = false;
       let dragStartY   = 0;
       let dragStartH   = MIN_H;
       let dragging     = false;
 
+      function applyProgress(h) {
+        const p = Math.max(0, Math.min(1, (h - MIN_H) / (THRESHOLD - MIN_H)));
+        bgEl.style.opacity = p;
+        // Text: dark #111 → white #fff
+        const c = Math.round(17 + (255 - 17) * p);
+        const a = (0.3 + 0.7 * p).toFixed(2);
+        titleEl.style.color = `rgb(${c},${c},${c})`;
+        labelEl.style.color  = `rgba(${c},${c},${c},${a})`;
+      }
+
       function setH(h, animated) {
         revealEl.style.transition = animated ? `height 0.42s ${EASE}` : 'none';
         revealEl.style.height = Math.round(h) + 'px';
+        if (animated) setTimeout(() => applyProgress(h), 0);
+        else applyProgress(h);
       }
 
       revealEl.addEventListener('touchstart', e => {
@@ -1694,11 +1723,11 @@
 
       revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
-        const dy  = dragStartY - e.touches[0].clientY; // positive = pulling up
-        // Resist downward push, free pull upward
+        const dy  = dragStartY - e.touches[0].clientY;
         const resistance = dy >= 0 ? 1 : 0.25;
         const newH = Math.max(MIN_H * 0.85, dragStartH + dy * resistance);
         revealEl.style.height = Math.round(newH) + 'px';
+        applyProgress(newH);
       }, { passive: true });
 
       revealEl.addEventListener('touchend', () => {
