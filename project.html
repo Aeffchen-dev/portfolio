@@ -168,49 +168,48 @@
     .text-inner { padding: 0; display: flex; flex-direction: column; height: 100%; }
     .text-body { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: rgba(255,255,255,.5); }
 
-    /* === NEXT PROJECT (scroll-scale) === */
+    /* === PAGE END LINKS (cv-card style, no img) === */
+    .page-links {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; margin: 8px; gap: 8px;
+      background: #141414; border-radius: 8px;
+    }
+    .page-links__label {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+    }
+    .page-links__all {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+      transition: color .15s; font-family: monospace;
+    }
+    .page-links__all:hover { color: #fff; }
+
+    /* === NEXT PROJECT (scroll-height reveal) === */
     .next-project {
-      position: relative; height: 100vh; overflow: hidden; cursor: pointer;
+      overflow: hidden; cursor: pointer;
+      background: #0D0D0D;
+      margin: 8px; border-radius: 8px;
+      will-change: height;
     }
-    .next-project__bg {
-      position: absolute; inset: 0;
-    }
-    .next-project__img {
-      width: 100%; height: 100%; object-fit: cover;
-      transform-origin: center center;
-      will-change: transform;
-      transform: scale(1);
-    }
-    .next-project__overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.08) 55%, transparent 100%);
-    }
-    .next-project__content {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 40px 32px;
+    .next-project__inner {
+      height: 100vh;
+      position: relative;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 32px;
     }
     .next-project__label {
       font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-      color: rgba(255,255,255,.45); margin-bottom: 14px;
+      color: rgba(255,255,255,.3); margin-bottom: 12px;
     }
     .next-project__title {
-      font-size: clamp(32px, 5vw, 80px);
+      font-size: clamp(32px, 6vw, 72px);
       font-weight: 700; letter-spacing: -.04em; line-height: .92; color: #fff;
     }
-
-    /* === FOOTER === */
-    .footer { padding: 32px 32px 24px; display: flex; justify-content: space-between; align-items: flex-end; }
-    .footer__nav { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
-    .footer__nav a {
-      font-size: 11px; font-weight: 500; color: rgba(255,255,255,.4);
-      letter-spacing: .07em; text-transform: uppercase; transition: color .15s;
+    .next-project__sub {
+      font-size: 14px; font-weight: 400; line-height: 1.4;
+      color: rgba(255,255,255,.4); margin-top: 10px;
     }
-    .footer__nav a:hover { color: #fff; }
-    .footer-bottom {
-      padding: 20px 32px; display: flex; justify-content: space-between;
-      border-top: 1px solid rgba(255,255,255,.08); margin: 0 8px;
-    }
-    .footer-bottom span { font-size: 11px; color: rgba(255,255,255,.3); }
 
     /* === MOBILE === */
     @media (max-width: 639px) {
@@ -221,9 +220,7 @@
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
       .block--full  { grid-column: span 1; }
       .block--half  { grid-column: span 1; }
-      .footer { flex-direction: column; align-items: flex-start; gap: 40px; padding: 48px 16px 24px; }
-      .footer__nav { align-items: flex-start; flex-direction: row; gap: 20px; }
-      .footer-bottom { padding: 16px; flex-direction: column; gap: 6px; }
+
     }
 
     /* === MOBILE + TABLET: reorder text before hero image === */
@@ -232,9 +229,8 @@
       .project-text    { order: 2; }
       .project-hero-img { order: 3; }
       .blocks          { order: 4; }
-      .next-project    { order: 5; }
-      .footer          { order: 6; }
-      .footer-bottom   { order: 7; }
+      .page-links      { order: 5; }
+      .next-project    { order: 6; }
     }
 
     /* === TABLET === */
@@ -371,32 +367,20 @@
     </div>
   </main>
 
-  <!-- NEXT PROJECT (scroll-scale section) -->
+  <!-- PAGE END LINKS -->
+  <div class="page-links">
+    <span class="page-links__label">Next Up</span>
+    <a href="index.html" class="page-links__all">[ View All Projects ]</a>
+  </div>
+
+  <!-- NEXT PROJECT (scroll-height reveal) -->
   <section class="next-project" id="nextProject" data-href="#">
-    <div class="next-project__bg">
-      <img class="next-project__img" src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Next project" loading="lazy">
-    </div>
-    <div class="next-project__overlay"></div>
-    <div class="next-project__content">
+    <div class="next-project__inner">
       <p class="next-project__label">Up Next</p>
       <h2 class="next-project__title">Motion Design<br>Language</h2>
+      <p class="next-project__sub">Defining the motion vocabulary across Douglas digital products</p>
     </div>
   </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer">
-      <nav class="footer__nav">
-        <a href="/work">Work</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-      </nav>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2025 Jana Gramlich. All rights reserved.</span>
-      <span>Design &amp; Code by Jana Gramlich</span>
-    </div>
-  </footer>
 
   </div><!-- /.project-sheet -->
 
@@ -484,34 +468,44 @@
     });
   })();
 
-  // === NEXT PROJECT SCROLL-SCALE ===
+  // === NEXT PROJECT SCROLL-HEIGHT REVEAL ===
   (function () {
     const section = document.getElementById('nextProject');
     if (!section) return;
-    const img = section.querySelector('.next-project__img');
     const href = section.dataset.href;
+    const vh   = window.innerHeight;
+    const MIN_H = Math.round(vh * 0.38);
+
+    // Set initial height
+    section.style.height = MIN_H + 'px';
+
+    // Store section's top offset once (before any height changes affect layout)
+    let sectionTop = Math.round(section.getBoundingClientRect().top + window.scrollY);
 
     let raf = 0;
     let navigating = false;
 
     function update() {
       raf = 0;
-      const rect = section.getBoundingClientRect();
-      const vh   = window.innerHeight;
-      // 0 = section bottom just reached viewport bottom; 1 = section fills viewport
-      const progress = Math.max(0, Math.min(1, (vh - rect.top) / rect.height));
+      const scrollY = window.scrollY;
+      // progress 0 → 1 as section scrolls from entering viewport to top of viewport
+      const progress = Math.max(0, Math.min(1, (scrollY - (sectionTop - vh)) / vh));
+      const h = MIN_H + (vh - MIN_H) * progress;
+      section.style.height = Math.round(h) + 'px';
 
-      img.style.transform = `scale(${1 + progress * 0.22})`;
-
-      if (progress >= 0.96 && !navigating && href && href !== '#') {
+      if (progress >= 0.98 && !navigating && href && href !== '#') {
         navigating = true;
-        setTimeout(() => { window.location.href = href; }, 120);
+        setTimeout(() => { window.location.href = href; }, 150);
       }
     }
 
     window.addEventListener('scroll', () => {
       if (!raf) raf = requestAnimationFrame(update);
     }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      sectionTop = Math.round(section.getBoundingClientRect().top + window.scrollY);
+    });
 
     section.addEventListener('click', () => {
       if (href && href !== '#') window.location.href = href;
