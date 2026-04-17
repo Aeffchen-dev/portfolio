@@ -101,10 +101,10 @@
       align-items:center; justify-content:center; gap:10px;
     }
     .hero__title {
-      font-size:clamp(28px, 7vw, 60px); font-weight:700;
+      font-size:clamp(28px, 5vw, 44px); font-weight:700;
       letter-spacing:0; line-height:0.9; color:#fff;
       text-align:center; text-transform:uppercase;
-      max-width:10em;
+      max-width:8em;
     }
     .hero__subtitle {
       font-size:clamp(13px, 2vw, 16px); font-weight:400; line-height:1.4;
@@ -115,7 +115,7 @@
       color:rgba(255,255,255,.45); text-align:center;
       max-width:38em;
     }
-    .hero__img-wrap { width:40vw; max-width:500px; min-height:0; }
+    .hero__img-wrap { width:28vw; max-width:360px; min-height:0; }
     .hero__img-wrap img { width:100%; height:auto; display:block; border-radius:4px; }
 
     /* bottom bar: BACK left, SHARE right */
@@ -551,7 +551,6 @@
 
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
-        initParallax();
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
@@ -562,25 +561,6 @@
 
   // Always init scroll nav (don't wait for article fetch)
   if (window._initScrollNav) window._initScrollNav();
-
-  // === IMAGE PARALLAX (same as project boxes on home) ===
-  function initParallax() {
-    let raf = 0;
-    function tick() {
-      raf = 0;
-      const vh = window.innerHeight;
-      document.querySelectorAll('.block-image').forEach(box => {
-        const img = box.querySelector('img'); if (!img) return;
-        const rect = box.getBoundingClientRect();
-        const extra = rect.height * 0.15;
-        const ratio = (rect.top + rect.height / 2) / vh - 0.5;
-        const shift = Math.max(-extra, Math.min(0, -extra / 2 + ratio * extra * 1.2));
-        img.style.transform = `translateY(${shift}px)`;
-      });
-    }
-    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(tick); }, { passive:true });
-    tick();
-  }
 </script>
 </body>
 </html>
