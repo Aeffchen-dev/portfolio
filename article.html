@@ -86,7 +86,7 @@
     /* === ARTICLE HERO === */
     .article-hero { background:#000; }
     .hero-top {
-      height:100vh;
+      height:70vh;
       max-width:1100px; margin:0 auto;
       padding:24px 32px 28px;
       display:flex; flex-direction:column;
@@ -104,6 +104,10 @@
       letter-spacing:0; line-height:0.9; color:#fff;
       text-align:center; text-transform:uppercase;
       max-width:10em;
+    }
+    .hero__subtitle {
+      font-size:clamp(13px, 2vw, 16px); font-weight:400; line-height:1.4;
+      color:rgba(255,255,255,.55); text-align:center; max-width:36em;
     }
     .hero__summary {
       font-size:13px; font-weight:400; line-height:1.55;
@@ -133,11 +137,8 @@
     }
     .share-btn:hover { color:#fff; }
 
-    /* First text block gets editorial indent */
-    .blocks__grid > .block-text:first-child .text-body > p:first-child { text-indent:48px; }
-
     /* === BLOCKS === */
-    .blocks { background:#1A1A1A; padding:8px; margin:8px 0; }
+    .blocks { padding:0 32px; margin:0 auto; max-width:1100px; }
     .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
     .block { border-radius:16px; overflow:hidden; }
     .block--full { grid-column:span 4; }
@@ -166,7 +167,8 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:100dvh; padding:20px 20px 20px; }
+      .hero-top { height:70dvh; padding:20px 20px 20px; }
+      .blocks { padding:0 16px; }
       .hero__img-wrap { width:60vw; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
@@ -220,6 +222,7 @@
           </div>
           <div class="hero-main">
             <h1 class="hero__title" id="articleTitle"></h1>
+            <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
             <p class="hero__summary" id="articleSummary" style="display:none"></p>
             <div class="hero__img-wrap" id="articleHeroImg" style="display:none">
               <img id="articleHeroImgEl" src="" alt="">
@@ -508,7 +511,15 @@
         document.getElementById('articleCategory').textContent = category;
         document.getElementById('articleTitle').textContent = title;
 
-        // Summary: use WP excerpt as AI-style one-liner
+        // Subtitle from ACF subtitle field
+        const subtitle = acf.subtitle || acf.sub_title || acf.tagline || '';
+        if (subtitle) {
+          const el = document.getElementById('articleSubtitle');
+          el.textContent = subtitle;
+          el.style.display = '';
+        }
+
+        // Summary: WP excerpt below subtitle
         const summary = excerpt.length > 20 ? excerpt : '';
         if (summary) {
           const el = document.getElementById('articleSummary');
@@ -538,7 +549,6 @@
 
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
-        if (window._initScrollNav) window._initScrollNav();
         initParallax();
       })
       .catch(err => {
@@ -547,6 +557,9 @@
         showError('Could not load article — ' + msg);
       });
   }
+
+  // Always init scroll nav (don't wait for article fetch)
+  if (window._initScrollNav) window._initScrollNav();
 
   // === IMAGE PARALLAX (same as project boxes on home) ===
   function initParallax() {
