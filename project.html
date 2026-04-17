@@ -136,7 +136,7 @@
     .project-hero-img img {
       width: 100%;
       height: auto;
-      border-radius: 16px;
+      border-radius: 4px;
       display: block;
     }
 
@@ -149,7 +149,7 @@
     }
 
     /* === BASE BLOCK === */
-    .block { border-radius: 16px; overflow: hidden; position: relative; }
+    .block { border-radius: 4px; overflow: hidden; position: relative; }
     .block--full { grid-column: span 4; }
     .block--half { grid-column: span 2; }
 
@@ -165,20 +165,38 @@
     .text-inner { padding: 0; display: flex; flex-direction: column; height: 100%; }
     .text-body { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: rgba(255,255,255,.5); }
 
+    /* === NEXT PROJECT (scroll-scale) === */
+    .next-project {
+      position: relative; height: 100vh; overflow: hidden; cursor: pointer;
+    }
+    .next-project__bg {
+      position: absolute; inset: 0;
+    }
+    .next-project__img {
+      width: 100%; height: 100%; object-fit: cover;
+      transform-origin: center center;
+      will-change: transform;
+      transform: scale(1);
+    }
+    .next-project__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.08) 55%, transparent 100%);
+    }
+    .next-project__content {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 40px 32px;
+    }
+    .next-project__label {
+      font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.45); margin-bottom: 14px;
+    }
+    .next-project__title {
+      font-size: clamp(32px, 5vw, 80px);
+      font-weight: 700; letter-spacing: -.04em; line-height: .92; color: #fff;
+    }
+
     /* === FOOTER === */
-    .footer-rule { height: 1px; background: rgba(255,255,255,.1); margin: 0; }
-    .footer { padding: 64px 32px 32px; display: flex; justify-content: space-between; align-items: flex-end; }
-    .footer__next-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 16px; }
-    .footer__next-title {
-      font-size: clamp(32px, 4.5vw, 64px);
-      font-weight: 700; letter-spacing: -.04em; line-height: .95; color: #fff; margin-bottom: 28px;
-    }
-    .footer__next-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 13px; font-weight: 500; color: #fff;
-      border-bottom: 1px solid rgba(255,255,255,.25); padding-bottom: 2px; transition: border-color .15s;
-    }
-    .footer__next-link:hover { border-color: #fff; }
+    .footer { padding: 32px 32px 24px; display: flex; justify-content: space-between; align-items: flex-end; }
     .footer__nav { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
     .footer__nav a {
       font-size: 11px; font-weight: 500; color: rgba(255,255,255,.4);
@@ -196,7 +214,7 @@
       .project-intro { padding: 20px; }
       .project-title { font-size: clamp(40px, 14vw, 100px); line-height: 0.9; }
       .project-hero-img { padding: 0 4px 4px; }
-      .project-hero-img img { border-radius: 10px; }
+      .project-hero-img img { border-radius: 4px; }
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
       .block--full  { grid-column: span 1; }
       .block--half  { grid-column: span 1; }
@@ -321,15 +339,21 @@
     </div>
   </main>
 
+  <!-- NEXT PROJECT (scroll-scale section) -->
+  <section class="next-project" id="nextProject" data-href="#">
+    <div class="next-project__bg">
+      <img class="next-project__img" src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Next project" loading="lazy">
+    </div>
+    <div class="next-project__overlay"></div>
+    <div class="next-project__content">
+      <p class="next-project__label">Up Next</p>
+      <h2 class="next-project__title">Motion Design<br>Language</h2>
+    </div>
+  </section>
+
   <!-- FOOTER -->
-  <div class="footer-rule"></div>
   <footer>
     <div class="footer">
-      <div class="footer__next">
-        <p class="footer__next-label">Next Project</p>
-        <h2 class="footer__next-title">Motion Design<br>Language</h2>
-        <a href="#" class="footer__next-link">View project →</a>
-      </div>
       <nav class="footer__nav">
         <a href="/work">Work</a>
         <a href="/about">About</a>
@@ -426,6 +450,42 @@
       dragging = false;
       snapBack();
     });
+  })();
+
+  // === NEXT PROJECT SCROLL-SCALE ===
+  (function () {
+    const section = document.getElementById('nextProject');
+    if (!section) return;
+    const img = section.querySelector('.next-project__img');
+    const href = section.dataset.href;
+
+    let raf = 0;
+    let navigating = false;
+
+    function update() {
+      raf = 0;
+      const rect = section.getBoundingClientRect();
+      const vh   = window.innerHeight;
+      // 0 = section bottom just reached viewport bottom; 1 = section fills viewport
+      const progress = Math.max(0, Math.min(1, (vh - rect.top) / rect.height));
+
+      img.style.transform = `scale(${1 + progress * 0.22})`;
+
+      if (progress >= 0.96 && !navigating && href && href !== '#') {
+        navigating = true;
+        setTimeout(() => { window.location.href = href; }, 120);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    }, { passive: true });
+
+    section.addEventListener('click', () => {
+      if (href && href !== '#') window.location.href = href;
+    });
+
+    update();
   })();
 </script>
 
