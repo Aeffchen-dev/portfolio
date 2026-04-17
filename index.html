@@ -383,7 +383,13 @@
     }
     .modal-page-end .page-links__all:hover { color: #000; }
     .modal-next-reveal {
-      overflow: hidden; cursor: pointer; background: #0D0D0D; will-change: height;
+      overflow: hidden; cursor: pointer; background: #0D0D0D;
+    }
+    .modal-next-reveal::before {
+      content: ''; display: block;
+      width: 36px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,.2);
+      margin: 12px auto 0;
     }
     .modal-next-reveal__inner {
       display: flex; flex-direction: column; justify-content: flex-end; padding: 32px;
@@ -1646,10 +1652,7 @@
       const scrollEl = document.querySelector('.modal__scroll');
       const modalH   = scrollEl.clientHeight;
       const MIN_H    = Math.round(modalH * 0.38);
-      // MAX_H > modalH so the section overflows scroll-height,
-      // giving real pull distance after the section fills the viewport.
-      const MAX_H    = Math.round(modalH * 2);
-      const RANGE    = MAX_H - MIN_H;
+      const EASE     = 'cubic-bezier(.4,0,.2,1)';
 
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
@@ -1672,27 +1675,49 @@
 
       if (!nextP) return;
 
-      const revealEl = pageEnd.querySelector('.modal-next-reveal');
-      let raf = 0, navigating = false;
+      const revealEl   = pageEnd.querySelector('.modal-next-reveal');
+      const THRESHOLD  = modalH * 0.72; // drag to 72% modal height → navigate
+      let navigating   = false;
+      let dragStartY   = 0;
+      let dragStartH   = MIN_H;
+      let dragging     = false;
 
-      function updateReveal() {
-        raf = 0;
-        const revealTop = revealEl.offsetTop;
-        const scrollIn  = Math.max(0, scrollEl.scrollTop + scrollEl.clientHeight - revealTop);
-        const progress  = Math.min(1, scrollIn / RANGE);
-        revealEl.style.height = Math.round(MIN_H + RANGE * progress) + 'px';
-        // Navigate at 70% — section is ~1.4× modal height, giving ~50% modal height of pull
-        if (progress >= 0.7 && !navigating) {
-          navigating = true;
-          setTimeout(() => goToNextProject(nextKey), 150);
-        }
+      function setH(h, animated) {
+        revealEl.style.transition = animated ? `height 0.42s ${EASE}` : 'none';
+        revealEl.style.height = Math.round(h) + 'px';
       }
 
-      _nextRevealAbort = new AbortController();
-      scrollEl.addEventListener('scroll', () => {
-        if (!raf) raf = requestAnimationFrame(updateReveal);
-      }, { passive: true, signal: _nextRevealAbort.signal });
+      revealEl.addEventListener('touchstart', e => {
+        if (navigating) return;
+        dragStartY = e.touches[0].clientY;
+        dragStartH = revealEl.getBoundingClientRect().height;
+        dragging   = true;
+        revealEl.style.transition = 'none';
+      }, { passive: true });
 
+      revealEl.addEventListener('touchmove', e => {
+        if (!dragging || navigating) return;
+        const dy  = dragStartY - e.touches[0].clientY; // positive = pulling up
+        // Resist downward push, free pull upward
+        const resistance = dy >= 0 ? 1 : 0.25;
+        const newH = Math.max(MIN_H * 0.85, dragStartH + dy * resistance);
+        revealEl.style.height = Math.round(newH) + 'px';
+      }, { passive: true });
+
+      revealEl.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        const currentH = revealEl.getBoundingClientRect().height;
+        if (currentH >= THRESHOLD && !navigating) {
+          navigating = true;
+          setH(modalH, true);
+          setTimeout(() => goToNextProject(nextKey), 420);
+        } else {
+          setH(MIN_H, true);
+        }
+      });
+
+      // Desktop: click navigates directly
       revealEl.addEventListener('click', () => {
         if (!navigating) { navigating = true; goToNextProject(nextKey); }
       });
