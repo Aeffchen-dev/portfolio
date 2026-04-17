@@ -79,10 +79,9 @@
     /* === LOADING === */
     .article-loading { display:flex; align-items:center; justify-content:center; min-height:100dvh; font-size:14px; color:rgba(255,255,255,.4); text-align:center; }
 
-    /* === FULL-PAGE LAYOUT === */
-    .modal { position:fixed; top:0; left:0; width:100vw; height:100dvh; z-index:10; border-radius:0; overflow:hidden; box-shadow:none; display:none; }
+    /* === ARTICLE CONTENT (no modal overlay) === */
+    .modal { display:none; }
     .modal.is-visible { display:block; }
-    .modal__scroll { height:100%; overflow-y:auto; overflow-x:hidden; background:#000; }
 
     /* === FIXED BACK LINK (top-right) === */
     .back-link {
@@ -99,15 +98,30 @@
     .article-hero { background:#000; }
     .hero-top {
       height:100vh;
-      padding:24px 32px 32px;
-      display:flex; flex-direction:column; justify-content:space-between;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
     }
-    .header-eyebrow { display:flex; align-items:center; flex-shrink:0; }
+    /* eyebrow floats at top of the hero */
+    .header-eyebrow {
+      position:absolute; top:24px; left:32px; right:32px;
+      display:flex; align-items:center;
+    }
     .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
     .eyebrow-category { font-size:15px; font-weight:400; color:rgba(255,255,255,.4); }
     .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.25); }
-    .hero__title { font-size:calc(50dvh - 33px); font-weight:700; letter-spacing:-0.04em; line-height:0.88; color:#fff; }
-    .hero-image { overflow:hidden; }
+    /* title centered, nudged up to clear the 40vh bottom image */
+    .hero__title {
+      font-size:calc(50dvh - 33px); font-weight:700; letter-spacing:-0.04em;
+      line-height:0.85; color:#fff;
+      text-align:center; text-transform:uppercase;
+      padding:0 24px 20vh;
+      width:100%;
+    }
+    /* hero image: pinned to bottom, centered, 40vh wide */
+    .hero-image {
+      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+      width:40vh; pointer-events:none;
+    }
     .hero-image img { width:100%; height:auto; display:block; }
 
     /* First text block gets editorial indent */
@@ -143,8 +157,9 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:100dvh; padding:20px 20px 24px; }
-      .hero__title { font-size:clamp(40px,14vw,100px); line-height:0.9; }
+      .hero-top { height:100dvh; }
+      .header-eyebrow { top:20px; left:20px; right:20px; }
+      .hero__title { font-size:clamp(40px,14vw,100px); line-height:0.85; padding:0 16px 20vh; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
       .page-footer { flex-direction:column; align-items:flex-start; gap:32px; padding:40px 20px 24px; }
@@ -210,9 +225,9 @@
             </div>
           </div>
           <h1 class="hero__title" id="articleTitle"></h1>
-        </div>
-        <div class="hero-image" id="heroImageWrap" style="display:none">
-          <img id="heroImage" src="" alt="">
+          <div class="hero-image" id="heroImageWrap" style="display:none">
+            <img id="heroImage" src="" alt="">
+          </div>
         </div>
       </div>
 
@@ -330,13 +345,11 @@
     window.addEventListener('resize', () => { if (_inScrollPill) setPillState(); });
     // Start full-width transparent — no setPillState() call
 
-    // Scroll-driven nav: attaches after modal is visible
+    // Scroll-driven nav: listens to window scroll (no modal overlay)
     window._initScrollNav = function() {
-      const modalScroll = document.querySelector('.modal__scroll');
-      if (!modalScroll) return;
       const THRESHOLD = 60;
-      modalScroll.addEventListener('scroll', () => {
-        if (modalScroll.scrollTop > THRESHOLD) applyScrollPill();
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > THRESHOLD) applyScrollPill();
         else clearScrollPill();
       }, { passive: true });
     };
