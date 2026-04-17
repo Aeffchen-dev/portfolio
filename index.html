@@ -365,25 +365,37 @@
     }
     .modal-close-bar__icon svg { display:block; }
 
-    /* === NEXT PROJECT BUTTON === */
-    .next-project-btn {
-      display:block; width:100%; text-align:center; cursor:pointer;
-      padding:64px 16px 48px; background:none; color:inherit;
-      border-top:1px solid rgba(0,0,0,.1); margin-top:24px;
-      font-family:'DM Sans',sans-serif;
+    /* === MODAL PAGE END === */
+    .modal-page-end { margin: 0 -8px; margin-top: 24px; }
+    .modal-page-end .page-links {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; gap: 8px;
+      border-top: 1px solid rgba(0,0,0,.08);
     }
-    .next-project-btn__label {
-      display:block;
-      font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
-      color:rgba(0,0,0,.35); margin-bottom:12px;
+    .modal-page-end .page-links__label {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(0,0,0,.35);
     }
-    .next-project-btn__title {
-      display:block;
-      font-size:clamp(36px,8vw,64px); font-weight:400; line-height:1;
-      letter-spacing:-0.02em; color:#111;
-      transition:opacity .2s;
+    .modal-page-end .page-links__all {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(0,0,0,.35);
+      transition: color .15s; cursor: pointer;
     }
-    .next-project-btn:hover .next-project-btn__title { opacity:.5; }
+    .modal-page-end .page-links__all:hover { color: #000; }
+    .modal-next-reveal {
+      overflow: hidden; cursor: pointer; background: #0D0D0D; will-change: height;
+    }
+    .modal-next-reveal__inner {
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 32px;
+    }
+    .modal-next-reveal__label {
+      font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.3); margin-bottom: 12px;
+    }
+    .modal-next-reveal__title {
+      font-size: clamp(28px, 6vw, 64px); font-weight: 700;
+      letter-spacing: -.03em; line-height: .92; color: #fff;
+    }
 
     .hero__title { display:none; }
     .modal-name {
@@ -1580,8 +1592,9 @@
 
     // === NEXT PROJECT SETUP ===
     const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
-    let currentProjectKey = null;
-    let _isTransitioning  = false;
+    let currentProjectKey  = null;
+    let _isTransitioning   = false;
+    let _nextRevealAbort   = null;
 
     function getNextProjectKey(key) {
       const idx = PROJECT_ORDER.indexOf(key);
@@ -1620,23 +1633,65 @@
       modal.querySelector('.page-header').style.background   = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
-      // Refresh next-project button
-      const oldBtn = modal.querySelector('.next-project-btn');
-      if (oldBtn) oldBtn.remove();
       injectNextBtn(key);
     }
 
     function injectNextBtn(key) {
+      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
+      const oldEnd = document.querySelector('.modal-page-end');
+      if (oldEnd) oldEnd.remove();
+
       const nextKey = getNextProjectKey(key);
-      if (!nextKey) return;
-      const nextP = PROJECTS[nextKey];
-      const btn = document.createElement('button');
-      btn.className = 'next-project-btn';
-      btn.innerHTML =
-        `<span class="next-project-btn__label">Next Project</span>` +
-        `<span class="next-project-btn__title">${nextP ? nextP.client : '→'}</span>`;
-      btn.addEventListener('click', () => goToNextProject(nextKey));
-      document.getElementById('modal-links').insertAdjacentElement('afterend', btn);
+      const nextP   = nextKey ? PROJECTS[nextKey] : null;
+      const scrollEl = document.querySelector('.modal__scroll');
+      const modalH   = scrollEl.clientHeight;
+      const MIN_H    = Math.round(modalH * 0.38);
+
+      const pageEnd = document.createElement('div');
+      pageEnd.className = 'modal-page-end';
+      pageEnd.innerHTML =
+        `<div class="page-links">` +
+          `<span class="page-links__label">Next Up</span>` +
+          `<button class="page-links__all">[ View All Projects ]</button>` +
+        `</div>` +
+        (nextP
+          ? `<div class="modal-next-reveal" style="height:${MIN_H}px">` +
+              `<div class="modal-next-reveal__inner" style="min-height:${modalH}px">` +
+                `<p class="modal-next-reveal__label">Up Next</p>` +
+                `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+              `</div>` +
+            `</div>`
+          : '');
+
+      document.getElementById('modal-links').insertAdjacentElement('afterend', pageEnd);
+      pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
+
+      if (!nextP) return;
+
+      const revealEl = pageEnd.querySelector('.modal-next-reveal');
+      let raf = 0, navigating = false;
+
+      function updateReveal() {
+        raf = 0;
+        const revealTop = revealEl.offsetTop;
+        const scrollTop = scrollEl.scrollTop;
+        const ch        = scrollEl.clientHeight;
+        const progress  = Math.max(0, Math.min(1, (scrollTop + ch - revealTop) / ch));
+        revealEl.style.height = Math.round(MIN_H + (modalH - MIN_H) * progress) + 'px';
+        if (progress >= 0.98 && !navigating) {
+          navigating = true;
+          setTimeout(() => goToNextProject(nextKey), 150);
+        }
+      }
+
+      _nextRevealAbort = new AbortController();
+      scrollEl.addEventListener('scroll', () => {
+        if (!raf) raf = requestAnimationFrame(updateReveal);
+      }, { passive: true, signal: _nextRevealAbort.signal });
+
+      revealEl.addEventListener('click', () => {
+        if (!navigating) { navigating = true; goToNextProject(nextKey); }
+      });
     }
 
     function goToNextProject(nextKey) {
