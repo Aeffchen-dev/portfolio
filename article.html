@@ -83,39 +83,55 @@
     .modal { display:none; }
     .modal.is-visible { display:block; }
 
-    /* === FIXED BACK LINK (top-right) === */
+    /* === ARTICLE HERO === */
+    .article-hero { background:#000; }
+    .hero-top {
+      height:100vh;
+      max-width:1100px; margin:0 auto;
+      padding:24px 32px 28px;
+      display:flex; flex-direction:column;
+    }
+    .header-eyebrow { flex-shrink:0; }
+    .eyebrow-category { font-size:13px; font-weight:400; color:rgba(255,255,255,.4); }
+
+    /* center zone: title + summary + hero image */
+    .hero-main {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:14px;
+    }
+    .hero__title {
+      font-size:clamp(28px, 7vw, 60px); font-weight:700;
+      letter-spacing:0; line-height:0.9; color:#fff;
+      text-align:center; text-transform:uppercase;
+      max-width:10em;
+    }
+    .hero__summary {
+      font-size:13px; font-weight:400; line-height:1.55;
+      color:rgba(255,255,255,.45); text-align:center;
+      max-width:38em;
+    }
+    .hero__img-wrap { width:40vw; max-width:500px; margin-top:4px; }
+    .hero__img-wrap img { width:100%; height:auto; display:block; border-radius:4px; }
+
+    /* bottom bar: BACK left, SHARE right */
+    .hero-bottom {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-shrink:0;
+    }
     .back-link {
-      position:fixed; top:16px; right:16px; z-index:200;
       display:inline-flex; align-items:center; gap:7px;
-      font-family:'DM Sans', sans-serif;
       font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
       color:rgba(255,255,255,.5); transition:color .15s;
     }
     .back-link:hover { color:#fff; }
     .back-link__arrow { display:inline-flex; flex-shrink:0; transform:rotate(180deg); }
-
-    /* === ARTICLE HERO === */
-    .article-hero { background:#000; }
-    .hero-top {
-      height:100vh;
-      display:flex; align-items:center; justify-content:center;
-      position:relative; overflow:hidden;
+    .share-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+      color:rgba(255,255,255,.5); transition:color .15s; cursor:pointer;
+      background:none; border:none; font-family:inherit; padding:0;
     }
-    /* eyebrow floats at top of the hero */
-    .header-eyebrow {
-      position:absolute; top:24px; left:32px; right:32px;
-      display:flex; align-items:center;
-    }
-    .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
-    .eyebrow-category { font-size:15px; font-weight:400; color:rgba(255,255,255,.4); }
-    .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.25); }
-    .hero__title {
-      font-size:clamp(48px, 13vw, 130px); font-weight:700; letter-spacing:-0.04em;
-      line-height:0.85; color:#fff;
-      text-align:center; text-transform:uppercase;
-      max-width:7em; /* constrains to ~2 lines */
-      padding:0 16px;
-    }
+    .share-btn:hover { color:#fff; }
 
     /* First text block gets editorial indent */
     .blocks__grid > .block-text:first-child .text-body > p:first-child { text-indent:48px; }
@@ -128,8 +144,8 @@
     .block--half { grid-column:span 2; }
     .ar-16-7 { aspect-ratio:16/7; }
     .ar-4-3  { aspect-ratio:4/3; }
-    .block-image { background:#1A1A1A; }
-    .block-image img { width:100%; height:auto; display:block; }
+    .block-image { background:#1A1A1A; position:relative; overflow:hidden; aspect-ratio:16/9; }
+    .block-image img { position:absolute; inset:0; width:100%; height:115%; object-fit:cover; will-change:transform; }
     .block-text { border-radius:0; }
     .text-inner { padding:16px 0; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
@@ -150,16 +166,15 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:100dvh; }
-      .header-eyebrow { top:20px; left:20px; right:20px; }
-      .hero__title { padding:0 16px; }
+      .hero-top { height:100dvh; padding:20px 20px 20px; }
+      .hero__img-wrap { width:60vw; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
       .page-footer { flex-direction:column; align-items:flex-start; gap:32px; padding:40px 20px 24px; }
       .footer__nav { flex-direction:row; align-items:flex-start; gap:20px; }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .hero-top { padding:24px 24px 32px; }
+      .hero-top { padding:24px 24px 28px; }
     }
   </style>
 </head>
@@ -191,17 +206,6 @@
     </div>
   </nav>
 
-  <!-- BACK LINK (fixed top-right) -->
-  <a href="articles.html" class="back-link" aria-label="Back to articles">
-    <span class="back-link__arrow">
-      <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/>
-        <path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/>
-      </svg>
-    </span>
-    <span>Back</span>
-  </a>
-
   <!-- LOADING STATE -->
   <div class="article-loading" id="articleLoading"><span>Loading…</span></div>
 
@@ -212,12 +216,22 @@
       <div class="article-hero">
         <div class="hero-top">
           <div class="header-eyebrow">
-            <div class="eyebrow-left">
-              <span class="eyebrow-category" id="articleCategory"></span>
-              <span class="eyebrow-date" id="articleDate"></span>
+            <span class="eyebrow-category" id="articleCategory"></span>
+          </div>
+          <div class="hero-main">
+            <h1 class="hero__title" id="articleTitle"></h1>
+            <p class="hero__summary" id="articleSummary" style="display:none"></p>
+            <div class="hero__img-wrap" id="articleHeroImg" style="display:none">
+              <img id="articleHeroImgEl" src="" alt="">
             </div>
           </div>
-          <h1 class="hero__title" id="articleTitle"></h1>
+          <div class="hero-bottom">
+            <a href="articles.html" class="back-link">
+              <span class="back-link__arrow"><svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+              <span>Back</span>
+            </a>
+            <button class="share-btn" id="shareBtn" style="display:none">Share Article</button>
+          </div>
         </div>
       </div>
 
@@ -492,28 +506,65 @@
 
         document.title = title + ' — Jana Gramlich';
         document.getElementById('articleCategory').textContent = category;
-        document.getElementById('articleDate').textContent = date;
         document.getElementById('articleTitle').textContent = title;
 
-        if (excerpt && excerpt.length > 20) {
-          document.getElementById('articleExcerpt').textContent = excerpt;
-          document.getElementById('articleExcerptWrap').style.display = '';
+        // Summary: use WP excerpt as AI-style one-liner
+        const summary = excerpt.length > 20 ? excerpt : '';
+        if (summary) {
+          const el = document.getElementById('articleSummary');
+          el.textContent = summary;
+          el.style.display = '';
         }
 
-        const { html: blocksHtml } = await renderBlocks(flexRows, test2);
+        // Share button (native share API)
+        const shareBtn = document.getElementById('shareBtn');
+        if (navigator.share) {
+          shareBtn.style.display = '';
+          shareBtn.addEventListener('click', () => {
+            navigator.share({ title, text: summary, url: location.href }).catch(() => {});
+          });
+        }
+
+        const { html: blocksHtml, heroUrl } = await renderBlocks(flexRows, test2);
         const fallback = (post.content?.rendered || '').trim();
         document.getElementById('blocksGrid').innerHTML = blocksHtml
           || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
 
+        // Hero image from first ACF image
+        if (heroUrl) {
+          document.getElementById('articleHeroImgEl').src = heroUrl;
+          document.getElementById('articleHeroImg').style.display = '';
+        }
+
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
         if (window._initScrollNav) window._initScrollNav();
+        initParallax();
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
         const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
         showError('Could not load article — ' + msg);
       });
+  }
+
+  // === IMAGE PARALLAX (same as project boxes on home) ===
+  function initParallax() {
+    let raf = 0;
+    function tick() {
+      raf = 0;
+      const vh = window.innerHeight;
+      document.querySelectorAll('.block-image').forEach(box => {
+        const img = box.querySelector('img'); if (!img) return;
+        const rect = box.getBoundingClientRect();
+        const extra = rect.height * 0.15;
+        const ratio = (rect.top + rect.height / 2) / vh - 0.5;
+        const shift = Math.max(-extra, Math.min(0, -extra / 2 + ratio * extra * 1.2));
+        img.style.transform = `translateY(${shift}px)`;
+      });
+    }
+    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(tick); }, { passive:true });
+    tick();
   }
 </script>
 </body>
