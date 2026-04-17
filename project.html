@@ -119,13 +119,18 @@
     /* Rotate the standard ↗ arrow 180° to point ↙ */
     .back-link__arrow { display: inline-flex; flex-shrink: 0; transform: rotate(180deg); }
 
-    /* === PROJECT TITLE === */
+    /* === PROJECT TITLE + SUBLINE === */
     .project-title {
       font-size: calc(50dvh - 33px);
       font-weight: 600;
       letter-spacing: -0.04em;
       line-height: 0.88;
       color: #fff;
+    }
+    .project-subline {
+      font-size: 14px; font-weight: 400; line-height: 1.5;
+      color: rgba(255,255,255,.45); max-width: 480px;
+      margin-top: 16px;
     }
 
     /* === FIRST IMAGE (100vw - 8px, natural height) === */
@@ -244,7 +249,10 @@
       </span>
       <span>Edition</span>
     </a>
-    <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
+    <div>
+      <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
+      <p class="project-subline">A cross-platform design system unifying app and web — balancing luxury appeal, accessibility compliance, and scale across Europe's leading beauty retailer.</p>
+    </div>
   </section>
 
   <!-- FIRST IMAGE (max 80vw / max 50vh) -->
