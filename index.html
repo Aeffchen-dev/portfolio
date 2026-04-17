@@ -1646,6 +1646,10 @@
       const scrollEl = document.querySelector('.modal__scroll');
       const modalH   = scrollEl.clientHeight;
       const MIN_H    = Math.round(modalH * 0.38);
+      // MAX_H > modalH so the section overflows scroll-height,
+      // giving real pull distance after the section fills the viewport.
+      const MAX_H    = Math.round(modalH * 2);
+      const RANGE    = MAX_H - MIN_H;
 
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
@@ -1674,11 +1678,11 @@
       function updateReveal() {
         raf = 0;
         const revealTop = revealEl.offsetTop;
-        const scrollTop = scrollEl.scrollTop;
-        const ch        = scrollEl.clientHeight;
-        const progress  = Math.max(0, Math.min(1, (scrollTop + ch - revealTop) / ch));
-        revealEl.style.height = Math.round(MIN_H + (modalH - MIN_H) * progress) + 'px';
-        if (progress >= 0.98 && !navigating) {
+        const scrollIn  = Math.max(0, scrollEl.scrollTop + scrollEl.clientHeight - revealTop);
+        const progress  = Math.min(1, scrollIn / RANGE);
+        revealEl.style.height = Math.round(MIN_H + RANGE * progress) + 'px';
+        // Navigate at 70% — section is ~1.4× modal height, giving ~50% modal height of pull
+        if (progress >= 0.7 && !navigating) {
           navigating = true;
           setTimeout(() => goToNextProject(nextKey), 150);
         }
