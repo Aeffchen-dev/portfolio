@@ -109,20 +109,13 @@
     .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
     .eyebrow-category { font-size:15px; font-weight:400; color:rgba(255,255,255,.4); }
     .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.25); }
-    /* title centered, nudged up to clear the 40vh bottom image */
     .hero__title {
       font-size:clamp(48px, 13vw, 130px); font-weight:700; letter-spacing:-0.04em;
       line-height:0.85; color:#fff;
       text-align:center; text-transform:uppercase;
-      padding:0 24px 20vh;
-      width:100%;
+      max-width:7em; /* constrains to ~2 lines */
+      padding:0 16px;
     }
-    /* hero image: pinned to bottom, centered, 40vh wide */
-    .hero-image {
-      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-      width:40vh; pointer-events:none;
-    }
-    .hero-image img { width:100%; height:auto; display:block; }
 
     /* First text block gets editorial indent */
     .blocks__grid > .block-text:first-child .text-body > p:first-child { text-indent:48px; }
@@ -159,7 +152,7 @@
     @media (max-width:639px) {
       .hero-top { height:100dvh; }
       .header-eyebrow { top:20px; left:20px; right:20px; }
-      .hero__title { padding:0 16px 20vh; }
+      .hero__title { padding:0 16px; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
       .page-footer { flex-direction:column; align-items:flex-start; gap:32px; padding:40px 20px 24px; }
@@ -225,9 +218,6 @@
             </div>
           </div>
           <h1 class="hero__title" id="articleTitle"></h1>
-          <div class="hero-image" id="heroImageWrap" style="display:none">
-            <img id="heroImage" src="" alt="">
-          </div>
         </div>
       </div>
 
