@@ -86,13 +86,13 @@
     /* === ARTICLE HERO === */
     .article-hero { background:#000; }
     .hero-top {
-      height:90vh;
+      height:80vh;
       max-width:800px; margin:0 auto;
       padding:24px 32px 28px;
       display:flex; flex-direction:column;
     }
 
-    /* center zone: must fit within 90vh — min-height:0 allows shrinking */
+    /* center zone: must fit within 80vh — min-height:0 allows shrinking */
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
       display:flex; flex-direction:column;
@@ -141,7 +141,7 @@
     .block--full { grid-column:span 4; }
     .block--half { grid-column:span 2; }
     .block-image { background:#1A1A1A; }
-    .block-image img { width:100%; height:auto; display:block; }
+    .block-image img { width:100%; height:auto; display:block; border-radius:4px; }
     .block-text { border-radius:0; }
     .text-inner { padding:16px 0; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
@@ -162,7 +162,7 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:90dvh; padding:20px 20px 20px; }
+      .hero-top { height:80dvh; padding:20px 20px 20px; }
       .blocks { padding:8px; }
 
       .blocks__grid { grid-template-columns:1fr; }
