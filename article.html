@@ -500,15 +500,10 @@
           document.getElementById('articleExcerptWrap').style.display = '';
         }
 
-        const { html: blocksHtml, heroUrl } = await renderBlocks(flexRows, test2);
+        const { html: blocksHtml } = await renderBlocks(flexRows, test2);
         const fallback = (post.content?.rendered || '').trim();
         document.getElementById('blocksGrid').innerHTML = blocksHtml
           || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
-
-        if (heroUrl) {
-          document.getElementById('heroImage').src = heroUrl;
-          document.getElementById('heroImageWrap').style.display = '';
-        }
 
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
