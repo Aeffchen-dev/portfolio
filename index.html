@@ -383,24 +383,25 @@
     }
     .modal-page-end .page-links__all:hover { color: #000; }
     .modal-next-reveal {
-      overflow: hidden; cursor: pointer; background: #0D0D0D;
+      overflow: hidden; cursor: pointer;
     }
     .modal-next-reveal::before {
       content: ''; display: block;
       width: 36px; height: 4px; border-radius: 2px;
-      background: rgba(255,255,255,.2);
+      background: rgba(0,0,0,.15);
       margin: 12px auto 0;
     }
     .modal-next-reveal__inner {
-      display: flex; flex-direction: column; justify-content: flex-end; padding: 32px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 32px; text-align: center;
     }
     .modal-next-reveal__label {
       font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-      color: rgba(255,255,255,.3); margin-bottom: 12px;
+      color: rgba(0,0,0,.3); margin-bottom: 12px;
     }
     .modal-next-reveal__title {
       font-size: clamp(28px, 6vw, 64px); font-weight: 700;
-      letter-spacing: -.03em; line-height: .92; color: #fff;
+      letter-spacing: -.03em; line-height: .92; color: #111;
     }
 
     .hero__title { display:none; }
