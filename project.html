@@ -76,6 +76,8 @@
       background: #0D0D0D;
       min-height: 100dvh;
       will-change: transform;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Drag handle on mobile/tablet */
@@ -90,14 +92,12 @@
       }
     }
 
-    /* === INTRO SECTION (100vh + 30vh) === */
+    /* === INTRO SECTION (back-link only) === */
     .project-intro {
-      height: 130vh;
       padding: 32px;
       background: #0D0D0D;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
 
     /* === BACK LINK (top-left corner) === */
@@ -119,9 +119,10 @@
     /* Rotate the standard ↗ arrow 180° to point ↙ */
     .back-link__arrow { display: inline-flex; flex-shrink: 0; transform: rotate(180deg); }
 
-    /* === PROJECT TITLE + SUBLINE === */
+    /* === PROJECT TEXT (title + subline) === */
+    .project-text { padding: 24px 32px; }
     .project-title {
-      font-size: calc(50dvh - 33px);
+      font-size: clamp(40px, 14vw, 100px);
       font-weight: 600;
       letter-spacing: -0.04em;
       line-height: 0.88;
@@ -129,7 +130,7 @@
     }
     .project-subline {
       font-size: 14px; font-weight: 400; line-height: 1.5;
-      color: rgba(255,255,255,.45); max-width: 480px;
+      color: rgba(255,255,255,.45);
       margin-top: 16px;
     }
 
@@ -214,7 +215,7 @@
     /* === MOBILE === */
     @media (max-width: 639px) {
       .project-intro { padding: 20px; }
-      .project-title { font-size: clamp(40px, 14vw, 100px); line-height: 0.9; }
+      .project-text { padding: 20px; }
       .project-hero-img { padding: 0 4px 4px; }
       .project-hero-img img { border-radius: 4px; }
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
@@ -225,11 +226,36 @@
       .footer-bottom { padding: 16px; flex-direction: column; gap: 6px; }
     }
 
+    /* === MOBILE + TABLET: reorder text before hero image === */
+    @media (max-width: 1023px) {
+      .project-intro   { order: 1; }
+      .project-text    { order: 2; }
+      .project-hero-img { order: 3; }
+      .blocks          { order: 4; }
+      .next-project    { order: 5; }
+      .footer          { order: 6; }
+      .footer-bottom   { order: 7; }
+    }
+
     /* === TABLET === */
     @media (min-width: 640px) and (max-width: 1023px) {
       .project-intro { padding: 24px; }
       .project-hero-img { padding: 0 4px 8px; }
       .blocks__grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* === DESKTOP: sheet max-width, 2-col text below hero === */
+    @media (min-width: 1024px) {
+      .project-sheet { max-width: 800px; margin: 0 auto; }
+      .project-text {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 24px;
+        padding: 32px;
+      }
+      .project-title { font-size: clamp(28px, 3.5vw, 48px); line-height: 0.9; }
+      .project-subline { margin-top: 0; padding-top: 6px; }
     }
   </style>
 </head>
@@ -238,7 +264,7 @@
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
   <div class="project-sheet" id="projectSheet">
 
-  <!-- INTRO: BACK link (top) + title (bottom) — 100vh container -->
+  <!-- INTRO: BACK link only -->
   <section class="project-intro">
     <a href="javascript:history.back()" class="back-link">
       <span class="back-link__arrow">
@@ -249,15 +275,17 @@
       </span>
       <span>Edition</span>
     </a>
-    <div>
-      <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
-      <p class="project-subline">A cross-platform design system unifying app and web — balancing luxury appeal, accessibility compliance, and scale across Europe's leading beauty retailer.</p>
-    </div>
   </section>
 
-  <!-- FIRST IMAGE (max 80vw / max 50vh) -->
+  <!-- FIRST IMAGE -->
   <div class="project-hero-img">
     <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
+  </div>
+
+  <!-- TITLE + SUBLINE (below hero on desktop, before hero on mobile via flex order) -->
+  <div class="project-text">
+    <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
+    <p class="project-subline">A cross-platform design system unifying app and web — balancing luxury appeal, accessibility compliance, and scale across Europe's leading beauty retailer.</p>
   </div>
 
   <!-- CONTENT BLOCKS -->
