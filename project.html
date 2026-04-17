@@ -153,12 +153,9 @@
     .block--full { grid-column: span 4; }
     .block--half { grid-column: span 2; }
 
-    .ar-16-7 { aspect-ratio: 16 / 7; }
-    .ar-4-3  { aspect-ratio: 4 / 3; }
-
-    /* === IMAGE BLOCK === */
+    /* === IMAGE BLOCK (height follows natural image dimensions) === */
     .block-image { background: #1A1A1A; }
-    .block-image img { width: 100%; height: 100%; object-fit: cover; }
+    .block-image img { width: 100%; height: auto; display: block; }
 
     /* === TEXT BLOCK === */
     .block-text { background: transparent; border-radius: 0; display: flex; flex-direction: column; }
@@ -218,7 +215,6 @@
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
       .block--full  { grid-column: span 1; }
       .block--half  { grid-column: span 1; }
-      .ar-16-7 { aspect-ratio: 4 / 3; }
       .footer { flex-direction: column; align-items: flex-start; gap: 40px; padding: 48px 16px 24px; }
       .footer__nav { align-items: flex-start; flex-direction: row; gap: 20px; }
       .footer-bottom { padding: 16px; flex-direction: column; gap: 6px; }
