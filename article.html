@@ -358,6 +358,35 @@
   // === ARTICLE FETCH ===
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
 
+  const ANTHROPIC_KEY = ''; // ← paste your Anthropic API key here
+
+  async function generateSummary(title, category, textContent) {
+    if (!ANTHROPIC_KEY) return '';
+    try {
+      const context = [
+        `Title: "${title}"`,
+        category ? `Category: "${category}"` : '',
+        textContent ? `Content: ${textContent.slice(0, 800)}` : '',
+      ].filter(Boolean).join('\n');
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': ANTHROPIC_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 80,
+          messages: [{ role: 'user', content: `Write exactly one concise sentence describing what this design article is about. Output only the sentence.\n\n${context}` }],
+        }),
+      });
+      const data = await res.json();
+      return data.content?.[0]?.text?.trim() || '';
+    } catch { return ''; }
+  }
+
   function stripHtml(html) {
     return new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
   }
@@ -505,15 +534,13 @@
           el.style.display = '';
         }
 
-        // Summary: WP excerpt, or first text block from ACF, or first content paragraph
-        const firstTextBlock = flexRows.find(r => {
-          const l = (r.acf_fc_layout||'').toLowerCase();
-          return l === 'text' || l === 'wysiwyg' || l === 'paragraph' || l === 'copy';
-        });
-        const firstTextFallback = firstTextBlock
-          ? stripHtml(firstTextBlock.text || firstTextBlock.wysiwyg || firstTextBlock.content || '').slice(0, 220).trim()
-          : stripHtml((post.content?.rendered || '').replace(/<\/p>/gi, ' ')).slice(0, 220).trim();
-        const summary = excerpt.length > 5 ? excerpt : firstTextFallback;
+        // AI-generated one-sentence summary
+        const textContent = flexRows
+          .filter(r => { const l = (r.acf_fc_layout||'').toLowerCase(); return l==='text'||l==='wysiwyg'||l==='paragraph'||l==='copy'; })
+          .map(r => stripHtml(r.text||r.wysiwyg||r.content||''))
+          .join(' ')
+          || stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim();
+        const summary = await generateSummary(title, category, textContent);
         if (summary) {
           const el = document.getElementById('articleSummary');
           el.textContent = summary;
