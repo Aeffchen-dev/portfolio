@@ -74,33 +74,44 @@
     .nav__linkedin { display:inline-flex; align-items:center; justify-content:center; background:#acb0ff; color:#171717; border-radius:999px; padding:8px 10px; font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase; margin-top:40px; }
 
     /* === PAGE WRAPPER === */
-    body { background:#111; color:#fff; }
+    body { background:#000; color:#fff; }
 
     /* === LOADING === */
     .article-loading { display:flex; align-items:center; justify-content:center; min-height:100dvh; font-size:14px; color:rgba(255,255,255,.4); text-align:center; }
 
-    /* === MODAL CARD === */
-    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:95vw; height:95vh; z-index:10; border-radius:20px; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,.5); display:none; }
+    /* === FULL-PAGE LAYOUT === */
+    .modal { position:fixed; top:0; left:0; width:100vw; height:100dvh; z-index:10; border-radius:0; overflow:hidden; box-shadow:none; display:none; }
     .modal.is-visible { display:block; }
-    .modal__scroll { height:100%; overflow-y:auto; overflow-x:hidden; background:#0D0D0D; }
+    .modal__scroll { height:100%; overflow-y:auto; overflow-x:hidden; background:#000; }
+
+    /* === FIXED BACK LINK (top-right) === */
+    .back-link {
+      position:fixed; top:16px; right:16px; z-index:200;
+      display:inline-flex; align-items:center; gap:7px;
+      font-family:'DM Sans', sans-serif;
+      font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+      color:rgba(255,255,255,.5); transition:color .15s;
+    }
+    .back-link:hover { color:#fff; }
+    .back-link__arrow { display:inline-flex; flex-shrink:0; transform:rotate(180deg); }
 
     /* === ARTICLE HERO === */
-    .article-hero { background:#0D0D0D; }
+    .article-hero { background:#000; }
     .hero-top {
-      height:calc(50dvh - 33px);
-      padding:20px 32px 24px;
+      height:100vh;
+      padding:24px 32px 32px;
       display:flex; flex-direction:column; justify-content:space-between;
-      overflow:hidden;
     }
-    .header-eyebrow { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .header-eyebrow { display:flex; align-items:center; flex-shrink:0; }
     .eyebrow-left { display:flex; align-items:baseline; gap:20px; }
-    .eyebrow-category { font-size:15px; font-weight:400; color:#fff; }
-    .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.35); }
-    .btn-back { width:36px; height:36px; border-radius:50%; background:#fff; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .15s; }
-    .btn-back:hover { background:rgba(255,255,255,.8); }
+    .eyebrow-category { font-size:15px; font-weight:400; color:rgba(255,255,255,.4); }
+    .eyebrow-date { font-size:15px; font-weight:400; color:rgba(255,255,255,.25); }
     .hero__title { font-size:calc(50dvh - 33px); font-weight:700; letter-spacing:-0.04em; line-height:0.88; color:#fff; }
-    .hero-image { height:50dvh; overflow:hidden; }
-    .hero-image img { width:100%; height:100%; object-fit:cover; object-position:center bottom; display:block; }
+    .hero-image { overflow:hidden; }
+    .hero-image img { width:100%; height:auto; display:block; }
+
+    /* First text block gets editorial indent */
+    .blocks__grid > .block-text:first-child .text-body > p:first-child { text-indent:48px; }
 
     /* === BLOCKS === */
     .blocks { background:#1A1A1A; padding:8px; margin:8px 0; }
@@ -132,18 +143,15 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .modal { width:100vw; height:100dvh; border-radius:0; top:0; left:0; transform:none; }
-      .hero-top { height:auto; min-height:50dvh; padding:56px 20px 20px; }
+      .hero-top { height:100dvh; padding:20px 20px 24px; }
       .hero__title { font-size:clamp(40px,14vw,100px); line-height:0.9; }
-      .hero-image { height:50dvh; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
-      .ar-16-7 { aspect-ratio:4/3; }
       .page-footer { flex-direction:column; align-items:flex-start; gap:32px; padding:40px 20px 24px; }
       .footer__nav { flex-direction:row; align-items:flex-start; gap:20px; }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .hero-top { padding:20px 24px 24px; }
+      .hero-top { padding:24px 24px 32px; }
     }
   </style>
 </head>
@@ -175,6 +183,17 @@
     </div>
   </nav>
 
+  <!-- BACK LINK (fixed top-right) -->
+  <a href="articles.html" class="back-link" aria-label="Back to articles">
+    <span class="back-link__arrow">
+      <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/>
+        <path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/>
+      </svg>
+    </span>
+    <span>Back</span>
+  </a>
+
   <!-- LOADING STATE -->
   <div class="article-loading" id="articleLoading"><span>Loading…</span></div>
 
@@ -189,9 +208,6 @@
               <span class="eyebrow-category" id="articleCategory"></span>
               <span class="eyebrow-date" id="articleDate"></span>
             </div>
-            <a href="articles.html" class="btn-back" aria-label="All articles">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"><path d="M1 1L11 11M11 1L1 11"/></svg>
-            </a>
           </div>
           <h1 class="hero__title" id="articleTitle"></h1>
         </div>
