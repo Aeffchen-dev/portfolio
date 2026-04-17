@@ -95,7 +95,6 @@
     /* center zone: must fit within 90vh — min-height:0 allows shrinking */
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
-      position:relative;
       display:flex; flex-direction:column;
       align-items:center; justify-content:center; gap:10px;
     }
@@ -114,10 +113,6 @@
       color:rgba(255,255,255,.45); text-align:center;
       max-width:38em;
     }
-    .hero__img-wrap {
-      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-    }
-    .hero__img-wrap img { width:auto; height:auto; max-width:100%; display:block; border-radius:4px; }
 
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
@@ -221,9 +216,7 @@
             <h1 class="hero__title" id="articleTitle"></h1>
             <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
             <p class="hero__summary" id="articleSummary" style="display:none"></p>
-            <div class="hero__img-wrap" id="articleHeroImg" style="display:none">
-              <img id="articleHeroImgEl" src="" alt="">
-            </div>
+
           </div>
           <div class="hero-bottom">
             <a href="articles.html" class="back-link">
@@ -394,10 +387,8 @@
   }
 
   // Build project-style blocks from ACF flexible content rows.
-  // Returns { html, heroUrl } — first image is extracted for the hero.
   async function renderBlocks(sections, test2) {
     const blocks = [];
-    let heroUrl = '';
     if (test2) {
       blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body"><p>${test2}</p></div></div></div>`);
     }
@@ -408,11 +399,7 @@
       if (layout === 'image' || layout === 'img' || layout === 'photo') {
         const url = await resolveImgUrl(s.img || s.image || s.photo || s.src || null);
         if (url) {
-          if (!heroUrl) {
-            heroUrl = url; // first image goes to hero
-          } else {
-            blocks.push(`<div class="block block--full block-image"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
-          }
+          blocks.push(`<div class="block block--full block-image"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
         }
       } else {
         // Text/editor: try known fields, then scan all string fields
@@ -425,7 +412,7 @@
         if (html) blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
       }
     }
-    return { html: blocks.join(''), heroUrl };
+    return { html: blocks.join('') };
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -535,16 +522,10 @@
           });
         }
 
-        const { html: blocksHtml, heroUrl } = await renderBlocks(flexRows, test2);
+        const { html: blocksHtml } = await renderBlocks(flexRows, test2);
         const fallback = (post.content?.rendered || '').trim();
         document.getElementById('blocksGrid').innerHTML = blocksHtml
           || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
-
-        // Hero image from first ACF image
-        if (heroUrl) {
-          document.getElementById('articleHeroImgEl').src = heroUrl;
-          document.getElementById('articleHeroImg').style.display = '';
-        }
 
         document.getElementById('articleLoading').style.display = 'none';
         document.getElementById('articleModal').classList.add('is-visible');
