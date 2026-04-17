@@ -86,7 +86,7 @@
     /* === ARTICLE HERO === */
     .article-hero { background:#000; }
     .hero-top {
-      height:70vh;
+      height:90vh;
       max-width:1100px; margin:0 auto;
       padding:24px 32px 28px;
       display:flex; flex-direction:column;
@@ -94,7 +94,7 @@
     .header-eyebrow { flex-shrink:0; }
     .eyebrow-category { font-size:13px; font-weight:400; color:rgba(255,255,255,.4); }
 
-    /* center zone: must fit within 70vh — min-height:0 allows shrinking */
+    /* center zone: must fit within 90vh — min-height:0 allows shrinking */
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
       display:flex; flex-direction:column;
@@ -115,8 +115,8 @@
       color:rgba(255,255,255,.45); text-align:center;
       max-width:38em;
     }
-    .hero__img-wrap { width:40vw; max-width:500px; min-height:0; max-height:28vh; overflow:hidden; }
-    .hero__img-wrap img { width:100%; height:100%; object-fit:cover; display:block; border-radius:4px; }
+    .hero__img-wrap { width:40vw; max-width:500px; min-height:0; }
+    .hero__img-wrap img { width:100%; height:auto; display:block; border-radius:4px; }
 
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
@@ -126,17 +126,17 @@
     .back-link {
       display:inline-flex; align-items:center; gap:7px;
       font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
-      color:rgba(255,255,255,.5); transition:color .15s;
+      color:#fff; transition:opacity .15s;
     }
-    .back-link:hover { color:#fff; }
+    .back-link:hover { opacity:.6; }
     .back-link__arrow { display:inline-flex; flex-shrink:0; transform:rotate(180deg); }
     .share-btn {
       display:inline-flex; align-items:center; gap:6px;
       font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
-      color:rgba(255,255,255,.5); transition:color .15s; cursor:pointer;
+      color:#fff; transition:opacity .15s; cursor:pointer;
       background:none; border:none; font-family:inherit; padding:0;
     }
-    .share-btn:hover { color:#fff; }
+    .share-btn:hover { opacity:.6; }
 
     /* === BLOCKS === */
     .blocks { padding:0 32px; margin:0 auto; max-width:1100px; }
@@ -144,10 +144,8 @@
     .block { border-radius:16px; overflow:hidden; }
     .block--full { grid-column:span 4; }
     .block--half { grid-column:span 2; }
-    .ar-16-7 { aspect-ratio:16/7; }
-    .ar-4-3  { aspect-ratio:4/3; }
-    .block-image { background:#1A1A1A; position:relative; overflow:hidden; aspect-ratio:16/9; }
-    .block-image img { position:absolute; inset:0; width:100%; height:115%; object-fit:cover; will-change:transform; }
+    .block-image { background:#1A1A1A; }
+    .block-image img { width:100%; height:auto; display:block; }
     .block-text { border-radius:0; }
     .text-inner { padding:16px 0; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
@@ -168,7 +166,7 @@
 
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:70dvh; padding:20px 20px 20px; }
+      .hero-top { height:90dvh; padding:20px 20px 20px; }
       .blocks { padding:0 16px; }
       .hero__img-wrap { width:60vw; }
       .blocks__grid { grid-template-columns:1fr; }
@@ -234,7 +232,10 @@
               <span class="back-link__arrow"><svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
               <span>Back</span>
             </a>
-            <button class="share-btn" id="shareBtn" style="display:none">Share Article</button>
+            <button class="share-btn" id="shareBtn" style="display:none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>Share Article</span>
+            </button>
           </div>
         </div>
       </div>
