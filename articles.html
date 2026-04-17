@@ -164,10 +164,10 @@
     }
     .cv-card:hover { background:rgba(255,255,255,0.08); }
     .cv-card__thumb {
-      width:100%;
-      flex-shrink:0; overflow:hidden; background:#1a1a1a;
+      width:100%; aspect-ratio:4/3;
+      flex-shrink:0; overflow:hidden; background:#1a1a1a; position:relative;
     }
-    .cv-card__thumb img { width:100%; height:auto; display:block; }
+    .cv-card__thumb img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
     .cv-card__thumb-placeholder {
       width:100%; height:100%;
       background:linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
@@ -398,9 +398,9 @@
     const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
     const acf      = post.acf || {};
     const imgRow   = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
-    const thumb    = post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail?.source_url
+    // Prefer first ACF image (same as article hero) over WP featured media
+    const thumb    = await resolveImgUrl(imgRow?.img || imgRow?.image)
                   || post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                  || await resolveImgUrl(imgRow?.img || imgRow?.image)
                   || '';
 
     const thumbHtml = thumb
@@ -444,7 +444,7 @@
 
     for (const base of bases) {
       const r = await fetch(
-        `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true`,
+        `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true&acf_format=standard`,
         { signal: AbortSignal.timeout(10000) }
       ).catch(() => null);
       if (!r || !r.ok) {
