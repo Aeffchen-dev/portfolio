@@ -654,11 +654,17 @@
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
         (async () => {
-          // Resolve image URLs from ACF flex rows + featured media
+          // Extract medium-sized image URLs directly from ACF objects (768×432, ~50-100KB each)
           const imgRows = flexRows.filter(r => { const l=(r.acf_fc_layout||'').toLowerCase(); return l==='image'||l==='img'||l==='photo'; });
-          const resolved = (await Promise.all(imgRows.slice(0,3).map(r => resolveImgUrl(r.img||r.image||r.photo||r.src||null)))).filter(Boolean);
+          const imageUrls = imgRows.slice(0, 3).map(r => {
+            const img = r.image || r.img || r.photo || r.src;
+            if (!img) return '';
+            if (typeof img === 'object') return img.sizes?.medium_large || img.sizes?.medium || img.url || img.source_url || '';
+            return typeof img === 'string' ? img : '';
+          }).filter(Boolean);
+          // Fallback: featured media
           const featImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-          const imageUrls = featImg && !resolved.includes(featImg) ? [featImg, ...resolved] : resolved;
+          if (featImg && !imageUrls.length) imageUrls.push(featImg);
 
           // Fetch images as base64 so Anthropic vision works without server-side URL access
           const imageData = (await Promise.all(imageUrls.slice(0,3).map(fetchImgBase64))).filter(Boolean);
