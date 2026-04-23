@@ -382,6 +382,33 @@
       transition: color .15s; cursor: pointer;
     }
     .modal-page-end .page-links__all:hover { color: #000; }
+    .modal-next-reveal {
+      position: relative; overflow: hidden; cursor: pointer;
+      background: rgba(0,0,0,.06); border-radius: 4px; min-height: 220px;
+    }
+    .modal-next-reveal__bg {
+      position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-next-reveal__bg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .modal-next-reveal__bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 100%);
+    }
+    .modal-next-reveal__inner {
+      position: relative; z-index: 1; height: 100%; min-height: 220px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 20px;
+    }
+    .modal-next-reveal__label {
+      font-size: 10px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(0,0,0,.35); margin-bottom: 6px;
+    }
+    .modal-next-reveal__title {
+      font-size: clamp(22px, 5vw, 40px); font-weight: 400;
+      letter-spacing: -.02em; line-height: 1; color: #111;
+    }
 
     .hero__title { display:none; }
     .modal-name {
@@ -1584,6 +1611,7 @@
     const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
     let currentProjectKey  = null;
     let _isTransitioning   = false;
+    let _nextRevealAbort   = null;
 
     function getNextProjectKey(key) {
       const idx = PROJECT_ORDER.indexOf(key);
@@ -1695,8 +1723,12 @@
     }
 
     function injectNextBtn(key) {
+      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
       const oldEnd = document.querySelector('.modal-page-end');
       if (oldEnd) oldEnd.remove();
+
+      const nextKey = getNextProjectKey(key);
+      const nextP   = nextKey ? PROJECTS[nextKey] : null;
 
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
@@ -1704,10 +1736,46 @@
         `<div class="page-links">` +
           `<span class="page-links__label">Next Up</span>` +
           `<button class="page-links__all">[ View All Projects ]</button>` +
-        `</div>`;
+        `</div>` +
+        (nextP
+          ? `<div class="modal-next-reveal">` +
+              `<div class="modal-next-reveal__bg">` +
+                (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` : '') +
+              `</div>` +
+              `<div class="modal-next-reveal__inner">` +
+                `<p class="modal-next-reveal__label">Up Next</p>` +
+                `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+              `</div>` +
+            `</div>`
+          : '');
 
       document.getElementById('modal-links').insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
+
+      if (!nextP) return;
+
+      const revealEl = pageEnd.querySelector('.modal-next-reveal');
+      const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
+      const titleEl  = revealEl.querySelector('.modal-next-reveal__title');
+      const labelEl  = revealEl.querySelector('.modal-next-reveal__label');
+      const scrollEl = document.querySelector('.modal__scroll');
+
+      function updateFade() {
+        const rr = revealEl.getBoundingClientRect();
+        const sr = scrollEl.getBoundingClientRect();
+        const visible = Math.max(0, Math.min(rr.bottom, sr.bottom) - Math.max(rr.top, sr.top));
+        const p = Math.min(1, visible / (sr.height * 0.45));
+        bgEl.style.opacity = p;
+        const c = Math.round(17 + (255 - 17) * p);
+        titleEl.style.color = `rgb(${c},${c},${c})`;
+        labelEl.style.color  = `rgba(${c},${c},${c},${(0.35 + 0.65 * p).toFixed(2)})`;
+      }
+
+      _nextRevealAbort = new AbortController();
+      scrollEl.addEventListener('scroll', updateFade, { passive: true, signal: _nextRevealAbort.signal });
+      updateFade();
+
+      revealEl.addEventListener('click', () => goToNextProject(nextKey));
     }
 
     function goToNextProject(nextKey) {
