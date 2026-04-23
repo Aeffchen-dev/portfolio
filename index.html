@@ -384,10 +384,10 @@
     .modal-page-end .page-links__all:hover { color: #000; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
-      background: rgba(0,0,0,.06); border-radius: 4px; min-height: 220px;
+      background: #1a1a1a; border-radius: 4px;
     }
     .modal-next-reveal__bg {
-      position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease;
+      position: absolute; inset: 0; opacity: 0;
     }
     .modal-next-reveal__bg img {
       width: 100%; height: 100%; object-fit: cover; display: block;
@@ -397,17 +397,17 @@
       background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 100%);
     }
     .modal-next-reveal__inner {
-      position: relative; z-index: 1; height: 100%; min-height: 220px;
+      position: relative; z-index: 1; height: 100%;
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 20px;
     }
     .modal-next-reveal__label {
       font-size: 10px; font-weight: 500; letter-spacing: .09em;
-      text-transform: uppercase; color: rgba(0,0,0,.35); margin-bottom: 6px;
+      text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 6px;
     }
     .modal-next-reveal__title {
       font-size: clamp(22px, 5vw, 40px); font-weight: 400;
-      letter-spacing: -.02em; line-height: 1; color: #111;
+      letter-spacing: -.02em; line-height: 1; color: #fff;
     }
 
     .hero__title { display:none; }
@@ -1712,8 +1712,9 @@
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
       const linksEl = document.getElementById('modal-links');
-      linksEl.innerHTML = buildLinkCards(p.links);
-      hydrateLinkThumbs(linksEl, p.links);
+      const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
+      linksEl.innerHTML = buildLinkCards(externalLinks);
+      hydrateLinkThumbs(linksEl, externalLinks);
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
@@ -1756,26 +1757,61 @@
 
       const revealEl = pageEnd.querySelector('.modal-next-reveal');
       const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
-      const titleEl  = revealEl.querySelector('.modal-next-reveal__title');
-      const labelEl  = revealEl.querySelector('.modal-next-reveal__label');
       const scrollEl = document.querySelector('.modal__scroll');
+      const modalH   = scrollEl.clientHeight;
+      const MIN_H    = Math.round(modalH * 0.38);
+      const THRESHOLD = modalH * 0.72;
+      const EASE     = 'cubic-bezier(.4,0,.2,1)';
+      let dragging = false, dragStartY = 0, dragStartH = MIN_H, navigating = false;
 
-      function updateFade() {
-        const rr = revealEl.getBoundingClientRect();
-        const sr = scrollEl.getBoundingClientRect();
-        const visible = Math.max(0, Math.min(rr.bottom, sr.bottom) - Math.max(rr.top, sr.top));
-        const p = Math.min(1, visible / (sr.height * 0.45));
+      revealEl.style.height = MIN_H + 'px';
+
+      function applyProgress(h) {
+        const p = Math.max(0, Math.min(1, (h - MIN_H) / (THRESHOLD - MIN_H)));
         bgEl.style.opacity = p;
-        const c = Math.round(17 + (255 - 17) * p);
-        titleEl.style.color = `rgb(${c},${c},${c})`;
-        labelEl.style.color  = `rgba(${c},${c},${c},${(0.35 + 0.65 * p).toFixed(2)})`;
+      }
+
+      function setH(h, animated) {
+        revealEl.style.transition = animated ? `height 0.42s ${EASE}` : 'none';
+        revealEl.style.height = Math.round(h) + 'px';
+        applyProgress(h);
       }
 
       _nextRevealAbort = new AbortController();
-      scrollEl.addEventListener('scroll', updateFade, { passive: true, signal: _nextRevealAbort.signal });
-      updateFade();
+      const sig = { passive: true, signal: _nextRevealAbort.signal };
 
-      revealEl.addEventListener('click', () => goToNextProject(nextKey));
+      revealEl.addEventListener('touchstart', e => {
+        if (navigating) return;
+        dragStartY = e.touches[0].clientY;
+        dragStartH = revealEl.getBoundingClientRect().height;
+        dragging = true;
+        revealEl.style.transition = 'none';
+      }, sig);
+
+      revealEl.addEventListener('touchmove', e => {
+        if (!dragging || navigating) return;
+        const dy = dragStartY - e.touches[0].clientY;
+        const newH = Math.max(MIN_H * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
+        revealEl.style.height = Math.round(newH) + 'px';
+        applyProgress(newH);
+      }, sig);
+
+      revealEl.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        const h = revealEl.getBoundingClientRect().height;
+        if (h >= THRESHOLD && !navigating) {
+          navigating = true;
+          setH(modalH, true);
+          setTimeout(() => goToNextProject(nextKey), 420);
+        } else {
+          setH(MIN_H, true);
+        }
+      }, sig);
+
+      revealEl.addEventListener('click', () => {
+        if (!navigating) { navigating = true; goToNextProject(nextKey); }
+      });
     }
 
     function goToNextProject(nextKey) {
