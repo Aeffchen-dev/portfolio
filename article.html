@@ -273,7 +273,6 @@
         <div class="hero-top">
           <div class="hero-main">
             <h1 class="hero__title" id="articleTitle"></h1>
-            <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
             <p class="hero__summary" id="articleSummary" style="display:none"></p>
 
           </div>
@@ -569,20 +568,10 @@
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
         const test2    = acf.test2 || '';
 
-        // Convert ALL-CAPS WordPress titles to title case for display
-        const displayTitle = title === title.toUpperCase()
-          ? title.toLowerCase().replace(/(^|[\s\-–—])\S/g, c => c.toUpperCase())
-          : title;
+        const displayTitle = title.toLowerCase().replace(/(^|[\s\-–—])\S/g, c => c.toUpperCase());
         document.title = displayTitle + ' — Jana Gramlich';
         document.getElementById('articleTitle').textContent = displayTitle;
 
-        // Subtitle from ACF subtitle field
-        const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
-        if (subtitle) {
-          const el = document.getElementById('articleSubtitle');
-          el.textContent = subtitle.toUpperCase();
-          el.style.setProperty('display', 'block');
-        }
 
         // AI-generated one-sentence summary
         const textContent = [
