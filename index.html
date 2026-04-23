@@ -382,7 +382,7 @@
     .modal-page-end .page-links__all:hover { opacity: .5; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
-      background: #1a1a1a; min-height: clamp(260px, 48vw, 420px);
+      background: #1a1a1a; height: 55vh;
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 0;
@@ -402,6 +402,12 @@
     .modal-next-reveal__title {
       font-size: clamp(22px, 5vw, 40px); font-weight: 400;
       letter-spacing: -.02em; line-height: 1; color: #fff;
+    }
+    @media (min-width:640px) {
+      .modal-next-reveal { height: auto; aspect-ratio: 3/4; }
+    }
+    @media (min-width:1024px) {
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; }
     }
 
     .hero__title { display:none; }
@@ -1729,7 +1735,7 @@
       pageEnd.className = 'modal-page-end';
       pageEnd.innerHTML =
         `<div class="page-links">` +
-          `<span class="page-links__label">Next Up <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>` +
+          `<span class="page-links__label">Next Up</span>` +
           `<button class="page-links__all">View All Projects <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
         `</div>` +
         (nextP
