@@ -1971,9 +1971,9 @@
       _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
       const closeBar = document.getElementById('modalCloseBar');
+      const txC      = window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       modal.querySelector('.modal__scroll').style.background = '';
       modal.querySelector('.page-header').style.background   = '';
-      modal.classList.remove('is-open');
       document.getElementById('modalBackdrop').classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
@@ -1984,8 +1984,13 @@
       nav.classList.remove('is-open');
       document.getElementById('themeColor').content = '#171717';
       document.documentElement.style.backgroundColor = '#171717';
+      modal.style.transition = 'transform .5s cubic-bezier(.4,0,.2,1)';
+      modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
         modal.style.visibility = 'hidden';
+        modal.style.transition = '';
+        modal.style.transform  = '';
+        modal.classList.remove('is-open');
       }, { once: true });
     }
     document.getElementById('modalCloseBar').addEventListener('click', closeModal);
