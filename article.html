@@ -179,9 +179,10 @@
 
     /* === ARTICLE END SLIDER === */
     .articles-slider {
-      display:flex; gap:8px; overflow:visible; scroll-snap-type:x mandatory;
-      padding-bottom:16px;
+      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; padding-bottom:16px;
     }
+    .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
       flex-shrink:0; width:300px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
@@ -608,12 +609,10 @@
           .map(r => stripHtml(r.text||r.wysiwyg||r.content||''))
           .join(' ')
           || stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim();
-        const summary = await generateSummary(title, category, textContent);
-        if (summary) {
-          const el = document.getElementById('articleSummary');
-          el.textContent = summary;
-          el.style.display = '';
-        }
+        const summary = await generateSummary(title, category, textContent || excerpt);
+        const summaryEl = document.getElementById('articleSummary');
+        summaryEl.textContent = summary || excerpt || '';
+        if (summaryEl.textContent) summaryEl.style.display = '';
 
         // Share button (native share API)
         const shareBtn = document.getElementById('shareBtn');
