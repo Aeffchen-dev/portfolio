@@ -96,7 +96,7 @@
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
       display:flex; flex-direction:column;
-      align-items:center; justify-content:center; gap:16px;
+      align-items:center; justify-content:center; gap:8px;
       padding:0 32px;
     }
     .hero__title {
@@ -107,15 +107,14 @@
     }
     .hero-main .hero__subtitle {
       font-size:11px !important; font-weight:500; line-height:1.4; letter-spacing:.09em;
-      color:rgba(255,255,255,.55); text-align:center; max-width:36em;
+      color:rgba(255,255,255,.55); text-align:center; max-width:28em;
       text-transform:uppercase !important;
     }
     .hero-main .hero__summary {
       font-size:11px !important; font-weight:500; line-height:1.4; letter-spacing:.09em;
-      color:rgba(255,255,255,.4); text-align:center; max-width:32em;
+      color:rgba(255,255,255,.4); text-align:center; max-width:24em;
       text-transform:uppercase !important;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-      margin-top:-8px;
     }
 
     /* bottom bar: BACK left, SHARE right */
@@ -581,7 +580,7 @@
         const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
         if (subtitle) {
           const el = document.getElementById('articleSubtitle');
-          el.textContent = subtitle;
+          el.textContent = subtitle.toUpperCase();
           el.style.setProperty('display', 'block');
         }
 
