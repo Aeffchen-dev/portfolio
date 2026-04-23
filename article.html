@@ -427,7 +427,7 @@
   // === ARTICLE FETCH ===
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
 
-  const ANTHROPIC_KEY = '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';
+  const ANTHROPIC_KEY = '';
   const SUMMARY_PROXY = ''; // set to your Cloudflare Worker URL to avoid exposing the key
 
   function cleanSummary(s) {
@@ -551,11 +551,11 @@
     }
 
     async function fetchArticle() {
-      const bases = ['articles', 'article'];
+      const bases = [];
       try {
         const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
         if (idx?.routes) {
-          const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
+          const SKIP = new Set(['articles','article','posts','pages','media','types','statuses','taxonomies',
             'tags','categories','users','comments','settings','themes','plugins','blocks',
             'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
             'menu-items','menu-locations','templates','template-parts','global-styles',
