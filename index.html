@@ -369,7 +369,7 @@
     .modal-page-end { margin: 72px -8px 0; }
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 8px; gap: 8px;
+      padding: 12px; gap: 8px;
     }
     .modal-page-end .page-links__label,
     .modal-page-end .page-links__all {
@@ -384,7 +384,7 @@
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
-      margin: 0; border-radius: 4px;
+      margin: 0; border-radius: 0;
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 0;
@@ -409,7 +409,7 @@
       .modal-next-reveal { height: auto; min-height: 0; aspect-ratio: 3/4; }
     }
     @media (min-width:1024px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 0; }
       .modal-next-reveal__inner { display: none; }
       .modal-page-end { margin-left: -16px; margin-right: -16px; }
     }
