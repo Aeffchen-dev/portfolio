@@ -211,8 +211,7 @@
     .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
     .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
     .work-item__view { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
-    .work-item__arrow { display:inline-flex; align-self:center; color:rgba(255,255,255,0.5); transition:transform .4s ease-in-out, color .4s ease-in-out; }
-    .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
+    .work-item__arrow { display:inline-flex; align-self:center; }
     .work-item + .work-item .work-item__image { margin-top:8px; }
     .cv-card { opacity:0; }
     .cv-card--about  { opacity:1; }
@@ -277,7 +276,7 @@
       border-radius:4px; margin-bottom:8px;
       text-decoration:none; color:inherit;
     }
-    a.cv-card { transition:background .4s ease-in-out; }
+    a.cv-card { transition:background .4s ease-in-out, color .4s ease-in-out; }
     a.cv-card:hover { background:rgba(255,255,255,0.1); }
     .cv-card__logo {
       width:60px; height:60px; background:#000;
@@ -292,8 +291,7 @@
       font-size:9px; font-weight:500; color:#989898;
       margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
     }
-    .cv-card__arrow { color:#fff; flex-shrink:0; line-height:1; display:flex; }
-    .arrow-icon { display:block; }
+    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; }
     /* About + Awards card */
     .cv-card--about { display:block; padding:12px 8px; }
     .cv-about__section-label { font-size:14px; font-weight:500; color:#fff; margin:0 0 4px; }
@@ -332,7 +330,7 @@
       display:flex; flex-direction:row; align-items:stretch; gap:0;
       padding:8px; background:#141414; border-radius:4px;
       text-decoration:none; color:inherit;
-      transition:background .4s ease-in-out;
+      transition:background .4s ease-in-out, color .4s ease-in-out;
     }
     .article-card:hover { background:rgba(255,255,255,0.1); }
     .article-card__thumb {
@@ -361,7 +359,8 @@
 
     /* === GLOBAL ARROWS === */
     .arrow-icon { stroke-width:1; width:1em; height:1em; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
-    a:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
+    a:hover .arrow-icon,
+    .work-item:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
     a { transition:color .4s ease-in-out; }
     a:hover { color:#fff; }
     .modal__scroll a:hover { color:#111; }

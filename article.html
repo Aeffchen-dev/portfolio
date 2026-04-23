@@ -485,7 +485,10 @@
             if (k !== 'acf_fc_layout' && typeof v === 'string' && v.trim()) { html = v; break; }
           }
         }
-        if (html) blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
+        if (html) {
+          html = html.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '').replace(/(<br\s*\/?>){2,}/gi, '');
+          blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
+        }
       }
     }
     return { html: blocks.join('') };
