@@ -576,7 +576,8 @@
       /* My Experience heading centered */
       .cv-section-heading { text-align:center; }
       .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
-      .project-links { padding-right:40px; }
+      .project-links { padding-right:40px; display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:8px; justify-content:center; }
+      .project-links > .modal-link-card { grid-column:1/-1; }
     }
     @media (min-width:1024px) {
       /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
@@ -632,7 +633,8 @@
       .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
-      .project-links { padding-right:40px; margin-top:32px; }
+      .project-links { padding-right:40px; margin-top:32px; display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:8px; justify-content:center; }
+      .project-links > .modal-link-card { grid-column:1/-1; }
       .modal-next-reveal__bg { opacity: 1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
