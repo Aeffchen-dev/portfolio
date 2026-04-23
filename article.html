@@ -45,7 +45,7 @@
     .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); opacity:0.65; }
     .nav__bar {
       height:33px; display:flex; align-items:center;
-      padding:0 16px; cursor:pointer; width:100%;
+      padding:0 8px; cursor:pointer; width:100%;
     }
     .nav.is-open .nav__bar {
       padding-left:calc((100% - var(--pill-w,168px)) / 2 + 16px);
@@ -88,7 +88,7 @@
     .hero-top {
       height:80vh;
       max-width:800px; margin:0 auto;
-      padding:24px 0 0;
+      padding:24px 8px 0;
       display:flex; flex-direction:column;
     }
 
@@ -97,7 +97,7 @@
       flex:1; min-height:0; overflow:hidden;
       display:flex; flex-direction:column;
       align-items:center; justify-content:center; gap:8px;
-      padding:0 32px;
+      padding:0;
     }
     .hero__title {
       font-size:clamp(28px, 5vw, 44px); font-weight:700;
@@ -111,11 +111,11 @@
       text-transform:none !important;
     }
     .hero-main .hero__summary {
-      font-size:11px !important; font-weight:500; line-height:1.4; letter-spacing:.09em;
-      color:rgba(255,255,255,.4); text-align:center; max-width:32em;
-      text-transform:uppercase !important;
+      font-size:12px !important; font-weight:500; line-height:1.2; letter-spacing:0;
+      color:rgba(255,255,255,.4); text-align:center; max-width:22em;
+      text-transform:none !important;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-      margin-top:-8px;
+      margin-top:16px;
     }
 
     /* bottom bar: BACK left, SHARE right */
@@ -139,7 +139,7 @@
     .share-btn:hover { opacity:.6; }
 
     /* === BLOCKS === */
-    .blocks { padding:16px 0 72px; margin:0 auto; max-width:800px; }
+    .blocks { padding:16px 8px 72px; margin:0 auto; max-width:800px; }
     .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); column-gap:4px; row-gap:72px; }
     .block { border-radius:16px; overflow:hidden; }
     .block--full { grid-column:span 4; }
@@ -158,7 +158,7 @@
     .text-body a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
 
     /* === ARTICLE PAGE END === */
-    .article-page-end { max-width:800px; margin:16px auto 0; }
+    .article-page-end { max-width:800px; margin:16px auto; }
     .article-page-end .page-links {
       display:flex; justify-content:space-between; align-items:baseline;
       padding:0 0 12px; gap:8px;
@@ -184,7 +184,7 @@
     /* === ARTICLE END SLIDER === */
     .articles-slider {
       display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
-      scrollbar-width:none; padding-bottom:16px;
+      scrollbar-width:none; padding:0 8px 16px;
     }
     .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
@@ -220,18 +220,18 @@
     /* === RESPONSIVE === */
     @media (min-width:1024px) {
       .hero-top         { height:60vh; }
-      .article-page-end { margin-top:40px; }
+      .article-page-end { margin-top:40px; margin-bottom:40px; }
       .articles-slider  { padding-bottom:40px; }
     }
     @media (max-width:639px) {
-      .hero-top { height:80dvh; padding:20px 0 0; }
-      .hero-main { padding:0 20px; }
+      .hero-top { height:80dvh; padding:20px 8px 0; }
+      .hero-main { padding:0; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .hero-top { padding:24px 0 0; }
-      .hero-main { padding:0 24px; }
+      .hero-top { padding:24px 8px 0; }
+      .hero-main { padding:0; }
     }
   </style>
 </head>
@@ -283,7 +283,7 @@
               <span class="back-link__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
               <span>Back</span>
             </a>
-            <button class="share-btn" id="shareBtn" style="display:none">
+            <button class="share-btn" id="shareBtn">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               <span>Share Article</span>
             </button>
@@ -599,18 +599,25 @@
         const summaryText = cleanSummary(excerpt)
           || cleanSummary(textContent.replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).find(s => s.length > 20 && s.length < 300) || '');
         if (summaryText) {
-          summaryEl.textContent = summaryText.toUpperCase();
+          summaryEl.textContent = summaryText;
           summaryEl.style.setProperty('display', 'block');
         }
 
-        // Share button (native share API)
+        // Share button — native share API with copy-link fallback
         const shareBtn = document.getElementById('shareBtn');
-        if (navigator.share) {
-          shareBtn.style.display = '';
-          shareBtn.addEventListener('click', () => {
+        shareBtn.style.display = '';
+        shareBtn.addEventListener('click', () => {
+          if (navigator.share) {
             navigator.share({ title, text: summaryText, url: location.href }).catch(() => {});
-          });
-        }
+          } else {
+            navigator.clipboard.writeText(location.href).then(() => {
+              const span = shareBtn.querySelector('span');
+              const orig = span.textContent;
+              span.textContent = 'Copied!';
+              setTimeout(() => { span.textContent = orig; }, 1500);
+            }).catch(() => {});
+          }
+        });
 
         const { html: blocksHtml } = await renderBlocks(flexRows, test2);
         const fallback = (post.content?.rendered || '').trim();
