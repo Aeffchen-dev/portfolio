@@ -1655,9 +1655,20 @@
       'douglas.de':  '394685685',
       'douglas.com': '394685685',
     };
-    const PROJECT_LINK_ICON_IDS = {
-      'douglas-premium-relaunch': '394685685',
-      'douglas-hybrid':           '394685685',
+    // Direct icon URL overrides per project — used instead of iTunes lookup
+    const PROJECT_LINK_ICONS = {
+      'douglas-premium-relaunch': 'images/douglas-icon.svg',
+      'douglas-hybrid':           'images/douglas-icon.svg',
+    };
+    // Fallback links used when WP API returns no call_to_action for a project
+    const PROJECT_DEFAULT_LINKS = {
+      'douglas-premium-relaunch': [
+        { t: 'Visit the Website', u: 'https://www.douglas.de' },
+        { t: 'App Download',      u: 'https://apps.apple.com/de/app/douglas-beauty/id394685685' },
+      ],
+      'douglas-hybrid': [
+        { t: 'App Download', u: 'https://apps.apple.com/de/app/douglas-beauty/id394685685' },
+      ],
     };
     const DOMAIN_FAVICON_BG = {
       'aboutyou.com': '#000',
@@ -1709,16 +1720,7 @@
       } catch { return { src: '', bg: '', domain: '' }; }
     }
 
-    async function hydrateLinkThumbs(container, links, forceItunesId = null) {
-      let forceSrc = null;
-      if (forceItunesId) {
-        try {
-          const res  = await fetch(`https://itunes.apple.com/lookup?id=${forceItunesId}`);
-          const data = await res.json();
-          const r = data.results?.[0];
-          forceSrc = r?.artworkUrl512 || r?.artworkUrl100 || null;
-        } catch {}
-      }
+    async function hydrateLinkThumbs(container, links, forceSrc = null) {
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
@@ -1768,7 +1770,7 @@
       const linksEl = document.getElementById('modal-links');
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       linksEl.innerHTML = buildLinkCards(externalLinks);
-      hydrateLinkThumbs(linksEl, externalLinks, PROJECT_LINK_ICON_IDS[key] || null);
+      hydrateLinkThumbs(linksEl, externalLinks, PROJECT_LINK_ICONS[key] || null);
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
@@ -2067,6 +2069,7 @@
               { cache: 'no-store' }
             ).then(r => r.json());
             const p = mapACFProject(data);
+            if (!p.links.length && PROJECT_DEFAULT_LINKS[key]) p.links = PROJECT_DEFAULT_LINKS[key];
             PROJECTS[key] = p;
 
             // Update work tile with live data
