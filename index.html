@@ -406,10 +406,8 @@
       letter-spacing: 0; line-height: 1.3; color: #fff;
     }
     @media (min-width:640px) {
-      .modal-next-reveal { height: auto; min-height: 0; aspect-ratio: 3/4; }
-    }
-    @media (min-width:1024px) {
       .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
+      .modal-next-reveal__bg { opacity: 1; }
       .modal-next-reveal__inner { display: none; }
       .modal-next-reveal__bg::after { display: none; }
       .modal-page-end .page-links__client { display: inline; }
@@ -640,7 +638,6 @@
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
       .project-links { margin-top:0; grid-column:1/-1; }
-      .modal-next-reveal__bg { opacity: 1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
       .modal__scroll { padding:24px 16px 0; }
@@ -1891,7 +1888,7 @@
       const p = PROJECTS[nextKey]; if (!p) return;
       _isTransitioning = true;
       const modalEl = document.getElementById('projectModal');
-      const txPfx   = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const txPfx   = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       const bg      = p.bg || '#f2f2f2';
       // Build display-only entering panel (shown during transition only)
       const heroHTML = p.hero
@@ -1999,7 +1996,7 @@
       const modalEl  = document.getElementById('projectModal');
       const scrollEl = modalEl.querySelector('.modal__scroll');
       const closeBar = document.getElementById('modalCloseBar');
-      const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       let sy = 0, dy = 0, vy = 0, pt = 0, active = false, baseCloseH = 0;
 
       function snapBack() {
