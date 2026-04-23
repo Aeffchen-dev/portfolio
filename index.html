@@ -370,21 +370,19 @@
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 16px; gap: 8px;
-      border-top: 1px solid rgba(0,0,0,.08);
     }
-    .modal-page-end .page-links__label {
-      font-size: 11px; font-weight: 500; letter-spacing: .09em;
-      text-transform: uppercase; color: #000;
-    }
+    .modal-page-end .page-links__label,
     .modal-page-end .page-links__all {
       font-size: 11px; font-weight: 500; letter-spacing: .09em;
       text-transform: uppercase; color: #000;
-      transition: color .15s; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: opacity .15s; cursor: pointer;
     }
-    .modal-page-end .page-links__all:hover { color: rgba(0,0,0,.5); }
+    .modal-page-end .page-links__label:hover,
+    .modal-page-end .page-links__all:hover { opacity: .5; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
-      background: #1a1a1a;
+      background: #1a1a1a; min-height: clamp(260px, 48vw, 420px);
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 0;
@@ -440,19 +438,19 @@
     .project-links { margin-top:72px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px; background:rgba(0,0,0,.06); border-radius:4px;
-      text-decoration:none; color:inherit; transition:background .2s;
+      padding:8px; background:#141414; border-radius:4px;
+      text-decoration:none; color:inherit; transition:background .4s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,.1); }
+    .modal-link-card:hover { background:rgba(255,255,255,.08); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
-      border-radius:4px; overflow:hidden;
+      border-radius:2px; overflow:hidden; background:#000;
       display:flex; align-items:center; justify-content:center;
     }
     .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .modal-link-card__body { flex:1; min-width:0; }
-    .modal-link-card__title { display:block; font-size:14px; font-weight:500; color:#111; line-height:1.3; }
-    .modal-link-card__arrow { color:#111; flex-shrink:0; display:flex; }
+    .modal-link-card__title { display:block; font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .modal-link-card__arrow { color:rgba(255,255,255,.4); flex-shrink:0; display:flex; }
 
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
@@ -1731,8 +1729,8 @@
       pageEnd.className = 'modal-page-end';
       pageEnd.innerHTML =
         `<div class="page-links">` +
-          `<span class="page-links__label">Next Up</span>` +
-          `<button class="page-links__all">[ View All Projects ]</button>` +
+          `<span class="page-links__label">Next Up <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>` +
+          `<button class="page-links__all">View All Projects <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
         `</div>` +
         (nextP
           ? `<div class="modal-next-reveal">` +
