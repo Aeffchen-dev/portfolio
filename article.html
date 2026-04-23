@@ -570,8 +570,12 @@
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
         const test2    = acf.test2 || '';
 
-        document.title = title + ' — Jana Gramlich';
-        document.getElementById('articleTitle').textContent = title;
+        // Convert ALL-CAPS WordPress titles to title case for display
+        const displayTitle = title === title.toUpperCase()
+          ? title.toLowerCase().replace(/(^|[\s\-–—])\S/g, c => c.toUpperCase())
+          : title;
+        document.title = displayTitle + ' — Jana Gramlich';
+        document.getElementById('articleTitle').textContent = displayTitle;
 
         // Subtitle from ACF subtitle field
         const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
