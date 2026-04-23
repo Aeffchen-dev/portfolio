@@ -1679,7 +1679,8 @@
         if (knownId) {
           const res = await fetch(`https://itunes.apple.com/lookup?id=${knownId}`);
           const data = await res.json();
-          const artwork = data.results?.[0]?.artworkUrl100;
+          const r = data.results?.[0];
+          const artwork = r?.artworkUrl512 || r?.artworkUrl100;
           if (artwork) return { src: artwork, bg: '' };
         }
         if (u.hostname === 'apps.apple.com') {
@@ -1687,18 +1688,19 @@
           if (appId) {
             const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
             const data = await res.json();
-            const artwork = data.results?.[0]?.artworkUrl100;
+            const r = data.results?.[0];
+            const artwork = r?.artworkUrl512 || r?.artworkUrl100;
             if (artwork) return { src: artwork, bg: '' };
           }
         }
         if (u.hostname === 'play.google.com') {
           const pkgId = u.searchParams.get('id') || '';
           if (pkgId) {
-            // Strip common segments and search iTunes for the matching iOS app
             const term = pkgId.replace(/^com\.|\.android$|\.app$|\.mobile$|\.ios$/g, '').replace(/\./g, ' ').trim();
             const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=software&limit=1&country=de`);
             const data = await res.json();
-            const artwork = data.results?.[0]?.artworkUrl100;
+            const r = data.results?.[0];
+            const artwork = r?.artworkUrl512 || r?.artworkUrl100;
             if (artwork) return { src: artwork, bg: '' };
           }
         }
@@ -1713,13 +1715,15 @@
         try {
           const res  = await fetch(`https://itunes.apple.com/lookup?id=${forceItunesId}`);
           const data = await res.json();
-          forceSrc = data.results?.[0]?.artworkUrl100 || null;
+          const r = data.results?.[0];
+          forceSrc = r?.artworkUrl512 || r?.artworkUrl100 || null;
         } catch {}
       }
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
         if (forceSrc) {
+          thumb.style.background = '';
           thumb.innerHTML = `<img src="${forceSrc}" alt="">`;
           continue;
         }
