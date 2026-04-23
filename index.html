@@ -1827,6 +1827,8 @@
       if (!nextP) return;
 
       const revealEl = pageEnd.querySelector('.modal-next-reveal');
+      const revealVid = revealEl && revealEl.querySelector('video');
+      if (revealVid) revealVid.play().catch(() => {});
       const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
       const scrollEl = document.querySelector('.modal__scroll');
       const modalH   = scrollEl.clientHeight;
