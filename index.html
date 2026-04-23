@@ -1682,9 +1682,15 @@
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
-        const { src, bg } = await resolveThumbData(links[i].u);
+        const { src } = await resolveThumbData(links[i].u);
         if (!src) continue;
-        thumb.innerHTML = `<img src="${src}" alt="">`;
+        const isFavicon = src.includes('google.com/s2/favicons');
+        if (isFavicon) {
+          thumb.style.background = '#fff';
+          thumb.innerHTML = `<img src="${src}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:0;display:block;">`;
+        } else {
+          thumb.innerHTML = `<img src="${src}" alt="">`;
+        }
       }
     }
 
