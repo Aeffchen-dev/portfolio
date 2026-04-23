@@ -1758,22 +1758,15 @@
       const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
       const scrollEl = document.querySelector('.modal__scroll');
       const modalH   = scrollEl.clientHeight;
-      const MIN_H    = Math.round(modalH * 0.38);
       const THRESHOLD = modalH * 0.72;
       const EASE     = 'cubic-bezier(.4,0,.2,1)';
-      let dragging = false, dragStartY = 0, dragStartH = MIN_H, navigating = false;
+      let dragging = false, dragStartY = 0, dragStartH = 0, naturalH = 0, navigating = false;
 
-      revealEl.style.height = MIN_H + 'px';
+      // CSS controls initial height; MIN_H captured on first touch
 
       function applyProgress(h) {
-        const p = Math.max(0, Math.min(1, (h - MIN_H) / (THRESHOLD - MIN_H)));
+        const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
         bgEl.style.opacity = p;
-      }
-
-      function setH(h, animated) {
-        revealEl.style.transition = animated ? `height 0.42s ${EASE}` : 'none';
-        revealEl.style.height = Math.round(h) + 'px';
-        applyProgress(h);
       }
 
       _nextRevealAbort = new AbortController();
@@ -1781,6 +1774,7 @@
 
       revealEl.addEventListener('touchstart', e => {
         if (navigating) return;
+        if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
         dragStartY = e.touches[0].clientY;
         dragStartH = revealEl.getBoundingClientRect().height;
         dragging = true;
@@ -1790,7 +1784,7 @@
       revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
         const dy = dragStartY - e.touches[0].clientY;
-        const newH = Math.max(MIN_H * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
+        const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
         revealEl.style.height = Math.round(newH) + 'px';
         applyProgress(newH);
       }, sig);
@@ -1801,10 +1795,15 @@
         const h = revealEl.getBoundingClientRect().height;
         if (h >= THRESHOLD && !navigating) {
           navigating = true;
-          setH(modalH, true);
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = modalH + 'px';
+          applyProgress(modalH);
           setTimeout(() => goToNextProject(nextKey), 420);
         } else {
-          setH(MIN_H, true);
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = naturalH + 'px';
+          applyProgress(naturalH);
+          setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
         }
       }, sig);
 
