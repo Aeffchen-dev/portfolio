@@ -616,11 +616,10 @@
           .join(' ')
           || stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim();
         const summaryEl = document.getElementById('articleSummary');
-        summaryEl.style.display = ''; // show immediately, populate async
-        summaryEl.textContent = excerpt || '…';
-        generateSummary(title, category, textContent || excerpt).then(s => {
-          if (s) summaryEl.textContent = s;
-          console.log('[summary] final text:', summaryEl.textContent);
+        summaryEl.style.setProperty('display', 'block');
+        summaryEl.textContent = excerpt || ' ';
+        generateSummary(title, category, textContent || excerpt || title).then(s => {
+          summaryEl.textContent = s || excerpt || '';
         });
 
         // Share button (native share API)
