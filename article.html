@@ -601,7 +601,7 @@
         if (navigator.share) {
           shareBtn.style.display = '';
           shareBtn.addEventListener('click', () => {
-            navigator.share({ title, text: summary, url: location.href }).catch(() => {});
+            navigator.share({ title, text: summaryText, url: location.href }).catch(() => {});
           });
         }
 
@@ -625,16 +625,11 @@
 
   async function injectNextArticle(currentSlug) {
     const FIELDS = 'id,slug,title,acf,_links';
-    const bases  = ['articles', 'article', 'posts'];
     let articles = [];
-    for (const base of bases) {
-      try {
-        const r = await fetch(`${API}/${base}?_fields=${FIELDS}&_embed=true&acf_format=standard&per_page=100`, { signal: AbortSignal.timeout(8000) });
-        if (!r.ok) continue;
-        const data = await r.json();
-        if (Array.isArray(data) && data.length > 0) { articles = data; break; }
-      } catch(e) {}
-    }
+    try {
+      const r = await fetch(`${API}/posts?_fields=${FIELDS}&_embed=true&acf_format=standard&per_page=100`, { signal: AbortSignal.timeout(8000) });
+      if (r.ok) { const data = await r.json(); if (Array.isArray(data)) articles = data; }
+    } catch(e) {}
     if (!articles.length) return;
 
     const ARROW_SVG = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
@@ -644,7 +639,9 @@
       const slug   = post.slug || '';
       const acf    = post.acf || {};
       const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
-      const img    = await resolveImgUrl(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+      const imgObj = imgRow?.image || imgRow?.img;
+      const img    = (typeof imgObj === 'object' ? (imgObj.sizes?.medium_large || imgObj.sizes?.thumbnail || imgObj.url || '') : (imgObj || ''))
+                  || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
       return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
         <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
         <div class="article-card__body">
