@@ -211,7 +211,7 @@
     .text-body a:hover { color:#fff; }
     .share-btn svg { transition:transform .2s ease-out; }
     .share-btn:hover { opacity:1; }
-    .share-btn:hover svg { transform:translateY(-4px); }
+    .share-btn:hover svg { transform:translateX(-4px); }
 
     /* === RESPONSIVE === */
     @media (min-width:1024px) {
@@ -425,14 +425,17 @@
 
   const ANTHROPIC_KEY = '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';
 
+  function cleanSummary(s) {
+    return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
+  }
+
   async function generateSummary(title, category, textContent) {
     if (ANTHROPIC_KEY) {
       try {
-        const context = [
-          `Title: "${title}"`,
-          category ? `Category: "${category}"` : '',
-          textContent ? `Content: ${textContent.slice(0, 800)}` : '',
-        ].filter(Boolean).join('\n');
+        const body = textContent && textContent !== title ? textContent.slice(0, 600) : '';
+        const context = [`Title: "${title}"`];
+        if (category) context.push(`Category: "${category}"`);
+        if (body) context.push(`Content: ${body}`);
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
@@ -443,21 +446,20 @@
           },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 80,
-            messages: [{ role: 'user', content: `Write exactly one concise sentence describing what this design article is about. Output only the sentence.\n\n${context}` }],
+            max_tokens: 100,
+            messages: [{ role: 'user', content: `Write one sentence (max 20 words) summarising what this article is about. Output only the sentence, no quotes.\n\n${context.join('\n')}` }],
           }),
         });
-        if (!res.ok) { console.warn('[summary] API HTTP', res.status, await res.text()); throw new Error('HTTP ' + res.status); }
+        if (!res.ok) { console.warn('[summary] API HTTP', res.status); throw new Error('HTTP ' + res.status); }
         const data = await res.json();
-        const text = data.content?.[0]?.text?.trim();
-        if (text) return text;
+        const text = cleanSummary(data.content?.[0]?.text);
+        if (text && text.length > 8) return text;
       } catch(e) { console.warn('[summary] API error:', e.message); }
     }
-    // Fallback: first sentence from content
+    // Fallback: first real sentence from content
     const src = textContent || '';
     const sentences = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
-    const first = sentences.find(s => s.length > 20 && s.length < 300) || '';
-    return first;
+    return cleanSummary(sentences.find(s => s.length > 20 && s.length < 300) || '');
   }
 
   function stripHtml(html) {
@@ -622,7 +624,7 @@
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
         generateSummary(title, category, textContent || excerpt || title).then(s => {
-          const text = s || excerpt || '';
+          const text = cleanSummary(s) || cleanSummary(excerpt) || '';
           if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
         });
 

@@ -343,19 +343,11 @@
     .article-card__label { font-size:9px; font-weight:500; color:#989898; margin-top:auto; text-transform:uppercase; letter-spacing:0.48px; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    .article-card--skeleton { pointer-events:none; cursor:default; }
-    .article-card--skeleton .article-card__thumb {
-      width:107px; height:60px;
-      background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
+    .article-card--skeleton {
+      pointer-events:none; cursor:default;
+      background:linear-gradient(90deg,#1a1a1a 25%,#202020 50%,#1a1a1a 75%);
       background-size:200% 100%; animation:shimmer 1.4s infinite;
     }
-    .article-card--skeleton .sk-line {
-      height:12px; border-radius:2px; margin-bottom:6px;
-      background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
-      background-size:200% 100%; animation:shimmer 1.4s infinite;
-    }
-    .article-card--skeleton .sk-line--title { width:80%; }
-    .article-card--skeleton .sk-line--label { width:30%; height:8px; margin-bottom:0; }
 
     /* === GLOBAL ARROWS === */
     .arrow-icon { stroke-width:1; width:12px; height:12px; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
@@ -833,11 +825,11 @@
     <!-- ARTICLES SECTION -->
     <section class="articles-section" id="articles">
       <div class="articles-slider" id="articlesSlider">
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
       </div>
     </section>
 
