@@ -179,10 +179,9 @@
 
     /* === ARTICLE END SLIDER === */
     .articles-slider {
-      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
-      scrollbar-width:none; padding-bottom:16px;
+      display:flex; gap:8px; overflow:visible; scroll-snap-type:x mandatory;
+      padding-bottom:16px;
     }
-    .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
       flex-shrink:0; width:300px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
