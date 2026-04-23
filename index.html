@@ -1655,6 +1655,10 @@
       'douglas.de':  '394685685',
       'douglas.com': '394685685',
     };
+    const PROJECT_LINK_ICON_IDS = {
+      'douglas-premium-relaunch': '394685685',
+      'douglas-hybrid':           '394685685',
+    };
     const DOMAIN_FAVICON_BG = {
       'aboutyou.com': '#000',
       'aboutyou.de':  '#000',
@@ -1703,10 +1707,22 @@
       } catch { return { src: '', bg: '', domain: '' }; }
     }
 
-    async function hydrateLinkThumbs(container, links) {
+    async function hydrateLinkThumbs(container, links, forceItunesId = null) {
+      let forceSrc = null;
+      if (forceItunesId) {
+        try {
+          const res  = await fetch(`https://itunes.apple.com/lookup?id=${forceItunesId}`);
+          const data = await res.json();
+          forceSrc = data.results?.[0]?.artworkUrl100 || null;
+        } catch {}
+      }
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
+        if (forceSrc) {
+          thumb.innerHTML = `<img src="${forceSrc}" alt="">`;
+          continue;
+        }
         const resolved = await resolveThumbData(links[i].u);
         const { src } = resolved;
         if (!src) continue;
@@ -1748,7 +1764,7 @@
       const linksEl = document.getElementById('modal-links');
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       linksEl.innerHTML = buildLinkCards(externalLinks);
-      hydrateLinkThumbs(linksEl, externalLinks);
+      hydrateLinkThumbs(linksEl, externalLinks, PROJECT_LINK_ICON_IDS[key] || null);
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
