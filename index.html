@@ -446,12 +446,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.55); border-radius:16px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.20); border-radius:16px;
       backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
       border:1px solid rgba(255,255,255,0.18);
       text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.72); border-color:rgba(255,255,255,0.28); }
+    .modal-link-card:hover { background:rgba(0,0,0,0.35); border-color:rgba(255,255,255,0.28); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -573,13 +573,13 @@
       /* Portrait images (3/4) with parallax re-enabled — start showing bottom of image */
       .work-item__image img { height:130%; }
       /* Info: meta col left, description text floats right (same as desktop) */
-      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .project-detail { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:32px; align-items:start; justify-content:center; }
+      .project-info { display:contents; }
       .info-meta { margin-bottom:0; }
       /* My Experience heading centered */
       .cv-section-heading { text-align:center; }
       .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
-      .project-links { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:8px; justify-content:center; }
-      .project-links > .modal-link-card { grid-column:1/-1; }
+      .project-links { margin-top:0; grid-column:1/-1; }
     }
     @media (min-width:1024px) {
       /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
@@ -632,11 +632,11 @@
       .home-footer        { padding-top:16px; }
       .nav__link[href="#about"],
       .section-label__link[href="#about"] { display:none; }
-      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .project-detail { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:32px; align-items:start; justify-content:center; }
+      .project-info { display:contents; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
-      .project-links { margin-top:32px; display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:8px; justify-content:center; }
-      .project-links > .modal-link-card { grid-column:1/-1; }
+      .project-links { margin-top:0; grid-column:1/-1; }
       .modal-next-reveal__bg { opacity: 1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
@@ -1000,11 +1000,13 @@
       <main class="blocks">
         <div class="blocks__grid" id="modal-blocks"></div>
       </main>
-      <section class="project-info">
-        <div class="info-meta" id="modal-facts"></div>
-        <p class="info-desc"    id="modal-role"></p>
-      </section>
-      <nav class="project-links" id="modal-links"></nav>
+      <div class="project-detail">
+        <section class="project-info">
+          <div class="info-meta" id="modal-facts"></div>
+          <p class="info-desc"    id="modal-role"></p>
+        </section>
+        <nav class="project-links" id="modal-links"></nav>
+      </div>
     </div>
   </div>
 
@@ -1909,11 +1911,13 @@
           `<div class="hero__desc">${p.text||''}</div>` +
         `</header>` +
         `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
-        `<section class="project-info">` +
-          `<div class="info-meta">${factsHTML}</div>` +
-          `<p class="info-desc">${p.myRole||''}</p>` +
-        `</section>` +
-        `<nav class="project-links">${linksHTML}</nav>`;
+        `<div class="project-detail">` +
+          `<section class="project-info">` +
+            `<div class="info-meta">${factsHTML}</div>` +
+            `<p class="info-desc">${p.myRole||''}</p>` +
+          `</section>` +
+          `<nav class="project-links">${linksHTML}</nav>` +
+        `</div>`;
       document.body.appendChild(panel);
       // Double rAF: mount at start position, then kick off animation
       requestAnimationFrame(() => {
