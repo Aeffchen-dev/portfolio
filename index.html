@@ -328,7 +328,7 @@
     }
     .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
-      flex-shrink:0; width:280px; scroll-snap-align:start;
+      flex-shrink:0; width:300px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
       padding:8px; background:#141414; border-radius:4px;
       text-decoration:none; color:inherit;
@@ -336,10 +336,10 @@
     }
     .article-card:hover { background:rgba(255,255,255,0.1); }
     .article-card__thumb {
-      width:60px; flex-shrink:0;
+      width:69px; height:69px; flex-shrink:0;
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
-    .article-card__thumb img { width:60px; height:auto; display:block; }
+    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .article-card__body { flex:1; min-width:0; display:flex; flex-direction:row; align-items:center; gap:12px; padding-left:12px; }
     .article-card__meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
     .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
@@ -348,7 +348,7 @@
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     .article-card--skeleton { pointer-events:none; cursor:default; }
     .article-card--skeleton .article-card__thumb {
-      height:60px;
+      height:69px;
       background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
       background-size:200% 100%; animation:shimmer 1.4s infinite;
     }
@@ -546,14 +546,14 @@
       .home-hero          { order:1; }
       .section-label      { order:2; }
       .work-list          { display:contents; }
-      .articles-section   { order:9; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
       .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .cta-footer-box     { order:11; display:contents; }
-      .cta-section        { order:11; padding-left:8px; padding-right:8px; }
-      .home-footer        { order:12; }
+      .articles-section   { order:11; }
+      .cta-footer-box     { order:12; display:contents; }
+      .cta-section        { order:12; padding-left:8px; padding-right:8px; }
+      .home-footer        { order:13; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
       .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
       .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
@@ -669,7 +669,6 @@
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
       .articles-section   { grid-column:1/7; }
-      .article-card       { width:300px; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .work-list .work-item:nth-child(4),
       .work-list .work-item:nth-child(3) { margin-bottom:50px; }
