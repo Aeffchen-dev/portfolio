@@ -382,34 +382,6 @@
       transition: color .15s; cursor: pointer;
     }
     .modal-page-end .page-links__all:hover { color: #000; }
-    .modal-next-reveal {
-      position: relative; overflow: hidden; cursor: pointer;
-    }
-    .modal-next-reveal__bg {
-      position: absolute; inset: 0; opacity: 0;
-    }
-    .modal-next-reveal__bg img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .modal-next-reveal__bg::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.2) 100%);
-    }
-
-    .modal-next-reveal__inner {
-      position: relative; z-index: 1;
-      height: 100%;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      padding: 32px; text-align: center;
-    }
-    .modal-next-reveal__label {
-      font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-      color: rgba(0,0,0,.3); margin-bottom: 12px;
-    }
-    .modal-next-reveal__title {
-      font-size: clamp(28px, 6vw, 64px); font-weight: 400;
-      letter-spacing: -.03em; line-height: .92; color: #111;
-    }
 
     .hero__title { display:none; }
     .modal-name {
@@ -423,7 +395,7 @@
     .hero__desc p { font-size:14px; font-weight:400; line-height:1.3; color:#111; }
 
     /* === BLOCKS GRID === */
-    .blocks { padding:24px 0; }
+    .blocks { padding:72px 0; }
     .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:72px; }
     .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
     .block-image { background:#e8e8e8; }
@@ -442,23 +414,22 @@
     .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-desc { font-size:14px; font-weight:400; line-height:1.3; color:#111; margin-top:0; max-width:500px; }
-    .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .project-links { margin-top:72px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:10px 12px; background:rgba(0,0,0,.06); border-radius:8px;
+      padding:8px; background:rgba(0,0,0,.06); border-radius:4px;
       text-decoration:none; color:inherit; transition:background .2s;
     }
     .modal-link-card:hover { background:rgba(0,0,0,.1); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
-      border-radius:6px; overflow:hidden; background:rgba(0,0,0,.08);
+      border-radius:4px; overflow:hidden;
       display:flex; align-items:center; justify-content:center;
     }
-    .modal-link-card__thumb img { width:28px; height:28px; object-fit:contain; display:block; }
+    .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .modal-link-card__body { flex:1; min-width:0; }
     .modal-link-card__title { display:block; font-size:14px; font-weight:500; color:#111; line-height:1.3; }
-    .modal-link-card__sub   { display:block; font-size:12px; font-weight:400; color:rgba(0,0,0,.4); margin-top:2px; }
-    .modal-link-card__arrow { color:rgba(0,0,0,.35); flex-shrink:0; display:flex; }
+    .modal-link-card__arrow { color:#111; flex-shrink:0; display:flex; }
 
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
@@ -1613,11 +1584,78 @@
     const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
     let currentProjectKey  = null;
     let _isTransitioning   = false;
-    let _nextRevealAbort   = null;
 
     function getNextProjectKey(key) {
       const idx = PROJECT_ORDER.indexOf(key);
       return idx >= 0 ? PROJECT_ORDER[(idx + 1) % PROJECT_ORDER.length] : null;
+    }
+
+    const _CARD_ARROW = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+
+    function buildLinkCards(links) {
+      return (links||[]).map((l, i) => {
+        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener" data-li="${i}">
+          <div class="modal-link-card__thumb"></div>
+          <div class="modal-link-card__body">
+            <span class="modal-link-card__title">${l.t}</span>
+          </div>
+          <span class="modal-link-card__arrow">${_CARD_ARROW}</span>
+        </a>`;
+      }).join('');
+    }
+
+    async function getDominantColor(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const c = document.createElement('canvas');
+            c.width = c.height = 4;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0, 4, 4);
+            const d = ctx.getImageData(0, 0, 4, 4).data;
+            let r = 0, g = 0, b = 0;
+            for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i+1]; b += d[i+2]; }
+            const n = d.length / 4;
+            resolve(`rgb(${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)})`);
+          } catch { resolve(''); }
+        };
+        img.onerror = () => resolve('');
+        img.src = src;
+      });
+    }
+
+    async function resolveThumbData(url) {
+      try {
+        const u = new URL(url);
+        if (u.hostname === 'apps.apple.com') {
+          const appId = u.pathname.match(/\/id(\d+)/)?.[1];
+          if (appId) {
+            const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
+            const data = await res.json();
+            const artwork = data.results?.[0]?.artworkUrl100;
+            if (artwork) {
+              const bg = await getDominantColor(artwork);
+              return { src: artwork, bg };
+            }
+          }
+        }
+        const faviconSrc = `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
+        const bg = await getDominantColor(faviconSrc);
+        return { src: faviconSrc, bg };
+      } catch { return { src: '', bg: '' }; }
+    }
+
+    async function hydrateLinkThumbs(container, links) {
+      for (let i = 0; i < (links||[]).length; i++) {
+        const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
+        if (!thumb) continue;
+        const { src, bg } = await resolveThumbData(links[i].u);
+        if (!src) continue;
+        if (bg) thumb.style.background = bg;
+        thumb.innerHTML = `<img src="${src}" alt="">`;
+      }
     }
 
     // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
@@ -1626,12 +1664,12 @@
       const modal   = document.getElementById('projectModal');
       const heroImg = document.getElementById('modal-hero');
       const heroVid = document.getElementById('modal-hero-video');
-      if (p.hero) {
+      if (p.heroVideo) {
+        heroVid.src = p.heroVideo; heroVid.style.display = '';
+        heroImg.style.display = 'none';
+      } else if (p.hero) {
         heroImg.src = p.hero; heroImg.style.display = '';
         heroVid.style.display = 'none'; heroVid.src = '';
-      } else if (p.heroVideo) {
-        heroVid.src = p.heroVideo; heroVid.style.display = '';
-        heroImg.style.display = 'none'; heroImg.src = '';
       } else {
         heroImg.style.display = 'none'; heroVid.style.display = 'none';
       }
@@ -1645,19 +1683,9 @@
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
-      const LINK_ARROW = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
-      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l => {
-        const domain = (() => { try { return new URL(l.u).hostname; } catch { return ''; } })();
-        const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
-        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener">
-          <div class="modal-link-card__thumb">${favicon ? `<img src="${favicon}" alt="">` : ''}</div>
-          <div class="modal-link-card__body">
-            <span class="modal-link-card__title">${l.t}</span>
-            ${domain ? `<span class="modal-link-card__sub">${domain}</span>` : ''}
-          </div>
-          <span class="modal-link-card__arrow">${LINK_ARROW}</span>
-        </a>`;
-      }).join('');
+      const linksEl = document.getElementById('modal-links');
+      linksEl.innerHTML = buildLinkCards(p.links);
+      hydrateLinkThumbs(linksEl, p.links);
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
@@ -1667,16 +1695,8 @@
     }
 
     function injectNextBtn(key) {
-      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
       const oldEnd = document.querySelector('.modal-page-end');
       if (oldEnd) oldEnd.remove();
-
-      const nextKey = getNextProjectKey(key);
-      const nextP   = nextKey ? PROJECTS[nextKey] : null;
-      const scrollEl = document.querySelector('.modal__scroll');
-      const modalH   = scrollEl.clientHeight;
-      const MIN_H    = Math.round(modalH * 0.38);
-      const EASE     = 'cubic-bezier(.4,0,.2,1)';
 
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
@@ -1684,80 +1704,10 @@
         `<div class="page-links">` +
           `<span class="page-links__label">Next Up</span>` +
           `<button class="page-links__all">[ View All Projects ]</button>` +
-        `</div>` +
-        (nextP
-          ? `<div class="modal-next-reveal" style="height:${MIN_H}px">` +
-              `<div class="modal-next-reveal__bg">` +
-                (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` : '') +
-              `</div>` +
-              `<div class="modal-next-reveal__inner">` +
-                `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
-              `</div>` +
-            `</div>`
-          : '');
+        `</div>`;
 
       document.getElementById('modal-links').insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
-
-      if (!nextP) return;
-
-      const revealEl   = pageEnd.querySelector('.modal-next-reveal');
-      const bgEl       = revealEl.querySelector('.modal-next-reveal__bg');
-      const titleEl    = revealEl.querySelector('.modal-next-reveal__title');
-      const THRESHOLD  = modalH * 0.72;
-      let navigating   = false;
-      let dragStartY   = 0;
-      let dragStartH   = MIN_H;
-      let dragging     = false;
-
-      function applyProgress(h) {
-        const p = Math.max(0, Math.min(1, (h - MIN_H) / (THRESHOLD - MIN_H)));
-        bgEl.style.opacity = p;
-        const c = Math.round(17 + (255 - 17) * p);
-        titleEl.style.color = `rgb(${c},${c},${c})`;
-      }
-
-      function setH(h, animated) {
-        revealEl.style.transition = animated ? `height 0.42s ${EASE}` : 'none';
-        revealEl.style.height = Math.round(h) + 'px';
-        if (animated) setTimeout(() => applyProgress(h), 0);
-        else applyProgress(h);
-      }
-
-      revealEl.addEventListener('touchstart', e => {
-        if (navigating) return;
-        dragStartY = e.touches[0].clientY;
-        dragStartH = revealEl.getBoundingClientRect().height;
-        dragging   = true;
-        revealEl.style.transition = 'none';
-      }, { passive: true });
-
-      revealEl.addEventListener('touchmove', e => {
-        if (!dragging || navigating) return;
-        const dy  = dragStartY - e.touches[0].clientY;
-        const resistance = dy >= 0 ? 1 : 0.25;
-        const newH = Math.max(MIN_H * 0.85, dragStartH + dy * resistance);
-        revealEl.style.height = Math.round(newH) + 'px';
-        applyProgress(newH);
-      }, { passive: true });
-
-      revealEl.addEventListener('touchend', () => {
-        if (!dragging) return;
-        dragging = false;
-        const currentH = revealEl.getBoundingClientRect().height;
-        if (currentH >= THRESHOLD && !navigating) {
-          navigating = true;
-          setH(modalH, true);
-          setTimeout(() => goToNextProject(nextKey), 420);
-        } else {
-          setH(MIN_H, true);
-        }
-      });
-
-      // Desktop: click navigates directly
-      revealEl.addEventListener('click', () => {
-        if (!navigating) { navigating = true; goToNextProject(nextKey); }
-      });
     }
 
     function goToNextProject(nextKey) {
@@ -1775,19 +1725,7 @@
         : '';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const _LARR = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
-      const linksHTML = (p.links||[]).map(l => {
-        const domain = (() => { try { return new URL(l.u).hostname; } catch { return ''; } })();
-        const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
-        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener">
-          <div class="modal-link-card__thumb">${favicon ? `<img src="${favicon}" alt="">` : ''}</div>
-          <div class="modal-link-card__body">
-            <span class="modal-link-card__title">${l.t}</span>
-            ${domain ? `<span class="modal-link-card__sub">${domain}</span>` : ''}
-          </div>
-          <span class="modal-link-card__arrow">${_LARR}</span>
-        </a>`;
-      }).join('');
+      const linksHTML = buildLinkCards(p.links);
       const panel = document.createElement('div');
       panel.style.cssText =
         'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
@@ -1982,12 +1920,12 @@
               const yearEl   = tile.querySelector('.work-item__year');
               const titleEl  = tile.querySelector('.work-item__title');
               const videoEl = tile.querySelector('.work-item__image video');
-              if (p.hero) {
+              if (p.heroVideo) {
+                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
+                if (imgEl)   { imgEl.style.display = 'none'; }
+              } else if (p.hero) {
                 if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
                 if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
-              } else if (p.heroVideo) {
-                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
-                if (imgEl)   { imgEl.style.display = 'none'; imgEl.src = ''; }
               }
               if (clientEl && p.client) clientEl.textContent = p.client;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
