@@ -16,7 +16,9 @@
   <meta name="twitter:title" content="Jana Gramlich • Portfolio">
   <meta name="twitter:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" id="favicon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -186,11 +188,12 @@
     /* Anchor offset: prevent fixed nav from covering targets */
     #work { scroll-margin-top:57px; }
     #about { scroll-margin-top:57px; }
-    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; }
+    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; padding-bottom:8px; }
     .section-label__prefix { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
     .section-label__links { display:flex; gap:20px; flex-wrap:nowrap; }
     .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
-    .section-label__link:hover { color:#fff; }
+    @media (hover:hover) { .section-label__link:hover { color:#fff; } }
+    .section-label__link[href="#about"] { display:none; }
     .work-list { display:flex; flex-direction:column; gap:0; margin-left:-8px; margin-right:-8px; }
     .work-item { cursor:pointer; position:relative; }
     .work-item__image {
@@ -203,16 +206,16 @@
     .work-item__body {
       background:#141414; border-radius:4px;
       padding:8px; aspect-ratio:4/3;
-      position:relative; z-index:1; margin-top:8px; will-change:transform,opacity;
+      position:relative; z-index:1; margin-top:16px; will-change:transform,opacity;
       display:flex; flex-direction:column;
     }
     .work-item__year { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; }
-    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:56px; }
+    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:auto; }
     .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
     .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
     .work-item__view { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
     .work-item__arrow { display:inline-flex; align-self:center; }
-    .work-item + .work-item .work-item__image { margin-top:8px; }
+    .work-item + .work-item .work-item__image { margin-top:16px; }
     .cv-card { opacity:0; }
     .cv-card--about  { opacity:1; }
     .cv-card--quotes { opacity:1; }
@@ -291,7 +294,7 @@
       font-size:9px; font-weight:500; color:#989898;
       margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
     }
-    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; }
+    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#989898; }
     /* About + Awards card */
     .cv-card--about { display:block; padding:12px 8px; }
     .cv-about__section-label { font-size:14px; font-weight:500; color:#fff; margin:0 0 4px; }
@@ -310,12 +313,37 @@
 
     /* === HOME FOOTER === */
     .home-footer {
-      display:flex; justify-content:space-between; align-items:center;
-      padding-top:40px;
-      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      padding-top:40px; padding-bottom:16px; overflow:hidden;
+      display:flex; flex-direction:column;
     }
-    .home-footer a { color:#fff; transition:opacity .4s ease-in-out; }
-    .home-footer a:hover { opacity:.5; }
+    .footer-grid {
+      display:flex; justify-content:space-between; align-items:flex-start;
+    }
+    .footer-col { display:flex; flex-direction:column; gap:4px; }
+    .footer-col a, .footer-col span {
+      font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898;
+      text-transform:uppercase; text-decoration:none;
+    }
+    .footer-col a { transition:opacity .4s ease-in-out; }
+    .footer-col a:hover { opacity:.5; }
+    .footer-col--right { margin-right:84px; font-size:14px; font-weight:400; }
+    .footer-social-label { margin-top:0; }
+    .footer-social-link { text-transform:none !important; letter-spacing:0 !important; color:#fff !important; }
+    .footer-location, .footer-email { color:#fff !important; text-transform:none !important; letter-spacing:0 !important; }
+    .footer-legal { display:flex; justify-content:space-between; gap:16px; padding:0; }
+    .footer-legal a { font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out; }
+    .footer-legal a:hover { opacity:.5; }
+    .footer-bottom { position:relative; margin-top:auto; z-index:0; }
+    .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
+    .footer-name {
+      font-size:100vw; font-weight:700; line-height:0.85;
+      letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
+      white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
+    }
+    @media (min-width:640px) {
+      .footer-name, .footer-logo, .footer-bottom, .footer-grid { display:none; }
+      .home-footer { min-height:0; padding-top:0; padding-bottom:8px; padding-left:8px; padding-right:8px; }
+    }
 
     /* === ARTICLES SECTION === */
     #articles { scroll-margin-top:57px; }
@@ -542,19 +570,25 @@
     }
     /* === MOBILE ONLY === */
     @media (max-width:639px) {
-      /* 8px side padding; work-list flattened so Douglas PR can interleave */
-      .home-content { display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
-      .home-hero          { order:1; }
-      .section-label      { order:2; }
+      /* no container padding; each element carries its own 8px */
+      .home-content { display:flex; flex-direction:column; padding:0; }
+      .home-hero          { order:1; padding-left:8px; padding-right:8px; padding-top:120px; padding-bottom:120px; min-height:0; justify-content:flex-start; }
+      .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
-      .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
+      .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
       .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .articles-section   { order:11; margin-top:16px; margin-bottom:24px; }
-      .cta-footer-box     { order:12; display:contents; }
-      .cta-section        { order:12; padding-left:8px; padding-right:8px; }
-      .home-footer        { order:13; }
+      .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
+      .articles-slider    { margin-left:8px; padding-right:8px; }
+      .cta-footer-box     { order:12; display:flex; flex-direction:column; min-height:100svh; }
+      .cta-section        { padding-left:8px; padding-right:8px; margin-top:80px; padding-top:0; padding-bottom:80px; }
+      .cta-section__texts { margin-bottom:32px; }
+      .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
+      .footer-bottom      { position:relative; margin-top:64px; z-index:0; pointer-events:none; }
+      .footer-logo        { top:0; left:0; }
+      .footer-grid        { position:relative; z-index:1; }
+      .footer-legal       { position:relative; z-index:1; margin-top:auto; background:#141414; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
       .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
       .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
@@ -564,6 +598,7 @@
       .work-list .work-item:nth-child(4) { order:8; } /* The Makery 2019 */
       /* no line break in grey experience text */
       .cv-section-heading br { display:none; }
+      .cv-section-heading { margin-bottom:16px; }
       /* modal header: client + title inline */
       .modal-header-left { flex-direction:row; align-items:baseline; gap:16px; }
       .modal-year { margin-top:0; }
@@ -572,30 +607,39 @@
       /* expanded nav: 8px side padding */
       .nav__links  { padding-left:8px; padding-right:8px; }
       .nav__contact { padding-left:8px; padding-right:8px; }
+      .work-item { display:flex; flex-direction:column; gap:8px; will-change:transform,opacity; margin-left:8px; margin-right:8px; }
+      .work-item__image { padding:0; margin:0; margin-top:0 !important; }
+      .work-item__body { margin:0; padding:8px; }
+      /* 8px gap between every consecutive pair of work-items (visual order via order:) */
+      .work-item--hero-side,
+      .work-list .work-item:nth-child(5),
+      .work-list .work-item:nth-child(3),
+      .work-list .work-item:nth-child(2),
+      .work-list .work-item:nth-child(4) { margin-top:8px; }
     }
     /* Tablet only */
     @media (min-width:640px) and (max-width:1023px) {
-      /* 2-col grid; work-list uses display:contents so its items join the grid alongside hero-side */
-      .home-content { display:grid; grid-template-columns:1fr 1fr; column-gap:8px; row-gap:32px; padding-left:8px; padding-right:8px; }
-      .home-hero     { grid-column:1/3; order:1; margin-top:80px; max-width:none; margin-left:0; margin-right:0; }
-      .section-label { grid-column:1/3; order:2; margin-top:0; }
+      /* no container padding; each element carries its own 8px */
+      .home-content { display:grid; grid-template-columns:1fr 1fr; column-gap:8px; row-gap:32px; }
+      .home-hero     { grid-column:1/3; order:1; margin-top:80px; max-width:none; margin-left:0; margin-right:0; padding-left:8px; padding-right:8px; }
+      .section-label { grid-column:1/3; order:2; margin-top:0; padding-left:8px; padding-right:8px; }
       /* Flatten work-list children into home-content grid */
       .work-list { display:contents; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
-      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; margin-top:-32px; } /* About You 2024 — full width */
+      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; margin-top:-32px; padding-left:8px; padding-right:8px; } /* About You 2024 — full width */
       .work-list .work-item:nth-child(1) .work-item__image { aspect-ratio:16/9; }
-      .work-item--hero-side { order:4; display:flex; }  /* Douglas PR 2023 */
-      .work-list .work-item:nth-child(5) { order:5; display:flex; } /* Douglas Hybrid 2022 */
-      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; } /* Zalando 2020 — full width */
+      .work-item--hero-side { order:4; display:flex; margin-left:8px; }  /* Douglas PR 2023 — left col */
+      .work-list .work-item:nth-child(5) { order:5; display:flex; margin-right:8px; } /* Douglas Hybrid 2022 — right col */
+      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; padding-left:8px; padding-right:8px; } /* Zalando 2020 — full width */
       .work-list .work-item:nth-child(3) .work-item__image { aspect-ratio:16/9; }
-      .work-list .work-item:nth-child(2) { order:7; }  /* DMEXCO 2020 */
-      .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
+      .work-list .work-item:nth-child(2) { order:7; margin-left:8px; }  /* DMEXCO 2020 — left col */
+      .work-list .work-item:nth-child(4) { order:8; margin-right:8px; }  /* The Makery 2019 — right col */
       /* Experience full-width; about+quotes side by side below */
       .exp-quotes-row  { display:contents; }
-      .articles-section { grid-column:1/3; order:9; }
-      .cv-section-wrap { grid-column:1/3; order:10; }
+      .articles-section { grid-column:1/3; order:9; margin-top:8px; }
+      .cv-section-wrap { grid-column:1/3; order:10; padding-left:8px; padding-right:8px; }
       .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
-      .about-quotes-row { grid-column:1/3; order:11; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; }
+      .about-quotes-row { grid-column:1/3; order:11; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; padding-left:8px; padding-right:8px; }
       .cv-section .cv-card:last-child { margin-bottom:8px; padding-bottom:8px; }
       .cv-card--about { padding-top:8px; }
       .cv-card.cv-card--quotes  { align-self:stretch; height:auto; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; box-sizing:border-box; padding-top:8px; padding-bottom:8px; }
@@ -605,9 +649,9 @@
       /* Widen experience cards but not the about/quotes cards */
       .cv-section .cv-card { width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
       .cta-footer-box  { grid-column:1/3; order:12; display:contents; }
-      .cta-section     { grid-column:1/3; order:12; margin-top:70px; justify-content:center; align-items:center; }
+      .cta-section     { grid-column:1/3; order:12; margin-top:32px; justify-content:center; align-items:center; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer     { grid-column:1/3; order:13; padding-bottom:8px; }
+      .home-footer     { grid-column:1/3; order:13; padding-left:8px; padding-right:8px; }
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
       /* No description text on half-width (2-col) tiles */
@@ -669,13 +713,13 @@
       .cv-section-heading br { display:none; }
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
-      .articles-section   { grid-column:1/7; margin-top:0; }
+      .articles-section   { display:none; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .work-list .work-item:nth-child(4),
       .work-list .work-item:nth-child(3) { margin-bottom:50px; }
       .cta-section        { margin-top:50px; justify-content:center; align-items:center; padding:0; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer        { padding-top:16px; }
+      .home-footer        { padding-top:0; }
       .nav__link[href="#about"],
       .section-label__link[href="#about"] { display:none; }
       .project-detail { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:32px; align-items:start; justify-content:center; }
@@ -730,7 +774,7 @@
       <div class="section-label__links">
         <a href="#about" class="section-label__link">About <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="archive.html" class="section-label__link">Archive <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="#articles" class="section-label__link">Articles <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#articles" class="section-label__link">Story <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
       </div>
     </div>
@@ -1016,8 +1060,26 @@
       </div>
 
       <footer class="home-footer">
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="imprint.html">Imprint</a>
+        <div class="footer-grid">
+          <div class="footer-col footer-col--left">
+            <span class="footer-social-label">Social</span>
+            <a href="https://www.instagram.com/daslebenunddiejana/" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
+            <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" target="_blank" rel="noopener" class="footer-social-link">LinkedIn</a>
+          </div>
+          <div class="footer-col footer-col--right">
+            <span>© Jana Gramlich, 2026</span>
+            <span class="footer-location">Located in Berlin</span>
+            <a href="mailto:hello@janagramlich.com" class="footer-email">hello@janagramlich.com</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <img src="images/logo.svg" alt="Logo" class="footer-logo">
+          <p class="footer-name">Jana</p>
+        </div>
+        <div class="footer-legal">
+          <a href="imprint.html">Imprint</a>
+          <a href="privacy-policy.html">Privacy</a>
+        </div>
       </footer>
     </div>
   </div>
@@ -1261,34 +1323,42 @@
         return y;
       }
 
-      // Work item cards: 16px peek slide-in, no scale
+      // Tablet/desktop: animate individual image+body cards
       const cards = [...document.querySelectorAll('.work-item__image, .work-item__body')];
-
-      function getPrevCard(el) {
-        if (el.classList.contains('work-item__body')) return el.previousElementSibling;
-        const prevItem = el.closest('.work-item').previousElementSibling;
-        return prevItem ? prevItem.querySelector('.work-item__body') : null;
-      }
+      // Mobile: animate whole .work-item containers as one unit
+      const workItems = [...document.querySelectorAll('.work-item')];
 
       function computeOffsets() {
-        cards.forEach(el => {
-          const prev = getPrevCard(el);
-          el._naturalAbsTop = naturalAbsTop(el);
-          el._initY = prev ? -16 : null;
-        });
+        cards.forEach(el => { el._initY = -8; });
       }
 
       function updateCards() {
-        const endDist = 0.85 * vH;
-        const sy = window.scrollY;
+        const endDist   = 0.85 * vH;
+        const isMobile  = window.innerWidth < 640;
+        const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
+        const isDesktop = window.innerWidth >= 1024;
+
+        if (isMobile) {
+          // Reset individual card styles so they don't interfere
+          cards.forEach(el => { el.style.opacity = ''; el.style.transform = ''; });
+          // Animate each work-item container as a single unit
+          workItems.forEach(el => {
+            const top = el.getBoundingClientRect().top;
+            const t   = Math.min(1, Math.max(0, (vH - top) / endDist));
+            el.style.opacity   = String(t);
+            el.style.transform = `translateY(${-8 * (1 - t)}px)`;
+          });
+          return;
+        }
+
+        // Tablet / Desktop: reset container styles, animate cards individually
+        workItems.forEach(el => { el.style.opacity = ''; el.style.transform = ''; });
         cards.forEach(el => {
           if (el._initY === null) { el.style.opacity = '1'; el.style.transform = 'none'; return; }
-          const nTop = el._naturalAbsTop - sy;
-          const t    = Math.min(1, Math.max(0, (vH - nTop) / endDist));
-          const isBody = el.classList.contains('work-item__body');
-          const isDesktop = window.innerWidth >= 1024;
-          const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
-          const bodyMult = isDesktop ? 3 : isTablet ? 3.33 : 1.5;
+          const isBody   = el.classList.contains('work-item__body');
+          const nTop     = el.getBoundingClientRect().top;
+          const t        = Math.min(1, Math.max(0, (vH - nTop) / endDist));
+          const bodyMult = isDesktop ? 3 : 3.33;
           const opacityT = isDesktop ? Math.min(1, t * 2) : t;
           el.style.opacity   = String(isBody ? Math.min(1, t * bodyMult) : opacityT);
           el.style.transform = `translateY(${el._initY * (1 - t)}px)`;
@@ -1721,10 +1791,11 @@
       'douglas.de':  '394685685',
       'douglas.com': '394685685',
     };
-    // Direct icon URL overrides per project — used instead of iTunes lookup
+    // Direct icon URL overrides per project — string applies to all cards, array applies per-index
     const PROJECT_LINK_ICONS = {
       'douglas-premium-relaunch': 'images/douglas-icon.jpg',
       'douglas-hybrid':           'images/douglas-icon.jpg',
+      'about-you':                [null, 'images/about-you-icon.jpg'],
     };
     // Fallback links used when WP API returns no call_to_action for a project
     const PROJECT_DEFAULT_LINKS = {
@@ -1790,9 +1861,10 @@
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
-        if (forceSrc) {
+        const overrideSrc = Array.isArray(forceSrc) ? (forceSrc[i] || null) : forceSrc;
+        if (overrideSrc) {
           thumb.style.background = '';
-          thumb.innerHTML = `<img src="${forceSrc}" alt="">`;
+          thumb.innerHTML = `<img src="${overrideSrc}" alt="">`;
           continue;
         }
         const resolved = await resolveThumbData(links[i].u);
@@ -1861,17 +1933,7 @@
           `<span class="page-links__label">Next Up${nextP ? `<span class="page-links__client">${nextP.client}</span>` : ''}</span>` +
           `<button class="page-links__all">View All Projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
         `</div>` +
-        (nextP
-          ? `<div class="modal-next-reveal">` +
-              `<div class="modal-next-reveal__bg">` +
-                (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
-                 nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
-              `</div>` +
-              `<div class="modal-next-reveal__inner">` +
-                `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
-              `</div>` +
-            `</div>`
-          : '');
+        '';
 
       const detailEl = document.getElementById('modal-links').closest('.project-detail');
       (detailEl || document.getElementById('modal-links')).insertAdjacentElement('afterend', pageEnd);
@@ -1879,8 +1941,20 @@
 
       if (!nextP) return;
 
+      pageEnd.insertAdjacentHTML('beforeend',
+        `<div class="modal-next-reveal">` +
+          `<div class="modal-next-reveal__bg">` +
+            (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
+             nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
+          `</div>` +
+          `<div class="modal-next-reveal__inner">` +
+            `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+          `</div>` +
+        `</div>`
+      );
+
       const revealEl = pageEnd.querySelector('.modal-next-reveal');
-      const revealVid = revealEl && revealEl.querySelector('video');
+      const revealVid = revealEl.querySelector('video');
       if (revealVid) revealVid.play().catch(() => {});
       const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
       const scrollEl = document.querySelector('.modal__scroll');
@@ -1888,8 +1962,6 @@
       const THRESHOLD = modalH * 0.72;
       const EASE     = 'cubic-bezier(.4,0,.2,1)';
       let dragging = false, dragStartY = 0, dragStartH = 0, naturalH = 0, navigating = false;
-
-      // CSS controls initial height; MIN_H captured on first touch
 
       function applyProgress(h) {
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
@@ -2262,7 +2334,10 @@
     function updateTileParallax() {
       const vh = window.innerHeight;
       document.querySelectorAll('.work-item__image').forEach(container => {
-        const img = container.querySelector('img'); if (!img) return;
+        const vidEl = container.querySelector('video');
+        const imgEl2 = container.querySelector('img');
+        const img = (vidEl && vidEl.style.display !== 'none' && vidEl.src) ? vidEl : imgEl2;
+        if (!img) return;
         const rect = container.getBoundingClientRect();
         const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
         const center = -extra / 2;               // center image in container
