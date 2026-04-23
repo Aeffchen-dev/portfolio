@@ -1723,12 +1723,13 @@
 
       revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
+        e.preventDefault(); // take control from the scroll container
         const dy  = dragStartY - e.touches[0].clientY;
         const resistance = dy >= 0 ? 1 : 0.25;
         const newH = Math.max(MIN_H * 0.85, dragStartH + dy * resistance);
         revealEl.style.height = Math.round(newH) + 'px';
         applyProgress(newH);
-      }, { passive: true });
+      }, { passive: false }); // must be non-passive to call preventDefault
 
       revealEl.addEventListener('touchend', () => {
         if (!dragging) return;
