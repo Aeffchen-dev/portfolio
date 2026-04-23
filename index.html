@@ -336,19 +336,18 @@
     }
     .article-card:hover { background:rgba(255,255,255,0.1); }
     .article-card__thumb {
-      width:69px; flex-shrink:0;
+      height:60px; flex-shrink:0;
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
-    .article-card__thumb img { width:69px; height:auto; display:block; }
-    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:row; align-items:center; gap:12px; padding-left:12px; }
-    .article-card__meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .article-card__thumb img { height:60px; width:auto; display:block; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; padding-left:12px; }
     .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
-    .article-card__cat { font-size:14px; font-weight:400; color:#989898; }
-    .article-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; display:flex; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; margin-top:auto; text-transform:uppercase; letter-spacing:0.48px; }
+    .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     .article-card--skeleton { pointer-events:none; cursor:default; }
     .article-card--skeleton .article-card__thumb {
-      height:69px;
+      width:80px; height:60px;
       background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
       background-size:200% 100%; animation:shimmer 1.4s infinite;
     }
@@ -358,7 +357,14 @@
       background-size:200% 100%; animation:shimmer 1.4s infinite;
     }
     .article-card--skeleton .sk-line--title { width:80%; }
-    .article-card--skeleton .sk-line--cat   { width:45%; margin-bottom:0; }
+    .article-card--skeleton .sk-line--label { width:30%; height:8px; margin-bottom:0; }
+
+    /* === GLOBAL ARROWS === */
+    .arrow-icon { stroke-width:1; width:1em; height:1em; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
+    a:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
+    a { transition:color .4s ease-in-out; }
+    a:hover { color:#fff; }
+    .modal__scroll a:hover { color:#111; }
 
     /* === MODAL === */
     .modal {
@@ -550,7 +556,7 @@
       .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .articles-section   { order:11; }
+      .articles-section   { order:11; margin-top:16px; margin-bottom:24px; }
       .cta-footer-box     { order:12; display:contents; }
       .cta-section        { order:12; padding-left:8px; padding-right:8px; }
       .home-footer        { order:13; }
@@ -824,9 +830,9 @@
     <!-- ARTICLES SECTION -->
     <section class="articles-section" id="articles">
       <div class="articles-slider" id="articlesSlider">
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--label"></div></div><span class="article-card__arrow"></span></div>
       </div>
     </section>
 
@@ -2245,11 +2251,10 @@
           return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
             <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
             <div class="article-card__body">
-              <div class="article-card__meta">
-                <p class="article-card__title">${title}</p>
-              </div>
-              <span class="article-card__arrow">${ARROW}</span>
+              <p class="article-card__title">${title}</p>
+              <span class="article-card__label">Story</span>
             </div>
+            <span class="article-card__arrow">${ARROW}</span>
           </a>`;
         }));
         slider.innerHTML = cards.join('');

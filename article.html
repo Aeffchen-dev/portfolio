@@ -88,7 +88,7 @@
     .hero-top {
       height:80vh;
       max-width:800px; margin:0 auto;
-      padding:24px 0 28px;
+      padding:24px 0 0;
       display:flex; flex-direction:column;
     }
 
@@ -96,7 +96,7 @@
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
       display:flex; flex-direction:column;
-      align-items:center; justify-content:center; gap:10px;
+      align-items:center; justify-content:center; gap:16px;
       padding:0 32px;
     }
     .hero__title {
@@ -110,9 +110,8 @@
       color:rgba(255,255,255,.55); text-align:center; max-width:36em;
     }
     .hero__summary {
-      font-size:13px; font-weight:400; line-height:1.55;
-      color:rgba(255,255,255,.45); text-align:center;
-      max-width:38em;
+      font-size:9px; font-weight:500; letter-spacing:0.48px;
+      text-transform:uppercase; color:#989898; text-align:center; max-width:36em;
     }
 
     /* bottom bar: BACK left, SHARE right */
@@ -136,73 +135,80 @@
     .share-btn:hover { opacity:.6; }
 
     /* === BLOCKS === */
-    .blocks { padding:72px 0; margin:0 auto; max-width:800px; }
+    .blocks { padding:16px 0 72px; margin:0 auto; max-width:800px; }
     .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); column-gap:4px; row-gap:72px; }
-    .block { border-radius:4px; overflow:hidden; }
+    .block { border-radius:16px; overflow:hidden; }
     .block--full { grid-column:span 4; }
     .block--half { grid-column:span 2; }
     .block-image { background:#1A1A1A; }
     .block-image img { width:100%; height:auto; display:block; }
-    .block-text { background:#141414; border-radius:4px; }
+    .block-text { background:#141414; border-radius:16px; }
     .text-inner { padding:12px 16px; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
+    .text-body > *:first-child { margin-top:0; }
     .text-body p { margin-bottom:20px; }
     .text-body p:last-child { margin-bottom:0; }
+    .text-body p:empty { display:none; }
     .text-body h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
     .text-body h3 { font-size:clamp(15px,1.8vw,20px); font-weight:500; color:#fff; margin:20px 0 8px; }
     .text-body a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
 
-    /* === ARTICLE PAGE END (Next Up) === */
-    .article-page-end { max-width:800px; margin:72px auto 0; padding:0 10vw; }
+    /* === ARTICLE PAGE END === */
+    .article-page-end { max-width:800px; margin:72px auto 0; }
     .article-page-end .page-links {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:12px 0; gap:8px;
+      display:flex; justify-content:flex-end; align-items:center;
+      padding:0 0 12px; gap:8px;
     }
-    .article-page-end .page-links__label,
     .article-page-end .page-links__all {
       font-size:11px; font-weight:500; letter-spacing:0.48px;
       text-transform:uppercase; color:rgba(255,255,255,0.6);
       display:inline-flex; align-items:center; gap:5px;
-      transition:opacity .15s; text-decoration:none;
-      background:none; border:none; font-family:inherit; padding:0; cursor:pointer;
+      text-decoration:none;
     }
-    .article-page-end .page-links__label:hover,
-    .article-page-end .page-links__all:hover { opacity:.5; }
-    .article-page-end .page-links__client {
-      margin-left:16px; font-weight:400; color:rgba(255,255,255,0.6);
-      text-transform:none; letter-spacing:0;
-    }
-    .article-next-reveal {
-      position:relative; overflow:hidden; cursor:pointer;
-      background:#1a1a1a; border-radius:4px;
-    }
-    .article-next-reveal__bg { display:block; }
-    .article-next-reveal__bg img, .article-next-reveal__bg video {
-      width:100%; height:auto; display:block;
-    }
-    .article-next-reveal__inner {
-      position:absolute; inset:0; z-index:1;
-      display:flex; flex-direction:column; justify-content:center; align-items:center;
-      padding:20px; text-align:center;
-    }
-    .article-next-reveal__title { font-size:14px; font-weight:400; letter-spacing:0; line-height:1.3; color:#fff; }
     @media (min-width:640px) {
-      .article-next-reveal { border-radius:4px 4px 0 0; }
-      .article-next-reveal__inner { display:none; }
       .article-page-end .page-links__client { display:inline; }
     }
 
+    /* === ARTICLE END SLIDER === */
+    .articles-slider {
+      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; padding-bottom:72px;
+    }
+    .articles-slider::-webkit-scrollbar { display:none; }
+    .article-card {
+      flex-shrink:0; width:300px; scroll-snap-align:start;
+      display:flex; flex-direction:row; align-items:stretch; gap:0;
+      padding:8px; background:#141414; border-radius:4px;
+      text-decoration:none; color:inherit;
+      transition:background .4s ease-in-out;
+    }
+    .article-card:hover { background:rgba(255,255,255,0.1); }
+    .article-card__thumb {
+      height:60px; flex-shrink:0;
+      border-radius:4px; overflow:hidden; background:#1a1a1a;
+    }
+    .article-card__thumb img { height:60px; width:auto; display:block; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; padding-left:12px; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; margin-top:auto; text-transform:uppercase; letter-spacing:0.48px; }
+    .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
+
+    /* === GLOBAL ARROWS === */
+    .arrow-icon { stroke-width:1; width:1em; height:1em; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
+    a:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
+    a { transition:color .4s ease-in-out; }
+    a:hover { color:#fff; }
+    .text-body a:hover { color:#fff; }
+
     /* === RESPONSIVE === */
     @media (max-width:639px) {
-      .hero-top { height:80dvh; padding:20px 0; }
+      .hero-top { height:80dvh; padding:20px 0 0; }
       .hero-main { padding:0 20px; }
-      .blocks { padding:72px 0; }
       .blocks__grid { grid-template-columns:1fr; }
       .block--full, .block--half { grid-column:span 1; }
-      .article-page-end .page-links__client { display:none; }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .hero-top { padding:24px 0 28px; }
+      .hero-top { padding:24px 0 0; }
       .hero-main { padding:0 24px; }
     }
   </style>
@@ -383,12 +389,13 @@
     }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
     window.addEventListener('resize', () => { if (_inScrollPill) setPillState(); });
-    setPillState();
+    if (window.innerWidth >= 1024) applyScrollPill(); else setPillState();
 
     // Scroll-driven nav: listens to window scroll (no modal overlay)
     window._initScrollNav = function() {
       const THRESHOLD = 60;
       window.addEventListener('scroll', () => {
+        if (window.innerWidth >= 1024) { applyScrollPill(); return; }
         if (window.scrollY > THRESHOLD) applyScrollPill();
         else clearScrollPill();
       }, { passive: true });
@@ -437,7 +444,7 @@
 
   function showError(msg) {
     document.getElementById('articleLoading').innerHTML =
-      `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
+      `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="index.html#articles" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
   }
 
   // Resolve an ACF image field to a URL.
@@ -626,35 +633,31 @@
         if (Array.isArray(data) && data.length > 0) { articles = data; break; }
       } catch(e) {}
     }
-    if (articles.length < 2) return;
-    const idx = articles.findIndex(a => a.slug === currentSlug);
-    if (idx < 0) return;
-    const next      = articles[(idx + 1) % articles.length];
-    const nextTitle = stripHtml(next.title?.rendered || '');
-    const acf       = next.acf || {};
-    const imgRow    = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
-    const nextImg   = await resolveImgUrl(imgRow?.img || imgRow?.image)
-                   || next._embedded?.['wp:featuredmedia']?.[0]?.source_url
-                   || '';
-    const nextUrl   = `article.html?slug=${encodeURIComponent(next.slug)}`;
-    const ARROW_SVG = `<svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+    if (!articles.length) return;
+
+    const ARROW_SVG = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+
+    const cards = await Promise.all(articles.map(async post => {
+      const title  = stripHtml(post.title?.rendered || 'Untitled');
+      const slug   = post.slug || '';
+      const acf    = post.acf || {};
+      const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+      const img    = await resolveImgUrl(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+      return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
+        <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
+        <div class="article-card__body">
+          <p class="article-card__title">${title}</p>
+          <span class="article-card__label">Story</span>
+        </div>
+        <span class="article-card__arrow">${ARROW_SVG}</span>
+      </a>`;
+    }));
 
     const pageEnd = document.getElementById('articlePageEnd');
     pageEnd.className = 'article-page-end';
     pageEnd.innerHTML =
-      `<div class="page-links">` +
-        `<span class="page-links__label">Next Up<span class="page-links__client">${nextTitle}</span></span>` +
-        `<a href="articles.html" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
-      `</div>` +
-      (nextImg
-        ? `<div class="article-next-reveal">` +
-            `<div class="article-next-reveal__bg"><img src="${nextImg}" alt="" loading="lazy"></div>` +
-            `<div class="article-next-reveal__inner"><h2 class="article-next-reveal__title">${nextTitle}</h2></div>` +
-          `</div>`
-        : '');
-
-    const reveal = pageEnd.querySelector('.article-next-reveal');
-    if (reveal) reveal.addEventListener('click', () => { window.location.href = nextUrl; });
+      `<div class="page-links"><a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a></div>` +
+      `<div class="articles-slider">${cards.join('')}</div>`;
   }
 
   // Always init scroll nav (don't wait for article fetch)
