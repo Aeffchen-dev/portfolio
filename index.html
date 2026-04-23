@@ -442,7 +442,7 @@
     .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-desc { font-size:14px; font-weight:400; line-height:1.3; color:#111; margin-top:0; max-width:500px; }
-    .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; max-width:500px; padding-right:16px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
       padding:8px; background:#141414; border-radius:16px;
@@ -525,7 +525,6 @@
       /* expanded nav: 8px side padding */
       .nav__links  { padding-left:8px; padding-right:8px; }
       .nav__contact { padding-left:8px; padding-right:8px; }
-      .project-links { padding-right:8px; }
     }
     /* Tablet only */
     @media (min-width:640px) and (max-width:1023px) {
@@ -576,7 +575,7 @@
       /* My Experience heading centered */
       .cv-section-heading { text-align:center; }
       .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
-      .project-links { max-width:530px; margin-left:auto; margin-right:auto; padding:0 8px; }
+      .project-links { max-width:530px; margin-left:auto; margin-right:auto; padding-right:16px; }
     }
     @media (min-width:1024px) {
       /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
@@ -632,7 +631,7 @@
       .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
-      .project-links { max-width:530px; margin-left:auto; margin-right:auto; }
+      .project-links { max-width:530px; margin-left:auto; margin-right:auto; padding-right:16px; }
       .modal-next-reveal__bg { opacity: 1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
