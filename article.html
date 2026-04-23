@@ -598,7 +598,10 @@
         const summaryEl = document.getElementById('articleSummary');
         const summaryText = cleanSummary(excerpt)
           || cleanSummary(textContent.replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).find(s => s.length > 20 && s.length < 300) || '');
-        if (summaryText) { summaryEl.textContent = summaryText; summaryEl.style.setProperty('display', 'block'); }
+        if (summaryText) {
+          summaryEl.textContent = summaryText.toUpperCase();
+          summaryEl.style.setProperty('display', 'block');
+        }
 
         // Share button (native share API)
         const shareBtn = document.getElementById('shareBtn');
