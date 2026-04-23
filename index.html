@@ -344,9 +344,9 @@
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     .article-card--skeleton {
-      pointer-events:none; cursor:default;
-      background:linear-gradient(90deg,#1a1a1a 25%,#202020 50%,#1a1a1a 75%);
-      background-size:200% 100%; animation:shimmer 1.4s infinite;
+      pointer-events:none; cursor:default; height:76px;
+      background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
+      background-size:200% 100% !important; animation:shimmer 1.4s infinite;
     }
 
     /* === GLOBAL ARROWS === */

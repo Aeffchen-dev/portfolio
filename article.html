@@ -429,13 +429,24 @@
     return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
   }
 
-  async function generateSummary(title, category, textContent) {
+  async function generateSummary(title, category, textContent, imageUrls = []) {
     if (ANTHROPIC_KEY) {
       try {
-        const body = textContent && textContent !== title ? textContent.slice(0, 600) : '';
-        const context = [`Title: "${title}"`];
-        if (category) context.push(`Category: "${category}"`);
-        if (body) context.push(`Content: ${body}`);
+        const hasText = !!(textContent && textContent !== title && textContent.length > 20);
+        const prompt = `Write one sentence (max 20 words) summarising what this design article is about. Output only the sentence, no quotes.`;
+        const ctx = [`Title: "${title}"`];
+        if (category) ctx.push(`Category: "${category}"`);
+        if (hasText) ctx.push(`Content: ${textContent.slice(0, 600)}`);
+
+        // Use vision when no text — pass up to 3 article images
+        const useVision = !hasText && imageUrls.length > 0;
+        const content = useVision
+          ? [
+              { type: 'text', text: `${prompt}\n\n${ctx.join('\n')}` },
+              ...imageUrls.slice(0, 3).map(url => ({ type: 'image', source: { type: 'url', url } })),
+            ]
+          : `${prompt}\n\n${ctx.join('\n')}`;
+
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
@@ -447,7 +458,7 @@
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 100,
-            messages: [{ role: 'user', content: `Write one sentence (max 20 words) summarising what this article is about. Output only the sentence, no quotes.\n\n${context.join('\n')}` }],
+            messages: [{ role: 'user', content }],
           }),
         });
         if (!res.ok) { console.warn('[summary] API HTTP', res.status); throw new Error('HTTP ' + res.status); }
@@ -623,10 +634,17 @@
           stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim(),
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
-        generateSummary(title, category, textContent || excerpt || title).then(s => {
+        (async () => {
+          // Collect article image URLs (resolve ACF IDs if needed)
+          const imgRows = flexRows.filter(r => { const l=(r.acf_fc_layout||'').toLowerCase(); return l==='image'||l==='img'||l==='photo'; });
+          const resolved = (await Promise.all(imgRows.slice(0,3).map(r => resolveImgUrl(r.img||r.image||r.photo||r.src||null)))).filter(Boolean);
+          const featImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          const imageUrls = featImg && !resolved.includes(featImg) ? [featImg, ...resolved] : resolved;
+
+          const s = await generateSummary(title, category, textContent || excerpt || title, imageUrls.slice(0,3));
           const text = cleanSummary(s) || cleanSummary(excerpt) || '';
           if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
-        });
+        })();
 
         // Share button (native share API)
         const shareBtn = document.getElementById('shareBtn');
