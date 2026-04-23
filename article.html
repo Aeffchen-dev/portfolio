@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Article — Jana Gramlich</title>
   <meta name="description" content="">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
@@ -141,12 +143,12 @@
     /* === BLOCKS === */
     .blocks { padding:16px 8px 72px; margin:0 auto; max-width:800px; }
     .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); column-gap:4px; row-gap:72px; }
-    .block { border-radius:16px; overflow:hidden; }
+    .block { border-radius:8px; overflow:hidden; }
     .block--full { grid-column:span 4; }
     .block--half { grid-column:span 2; }
     .block-image { background:#1A1A1A; }
     .block-image img { width:100%; height:auto; display:block; }
-    .block-text { background:#141414; border-radius:16px; }
+    .block-text { background:#141414; border-radius:8px; }
     .text-inner { padding:12px 16px; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
     .text-body > *:first-child { margin-top:0; }
@@ -158,7 +160,7 @@
     .text-body a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
 
     /* === ARTICLE PAGE END === */
-    .article-page-end { max-width:800px; margin:16px auto; }
+    .article-page-end { margin:0 8px; }
     .article-page-end .page-links {
       display:flex; justify-content:space-between; align-items:baseline;
       padding:0 0 12px; gap:8px;
@@ -182,11 +184,14 @@
     }
 
     /* === ARTICLE END SLIDER === */
-    .articles-slider {
-      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
-      scrollbar-width:none; padding:0 8px 16px;
+    .articles-slider-wrap {
+      overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; width:100vw; margin-left:0; margin-bottom:8px;
     }
-    .articles-slider::-webkit-scrollbar { display:none; }
+    .articles-slider-wrap::-webkit-scrollbar { display:none; }
+    .articles-slider {
+      display:flex; gap:8px; overflow-x:visible; margin:0 8px;
+    }
     .article-card {
       flex-shrink:0; width:300px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
@@ -221,7 +226,7 @@
     @media (min-width:1024px) {
       .hero-top         { height:60vh; }
       .article-page-end { margin-top:40px; margin-bottom:40px; }
-      .articles-slider  { padding-bottom:40px; }
+      .articles-slider-wrap { padding-bottom:40px; }
     }
     @media (max-width:639px) {
       .hero-top { height:80dvh; padding:20px 8px 0; }
@@ -350,78 +355,73 @@
     const dots    = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
     const logoEl  = navBar.querySelector('.nav__logo');
 
-    function setPillState() {
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function updateNavScroll() {
+      if (nav.classList.contains('is-open')) return;
+      const isMobile = window.innerWidth < 1024;
+      const t = isMobile ? Math.min(1, window.scrollY / 40) : 1;
       const targetW = logoEl.offsetWidth + 48;
-      nav.style.width = targetW + 'px';
-      nav.style.top   = window.innerWidth >= 640 ? '8px' : '4px';
-      nav.style.borderRadius = '24px';
-      nav.style.background   = 'rgba(0,0,0,0.45)';
-      nav.style.setProperty('--nav-bg-opacity','0');
-      nav.style.backdropFilter       = 'blur(20px) saturate(180%)';
-      nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+      nav.style.width        = lerp(window.innerWidth, targetW, t) + 'px';
+      nav.style.top          = window.innerWidth >= 1024 ? '16px' : '8px';
+      nav.style.borderRadius = lerp(0, 24, t) + 'px';
+      nav.style.background   = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
+      nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
+      const filterVal = t > 0.01 ? `blur(${lerp(0,20,t)}px) saturate(${lerp(100,180,t)}%)` : 'none';
+      nav.style.backdropFilter = filterVal;
+      nav.style.webkitBackdropFilter = filterVal;
       nav.style.setProperty('--pill-w', targetW + 'px');
-      navBar.style.paddingLeft  = '16px'; navBar.style.paddingRight = '16px';
-      navBar.style.paddingTop   = '0';   navBar.style.paddingBottom= '0';
-      dots[0].style.opacity = '0'; dots[2].style.opacity = '0';
-      dots[0].style.transform = 'translateX(6px)'; dots[2].style.transform = 'translateX(-6px)';
-      dots[1].style.background = 'rgb(172,176,255)';
-      dots[1].style.width = '8px'; dots[1].style.height = '8px';
-      navMenu.style.width = '8px';
+      const hPad = isMobile ? Math.round(lerp(8, 16, t)) : 16;
+      navBar.style.paddingLeft  = hPad + 'px';
+      navBar.style.paddingRight = hPad + 'px';
+      navBar.style.paddingBottom = '0';
+      dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
+      dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
+      dots[0].style.transform = `translateX(${lerp(0, 6, t)}px)`;
+      dots[2].style.transform = `translateX(${lerp(0, -6, t)}px)`;
+      dots[1].style.background = `rgb(${Math.round(lerp(255,172,t))},${Math.round(lerp(255,176,t))},255)`;
+      const dotSz = lerp(3, 8, t) + 'px';
+      dots[1].style.width = dotSz; dots[1].style.height = dotSz;
+      navMenu.style.width = lerp(15, 8, t) + 'px';
     }
 
     const EASE = 'cubic-bezier(.4,0,.2,1)';
     const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
 
-    // Track whether scroll has pushed nav into pill mode
-    let _inScrollPill = false;
-
-    function clearScrollPill() {
-      if (!_inScrollPill) return;
-      _inScrollPill = false;
-      nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
-      nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
-      nav.style.setProperty('--pill-w', '');
-      navBar.style.paddingLeft = ''; navBar.style.paddingRight = '';
-      navBar.style.paddingTop = ''; navBar.style.paddingBottom = '';
-      dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
-      navMenu.style.width = '';
-    }
-
-    function applyScrollPill() {
-      if (_inScrollPill) return;
-      _inScrollPill = true;
-      setPillState();
-    }
-
     new MutationObserver(() => {
-      nav.style.transition = NAV_TRANS;
-      void nav.offsetHeight;
       if (nav.classList.contains('is-open')) {
+        const pillW = logoEl.offsetWidth + 48;
+        const currentW = parseFloat(nav.style.width) || pillW;
+        if (currentW < pillW * 1.5) {
+          nav.style.transition = 'none';
+          nav.style.width = pillW + 'px';
+          nav.style.borderRadius = '24px';
+          void nav.offsetHeight;
+        }
+        nav.style.transition = NAV_TRANS;
         nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
         nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
-        navBar.style.paddingLeft=''; navBar.style.paddingRight='';
-        navBar.style.paddingTop=''; navBar.style.paddingBottom='';
+        const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+        const openNavW = isTablet ? window.innerWidth - 16 : Math.min(window.innerWidth - 16, 400);
+        const openPad  = Math.max(16, Math.round((openNavW - (logoEl.offsetWidth + 48)) / 2) + 16);
+        navBar.style.paddingLeft = openPad + 'px';
+        navBar.style.paddingRight = openPad + 'px';
+        navBar.style.paddingTop = ''; navBar.style.paddingBottom = '';
         dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
         navMenu.style.width = '8px';
       } else {
-        if (_inScrollPill) setPillState();
-        else clearScrollPill();
+        nav.style.transition = NAV_TRANS;
+        void nav.offsetHeight;
+        updateNavScroll();
+        setTimeout(() => { nav.style.transition = ''; }, 450);
       }
-      setTimeout(() => { nav.style.transition = ''; }, 450);
     }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
-    window.addEventListener('resize', () => { if (_inScrollPill) setPillState(); });
-    if (window.innerWidth >= 1024) applyScrollPill(); else setPillState();
+    window.addEventListener('scroll', updateNavScroll, { passive: true });
+    window.addEventListener('resize', updateNavScroll);
+    updateNavScroll();
 
-    // Scroll-driven nav: listens to window scroll (no modal overlay)
-    window._initScrollNav = function() {
-      const THRESHOLD = 60;
-      window.addEventListener('scroll', () => {
-        if (window.innerWidth >= 1024) { applyScrollPill(); return; }
-        if (window.scrollY > THRESHOLD) applyScrollPill();
-        else clearScrollPill();
-      }, { passive: true });
-    };
+    window._initScrollNav = function() { updateNavScroll(); };
   })();
 
   // === ARTICLE FETCH ===
@@ -677,7 +677,30 @@
         `<span class="page-links__label">Next Up</span>` +
         `<a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
       `</div>` +
-      `<div class="articles-slider">${cards.join('')}</div>`;
+      `<div class="articles-slider-wrap"><div class="articles-slider">${cards.join('')}</div></div>`;
+
+    const sliderWrap = pageEnd.querySelector('.articles-slider-wrap');
+    const slider = sliderWrap.querySelector('.articles-slider');
+    const allCards = [...slider.querySelectorAll('.article-card')];
+    // Scroll past the current article's card so it's off-screen left
+    const currentCard = allCards.find(c => {
+      try { return new URL(c.href).searchParams.get('slug') === currentSlug; } catch { return false; }
+    });
+    const savedScroll = sessionStorage.getItem('sliderScroll');
+    if (savedScroll !== null) {
+      sliderWrap.scrollLeft = parseInt(savedScroll, 10);
+      sessionStorage.removeItem('sliderScroll');
+    } else if (currentCard) {
+      const nextCard = allCards[allCards.indexOf(currentCard) + 1] || allCards[0];
+      sliderWrap.scrollLeft = nextCard.offsetLeft;
+    }
+    sliderWrap.addEventListener('click', e => {
+      const card = e.target.closest('.article-card');
+      if (!card) return;
+      const idx = allCards.indexOf(card);
+      const after = allCards[idx + 1] || allCards[0];
+      sessionStorage.setItem('sliderScroll', after.offsetLeft);
+    }, true);
   }
 
   // Always init scroll nav (don't wait for article fetch)
