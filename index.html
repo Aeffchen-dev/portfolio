@@ -1660,15 +1660,21 @@
             const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
             const data = await res.json();
             const artwork = data.results?.[0]?.artworkUrl100;
-            if (artwork) {
-              const bg = await getDominantColor(artwork);
-              return { src: artwork, bg };
-            }
+            if (artwork) return { src: artwork, bg: '' };
           }
         }
-        const faviconSrc = `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
-        const bg = await getDominantColor(faviconSrc);
-        return { src: faviconSrc, bg };
+        if (u.hostname === 'play.google.com') {
+          const pkgId = u.searchParams.get('id') || '';
+          if (pkgId) {
+            // Strip common segments and search iTunes for the matching iOS app
+            const term = pkgId.replace(/^com\.|\.android$|\.app$|\.mobile$|\.ios$/g, '').replace(/\./g, ' ').trim();
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=software&limit=1&country=de`);
+            const data = await res.json();
+            const artwork = data.results?.[0]?.artworkUrl100;
+            if (artwork) return { src: artwork, bg: '' };
+          }
+        }
+        return { src: `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`, bg: '' };
       } catch { return { src: '', bg: '' }; }
     }
 
