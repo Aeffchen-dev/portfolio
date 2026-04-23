@@ -1651,6 +1651,11 @@
       });
     }
 
+    const DOMAIN_ITUNES_IDS = {
+      'douglas.de':  '394685685',
+      'douglas.com': '394685685',
+    };
+
     async function resolveThumbData(url) {
       try {
         let u = new URL(url);
@@ -1661,6 +1666,14 @@
         const redir = u.searchParams.get('url') || u.searchParams.get('redirect');
         if (redir) try { u = new URL(redir); } catch {}
         url = u.toString();
+        // Known domain → iTunes ID map (shows app icon even for website links)
+        const knownId = DOMAIN_ITUNES_IDS[u.hostname.replace(/^www\./, '')];
+        if (knownId) {
+          const res = await fetch(`https://itunes.apple.com/lookup?id=${knownId}`);
+          const data = await res.json();
+          const artwork = data.results?.[0]?.artworkUrl100;
+          if (artwork) return { src: artwork, bg: '' };
+        }
         if (u.hostname === 'apps.apple.com') {
           const appId = u.pathname.match(/\/id(\d+)/)?.[1];
           if (appId) {
