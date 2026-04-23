@@ -447,11 +447,11 @@
             messages: [{ role: 'user', content: `Write exactly one concise sentence describing what this design article is about. Output only the sentence.\n\n${context}` }],
           }),
         });
+        if (!res.ok) { console.warn('[summary] API HTTP', res.status, await res.text()); throw new Error('HTTP ' + res.status); }
         const data = await res.json();
-        console.log('[summary] API response:', data);
         const text = data.content?.[0]?.text?.trim();
         if (text) return text;
-      } catch(e) { console.warn('[summary] API error:', e); }
+      } catch(e) { console.warn('[summary] API error:', e.message); }
     }
     // Fallback: first sentence from content
     const src = textContent || '';
@@ -594,7 +594,7 @@
                        : (Object.values(acf).find(check) || []);
 
         const title    = stripHtml(post.title?.rendered || 'Untitled');
-        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').trim();
+        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').replace(/\s*\.{3,}$|\s*…$/, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
         const test2    = acf.test2 || '';
@@ -621,12 +621,9 @@
           stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim(),
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
-        summaryEl.style.setProperty('display', 'block');
-        summaryEl.textContent = excerpt || '';
         generateSummary(title, category, textContent || excerpt || title).then(s => {
           const text = s || excerpt || '';
-          if (text) { summaryEl.textContent = text; }
-          else { summaryEl.style.display = 'none'; }
+          if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
         });
 
         // Share button (native share API)
