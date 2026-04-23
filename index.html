@@ -1655,6 +1655,10 @@
       'douglas.de':  '394685685',
       'douglas.com': '394685685',
     };
+    const DOMAIN_FAVICON_BG = {
+      'aboutyou.com': '#000',
+      'aboutyou.de':  '#000',
+    };
 
     async function resolveThumbData(url) {
       try {
@@ -1694,19 +1698,21 @@
             if (artwork) return { src: artwork, bg: '' };
           }
         }
-        return { src: `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`, bg: '' };
-      } catch { return { src: '', bg: '' }; }
+        const domain = u.hostname.replace(/^www\./, '');
+        return { src: `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`, bg: '', domain };
+      } catch { return { src: '', bg: '', domain: '' }; }
     }
 
     async function hydrateLinkThumbs(container, links) {
       for (let i = 0; i < (links||[]).length; i++) {
         const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
         if (!thumb) continue;
-        const { src } = await resolveThumbData(links[i].u);
+        const resolved = await resolveThumbData(links[i].u);
+        const { src } = resolved;
         if (!src) continue;
         const isFavicon = src.includes('google.com/s2/favicons');
         if (isFavicon) {
-          thumb.style.background = '#fff';
+          thumb.style.background = DOMAIN_FAVICON_BG[resolved.domain] || '#fff';
           thumb.innerHTML = `<img src="${src}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:0;display:block;">`;
         } else {
           thumb.innerHTML = `<img src="${src}" alt="">`;
