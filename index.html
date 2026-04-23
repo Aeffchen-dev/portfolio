@@ -322,31 +322,32 @@
     /* === ARTICLES SECTION === */
     #articles { scroll-margin-top:57px; }
     .articles-section { margin-top:clamp(16px,3dvh,40px); }
-    .articles-section__header { display:flex; align-items:baseline; margin-bottom:8px; }
-    .articles-section__label { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
     .articles-slider {
       display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; padding-bottom:1px;
     }
     .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
-      flex-shrink:0; width:240px; scroll-snap-align:start;
-      background:#141414; border-radius:4px; overflow:hidden;
+      flex-shrink:0; width:280px; scroll-snap-align:start;
+      display:flex; flex-direction:row; align-items:center; gap:0;
+      padding:12px; background:#141414; border-radius:8px;
       text-decoration:none; color:inherit;
-      display:flex; flex-direction:column;
       transition:background .4s ease-in-out;
     }
-    .article-card:hover { background:#1e1e1e; }
-    .article-card__image {
-      width:100%; aspect-ratio:3/2; overflow:hidden; background:#1a1a1a; flex-shrink:0;
+    .article-card:hover { background:rgba(255,255,255,0.1); }
+    .article-card__thumb {
+      width:60px; height:60px; flex-shrink:0;
+      border-radius:6px; overflow:hidden; background:#1a1a1a;
     }
-    .article-card__image img { width:100%; height:100%; object-fit:cover; display:block; }
-    .article-card__body { padding:8px; flex:1; display:flex; flex-direction:column; }
+    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:row; align-items:center; gap:12px; padding-left:12px; }
+    .article-card__meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
     .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
-    .article-card__category { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; margin-top:4px; }
+    .article-card__cat { font-size:14px; font-weight:400; color:#989898; }
+    .article-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; display:flex; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     .article-card--skeleton { pointer-events:none; cursor:default; }
-    .article-card--skeleton .article-card__image {
+    .article-card--skeleton .article-card__thumb {
       background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
       background-size:200% 100%; animation:shimmer 1.4s infinite;
     }
@@ -544,9 +545,7 @@
       .home-hero          { order:1; }
       .section-label      { order:2; }
       .work-list          { display:contents; }
-      .articles-section   { order:9; margin-left:-8px; margin-right:-8px; }
-      .articles-section__header { padding-left:8px; padding-right:8px; }
-      .articles-slider    { padding-left:8px; }
+      .articles-section   { order:9; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
       .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
@@ -823,13 +822,10 @@
 
     <!-- ARTICLES SECTION -->
     <section class="articles-section" id="articles">
-      <div class="articles-section__header">
-        <span class="articles-section__label">Articles</span>
-      </div>
       <div class="articles-slider" id="articlesSlider">
-        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
-        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__thumb"></div><div class="article-card__body"><div class="article-card__meta"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div></div>
       </div>
     </section>
 
@@ -2244,11 +2240,15 @@
           const acf = post.acf || {};
           const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
           const img = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          const ARROW = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
           return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
-            ${img ? `<div class="article-card__image"><img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy"></div>` : ''}
+            <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
             <div class="article-card__body">
-              <p class="article-card__title">${title}</p>
-              ${category ? `<p class="article-card__category">${category}</p>` : ''}
+              <div class="article-card__meta">
+                <p class="article-card__title">${title}</p>
+                ${category ? `<p class="article-card__cat">${category}</p>` : ''}
+              </div>
+              <span class="article-card__arrow">${ARROW}</span>
             </div>
           </a>`;
         }));
