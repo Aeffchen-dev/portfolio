@@ -156,14 +156,22 @@
     /* === ARTICLE PAGE END === */
     .article-page-end { max-width:800px; margin:72px auto 0; }
     .article-page-end .page-links {
-      display:flex; justify-content:flex-end; align-items:center;
+      display:flex; justify-content:space-between; align-items:baseline;
       padding:0 0 12px; gap:8px;
+    }
+    .article-page-end .page-links__label {
+      font-size:11px; font-weight:500; letter-spacing:0.48px;
+      text-transform:uppercase; color:rgba(255,255,255,0.6);
+    }
+    .article-page-end .page-links__client {
+      display:none; margin-left:12px; font-weight:400;
+      text-transform:none; letter-spacing:0; color:rgba(255,255,255,0.4);
     }
     .article-page-end .page-links__all {
       font-size:11px; font-weight:500; letter-spacing:0.48px;
       text-transform:uppercase; color:rgba(255,255,255,0.6);
       display:inline-flex; align-items:center; gap:5px;
-      text-decoration:none;
+      text-decoration:none; flex-shrink:0;
     }
     @media (min-width:640px) {
       .article-page-end .page-links__client { display:inline; }
@@ -195,7 +203,7 @@
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
 
     /* === GLOBAL ARROWS === */
-    .arrow-icon { stroke-width:1; width:20px; height:20px; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
+    .arrow-icon { stroke-width:1; width:12px; height:12px; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
     a:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
     a { transition:color .4s ease-in-out; }
     a:hover { color:#fff; }
@@ -409,30 +417,35 @@
   const ANTHROPIC_KEY = ''; // ← paste your Anthropic API key here
 
   async function generateSummary(title, category, textContent) {
-    if (!ANTHROPIC_KEY) return '';
-    try {
-      const context = [
-        `Title: "${title}"`,
-        category ? `Category: "${category}"` : '',
-        textContent ? `Content: ${textContent.slice(0, 800)}` : '',
-      ].filter(Boolean).join('\n');
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': ANTHROPIC_KEY,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 80,
-          messages: [{ role: 'user', content: `Write exactly one concise sentence describing what this design article is about. Output only the sentence.\n\n${context}` }],
-        }),
-      });
-      const data = await res.json();
-      return data.content?.[0]?.text?.trim() || '';
-    } catch { return ''; }
+    if (ANTHROPIC_KEY) {
+      try {
+        const context = [
+          `Title: "${title}"`,
+          category ? `Category: "${category}"` : '',
+          textContent ? `Content: ${textContent.slice(0, 800)}` : '',
+        ].filter(Boolean).join('\n');
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': ANTHROPIC_KEY,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 80,
+            messages: [{ role: 'user', content: `Write exactly one concise sentence describing what this design article is about. Output only the sentence.\n\n${context}` }],
+          }),
+        });
+        const data = await res.json();
+        const text = data.content?.[0]?.text?.trim();
+        if (text) return text;
+      } catch {}
+    }
+    // Fallback: extract first sentence from content
+    const first = textContent?.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] || '';
+    return first.length > 20 && first.length < 220 ? first : '';
   }
 
   function stripHtml(html) {
@@ -657,10 +670,17 @@
       </a>`;
     }));
 
+    const idx = articles.findIndex(a => a.slug === currentSlug);
+    const next = idx >= 0 ? articles[(idx + 1) % articles.length] : null;
+    const nextTitle = next ? stripHtml(next.title?.rendered || '') : '';
+
     const pageEnd = document.getElementById('articlePageEnd');
     pageEnd.className = 'article-page-end';
     pageEnd.innerHTML =
-      `<div class="page-links"><a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a></div>` +
+      `<div class="page-links">` +
+        `<span class="page-links__label">Next Up<span class="page-links__client">${nextTitle}</span></span>` +
+        `<a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
+      `</div>` +
       `<div class="articles-slider">${cards.join('')}</div>`;
   }
 
