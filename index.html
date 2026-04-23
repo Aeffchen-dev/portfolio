@@ -1653,7 +1653,14 @@
 
     async function resolveThumbData(url) {
       try {
-        const u = new URL(url);
+        let u = new URL(url);
+        // Unwrap Google ad redirect URLs (adurl param holds the real destination)
+        const adurl = u.searchParams.get('adurl');
+        if (adurl) try { u = new URL(adurl); } catch {}
+        // Also follow plain redirect/url params
+        const redir = u.searchParams.get('url') || u.searchParams.get('redirect');
+        if (redir) try { u = new URL(redir); } catch {}
+        url = u.toString();
         if (u.hostname === 'apps.apple.com') {
           const appId = u.pathname.match(/\/id(\d+)/)?.[1];
           if (appId) {
