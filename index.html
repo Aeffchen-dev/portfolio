@@ -448,7 +448,7 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.06); border-radius:16px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.03); border-radius:16px;
       backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
       border:1px solid rgba(128,128,128,0.16);
       text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
@@ -1898,6 +1898,7 @@
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       const linksHTML = buildLinkCards(p.links);
       const panel = document.createElement('div');
+      panel.classList.add('js-nav-panel');
       panel.style.cssText =
         'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
         'overscroll-behavior:contain;scrollbar-width:none;' +
@@ -1960,6 +1961,8 @@
 
     // === CLOSE MODAL ===
     function closeModal() {
+      document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+      _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
       const closeBar = document.getElementById('modalCloseBar');
       modal.querySelector('.modal__scroll').style.background = '';
@@ -1997,6 +2000,8 @@
       }
 
       function doClose() {
+        document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+        _isTransitioning = false;
         closeBar.style.height = '';
         closeBar.classList.remove('is-active');
         modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
