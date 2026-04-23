@@ -427,50 +427,8 @@
   // === ARTICLE FETCH ===
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
 
-  const ANTHROPIC_KEY = '';
-  const SUMMARY_PROXY = ''; // set to your Cloudflare Worker URL to avoid exposing the key
-
   function cleanSummary(s) {
     return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
-  }
-
-  // imageUrls: array of publicly accessible image URLs (Anthropic fetches them server-side — no CORS issue)
-  async function generateSummary(title, category, textContent, imageUrls = []) {
-    const endpoint = SUMMARY_PROXY || 'https://api.anthropic.com/v1/messages';
-    const headers = { 'content-type': 'application/json', 'anthropic-version': '2023-06-01' };
-    if (!SUMMARY_PROXY && ANTHROPIC_KEY) headers['x-api-key'] = ANTHROPIC_KEY;
-    if (!SUMMARY_PROXY) headers['anthropic-dangerous-direct-browser-access'] = 'true';
-
-    try {
-      const hasText = !!(textContent && textContent !== title && textContent.length > 20);
-      const prompt = `Write one sentence (max 20 words) summarising what this design article is about. Output only the sentence, no quotes.`;
-      const ctx = [`Title: "${title}"`];
-      if (category) ctx.push(`Category: "${category}"`);
-      if (hasText) ctx.push(`Content: ${textContent.slice(0, 600)}`);
-
-      const useVision = !hasText && imageUrls.length > 0;
-      const content = useVision
-        ? [
-            { type: 'text', text: `${prompt}\n\n${ctx.join('\n')}` },
-            ...imageUrls.slice(0, 3).map(url => ({ type: 'image', source: { type: 'url', url } })),
-          ]
-        : `${prompt}\n\n${ctx.join('\n')}`;
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 100, messages: [{ role: 'user', content }] }),
-      });
-      if (!res.ok) { console.warn('[summary] API HTTP', res.status); throw new Error('HTTP ' + res.status); }
-      const data = await res.json();
-      const text = cleanSummary(data.content?.[0]?.text);
-      if (text && text.length > 8) return text;
-    } catch(e) { console.warn('[summary] error:', e.message); }
-
-    // Fallback: first real sentence from content
-    const src = textContent || '';
-    const sentences = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
-    return cleanSummary(sentences.find(s => s.length > 20 && s.length < 300) || '');
   }
 
   function stripHtml(html) {
@@ -634,23 +592,9 @@
           stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim(),
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
-        (async () => {
-          // Extract medium-sized image URLs directly from ACF objects (768×432, ~50-100KB each)
-          const imgRows = flexRows.filter(r => { const l=(r.acf_fc_layout||'').toLowerCase(); return l==='image'||l==='img'||l==='photo'; });
-          const imageUrls = imgRows.slice(0, 3).map(r => {
-            const img = r.image || r.img || r.photo || r.src;
-            if (!img) return '';
-            if (typeof img === 'object') return img.sizes?.medium_large || img.sizes?.medium || img.url || img.source_url || '';
-            return typeof img === 'string' ? img : '';
-          }).filter(Boolean);
-          // Fallback: featured media
-          const featImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-          if (featImg && !imageUrls.length) imageUrls.push(featImg);
-
-          const s = await generateSummary(title, category, textContent || excerpt || title, imageUrls.slice(0,3));
-          const text = cleanSummary(s) || cleanSummary(excerpt) || '';
-          if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
-        })();
+        const summaryText = cleanSummary(excerpt)
+          || cleanSummary(textContent.replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).find(s => s.length > 20 && s.length < 300) || '');
+        if (summaryText) { summaryEl.textContent = summaryText; summaryEl.style.setProperty('display', 'block'); }
 
         // Share button (native share API)
         const shareBtn = document.getElementById('shareBtn');
