@@ -380,6 +380,7 @@
     }
     .modal-page-end .page-links__label:hover,
     .modal-page-end .page-links__all:hover { opacity: .5; }
+    .modal-page-end .page-links__client { margin-left: 16px; font-weight: 400; color: #000; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
@@ -408,7 +409,7 @@
       .modal-next-reveal { height: auto; min-height: 0; aspect-ratio: 3/4; }
     }
     @media (min-width:1024px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
     }
 
     .hero__title { display:none; }
@@ -492,7 +493,7 @@
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
-      .project-links { margin-top:16px; }
+      .project-links { margin-top:32px; }
     }
     /* === MOBILE ONLY === */
     @media (max-width:639px) {
@@ -631,7 +632,7 @@
       .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
-      .project-links { padding-right:40px; }
+      .project-links { padding-right:40px; margin-top:32px; }
       .modal-next-reveal__bg { opacity: 1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
@@ -1795,7 +1796,7 @@
       pageEnd.className = 'modal-page-end';
       pageEnd.innerHTML =
         `<div class="page-links">` +
-          `<span class="page-links__label">Next Up</span>` +
+          `<span class="page-links__label">Next Up${nextP ? `<span class="page-links__client">${nextP.client}</span>` : ''}</span>` +
           `<button class="page-links__all">View All Projects <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
         `</div>` +
         (nextP
