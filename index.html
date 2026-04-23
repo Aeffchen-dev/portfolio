@@ -319,6 +319,45 @@
     .home-footer a { color:#fff; transition:opacity .4s ease-in-out; }
     .home-footer a:hover { opacity:.5; }
 
+    /* === ARTICLES SECTION === */
+    #articles { scroll-margin-top:57px; }
+    .articles-section { margin-top:clamp(16px,3dvh,40px); }
+    .articles-section__header { display:flex; align-items:baseline; margin-bottom:8px; }
+    .articles-section__label { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
+    .articles-slider {
+      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; padding-bottom:1px;
+    }
+    .articles-slider::-webkit-scrollbar { display:none; }
+    .article-card {
+      flex-shrink:0; width:240px; scroll-snap-align:start;
+      background:#141414; border-radius:4px; overflow:hidden;
+      text-decoration:none; color:inherit;
+      display:flex; flex-direction:column;
+      transition:background .4s ease-in-out;
+    }
+    .article-card:hover { background:#1e1e1e; }
+    .article-card__image {
+      width:100%; aspect-ratio:3/2; overflow:hidden; background:#1a1a1a; flex-shrink:0;
+    }
+    .article-card__image img { width:100%; height:100%; object-fit:cover; display:block; }
+    .article-card__body { padding:8px; flex:1; display:flex; flex-direction:column; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .article-card__category { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; margin-top:4px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .article-card--skeleton { pointer-events:none; cursor:default; }
+    .article-card--skeleton .article-card__image {
+      background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
+      background-size:200% 100%; animation:shimmer 1.4s infinite;
+    }
+    .article-card--skeleton .sk-line {
+      height:12px; border-radius:2px; margin-bottom:6px;
+      background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);
+      background-size:200% 100%; animation:shimmer 1.4s infinite;
+    }
+    .article-card--skeleton .sk-line--title { width:80%; }
+    .article-card--skeleton .sk-line--cat   { width:45%; margin-bottom:0; }
+
     /* === MODAL === */
     .modal {
       position:fixed;
@@ -505,13 +544,16 @@
       .home-hero          { order:1; }
       .section-label      { order:2; }
       .work-list          { display:contents; }
-      .exp-quotes-row     { order:9; display:flex; flex-direction:column; }
+      .articles-section   { order:9; margin-left:-8px; margin-right:-8px; }
+      .articles-section__header { padding-left:8px; padding-right:8px; }
+      .articles-slider    { padding-left:8px; }
+      .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
       .about-quotes-row   { display:flex; flex-direction:column; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .cta-footer-box     { order:10; display:contents; }
-      .cta-section        { order:10; padding-left:8px; padding-right:8px; }
-      .home-footer        { order:11; }
+      .cta-footer-box     { order:11; display:contents; }
+      .cta-section        { order:11; padding-left:8px; padding-right:8px; }
+      .home-footer        { order:12; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
       .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
       .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
@@ -549,9 +591,10 @@
       .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
       /* Experience full-width; about+quotes side by side below */
       .exp-quotes-row  { display:contents; }
-      .cv-section-wrap { grid-column:1/3; order:9; }
+      .articles-section { grid-column:1/3; order:9; }
+      .cv-section-wrap { grid-column:1/3; order:10; }
       .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
-      .about-quotes-row { grid-column:1/3; order:10; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; }
+      .about-quotes-row { grid-column:1/3; order:11; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; }
       .cv-section .cv-card:last-child { margin-bottom:8px; padding-bottom:8px; }
       .cv-card--about { padding-top:8px; }
       .cv-card.cv-card--quotes  { align-self:stretch; height:auto; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; box-sizing:border-box; padding-top:8px; padding-bottom:8px; }
@@ -560,10 +603,10 @@
       .cv-card.cv-card--quotes .cv-quotes__attr  { margin-bottom:auto; text-align:left; width:100%; }
       /* Widen experience cards but not the about/quotes cards */
       .cv-section .cv-card { width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
-      .cta-footer-box  { grid-column:1/3; order:11; display:contents; }
-      .cta-section     { grid-column:1/3; order:11; margin-top:70px; justify-content:center; align-items:center; }
+      .cta-footer-box  { grid-column:1/3; order:12; display:contents; }
+      .cta-section     { grid-column:1/3; order:12; margin-top:70px; justify-content:center; align-items:center; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer     { grid-column:1/3; order:12; padding-bottom:8px; }
+      .home-footer     { grid-column:1/3; order:13; padding-bottom:8px; }
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
       /* No description text on half-width (2-col) tiles */
@@ -625,6 +668,7 @@
       .cv-section-heading br { display:none; }
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
+      .articles-section   { grid-column:1/7; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .work-list .work-item:nth-child(4),
       .work-list .work-item:nth-child(3) { margin-bottom:50px; }
@@ -664,7 +708,7 @@
           <a href="#work" class="nav__link">Work</a>
           <a href="#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+          <a href="#articles" class="nav__link">Articles</a>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -685,7 +729,7 @@
       <div class="section-label__links">
         <a href="#about" class="section-label__link">About <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="archive.html" class="section-label__link">Archive <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="articles.html" class="section-label__link">Articles <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#articles" class="section-label__link">Articles <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
       </div>
     </div>
@@ -776,6 +820,18 @@
       </article>
 
     </div>
+
+    <!-- ARTICLES SECTION -->
+    <section class="articles-section" id="articles">
+      <div class="articles-section__header">
+        <span class="articles-section__label">Articles</span>
+      </div>
+      <div class="articles-slider" id="articlesSlider">
+        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
+        <div class="article-card article-card--skeleton"><div class="article-card__image"></div><div class="article-card__body"><div class="sk-line sk-line--title"></div><div class="sk-line sk-line--cat"></div></div></div>
+      </div>
+    </section>
 
     <!-- EXPERIENCE + QUOTES ROW -->
     <div class="exp-quotes-row">
@@ -2129,6 +2185,75 @@
           } catch(e) { console.warn(`Failed to load project "${key}":`, e); }
         })
       );
+    })();
+
+    // === ARTICLES SLIDER ===
+    (function() {
+      const slider = document.getElementById('articlesSlider');
+      if (!slider) return;
+
+      async function resolveArticleImg(img) {
+        if (!img) return '';
+        if (typeof img === 'object') return img.url || img.source_url || '';
+        const id = parseInt(img, 10);
+        if (!id) return typeof img === 'string' ? img : '';
+        try {
+          const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(5000) });
+          if (r.ok) return (await r.json()).source_url || '';
+        } catch(e) {}
+        return '';
+      }
+
+      async function fetchArticles() {
+        const FIELDS = 'id,title,date,slug,acf,_links';
+        const bases = ['articles', 'article'];
+        try {
+          const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+          if (idx?.routes) {
+            const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
+              'tags','categories','users','comments','settings','themes','plugins','blocks',
+              'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+              'menu-items','menu-locations','templates','template-parts','global-styles',
+              'navigation','font-families','font-collections','pattern-directory',
+              'block-types','block-patterns','block-pattern-categories','projects','project']);
+            const others = Object.keys(idx.routes)
+              .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+              .filter(b => b && !SKIP.has(b));
+            bases.push(...others);
+          }
+        } catch(e) {}
+        bases.push('posts');
+        for (const base of bases) {
+          const r = await fetch(`${API}/${base}?per_page=8&_fields=${FIELDS}&_embed=true&acf_format=standard`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+          if (!r || !r.ok) { const code = r ? (await r.json().catch(() => ({}))).code : null; if (!r || code === 'rest_no_route') continue; throw new Error(`HTTP ${r.status}`); }
+          const posts = await r.json();
+          if (!Array.isArray(posts) || posts.length === 0) continue;
+          const hasAcf = posts.some(p => p.acf && (p.acf.test !== undefined || p.acf.content !== undefined));
+          if (!hasAcf && base === 'posts') continue;
+          return posts;
+        }
+        return [];
+      }
+
+      fetchArticles().then(async posts => {
+        if (!posts.length) { slider.innerHTML = ''; return; }
+        const cards = await Promise.all(posts.slice(0, 8).map(async post => {
+          const title = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent : 'Untitled';
+          const slug = post.slug || '';
+          const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+          const acf = post.acf || {};
+          const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+          const img = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
+            ${img ? `<div class="article-card__image"><img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy"></div>` : ''}
+            <div class="article-card__body">
+              <p class="article-card__title">${title}</p>
+              ${category ? `<p class="article-card__category">${category}</p>` : ''}
+            </div>
+          </a>`;
+        }));
+        slider.innerHTML = cards.join('');
+      }).catch(() => { slider.innerHTML = ''; });
     })();
 
     // === TILE PARALLAX ===
