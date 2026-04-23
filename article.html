@@ -321,9 +321,21 @@
 <script>
   // === NAV ===
   const nav = document.getElementById('mainNav');
-  nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
-  let _mlSuppress = false;
-  nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+  let _mlSuppress = false, _openedByHover = false, _hoverAllowAfter = 0;
+  function closeByHover() {
+    _openedByHover = false;
+    _hoverAllowAfter = Date.now() + 600;
+    nav.classList.remove('is-open');
+  }
+  nav.addEventListener('mouseenter', () => {
+    if (window.innerWidth < 640) return;
+    if (Date.now() < _hoverAllowAfter) return;
+    _openedByHover = true;
+    nav.classList.add('is-open');
+  });
+  nav.addEventListener('mouseleave', () => {
+    if (window.innerWidth >= 640 && !_mlSuppress && _openedByHover) closeByHover();
+  });
   nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive:true });
   nav.querySelector('.nav__logo').addEventListener('touchend', e => {
     if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
@@ -644,12 +656,12 @@
   }
 
   async function injectNextArticle(currentSlug) {
-    const FIELDS = 'id,slug,title,_links';
+    const FIELDS = 'id,slug,title,acf,_links';
     const bases  = ['articles', 'article', 'posts'];
     let articles = [];
     for (const base of bases) {
       try {
-        const r = await fetch(`${API}/${base}?_fields=${FIELDS}&_embed=true&per_page=100`, { signal: AbortSignal.timeout(8000) });
+        const r = await fetch(`${API}/${base}?_fields=${FIELDS}&_embed=true&acf_format=standard&per_page=100`, { signal: AbortSignal.timeout(8000) });
         if (!r.ok) continue;
         const data = await r.json();
         if (Array.isArray(data) && data.length > 0) { articles = data; break; }
@@ -660,7 +672,11 @@
     if (idx < 0) return;
     const next      = articles[(idx + 1) % articles.length];
     const nextTitle = stripHtml(next.title?.rendered || '');
-    const nextImg   = next._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+    const acf       = next.acf || {};
+    const imgRow    = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+    const nextImg   = await resolveImgUrl(imgRow?.img || imgRow?.image)
+                   || next._embedded?.['wp:featuredmedia']?.[0]?.source_url
+                   || '';
     const nextUrl   = `article.html?slug=${encodeURIComponent(next.slug)}`;
     const ARROW_SVG = `<svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
 
