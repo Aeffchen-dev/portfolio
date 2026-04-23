@@ -429,7 +429,24 @@
     return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
   }
 
-  async function generateSummary(title, category, textContent, imageUrls = []) {
+  // Fetch an image URL and return { mediaType, data } for base64 Anthropic vision.
+  async function fetchImgBase64(url) {
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) return null;
+      const blob = await r.blob();
+      const mediaType = (blob.type || 'image/jpeg').split(';')[0];
+      return await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res({ mediaType, data: reader.result.split(',')[1] });
+        reader.onerror = rej;
+        reader.readAsDataURL(blob);
+      });
+    } catch(e) { return null; }
+  }
+
+  // imageData: array of { mediaType, data } from fetchImgBase64
+  async function generateSummary(title, category, textContent, imageData = []) {
     if (ANTHROPIC_KEY) {
       try {
         const hasText = !!(textContent && textContent !== title && textContent.length > 20);
@@ -438,12 +455,14 @@
         if (category) ctx.push(`Category: "${category}"`);
         if (hasText) ctx.push(`Content: ${textContent.slice(0, 600)}`);
 
-        // Use vision when no text — pass up to 3 article images
-        const useVision = !hasText && imageUrls.length > 0;
+        // Vision: send images as base64 when no text content is available
+        const useVision = !hasText && imageData.length > 0;
         const content = useVision
           ? [
               { type: 'text', text: `${prompt}\n\n${ctx.join('\n')}` },
-              ...imageUrls.slice(0, 3).map(url => ({ type: 'image', source: { type: 'url', url } })),
+              ...imageData.slice(0, 3).map(({ mediaType, data }) => ({
+                type: 'image', source: { type: 'base64', media_type: mediaType, data },
+              })),
             ]
           : `${prompt}\n\n${ctx.join('\n')}`;
 
@@ -461,7 +480,7 @@
             messages: [{ role: 'user', content }],
           }),
         });
-        if (!res.ok) { console.warn('[summary] API HTTP', res.status); throw new Error('HTTP ' + res.status); }
+        if (!res.ok) { console.warn('[summary] API HTTP', res.status, await res.text()); throw new Error('HTTP ' + res.status); }
         const data = await res.json();
         const text = cleanSummary(data.content?.[0]?.text);
         if (text && text.length > 8) return text;
@@ -635,13 +654,16 @@
         ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
         (async () => {
-          // Collect article image URLs (resolve ACF IDs if needed)
+          // Resolve image URLs from ACF flex rows + featured media
           const imgRows = flexRows.filter(r => { const l=(r.acf_fc_layout||'').toLowerCase(); return l==='image'||l==='img'||l==='photo'; });
           const resolved = (await Promise.all(imgRows.slice(0,3).map(r => resolveImgUrl(r.img||r.image||r.photo||r.src||null)))).filter(Boolean);
           const featImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
           const imageUrls = featImg && !resolved.includes(featImg) ? [featImg, ...resolved] : resolved;
 
-          const s = await generateSummary(title, category, textContent || excerpt || title, imageUrls.slice(0,3));
+          // Fetch images as base64 so Anthropic vision works without server-side URL access
+          const imageData = (await Promise.all(imageUrls.slice(0,3).map(fetchImgBase64))).filter(Boolean);
+
+          const s = await generateSummary(title, category, textContent || excerpt || title, imageData);
           const text = cleanSummary(s) || cleanSummary(excerpt) || '';
           if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
         })();
