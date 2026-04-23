@@ -382,7 +382,7 @@
     .modal-page-end .page-links__all:hover { opacity: .5; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
-      background: #1a1a1a; height: 55vh;
+      background: #1a1a1a; height: 55vh; min-height: 55vh;
       margin: 0 16px; border-radius: 4px;
     }
     .modal-next-reveal__bg {
@@ -405,10 +405,10 @@
       letter-spacing: -.02em; line-height: 1; color: #fff;
     }
     @media (min-width:640px) {
-      .modal-next-reveal { height: auto; aspect-ratio: 3/4; }
+      .modal-next-reveal { height: auto; min-height: 0; aspect-ratio: 3/4; }
     }
     @media (min-width:1024px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; }
     }
 
     .hero__title { display:none; }
@@ -451,10 +451,10 @@
     .modal-link-card:hover { background:rgba(255,255,255,.08); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
-      border-radius:2px; overflow:hidden; background:#fff;
+      border-radius:8px; overflow:hidden;
       display:flex; align-items:center; justify-content:center;
     }
-    .modal-link-card__thumb img { width:28px; height:28px; object-fit:contain; display:block; }
+    .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; }
     .modal-link-card__body { flex:1; min-width:0; }
     .modal-link-card__title { display:block; font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
     .modal-link-card__arrow { color:#fff; flex-shrink:0; display:flex; align-items:center; }
@@ -1678,7 +1678,6 @@
         if (!thumb) continue;
         const { src, bg } = await resolveThumbData(links[i].u);
         if (!src) continue;
-        if (bg) thumb.style.background = bg;
         thumb.innerHTML = `<img src="${src}" alt="">`;
       }
     }
