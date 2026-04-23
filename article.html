@@ -424,68 +424,45 @@
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
 
   const ANTHROPIC_KEY = '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';
+  const SUMMARY_PROXY = ''; // set to your Cloudflare Worker URL to avoid exposing the key
 
   function cleanSummary(s) {
     return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
   }
 
-  // Fetch an image URL and return { mediaType, data } for base64 Anthropic vision.
-  async function fetchImgBase64(url) {
+  // imageUrls: array of publicly accessible image URLs (Anthropic fetches them server-side — no CORS issue)
+  async function generateSummary(title, category, textContent, imageUrls = []) {
+    const endpoint = SUMMARY_PROXY || 'https://api.anthropic.com/v1/messages';
+    const headers = { 'content-type': 'application/json', 'anthropic-version': '2023-06-01' };
+    if (!SUMMARY_PROXY && ANTHROPIC_KEY) headers['x-api-key'] = ANTHROPIC_KEY;
+    if (!SUMMARY_PROXY) headers['anthropic-dangerous-direct-browser-access'] = 'true';
+
     try {
-      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) return null;
-      const blob = await r.blob();
-      const mediaType = (blob.type || 'image/jpeg').split(';')[0];
-      return await new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onload = () => res({ mediaType, data: reader.result.split(',')[1] });
-        reader.onerror = rej;
-        reader.readAsDataURL(blob);
+      const hasText = !!(textContent && textContent !== title && textContent.length > 20);
+      const prompt = `Write one sentence (max 20 words) summarising what this design article is about. Output only the sentence, no quotes.`;
+      const ctx = [`Title: "${title}"`];
+      if (category) ctx.push(`Category: "${category}"`);
+      if (hasText) ctx.push(`Content: ${textContent.slice(0, 600)}`);
+
+      const useVision = !hasText && imageUrls.length > 0;
+      const content = useVision
+        ? [
+            { type: 'text', text: `${prompt}\n\n${ctx.join('\n')}` },
+            ...imageUrls.slice(0, 3).map(url => ({ type: 'image', source: { type: 'url', url } })),
+          ]
+        : `${prompt}\n\n${ctx.join('\n')}`;
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 100, messages: [{ role: 'user', content }] }),
       });
-    } catch(e) { return null; }
-  }
+      if (!res.ok) { console.warn('[summary] API HTTP', res.status); throw new Error('HTTP ' + res.status); }
+      const data = await res.json();
+      const text = cleanSummary(data.content?.[0]?.text);
+      if (text && text.length > 8) return text;
+    } catch(e) { console.warn('[summary] error:', e.message); }
 
-  // imageData: array of { mediaType, data } from fetchImgBase64
-  async function generateSummary(title, category, textContent, imageData = []) {
-    if (ANTHROPIC_KEY) {
-      try {
-        const hasText = !!(textContent && textContent !== title && textContent.length > 20);
-        const prompt = `Write one sentence (max 20 words) summarising what this design article is about. Output only the sentence, no quotes.`;
-        const ctx = [`Title: "${title}"`];
-        if (category) ctx.push(`Category: "${category}"`);
-        if (hasText) ctx.push(`Content: ${textContent.slice(0, 600)}`);
-
-        // Vision: send images as base64 when no text content is available
-        const useVision = !hasText && imageData.length > 0;
-        const content = useVision
-          ? [
-              { type: 'text', text: `${prompt}\n\n${ctx.join('\n')}` },
-              ...imageData.slice(0, 3).map(({ mediaType, data }) => ({
-                type: 'image', source: { type: 'base64', media_type: mediaType, data },
-              })),
-            ]
-          : `${prompt}\n\n${ctx.join('\n')}`;
-
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': ANTHROPIC_KEY,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-            'anthropic-dangerous-direct-browser-access': 'true',
-          },
-          body: JSON.stringify({
-            model: 'claude-haiku-4-5-20251001',
-            max_tokens: 100,
-            messages: [{ role: 'user', content }],
-          }),
-        });
-        if (!res.ok) { console.warn('[summary] API HTTP', res.status, await res.text()); throw new Error('HTTP ' + res.status); }
-        const data = await res.json();
-        const text = cleanSummary(data.content?.[0]?.text);
-        if (text && text.length > 8) return text;
-      } catch(e) { console.warn('[summary] API error:', e.message); }
-    }
     // Fallback: first real sentence from content
     const src = textContent || '';
     const sentences = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
@@ -597,7 +574,7 @@
           if (!r) continue;
           if (!r.ok) {
             const body = await r.json().catch(() => ({}));
-            if (body.code === 'rest_no_route') { post = null; break; } // skip this base
+            if (body.code === 'rest_no_route' || r.status === 404) { post = null; break; } // expected miss
             console.warn(`[article] /${base}${acfSuffix}: HTTP ${r.status}`, body.code);
             continue; // try next suffix
           }
@@ -666,10 +643,7 @@
           const featImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
           if (featImg && !imageUrls.length) imageUrls.push(featImg);
 
-          // Fetch images as base64 so Anthropic vision works without server-side URL access
-          const imageData = (await Promise.all(imageUrls.slice(0,3).map(fetchImgBase64))).filter(Boolean);
-
-          const s = await generateSummary(title, category, textContent || excerpt || title, imageData);
+          const s = await generateSummary(title, category, textContent || excerpt || title, imageUrls.slice(0,3));
           const text = cleanSummary(s) || cleanSummary(excerpt) || '';
           if (text) { summaryEl.textContent = text; summaryEl.style.setProperty('display', 'block'); }
         })();
