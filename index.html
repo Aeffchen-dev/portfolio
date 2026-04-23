@@ -366,7 +366,7 @@
     .modal-close-bar__icon svg { display:block; }
 
     /* === MODAL PAGE END === */
-    .modal-page-end { margin: 72px -8px 0; }
+    .modal-page-end { margin: 72px 0 0; }
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px; gap: 8px;
@@ -384,7 +384,7 @@
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
-      margin: 0; border-radius: 0;
+      margin: 0; border-radius: 4px;
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 0;
@@ -409,9 +409,9 @@
       .modal-next-reveal { height: auto; min-height: 0; aspect-ratio: 3/4; }
     }
     @media (min-width:1024px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 0; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
       .modal-next-reveal__inner { display: none; }
-      .modal-page-end { margin-left: -16px; margin-right: -16px; }
+      .modal-next-reveal__bg::after { display: none; }
       .modal-page-end .page-links__client { display: inline; }
     }
 
@@ -1902,11 +1902,14 @@
       const linksHTML = buildLinkCards(p.links);
       const panel = document.createElement('div');
       panel.classList.add('js-nav-panel');
+      const isTabletPlus = window.innerWidth >= 640;
+      const isDesktopP   = window.innerWidth >= 1024;
       panel.style.cssText =
-        'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
-        'overscroll-behavior:contain;scrollbar-width:none;' +
-        `background:${bg};color:#111;padding:24px 8px;` +
-        "font-family:'DM Sans',sans-serif;transform:translateY(100%);";
+        'position:fixed;top:0;bottom:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
+        'overscroll-behavior:contain;scrollbar-width:none;max-height:95dvh;' +
+        `background:${bg};color:#111;padding:24px ${isDesktopP ? 16 : 8}px;` +
+        (isTabletPlus ? 'left:50%;right:auto;width:100%;max-width:1100px;' : 'left:0;right:0;') +
+        `font-family:'DM Sans',sans-serif;transform:${txPfx()}translateY(100%);`;
       panel.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
@@ -1933,7 +1936,7 @@
           modalEl.style.transition = `transform ${dur}ms ${ease}`;
           modalEl.style.transform  = `${txPfx()}translateY(-108%)`;
           panel.style.transition   = `transform ${dur}ms ${ease}`;
-          panel.style.transform    = 'translateY(0)';
+          panel.style.transform    = txPfx() + 'translateY(0)';
           setTimeout(() => {
             // Swap real modal content silently behind the covering panel
             fillModalContent(nextKey);
@@ -1965,6 +1968,7 @@
     // === CLOSE MODAL ===
     function closeModal() {
       document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
       _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
       const closeBar = document.getElementById('modalCloseBar');
@@ -2004,6 +2008,7 @@
 
       function doClose() {
         document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+        if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
         _isTransitioning = false;
         closeBar.style.height = '';
         closeBar.classList.remove('is-active');
