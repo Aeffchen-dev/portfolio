@@ -444,13 +444,15 @@
           }),
         });
         const data = await res.json();
+        console.log('[summary] API response:', data);
         const text = data.content?.[0]?.text?.trim();
         if (text) return text;
-      } catch {}
+      } catch(e) { console.warn('[summary] API error:', e); }
     }
-    // Fallback: extract first sentence from content
-    const first = textContent?.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] || '';
-    return first.length > 20 && first.length < 220 ? first : '';
+    // Fallback: first sentence from content
+    const src = textContent || '';
+    const first = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] || '';
+    return first.length > 20 && first.length < 300 ? first : '';
   }
 
   function stripHtml(html) {
@@ -609,10 +611,13 @@
           .map(r => stripHtml(r.text||r.wysiwyg||r.content||''))
           .join(' ')
           || stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim();
-        const summary = await generateSummary(title, category, textContent || excerpt);
         const summaryEl = document.getElementById('articleSummary');
-        summaryEl.textContent = summary || excerpt || '';
-        if (summaryEl.textContent) summaryEl.style.display = '';
+        summaryEl.style.display = ''; // show immediately, populate async
+        summaryEl.textContent = excerpt || '…';
+        generateSummary(title, category, textContent || excerpt).then(s => {
+          if (s) summaryEl.textContent = s;
+          console.log('[summary] final text:', summaryEl.textContent);
+        });
 
         // Share button (native share API)
         const shareBtn = document.getElementById('shareBtn');
