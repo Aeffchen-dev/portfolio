@@ -407,7 +407,7 @@
       color: rgba(0,0,0,.3); margin-bottom: 12px;
     }
     .modal-next-reveal__title {
-      font-size: clamp(28px, 6vw, 64px); font-weight: 700;
+      font-size: clamp(28px, 6vw, 64px); font-weight: 400;
       letter-spacing: -.03em; line-height: .92; color: #111;
     }
 
@@ -442,17 +442,23 @@
     .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-desc { font-size:14px; font-weight:400; line-height:1.3; color:#111; margin-top:0; max-width:500px; }
-    .project-links { margin-top:32px; }
-    .project-link {
-      display:block;
-      font-size:clamp(40px, 8vw, 60px);
-      font-weight:400; line-height:1;
-      text-align:center; text-transform:uppercase; color:#111;
-      border-top:1px solid rgba(0,0,0,.2); padding:0;
-      transition:opacity .4s ease-in-out;
+    .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .modal-link-card {
+      display:flex; align-items:center; gap:12px;
+      padding:10px 12px; background:rgba(0,0,0,.06); border-radius:8px;
+      text-decoration:none; color:inherit; transition:background .2s;
     }
-    .project-link:last-child { border-bottom:1px solid rgba(0,0,0,.2); }
-    .project-link:hover { opacity:.5; }
+    .modal-link-card:hover { background:rgba(0,0,0,.1); }
+    .modal-link-card__thumb {
+      width:44px; height:44px; flex-shrink:0;
+      border-radius:6px; overflow:hidden; background:rgba(0,0,0,.08);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal-link-card__thumb img { width:28px; height:28px; object-fit:contain; display:block; }
+    .modal-link-card__body { flex:1; min-width:0; }
+    .modal-link-card__title { display:block; font-size:14px; font-weight:500; color:#111; line-height:1.3; }
+    .modal-link-card__sub   { display:block; font-size:12px; font-weight:400; color:rgba(0,0,0,.4); margin-top:2px; }
+    .modal-link-card__arrow { color:rgba(0,0,0,.35); flex-shrink:0; display:flex; }
 
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
@@ -487,8 +493,7 @@
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
-      .project-links { margin-top:64px; text-align:center; }
-      .project-link { font-size:clamp(56px, 6vw, 96px); }
+      .project-links { margin-top:32px; }
     }
     /* === MOBILE ONLY === */
     @media (max-width:639px) {
@@ -1640,8 +1645,19 @@
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
-      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l =>
-        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const LINK_ARROW = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l => {
+        const domain = (() => { try { return new URL(l.u).hostname; } catch { return ''; } })();
+        const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
+        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener">
+          <div class="modal-link-card__thumb">${favicon ? `<img src="${favicon}" alt="">` : ''}</div>
+          <div class="modal-link-card__body">
+            <span class="modal-link-card__title">${l.t}</span>
+            ${domain ? `<span class="modal-link-card__sub">${domain}</span>` : ''}
+          </div>
+          <span class="modal-link-card__arrow">${LINK_ARROW}</span>
+        </a>`;
+      }).join('');
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
@@ -1675,7 +1691,6 @@
                 (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` : '') +
               `</div>` +
               `<div class="modal-next-reveal__inner">` +
-                `<p class="modal-next-reveal__label">Up Next</p>` +
                 `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
               `</div>` +
             `</div>`
@@ -1688,7 +1703,6 @@
 
       const revealEl   = pageEnd.querySelector('.modal-next-reveal');
       const bgEl       = revealEl.querySelector('.modal-next-reveal__bg');
-      const labelEl    = revealEl.querySelector('.modal-next-reveal__label');
       const titleEl    = revealEl.querySelector('.modal-next-reveal__title');
       const THRESHOLD  = modalH * 0.72;
       let navigating   = false;
@@ -1699,11 +1713,8 @@
       function applyProgress(h) {
         const p = Math.max(0, Math.min(1, (h - MIN_H) / (THRESHOLD - MIN_H)));
         bgEl.style.opacity = p;
-        // Text: dark #111 → white #fff
         const c = Math.round(17 + (255 - 17) * p);
-        const a = (0.3 + 0.7 * p).toFixed(2);
         titleEl.style.color = `rgb(${c},${c},${c})`;
-        labelEl.style.color  = `rgba(${c},${c},${c},${a})`;
       }
 
       function setH(h, animated) {
@@ -1723,13 +1734,12 @@
 
       revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
-        e.preventDefault(); // take control from the scroll container
         const dy  = dragStartY - e.touches[0].clientY;
         const resistance = dy >= 0 ? 1 : 0.25;
         const newH = Math.max(MIN_H * 0.85, dragStartH + dy * resistance);
         revealEl.style.height = Math.round(newH) + 'px';
         applyProgress(newH);
-      }, { passive: false }); // must be non-passive to call preventDefault
+      }, { passive: true });
 
       revealEl.addEventListener('touchend', () => {
         if (!dragging) return;
@@ -1765,8 +1775,19 @@
         : '';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const linksHTML = (p.links||[]).map(l =>
-        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const _LARR = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+      const linksHTML = (p.links||[]).map(l => {
+        const domain = (() => { try { return new URL(l.u).hostname; } catch { return ''; } })();
+        const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
+        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener">
+          <div class="modal-link-card__thumb">${favicon ? `<img src="${favicon}" alt="">` : ''}</div>
+          <div class="modal-link-card__body">
+            <span class="modal-link-card__title">${l.t}</span>
+            ${domain ? `<span class="modal-link-card__sub">${domain}</span>` : ''}
+          </div>
+          <span class="modal-link-card__arrow">${_LARR}</span>
+        </a>`;
+      }).join('');
       const panel = document.createElement('div');
       panel.style.cssText =
         'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
