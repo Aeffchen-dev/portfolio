@@ -380,7 +380,7 @@
     }
     .modal-page-end .page-links__label:hover,
     .modal-page-end .page-links__all:hover { opacity: .5; }
-    .modal-page-end .page-links__client { margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
+    .modal-page-end .page-links__client { display: none; margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
@@ -412,6 +412,7 @@
       .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 0; }
       .modal-next-reveal__inner { display: none; }
       .modal-page-end { margin-left: -16px; margin-right: -16px; }
+      .modal-page-end .page-links__client { display: inline; }
     }
 
     .hero__title { display:none; }
@@ -1810,7 +1811,8 @@
         (nextP
           ? `<div class="modal-next-reveal">` +
               `<div class="modal-next-reveal__bg">` +
-                (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` : '') +
+                (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
+                 nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
               `</div>` +
               `<div class="modal-next-reveal__inner">` +
                 `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
@@ -1818,7 +1820,8 @@
             `</div>`
           : '');
 
-      document.getElementById('modal-links').insertAdjacentElement('afterend', pageEnd);
+      const detailEl = document.getElementById('modal-links').closest('.project-detail');
+      (detailEl || document.getElementById('modal-links')).insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
 
       if (!nextP) return;
