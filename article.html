@@ -455,8 +455,9 @@
     }
     // Fallback: first sentence from content
     const src = textContent || '';
-    const first = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] || '';
-    return first.length > 20 && first.length < 300 ? first : '';
+    const sentences = src.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
+    const first = sentences.find(s => s.length > 20 && s.length < 300) || '';
+    return first;
   }
 
   function stripHtml(html) {
@@ -610,16 +611,22 @@
         }
 
         // AI-generated one-sentence summary
-        const textContent = flexRows
-          .filter(r => { const l = (r.acf_fc_layout||'').toLowerCase(); return l==='text'||l==='wysiwyg'||l==='paragraph'||l==='copy'; })
-          .map(r => stripHtml(r.text||r.wysiwyg||r.content||''))
-          .join(' ')
-          || stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim();
+        const textContent = [
+          ...flexRows
+            .filter(r => { const l = (r.acf_fc_layout||'').toLowerCase(); return l.includes('text')||l.includes('wysiwyg')||l.includes('paragraph')||l.includes('copy')||l.includes('body'); })
+            .map(r => stripHtml(r.text||r.wysiwyg||r.content||r.body||r.copy||'')),
+          ...Object.entries(acf)
+            .filter(([k,v]) => typeof v==='string' && v.length>60 && !['subtitle','sub_title','tagline','test2'].includes(k))
+            .map(([,v]) => stripHtml(v)),
+          stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim(),
+        ].filter(Boolean).join(' ').trim();
         const summaryEl = document.getElementById('articleSummary');
         summaryEl.style.setProperty('display', 'block');
-        summaryEl.textContent = excerpt || ' ';
+        summaryEl.textContent = excerpt || '';
         generateSummary(title, category, textContent || excerpt || title).then(s => {
-          summaryEl.textContent = s || excerpt || '';
+          const text = s || excerpt || '';
+          if (text) { summaryEl.textContent = text; }
+          else { summaryEl.style.display = 'none'; }
         });
 
         // Share button (native share API)
