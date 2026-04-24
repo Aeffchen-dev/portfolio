@@ -178,10 +178,17 @@
       transition:border-color .4s ease-in-out;
     }
     .btn-about:hover { border-color:#989898; }
+    @keyframes dot-pulse {
+      0%,100% { transform:scale(1); opacity:1; }
+      50%      { transform:scale(1.6); opacity:0.7; }
+    }
     .btn-about__dot {
       width:8px; height:8px; border-radius:50%;
-      background:#acb0ff;
+      background:#FF45F0;
       flex-shrink:0;
+    }
+    .btn-about:hover .btn-about__dot {
+      animation: dot-pulse 0.8s ease-in-out infinite;
     }
 
     /* === WORK LIST === */
@@ -294,7 +301,8 @@
       font-size:9px; font-weight:500; color:#989898;
       margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
     }
-    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#5a5a5a; }
+    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#333333; }
+    a.cv-card:hover .cv-card__arrow { color:#5a5a5a; }
     .article-card__arrow { color:#999999; }
     /* About + Awards card */
     .cv-card--about { display:block; padding:12px 8px; }
@@ -368,8 +376,8 @@
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
     .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:16px; height:60px; padding-left:16px; position:relative; }
-    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.13; z-index:0; pointer-events:none; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
+    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
     .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
     .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
@@ -671,9 +679,9 @@
       .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
       .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
-      .footer-bottom      { position:relative; margin-top:150px; z-index:0; pointer-events:none; }
-      .footer-name        { margin-bottom:-118px; }
-      .footer-logo        { top:8px; left:0; pointer-events:auto; cursor:pointer; }
+      .footer-bottom      { position:relative; margin-top:100px; z-index:0; pointer-events:none; }
+      .footer-name        { margin-bottom:-79px; }
+      .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
       .footer-grid        { position:relative; z-index:1; }
       .footer-legal       { position:relative; z-index:1; margin-top:auto; background:#141414; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */

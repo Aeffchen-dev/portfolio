@@ -120,6 +120,11 @@
       margin-top:16px;
     }
 
+    .hero__cover-img {
+      border-radius:8px; object-fit:cover; display:none;
+      flex-shrink:0; margin-bottom:8px;
+    }
+
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
       display:flex; justify-content:space-between; align-items:center;
@@ -193,7 +198,7 @@
       display:flex; gap:8px; overflow-x:visible; margin:0 8px;
     }
     .article-card {
-      flex-shrink:0; width:300px; scroll-snap-align:start;
+      flex-shrink:0; width:324px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
       padding:8px; background:#141414; border-radius:4px;
       text-decoration:none; color:inherit;
@@ -201,13 +206,14 @@
     }
     .article-card:hover { background:rgba(255,255,255,0.1); }
     .article-card__thumb {
-      width:107px; height:60px; flex-shrink:0;
+      width:60px; height:60px; flex-shrink:0;
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
     .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; padding-left:12px; }
-    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
-    .article-card__label { font-size:9px; font-weight:500; color:#989898; margin-top:auto; text-transform:uppercase; letter-spacing:0.48px; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
+    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
 
     /* === GLOBAL ARROWS === */
@@ -278,6 +284,7 @@
       <div class="article-hero">
         <div class="hero-top">
           <div class="hero-main">
+            <img id="articleCoverImg" class="hero__cover-img" alt="">
             <h1 class="hero__title" id="articleTitle"></h1>
             <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
             <p class="hero__summary" id="articleSummary" style="display:none"></p>
@@ -427,6 +434,17 @@
   // === ARTICLE FETCH ===
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
 
+  const ARTICLE_COVERS = {
+    'building-a-multi-brand-designsystem':        'images/article-covers/multi-brand-design-system.png',
+    'app-vs-web':                                  'images/article-covers/app-vs-web.png',
+    '688-2':                                       'images/article-covers/analytical-mindset.png',
+    'refinement-ready-checklist':                  'images/article-covers/definition-of-done.png',
+    'website-analysis-how-to':                     'images/article-covers/website-analysis.png',
+    'above-the-fold':                              'images/article-covers/above-the-fold.png',
+    'animation-in-ux':                             'images/article-covers/animation-in-ux.png',
+    'image-and-video-preparation-for-the-web':     'images/article-covers/asset-preparation.png',
+  };
+
   function cleanSummary(s) {
     return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
   }
@@ -575,7 +593,21 @@
           ? title.toLowerCase().replace(/(^|[\s\-–—])\S/g, c => c.toUpperCase())
           : title;
         document.title = displayTitle + ' — Jana Gramlich';
-        document.getElementById('articleTitle').textContent = displayTitle;
+        const titleEl = document.getElementById('articleTitle');
+        titleEl.textContent = displayTitle;
+
+        // Cover image in header — 16px above headline, 20% less wide than headline
+        const coverSrc = ARTICLE_COVERS[post.slug || slug || ''] || '';
+        if (coverSrc) {
+          const coverImg = document.getElementById('articleCoverImg');
+          coverImg.src = coverSrc;
+          coverImg.style.display = 'block';
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            const w = Math.round(titleEl.getBoundingClientRect().width * 0.8);
+            coverImg.style.width  = w + 'px';
+            coverImg.style.height = w + 'px';
+          }));
+        }
 
         // Subtitle from ACF subtitle field
         const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
@@ -650,17 +682,19 @@
 
     const cards = await Promise.all(articles.map(async post => {
       const title  = stripHtml(post.title?.rendered || 'Untitled');
-      const slug   = post.slug || '';
+      const postSlug = post.slug || '';
       const acf    = post.acf || {};
       const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
       const imgObj = imgRow?.image || imgRow?.img;
-      const img    = (typeof imgObj === 'object' ? (imgObj.sizes?.medium_large || imgObj.sizes?.thumbnail || imgObj.url || '') : (imgObj || ''))
+      const cmsImg = (typeof imgObj === 'object' ? (imgObj.sizes?.medium_large || imgObj.sizes?.thumbnail || imgObj.url || '') : (imgObj || ''))
                   || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-      return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
+      const img = ARTICLE_COVERS[postSlug] || cmsImg || '';
+      return `<a class="article-card" href="article.html?slug=${encodeURIComponent(postSlug)}">
         <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
         <div class="article-card__body">
+          ${img ? `<div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>` : ''}
           <p class="article-card__title">${title}</p>
-          <span class="article-card__label">Story</span>
+          <span class="article-card__label">Deep Dive</span>
         </div>
         <span class="article-card__arrow">${ARROW_SVG}</span>
       </a>`;
