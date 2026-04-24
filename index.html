@@ -101,7 +101,7 @@
     .nav__menu:active { transform:scale(0.9); }
     .nav__link:active { opacity:0.5 !important; transform:translateY(0) !important; }
     .nav__linkedin { transition:opacity .2s ease, transform .2s cubic-bezier(.4,0,.2,1); }
-    .nav__linkedin:hover { opacity:0.8; }
+    .nav__linkedin:hover { opacity:0.8; color:#171717; }
     .nav__linkedin:active { transform:scale(0.95); }
     .modal-open #mainNav { pointer-events:none; }
     .nav__expand {
@@ -190,7 +190,7 @@
     #about { scroll-margin-top:57px; }
     .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; padding-bottom:8px; }
     .section-label__prefix { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
-    .section-label__links { display:flex; gap:20px; flex-wrap:nowrap; }
+    .section-label__links { display:flex; gap:24px; flex-wrap:nowrap; }
     .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
     @media (hover:hover) { .section-label__link:hover { color:#fff; } }
     .section-label__link[href="mailto:hello@janagramlich.com"] { display:none; }
@@ -294,7 +294,8 @@
       font-size:9px; font-weight:500; color:#989898;
       margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
     }
-    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#989898; }
+    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#5a5a5a; }
+    .article-card__arrow { color:#999999; }
     /* About + Awards card */
     .cv-card--about { display:block; padding:12px 8px; }
     .cv-about__section-label { font-size:14px; font-weight:500; color:#fff; margin:0 0 4px; }
@@ -336,7 +337,7 @@
     .footer-bottom { position:relative; margin-top:auto; z-index:0; }
     .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
     .footer-name {
-      font-size:100vw; font-weight:700; line-height:0.85;
+      font-size:100vw; font-weight:500; line-height:0.85;
       letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
       white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
     }
@@ -348,13 +349,14 @@
     /* === ARTICLES SECTION === */
     #articles { scroll-margin-top:57px; }
     .articles-section { margin-top:24px; margin-bottom:64px; }
+    .articles-section__label { font-size:14px; font-weight:500; color:#fff; margin:16px 0 8px; padding-left:8px; }
     .articles-slider {
       display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
       scrollbar-width:none; padding-bottom:1px;
     }
     .articles-slider::-webkit-scrollbar { display:none; }
     .article-card {
-      flex-shrink:0; width:300px; scroll-snap-align:start;
+      flex-shrink:0; width:324px; scroll-snap-align:start;
       display:flex; flex-direction:row; align-items:stretch; gap:0;
       padding:8px; background:#141414; border-radius:4px;
       text-decoration:none; color:inherit;
@@ -362,15 +364,98 @@
     }
     .article-card:hover { background:rgba(255,255,255,0.1); }
     .article-card__thumb {
-      width:107px; height:60px; flex-shrink:0;
+      width:60px; height:60px; flex-shrink:0;
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
     .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; padding-left:12px; }
-    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
-    .article-card__label { font-size:9px; font-weight:500; color:#989898; margin-top:auto; text-transform:uppercase; letter-spacing:0.48px; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:16px; height:60px; padding-left:16px; position:relative; }
+    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.13; z-index:0; pointer-events:none; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    /* J — high wide arc, big tilt */
+    @keyframes jana-J {
+      0%   { transform: translate(0,       0px) rotate(  0deg); opacity:1; }
+      5%   { transform: translate(1.5vw,  -8px) rotate(  4deg); opacity:1; }
+      12%  { transform: translate(4vw,   -42px) rotate( 10deg); opacity:1; }
+      22%  { transform: translate(5vw,   -96px) rotate( 15deg); opacity:1; }
+      31%  { transform: translate(3vw,  -128px) rotate(  7deg); opacity:1; }
+      40%  { transform: translate(-4vw, -118px) rotate( -8deg); opacity:1; }
+      50%  { transform: translate(-22vw, -82px) rotate(-20deg); opacity:1; }
+      60%  { transform: translate(-58vw, -22px) rotate(-30deg); opacity:1; }
+      67%  { transform: translate(-115vw, 14px) rotate(-36deg); opacity:0; }
+      68%  { transform: translate( 115vw, 14px) rotate(-36deg); opacity:0; }
+      76%  { transform: translate(  62vw, -20px) rotate(-22deg); opacity:1; }
+      85%  { transform: translate(  12vw, -32px) rotate(  7deg); opacity:1; }
+      93%  { transform: translate(   2vw, -10px) rotate(  2deg); opacity:1; }
+      97%  { transform: translate(  -1vw,  -2px) rotate( -1deg); opacity:1; }
+      100% { transform: translate(0,       0px) rotate(  0deg); opacity:1; }
+    }
+    /* A (1st) — mid height, left-leaning exit */
+    @keyframes jana-A1 {
+      0%   { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+      5%   { transform: translate(1vw,   -5px) rotate(  3deg); opacity:1; }
+      13%  { transform: translate(3vw,  -30px) rotate(  8deg); opacity:1; }
+      23%  { transform: translate(3.5vw,-72px) rotate( 11deg); opacity:1; }
+      33%  { transform: translate(1.5vw,-98px) rotate(  3deg); opacity:1; }
+      42%  { transform: translate(-6vw, -88px) rotate(-11deg); opacity:1; }
+      53%  { transform: translate(-28vw,-52px) rotate(-23deg); opacity:1; }
+      62%  { transform: translate(-68vw,-10px) rotate(-31deg); opacity:1; }
+      69%  { transform: translate(-118vw,10px) rotate(-35deg); opacity:0; }
+      70%  { transform: translate( 118vw,10px) rotate(-35deg); opacity:0; }
+      78%  { transform: translate(  55vw,-16px) rotate(-19deg); opacity:1; }
+      87%  { transform: translate(  10vw,-24px) rotate(  6deg); opacity:1; }
+      94%  { transform: translate(   2vw, -7px) rotate(  2deg); opacity:1; }
+      98%  { transform: translate(  -0.5vw,-1px) rotate(-0.5deg); opacity:1; }
+      100% { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+    }
+    /* N — shallower arc, faster to left */
+    @keyframes jana-N {
+      0%   { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+      6%   { transform: translate(0.8vw, -4px) rotate(  2.5deg); opacity:1; }
+      14%  { transform: translate(2.5vw,-22px) rotate(  7deg); opacity:1; }
+      24%  { transform: translate(3vw,  -58px) rotate(  9deg); opacity:1; }
+      34%  { transform: translate(1vw,  -80px) rotate(  2deg); opacity:1; }
+      43%  { transform: translate(-8vw, -72px) rotate(-13deg); opacity:1; }
+      54%  { transform: translate(-32vw,-40px) rotate(-22deg); opacity:1; }
+      63%  { transform: translate(-74vw, -6px) rotate(-29deg); opacity:1; }
+      70%  { transform: translate(-122vw, 8px) rotate(-33deg); opacity:0; }
+      71%  { transform: translate( 122vw, 8px) rotate(-33deg); opacity:0; }
+      79%  { transform: translate(  50vw,-12px) rotate(-17deg); opacity:1; }
+      88%  { transform: translate(   8vw,-20px) rotate(  5deg); opacity:1; }
+      95%  { transform: translate(   1.5vw,-6px) rotate( 1.5deg); opacity:1; }
+      98%  { transform: translate(  -0.5vw,-1px) rotate(-0.5deg); opacity:1; }
+      100% { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+    }
+    /* A (2nd/last) — lowest tightest curve, trails in gently */
+    @keyframes jana-A2 {
+      0%   { transform: translate(0,     0px) rotate(  0deg); opacity:1; }
+      6%   { transform: translate(0.5vw,-2px) rotate(  2deg); opacity:1; }
+      15%  { transform: translate(2vw, -14px) rotate(  5deg); opacity:1; }
+      25%  { transform: translate(2.5vw,-44px) rotate(  8deg); opacity:1; }
+      35%  { transform: translate(0.5vw,-62px) rotate(  1deg); opacity:1; }
+      44%  { transform: translate(-10vw,-54px) rotate(-14deg); opacity:1; }
+      55%  { transform: translate(-36vw,-28px) rotate(-21deg); opacity:1; }
+      64%  { transform: translate(-78vw, -4px) rotate(-27deg); opacity:1; }
+      71%  { transform: translate(-124vw, 6px) rotate(-31deg); opacity:0; }
+      72%  { transform: translate( 124vw, 6px) rotate(-31deg); opacity:0; }
+      80%  { transform: translate(  46vw,-10px) rotate(-15deg); opacity:1; }
+      89%  { transform: translate(   6vw,-16px) rotate(  4deg); opacity:1; }
+      96%  { transform: translate(   1vw, -5px) rotate(  1deg); opacity:1; }
+      99%  { transform: translate(  -0.5vw,-1px) rotate(-0.3deg); opacity:1; }
+      100% { transform: translate(0,     0px) rotate(  0deg); opacity:1; }
+    }
+    .footer-name span { display:inline-block; }
+    .footer-name.jana-animate span {
+      animation-duration: 3.4s;
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      animation-fill-mode: forwards;
+    }
+    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay:   0ms; }
+    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 300ms; }
+    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 600ms; }
+    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 900ms; }
     .article-card--skeleton {
       pointer-events:none; cursor:default; height:76px;
       background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
@@ -576,17 +661,19 @@
       .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
-      .about-quotes-row   { display:flex; flex-direction:column; }
+      .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
+      .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
       .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:8px; padding-right:8px; }
       .cta-footer-box     { order:12; display:flex; flex-direction:column; min-height:100svh; }
-      .cta-section        { padding-left:8px; padding-right:8px; margin-top:80px; padding-top:0; padding-bottom:80px; }
+      .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
       .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
-      .footer-bottom      { position:relative; margin-top:64px; z-index:0; pointer-events:none; }
-      .footer-logo        { top:0; left:0; }
+      .footer-bottom      { position:relative; margin-top:150px; z-index:0; pointer-events:none; }
+      .footer-name        { margin-bottom:-118px; }
+      .footer-logo        { top:8px; left:0; pointer-events:auto; cursor:pointer; }
       .footer-grid        { position:relative; z-index:1; }
       .footer-legal       { position:relative; z-index:1; margin-top:auto; background:#141414; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
@@ -636,7 +723,7 @@
       .work-list .work-item:nth-child(4) { order:8; margin-right:8px; }  /* The Makery 2019 — right col */
       /* Experience full-width; about+quotes side by side below */
       .exp-quotes-row  { display:contents; }
-      .articles-section { grid-column:1/3; order:9; margin-top:8px; }
+      .articles-section { grid-column:1/3; order:12; margin-top:8px; }
       .cv-section-wrap { grid-column:1/3; order:10; padding-left:8px; padding-right:8px; }
       .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
       .about-quotes-row { grid-column:1/3; order:11; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; padding-left:8px; padding-right:8px; }
@@ -773,7 +860,7 @@
       <div class="section-label__links">
         <a href="#about" class="section-label__link">About <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="archive.html" class="section-label__link">Archive <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="#articles" class="section-label__link">Story <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#articles" class="section-label__link">Articles <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
         <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
       </div>
     </div>
@@ -867,6 +954,7 @@
 
     <!-- ARTICLES SECTION -->
     <section class="articles-section" id="articles">
+      <p class="articles-section__label" id="articlesLabel">Articles</p>
       <div class="articles-slider" id="articlesSlider">
         <div class="article-card article-card--skeleton"></div>
         <div class="article-card article-card--skeleton"></div>
@@ -1073,7 +1161,7 @@
         </div>
         <div class="footer-bottom">
           <img src="images/logo.svg" alt="Logo" class="footer-logo">
-          <p class="footer-name">Jana</p>
+          <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span></p>
         </div>
         <div class="footer-legal">
           <a href="imprint.html">Imprint</a>
@@ -1416,7 +1504,7 @@
       const iconPlay     = document.getElementById('cv-icon-play');
       const ringWrap     = document.querySelector('.cv-quotes__ring-wrap');
       const CIRC         = 56.55; // 2π × r(9)
-      const QUOTE_MS     = 6000;
+      const QUOTE_MS     = 10000;
       let   qIndex       = 0;
       let   qStart       = null;
       let   qRafId       = null;
@@ -2306,27 +2394,57 @@
         return [];
       }
 
+      // Local cover images stored in /images/article-covers/ — keyed by article slug
+      const ARTICLE_COVERS = {
+        'building-a-multi-brand-designsystem':        'images/article-covers/multi-brand-design-system.png',
+        'app-vs-web':                                  'images/article-covers/app-vs-web.png',
+        '688-2':                                       'images/article-covers/analytical-mindset.png',
+        'refinement-ready-checklist':                  'images/article-covers/definition-of-done.png',
+        'website-analysis-how-to':                     'images/article-covers/website-analysis.png',
+        'above-the-fold':                              'images/article-covers/above-the-fold.png',
+        'animation-in-ux':                             'images/article-covers/animation-in-ux.png',
+        'image-and-video-preparation-for-the-web':     'images/article-covers/asset-preparation.png',
+      };
+
       fetchArticles().then(async posts => {
         if (!posts.length) { slider.innerHTML = ''; return; }
-        const cards = await Promise.all(posts.slice(0, 8).map(async post => {
+        const shown = posts.slice(0, 8);
+        const label = document.getElementById('articlesLabel');
+        if (label) label.textContent = `Articles (${shown.length})`;
+        const cards = await Promise.all(shown.map(async post => {
           const title = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent : 'Untitled';
           const slug = post.slug || '';
           const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
           const acf = post.acf || {};
           const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
-          const img = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          const cmsImg = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          const img = ARTICLE_COVERS[slug] || cmsImg || '';
           const ARROW = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
           return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
             <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
             <div class="article-card__body">
+              ${img ? `<div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>` : ''}
               <p class="article-card__title">${title}</p>
-              <span class="article-card__label">Story</span>
+              <span class="article-card__label">Deep Dive</span>
             </div>
             <span class="article-card__arrow">${ARROW}</span>
           </a>`;
         }));
         slider.innerHTML = cards.join('');
       }).catch(() => { slider.innerHTML = ''; });
+    })();
+
+    // === JANA LOGO CLICK ANIMATION ===
+    (() => {
+      const logo = document.querySelector('.footer-logo');
+      const jana = document.querySelector('.footer-name');
+      if (!logo || !jana) return;
+      logo.addEventListener('click', () => {
+        if (jana.classList.contains('jana-animate')) return;
+        jana.classList.add('jana-animate');
+        const lastSpan = jana.querySelector('span:last-child') || jana;
+        lastSpan.addEventListener('animationend', () => jana.classList.remove('jana-animate'), { once: true });
+      });
     })();
 
     // === TILE PARALLAX ===
