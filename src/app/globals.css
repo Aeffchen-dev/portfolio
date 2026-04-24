@@ -14,6 +14,39 @@
   --color-accent: #f0f0f0;
 }
 
+/* ─── Bottom sheet: staggered entry animations ─── */
+
+@keyframes sheetItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Each stagger slot: fill-mode forwards so opacity stays at 1 */
+.sheet-stagger-1 {
+  animation: sheetItemIn 0.52s cubic-bezier(0, 0, 0.2, 1) 0.06s both;
+}
+.sheet-stagger-2 {
+  animation: sheetItemIn 0.52s cubic-bezier(0, 0, 0.2, 1) 0.14s both;
+}
+.sheet-stagger-3 {
+  animation: sheetItemIn 0.52s cubic-bezier(0, 0, 0.2, 1) 0.22s both;
+}
+.sheet-stagger-4 {
+  animation: sheetItemIn 0.52s cubic-bezier(0, 0, 0.2, 1) 0.30s both;
+}
+.sheet-stagger-5 {
+  animation: sheetItemIn 0.52s cubic-bezier(0, 0, 0.2, 1) 0.38s both;
+}
+.sheet-stagger-6 {
+  animation: sheetItemIn 0.62s cubic-bezier(0, 0, 0.2, 1) 0.46s both;
+}
+
 *,
 *::before,
 *::after {
