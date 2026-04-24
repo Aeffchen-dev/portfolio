@@ -198,6 +198,23 @@
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 32px;
     }
+    .next-project__bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: 0; opacity: 0.2;
+    }
+    .next-project__video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: 1; opacity: 0.2;
+      display: none;
+    }
+    .next-project__video[src]:not([src=""]) { display: block; }
+    .next-project__overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.15) 55%, transparent 100%);
+    }
+    .next-project__label,
+    .next-project__title,
+    .next-project__sub { position: relative; z-index: 3; }
     .next-project__label {
       font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
       color: rgba(255,255,255,.3); margin-bottom: 12px;
@@ -374,8 +391,11 @@
   </div>
 
   <!-- NEXT PROJECT (scroll-height reveal) -->
-  <section class="next-project" id="nextProject" data-href="#">
+  <section class="next-project" id="nextProject" data-href="#" data-img="" data-video="">
     <div class="next-project__inner">
+      <img class="next-project__bg" src="" alt="">
+      <video class="next-project__video" autoplay muted loop playsinline src=""></video>
+      <div class="next-project__overlay"></div>
       <p class="next-project__label">Up Next</p>
       <h2 class="next-project__title">Motion Design<br>Language</h2>
       <p class="next-project__sub">Defining the motion vocabulary across Douglas digital products</p>
@@ -473,6 +493,12 @@
     const section = document.getElementById('nextProject');
     if (!section) return;
     const href = section.dataset.href;
+
+    // Populate bg image + video from data attributes
+    const bgImg = section.querySelector('.next-project__bg');
+    const bgVid = section.querySelector('.next-project__video');
+    if (bgImg && section.dataset.img) bgImg.src = section.dataset.img;
+    if (bgVid && section.dataset.video) bgVid.src = section.dataset.video;
     const vh   = window.innerHeight;
     const MIN_H = Math.round(vh * 0.38);
 
@@ -492,6 +518,9 @@
       const progress = Math.max(0, Math.min(1, (scrollY - (sectionTop - vh)) / vh));
       const h = MIN_H + (vh - MIN_H) * progress;
       section.style.height = Math.round(h) + 'px';
+      const imgOpacity = 0.2 + 0.8 * progress;
+      if (bgImg) bgImg.style.opacity = imgOpacity;
+      if (bgVid) bgVid.style.opacity = imgOpacity;
 
       if (progress >= 0.98 && !navigating && href && href !== '#') {
         navigating = true;
