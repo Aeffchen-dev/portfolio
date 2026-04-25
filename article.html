@@ -121,7 +121,7 @@
     }
 
     .hero__cover-img {
-      border-radius:8px; object-fit:cover; display:none;
+      width:80px; height:80px; border-radius:32px; object-fit:cover; display:none;
       flex-shrink:0; margin-bottom:8px;
     }
 
@@ -602,11 +602,6 @@
           const coverImg = document.getElementById('articleCoverImg');
           coverImg.src = coverSrc;
           coverImg.style.display = 'block';
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            const w = Math.round(titleEl.getBoundingClientRect().width * 0.8);
-            coverImg.style.width  = w + 'px';
-            coverImg.style.height = w + 'px';
-          }));
         }
 
         // Subtitle from ACF subtitle field
