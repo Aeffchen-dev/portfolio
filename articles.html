@@ -11,7 +11,9 @@
   <meta property="og:title" content="Jana Gramlich • Articles">
   <meta property="og:description" content="Writing and editorial work by Jana Gramlich, product designer based in Berlin.">
   <meta property="og:url" content="https://portfolio.janagramlich.com/articles.html">
-  <link rel="icon" id="favicon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -153,36 +155,31 @@
       letter-spacing:0.48px; text-transform:uppercase;
     }
 
-    /* === CV CARD (articles) === */
+    /* === CV CARD (articles — matches home CV row layout) === */
     .cv-card {
-      display:flex; align-items:flex-start; gap:16px;
-      padding:8px; background:#141414;
-      border-radius:4px; margin-bottom:8px;
+      display:flex; flex-direction:row; align-items:center; gap:0;
+      padding:12px; background:#141414;
+      border-radius:8px; margin-bottom:8px;
       text-decoration:none; color:inherit;
       transition:background .4s ease-in-out;
     }
-    .cv-card:hover { background:rgba(255,255,255,0.08); }
+    .cv-card:hover { background:rgba(255,255,255,0.1); }
+    /* thumbnail: same 60×60 dimensions as CV company logo */
     .cv-card__thumb {
-      width:60px; height:60px;
-      border-radius:2px; flex-shrink:0;
-      overflow:hidden; background:#1a1a1a;
+      width:60px; height:60px; flex-shrink:0;
+      border-radius:6px; overflow:hidden; background:#1a1a1a;
     }
     .cv-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .cv-card__thumb-placeholder {
-      width:100%; height:100%;
-      background:linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      width:60px; height:60px;
+      background:linear-gradient(135deg,#1e1e1e 0%,#2a2a2a 100%);
+      border-radius:6px; flex-shrink:0;
     }
-    .cv-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; }
-    .cv-card__title {
-      font-size:14px; font-weight:500; color:#fff; line-height:1.3;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .cv-card__category { font-size:14px; font-weight:400; color:#989898; margin-top:1px; }
-    .cv-card__date {
-      font-size:9px; font-weight:500; color:#989898;
-      margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
-    }
-    .cv-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; line-height:1; display:flex; align-self:center; }
+    .cv-card__body { flex:1; min-width:0; display:flex; flex-direction:row; align-items:center; gap:12px; padding-left:12px; }
+    .cv-card__meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .cv-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
+    .cv-card__category { font-size:14px; font-weight:400; color:#989898; }
+    .cv-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; display:flex; }
 
     /* === SKELETON === */
     .cv-card--skeleton { pointer-events:none; }
@@ -193,12 +190,11 @@
       border-radius:2px;
     }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    .sk-thumb { width:60px; height:60px; border-radius:2px; flex-shrink:0; }
-    .sk-body { flex:1; display:flex; flex-direction:column; gap:6px; height:60px; }
+    .sk-thumb { width:60px; height:60px; flex-shrink:0; border-radius:6px; }
+    .sk-body { flex:1; display:flex; flex-direction:column; gap:6px; padding-left:12px; }
     .sk-line { height:12px; border-radius:2px; }
     .sk-line--title { width:65%; }
     .sk-line--cat   { width:35%; }
-    .sk-line--date  { width:20%; margin-top:auto; }
 
     /* === EMPTY STATE === */
     .articles-empty {
@@ -215,6 +211,98 @@
     }
     .articles-footer a { color:#fff; transition:opacity .4s ease-in-out; }
     .articles-footer a:hover { opacity:.5; }
+
+    /* cv-card as clickable div */
+    .cv-card { cursor:pointer; }
+
+    /* === ARTICLE SHEET === */
+    .art-backdrop {
+      position:fixed; inset:0; z-index:199;
+      background:transparent; pointer-events:none;
+      transition:background .5s cubic-bezier(.4,0,.2,1);
+    }
+    .art-backdrop.is-active { background:rgba(0,0,0,0.6); pointer-events:auto; }
+
+    .art-sheet {
+      position:fixed; bottom:0; left:0;
+      width:100vw; max-height:100dvh;
+      border-radius:16px 16px 0 0; overflow:hidden;
+      z-index:200;
+      transform:translateY(100%);
+      transition:transform .5s cubic-bezier(.4,0,.2,1);
+      pointer-events:none;
+    }
+    .art-sheet.is-open { transform:translateY(0); pointer-events:auto; }
+
+    .art-sheet__scroll {
+      max-height:100dvh; overflow-y:auto; overflow-x:hidden;
+      overscroll-behavior:contain; background:#0D0D0D; color:#fff;
+      scrollbar-width:none;
+    }
+    .art-sheet__scroll::-webkit-scrollbar { display:none; }
+
+    /* Hero — 100dvh split into two 50dvh halves */
+    .art-sheet__hero {
+      height:100dvh; display:flex; flex-direction:column; overflow:hidden;
+    }
+
+    /* Top 50dvh — BACK + date + title */
+    .art-hero__top {
+      height:50dvh; flex-shrink:0;
+      display:flex; flex-direction:column;
+      padding:16px 16px 24px;
+      background:#0D0D0D;
+    }
+    .art-back-btn {
+      font-size:11px; font-weight:500; color:#989898;
+      letter-spacing:0.48px; text-transform:uppercase;
+      display:inline-flex; align-items:center; gap:5px;
+      background:none; border:none; cursor:pointer;
+      font-family:inherit; padding:0; flex-shrink:0;
+      transition:color .3s ease-in-out;
+    }
+    .art-back-btn:hover { color:#fff; }
+    .art-hero__meta { margin-top:auto; }
+    .art-hero__date {
+      font-size:11px; font-weight:500; color:#989898;
+      letter-spacing:0.48px; text-transform:none;
+      margin-top:8px;
+    }
+    .art-hero__title {
+      font-size:clamp(22px,5vw,48px); font-weight:500;
+      color:#fff; line-height:1.05; letter-spacing:-0.02em;
+      text-transform:uppercase;
+    }
+
+    /* Bottom 50dvh — image ×2 at 60vw, centered */
+    .art-hero__img-wrap {
+      height:50dvh; flex-shrink:0;
+      display:flex; justify-content:center; align-items:flex-end;
+      background:#0D0D0D; overflow:hidden;
+    }
+    .art-hero__img {
+      width:60vw; height:50dvh;
+      object-fit:cover; object-position:center bottom;
+      display:block; flex-shrink:0;
+    }
+    .art-hero__img--portrait { display:block; }
+    .art-hero__img--landscape { display:none; }
+    @media (orientation:landscape) {
+      .art-hero__img--portrait { display:none; }
+      .art-hero__img--landscape { display:block; }
+    }
+
+    /* Content below hero */
+    .art-sheet__content { padding:40px 16px 64px; max-width:640px; margin:0 auto; }
+    .art-content-loading { padding:40px 16px; color:rgba(255,255,255,.4); font-size:14px; text-align:center; }
+    .art-block { margin-bottom:48px; }
+    .art-block img { width:100%; height:auto; display:block; border-radius:2px; }
+    .art-block-text { font-size:15px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
+    .art-block-text p { margin-bottom:16px; }
+    .art-block-text p:last-child { margin-bottom:0; }
+    .art-block-text h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
+    .art-block-text h3 { font-size:clamp(15px,1.8vw,20px); font-weight:500; color:#fff; margin:20px 0 8px; }
+    .art-block-text a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
   </style>
 </head>
 <body>
@@ -233,7 +321,7 @@
           <a href="index.html#work" class="nav__link">Work</a>
           <a href="index.html#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link is-current">Articles</a>
+          <a href="index.html#articles" class="nav__link">Articles</a>
         </div>
         <div class="nav__divider"></div>
         <div class="nav__contact">
@@ -259,7 +347,6 @@
         <div class="sk-body">
           <div class="sk-line sk-line--title skeleton-block"></div>
           <div class="sk-line sk-line--cat skeleton-block"></div>
-          <div class="sk-line sk-line--date skeleton-block"></div>
         </div>
       </div>
       <div class="cv-card cv-card--skeleton">
@@ -267,7 +354,6 @@
         <div class="sk-body">
           <div class="sk-line sk-line--title skeleton-block"></div>
           <div class="sk-line sk-line--cat skeleton-block"></div>
-          <div class="sk-line sk-line--date skeleton-block"></div>
         </div>
       </div>
       <div class="cv-card cv-card--skeleton">
@@ -275,7 +361,6 @@
         <div class="sk-body">
           <div class="sk-line sk-line--title skeleton-block"></div>
           <div class="sk-line sk-line--cat skeleton-block"></div>
-          <div class="sk-line sk-line--date skeleton-block"></div>
         </div>
       </div>
     </div>
@@ -285,6 +370,36 @@
       <a href="imprint.html">Imprint</a>
     </footer>
 
+  </div>
+</div>
+
+<!-- ARTICLE BOTTOM SHEET -->
+<div class="art-backdrop" id="artBackdrop"></div>
+
+<div class="art-sheet" id="artSheet">
+  <div class="art-sheet__scroll" id="artSheetScroll">
+    <div class="art-sheet__hero">
+
+      <!-- Top 50dvh: BACK · date · title -->
+      <div class="art-hero__top">
+        <button class="art-back-btn" id="artBackBtn" type="button">
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(180deg)"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>
+          Back
+        </button>
+        <div class="art-hero__meta">
+          <h2 class="art-hero__title" id="artHeroTitle"></h2>
+          <p class="art-hero__date" id="artHeroDate"></p>
+        </div>
+      </div>
+
+      <!-- Bottom 50dvh: first image ×2, 60vw centered -->
+      <div class="art-hero__img-wrap">
+        <img class="art-hero__img art-hero__img--portrait"  id="artHeroImgPortrait"  src="" alt="" style="display:none">
+        <img class="art-hero__img art-hero__img--landscape" id="artHeroImgLandscape" src="" alt="" style="display:none">
+      </div>
+
+    </div>
+    <div class="art-sheet__content" id="artSheetContent"></div>
   </div>
 </div>
 
@@ -378,12 +493,27 @@
     return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
   }
 
-  function buildCard(post) {
+  async function resolveImgUrl(img) {
+    if (!img) return '';
+    if (typeof img === 'object') return img.url || img.source_url || '';
+    const id = parseInt(img, 10);
+    if (!id) return typeof img === 'string' ? img : '';
+    try {
+      const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(5000) });
+      if (r.ok) return (await r.json()).source_url || '';
+    } catch(e) {}
+    return '';
+  }
+
+  async function buildCard(post) {
     const title    = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered,'text/html').body.textContent : 'Untitled';
     const slug     = post.slug || '';
     const date     = formatDate(post.date);
     const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-    const thumb    = post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail?.source_url
+    const acf      = post.acf || {};
+    const imgRow   = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+    // Prefer first ACF image (same as article hero) over WP featured media
+    const thumb    = await resolveImgUrl(imgRow?.img || imgRow?.image)
                   || post._embedded?.['wp:featuredmedia']?.[0]?.source_url
                   || '';
 
@@ -391,37 +521,248 @@
       ? `<img src="${thumb}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">`
       : `<div class="cv-card__thumb-placeholder"></div>`;
 
-    return `<a class="cv-card" href="article.html?slug=${encodeURIComponent(slug)}">
+    return `<div class="cv-card" data-slug="${encodeURIComponent(slug)}" data-title="${title.replace(/"/g,'&quot;')}" data-date="${date}" data-thumb="${thumb.replace(/"/g,'&quot;')}" role="button" tabindex="0">
   <div class="cv-card__thumb">${thumbHtml}</div>
   <div class="cv-card__body">
-    <p class="cv-card__title">${title}</p>
-    ${category ? `<p class="cv-card__category">${category}</p>` : ''}
-    <p class="cv-card__date">${date}</p>
+    <div class="cv-card__meta">
+      <p class="cv-card__title">${title}</p>
+      ${category ? `<p class="cv-card__category">${category}</p>` : ''}
+    </div>
+    <span class="cv-card__arrow">${ARROW_SVG}</span>
   </div>
-  <span class="cv-card__arrow">${ARROW_SVG}</span>
-</a>`;
+</div>`;
   }
 
-  fetch(`${API}/posts?per_page=20&_embed=true&acf_format=standard`)
-    .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    })
-    .then(posts => {
-      const list  = document.getElementById('articleList');
-      const count = document.getElementById('articleCount');
-      if (!Array.isArray(posts)) throw new Error('Unexpected response');
-      if (posts.length === 0) {
-        list.innerHTML = '<div class="articles-empty">No articles yet.</div>';
-        return;
+  async function fetchArticleList() {
+    const LIST_FIELDS = 'id,title,date,slug,acf,_links';
+    // Priority order: dedicated CPT names first, then any other discovered CPT, posts as last resort
+    const bases = ['articles', 'article'];
+    try {
+      const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+      if (idx?.routes) {
+        const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
+          'tags','categories','users','comments','settings','themes','plugins','blocks',
+          'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+          'menu-items','menu-locations','templates','template-parts','global-styles',
+          'navigation','font-families','font-collections','pattern-directory',
+          'block-types','block-patterns','block-pattern-categories','projects','project']);
+        const others = Object.keys(idx.routes)
+          .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+          .filter(b => b && !SKIP.has(b));
+        bases.push(...others);
+        console.log('[articles] trying bases:', bases);
       }
-      count.textContent = posts.length + (posts.length === 1 ? ' article' : ' articles');
-      list.innerHTML = posts.map(buildCard).join('');
-    })
-    .catch(err => {
-      console.error('[articles] fetch failed:', err);
-      document.getElementById('articleList').innerHTML = '<div class="articles-empty">Could not load articles — ' + (err.message || 'network error') + '.</div>';
+    } catch(e) {}
+    bases.push('posts'); // final fallback — articles may live in standard posts
+
+    for (const base of bases) {
+      const r = await fetch(
+        `${API}/${base}?per_page=20&_fields=${LIST_FIELDS}&_embed=true&acf_format=standard`,
+        { signal: AbortSignal.timeout(10000) }
+      ).catch(() => null);
+      if (!r || !r.ok) {
+        const code = r ? (await r.json().catch(() => ({}))).code : null;
+        if (!r || code === 'rest_no_route') continue;
+        throw new Error(`HTTP ${r.status}${code ? ' · ' + code : ''}`);
+      }
+      const posts = await r.json();
+      if (!Array.isArray(posts) || posts.length === 0) continue;
+      // Confirm these are articles by checking for ACF fields
+      const hasAcf = posts.some(p => p.acf && (p.acf.test !== undefined || p.acf.content !== undefined));
+      if (!hasAcf && base === 'posts') continue; // posts but no article ACF — skip
+      console.log(`[articles] loaded ${posts.length} items from /${base}`);
+      return posts;
+    }
+    throw new Error('No articles found — check the WordPress REST API settings for the articles post type');
+  }
+
+  fetchArticleList().then(async posts => {
+    const list  = document.getElementById('articleList');
+    const count = document.getElementById('articleCount');
+    if (posts.length === 0) { list.innerHTML = '<div class="articles-empty">No articles yet.</div>'; return; }
+    count.textContent = posts.length + (posts.length === 1 ? ' article' : ' articles');
+    list.innerHTML = (await Promise.all(posts.map(buildCard))).join('');
+  }).catch(err => {
+    console.error('[articles] fetch failed:', err);
+    const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
+    document.getElementById('articleList').innerHTML =
+      `<div class="articles-empty">Could not load articles — ${msg}</div>`;
+  });
+
+  // === ARTICLE BOTTOM SHEET ===
+  const artSheet    = document.getElementById('artSheet');
+  const artScroll   = document.getElementById('artSheetScroll');
+  const artBackdrop = document.getElementById('artBackdrop');
+  const artBackBtn  = document.getElementById('artBackBtn');
+  let artCurrentSlug = null;
+
+  function openSheet(slug, title, date, thumb) {
+    artCurrentSlug = slug;
+    document.getElementById('artHeroTitle').textContent = title;
+    document.getElementById('artHeroDate').textContent  = date;
+    const p = document.getElementById('artHeroImgPortrait');
+    const l = document.getElementById('artHeroImgLandscape');
+    if (thumb) {
+      p.src = thumb; p.style.display = '';
+      l.src = thumb; l.style.display = '';
+    } else {
+      p.style.display = 'none'; l.style.display = 'none';
+    }
+    document.getElementById('artSheetContent').innerHTML = '<div class="art-content-loading">Loading…</div>';
+    artSheet.classList.add('is-open');
+    artBackdrop.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+    artScroll.scrollTop = 0;
+    fetchAndRenderArticle(slug);
+  }
+
+  function closeSheet() {
+    artSheet.classList.remove('is-open');
+    artBackdrop.classList.remove('is-active');
+    document.body.style.overflow = '';
+    artCurrentSlug = null;
+  }
+
+  artBackBtn.addEventListener('click', closeSheet);
+  artBackdrop.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && artCurrentSlug) closeSheet(); });
+
+  // Click on article card
+  document.getElementById('articleList').addEventListener('click', e => {
+    const card = e.target.closest('.cv-card[data-slug]');
+    if (!card) return;
+    openSheet(
+      decodeURIComponent(card.dataset.slug),
+      card.dataset.title || '',
+      card.dataset.date  || '',
+      card.dataset.thumb || ''
+    );
+  });
+  document.getElementById('articleList').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('.cv-card[data-slug]');
+      if (card) { e.preventDefault(); card.click(); }
+    }
+  });
+
+  // Swipe-to-close
+  (function() {
+    let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
+    artSheet.addEventListener('touchstart', e => {
+      if (artScroll.scrollTop > 0) return;
+      const t = e.touches[0]; sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
+    }, { passive: true });
+    artSheet.addEventListener('touchmove', e => {
+      if (!active) return;
+      const t = e.touches[0]; const d = t.clientY - sy;
+      if (d <= 0) { active = false; return; }
+      e.preventDefault();
+      vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
+      dy = d; pt = e.timeStamp;
+      artSheet.style.transition = 'none';
+      artSheet.style.transform  = `translateY(${dy}px)`;
+    }, { passive: false });
+    artSheet.addEventListener('touchend', () => {
+      if (!active) return; active = false;
+      artSheet.style.transition = ''; artSheet.style.transform = '';
+      if (dy > 100 || vy > 8) closeSheet();
     });
+    artSheet.addEventListener('touchcancel', () => {
+      active = false; artSheet.style.transition = ''; artSheet.style.transform = '';
+    });
+  })();
+
+  // Fetch and render article content into sheet
+  async function resolveArtImg(img) {
+    if (!img) return '';
+    if (typeof img === 'object') return img.url || img.source_url || '';
+    const id = parseInt(img, 10);
+    if (!id) return typeof img === 'string' ? img : '';
+    try {
+      const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(6000) });
+      if (r.ok) return (await r.json()).source_url || '';
+    } catch(e) {}
+    return '';
+  }
+
+  async function renderArtBlocks(sections, test2) {
+    const out = [];
+    if (test2) out.push(`<div class="art-block"><div class="art-block-text"><p>${test2}</p></div></div>`);
+    for (const s of sections) {
+      const layout = (s.acf_fc_layout || '').toLowerCase();
+      if (layout === 'image' || layout === 'img' || layout === 'photo') {
+        const url = await resolveArtImg(s.img || s.image || s.photo || null);
+        if (url) out.push(`<div class="art-block"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+      } else {
+        let html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
+        if (!html) {
+          for (const [k, v] of Object.entries(s)) {
+            if (k !== 'acf_fc_layout' && typeof v === 'string' && v.trim()) { html = v; break; }
+          }
+        }
+        if (html) out.push(`<div class="art-block"><div class="art-block-text">${html}</div></div>`);
+      }
+    }
+    return out.join('');
+  }
+
+  async function fetchAndRenderArticle(slug) {
+    const FIELDS = 'id,title,date,excerpt,acf,content,_links';
+    const bases  = ['articles', 'article', 'posts'];
+    try {
+      let post = null;
+      for (const base of bases) {
+        for (const acfSuffix of ['&acf_format=standard', '']) {
+          const r = await fetch(
+            `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true${acfSuffix}`,
+            { signal: AbortSignal.timeout(10000) }
+          ).catch(() => null);
+          if (!r || !r.ok) {
+            const body = r ? await r.json().catch(() => ({})) : {};
+            if (!r || body.code === 'rest_no_route') break;
+            continue;
+          }
+          const data = await r.json();
+          const candidate = Array.isArray(data) ? data[0] : data;
+          if (!candidate?.id) continue;
+          const hasAcf = candidate.acf && Object.keys(candidate.acf).length > 0;
+          if (hasAcf) { post = candidate; break; }
+          if (!post) post = candidate;
+        }
+        if (post?.id) break;
+      }
+
+      if (!post) throw new Error('Article not found');
+      if (slug !== artCurrentSlug) return;
+
+      const acf = post.acf || {};
+      const check = v => Array.isArray(v) && v.length > 0 && typeof v[0] === 'object' && 'acf_fc_layout' in v[0];
+      const flexRows = check(acf.content) ? acf.content : (Object.values(acf).find(check) || []);
+
+      const blocks = await renderArtBlocks(flexRows, acf.test2 || '');
+      const fallback = (post.content?.rendered || '').trim();
+      const html = blocks || (fallback ? `<div class="art-block"><div class="art-block-text">${fallback}</div></div>` : '');
+
+      if (slug !== artCurrentSlug) return;
+      document.getElementById('artSheetContent').innerHTML =
+        html || '<div class="art-content-loading">No content available.</div>';
+
+      // Update hero image with best available source
+      const featuredUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+      const imgRow = flexRows.find(s => ['image','img','photo'].includes((s.acf_fc_layout||'').toLowerCase()));
+      const heroUrl = featuredUrl || await resolveArtImg(imgRow?.img || imgRow?.image || null);
+      if (heroUrl && slug === artCurrentSlug) {
+        const p = document.getElementById('artHeroImgPortrait');
+        const l = document.getElementById('artHeroImgLandscape');
+        p.src = heroUrl; p.style.display = '';
+        l.src = heroUrl; l.style.display = '';
+      }
+    } catch(e) {
+      if (slug !== artCurrentSlug) return;
+      document.getElementById('artSheetContent').innerHTML =
+        `<div class="art-content-loading">Could not load article — ${e.message || 'network error'}</div>`;
+    }
+  }
 </script>
 </body>
 </html>
