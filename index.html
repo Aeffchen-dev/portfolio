@@ -92,11 +92,21 @@
       width:15px; height:13px; flex-shrink:0; position:relative;
       margin-left:auto; overflow:visible;
     }
+    @keyframes nav-dot-size {
+      0%, 100% { width:8px; height:8px; }
+      50%       { width:12px; height:12px; }
+    }
     .nav__menu > span:not(.nav__close-icon) {
       display:block; width:3px; height:3px; border-radius:50%;
       background:#fff; flex-shrink:0;
       transition:opacity .25s ease;
     }
+    .nav__menu > span:nth-child(3) {
+      width:8px; height:8px; background:#acb0ff;
+      transition:none;
+      animation:nav-dot-size 2s ease-in-out infinite;
+    }
+    .nav.is-open .nav__menu > span:nth-child(3) { animation-play-state:paused; }
     .nav__close-icon {
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
