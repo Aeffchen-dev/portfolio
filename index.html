@@ -125,13 +125,37 @@
     .nav__vibe {
       padding:16px 0 16px; width:35%; flex-shrink:0; font-size:14px; font-weight:500;
       color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
-      text-align:left;
+      text-align:left; position:relative;
       opacity:0; transform:translateY(8px);
       transition:opacity .2s ease, transform .25s ease;
     }
     .nav.is-open .nav__vibe {
       opacity:1; transform:translateY(0);
       transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
+    @keyframes figmaCursor {
+      0%   { transform:translate(4px, 2px); }
+      15%  { transform:translate(22px, 18px); }
+      30%  { transform:translate(38px, 8px); }
+      45%  { transform:translate(28px, 34px); }
+      60%  { transform:translate(8px, 44px); }
+      75%  { transform:translate(44px, 30px); }
+      90%  { transform:translate(16px, 12px); }
+      100% { transform:translate(4px, 2px); }
+    }
+    .nav__cursor {
+      position:absolute; top:16px; left:0;
+      pointer-events:none;
+      animation:figmaCursor 5s ease-in-out infinite paused;
+    }
+    .nav.is-open .nav__cursor { animation-play-state:running; }
+    .nav__cursor-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
     }
     .nav__link {
       display:block;
@@ -961,7 +985,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe">This page is vibe coded with Claude Code</p>
+          <p class="nav__vibe">This page is vibe coded with Claude Code<span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
