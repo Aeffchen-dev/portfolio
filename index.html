@@ -496,7 +496,7 @@
     .modal {
       position:fixed;
       bottom:0; left:0;
-      width:100vw; max-height:100lvh;
+      width:100vw; max-height:100svh;
       z-index:200;
       background:#f2f2f2;
       border-radius:16px 16px 0 0;
@@ -510,8 +510,8 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:100lvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      background:#f2f2f2; padding:24px 8px 0;
+      max-height:100svh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+      background:#f2f2f2; padding:24px 8px env(safe-area-inset-bottom);
       scrollbar-width:none;
       color:#111;
     }
