@@ -700,7 +700,10 @@
       background:rgba(0,0,0,0.6);
       pointer-events:auto;
     }
-    @media (max-width:1023px) {
+    @media (max-width:639px) {
+      .modal-backdrop.is-active { background:#000; pointer-events:auto; }
+    }
+    @media (min-width:640px) and (max-width:1023px) {
       .modal-backdrop.is-active { background:transparent; pointer-events:auto; }
     }
 
