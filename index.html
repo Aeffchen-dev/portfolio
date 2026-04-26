@@ -289,18 +289,18 @@
     .cv-card--archive {
       display:none; width:100%;
       position:relative; overflow:hidden;
-      padding:12px 8px 16px;
+      padding:12px 0 0;
       cursor:pointer; text-decoration:none;
       aspect-ratio:1/1;
     }
     .cv-card--archive__label {
       display:block; font-size:14px; font-weight:500; color:#fff;
-      position:relative; z-index:2;
+      position:relative; z-index:2; text-align:left; padding:0 12px;
     }
     .archive-mini {
-      position:absolute; inset:0; top:30px;
+      position:absolute; inset:0; top:38px;
       overflow:hidden; border-radius:0 0 4px 4px;
-      cursor:grab;
+      cursor:default;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
@@ -909,7 +909,7 @@
       .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #060606); }
       .articles-section:not(.at-end)::after { opacity:1; }
       .articles-section__label { padding-left:0; padding-right:0; }
-      .articles-slider    { padding-left:8px; padding-bottom:8px; }
+      .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:-8px; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .cv-awards-grid { column-gap:16px; }
       .cv-card--archive { display:block; height:300px; aspect-ratio:unset; margin-top:8px; }
@@ -2785,7 +2785,7 @@ quoteText.textContent = '“' + q.text + '”';
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = (CW - GAP * (COLS - 1)) / COLS;
+        const TW = (CW - GAP * (COLS - 1)) / COLS * 0.7;
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
@@ -2843,7 +2843,17 @@ quoteText.textContent = '“' + q.text + '”';
         // Auto-drift
         vx = 0.3; vy = 0.15;
 
+        // Wheel / trackpad scroll (desktop)
+        mini.addEventListener('wheel', e => {
+          e.preventDefault();
+          ox -= e.deltaX * 0.6;
+          oy -= e.deltaY * 0.6;
+          vx = 0; vy = 0;
+        }, { passive: false });
+
+        // Drag (mobile/tablet only)
         mini.addEventListener('pointerdown', e => {
+          if (window.innerWidth >= 1024) return;
           dragging = true; mini.classList.add('is-dragging');
           lx = e.clientX; ly = e.clientY; lt = performance.now();
           vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
