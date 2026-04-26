@@ -118,14 +118,14 @@
     }
     .nav.is-open .nav__expand { padding-top:33px; }
     .nav.is-open .nav__expand { grid-template-rows:1fr; }
-    .nav__expand-inner { overflow:hidden; }
-    .nav__top-row { display:flex; justify-content:space-between; align-items:flex-start; }
+    .nav__expand-inner { overflow:hidden; padding:0 16px; }
+    .nav__top-row { display:flex; align-items:flex-start; }
 
-    .nav__links { padding:16px 32px 16px 32px; display:flex; flex-direction:column; }
+    .nav__links { padding:16px 0 16px; display:flex; flex-direction:column; width:50%; flex-shrink:0; }
     .nav__vibe {
-      padding:16px 80px 16px 0; margin-left:-200px; font-size:14px; font-weight:500;
+      padding:16px 0 16px; width:50%; flex-shrink:0; font-size:14px; font-weight:500;
       color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
-      text-align:left; min-width:100px;
+      text-align:left;
       opacity:0; transform:translateY(8px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -153,7 +153,7 @@
     .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
 
     .nav__contact {
-      padding:40px 32px 24px;
+      padding:40px 0 24px;
       opacity:0; transform:translateY(6px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -733,8 +733,8 @@
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
       /* expanded nav: 8px side padding */
-      .nav__links  { padding-left:8px; padding-right:8px; }
-      .nav__contact { padding-left:8px; padding-right:8px; }
+      .nav__links  { padding-left:0; padding-right:0; }
+      .nav__contact { padding-left:0; padding-right:0; }
       .work-item { display:flex; flex-direction:column; gap:8px; will-change:transform,opacity; margin-left:8px; margin-right:8px; }
       .work-item__image { padding:0; margin:0; margin-top:0 !important; }
       .work-item__body { margin:0; padding:8px; }
