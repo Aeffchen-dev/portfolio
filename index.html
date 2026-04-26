@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#060606" id="themeColor">
   <title>Jana Gramlich – Product Designer based in Berlin</title>
   <meta name="description" content="Hi there! I am Jana, a product designer based in Berlin. I create data-driven digital experiences with a touch of motion and joy of use.">
@@ -533,9 +533,15 @@
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      background:#f2f2f2; padding:24px 8px 0;
+      background:#f2f2f2; padding:24px 8px env(safe-area-inset-bottom, 0px);
       scrollbar-width:none;
       color:#111;
+    }
+    #safeBar {
+      position:fixed; bottom:0; left:0; right:0;
+      height:env(safe-area-inset-bottom, 0px);
+      z-index:202; pointer-events:none;
+      background:#060606;
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
 
@@ -704,7 +710,7 @@
       .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { padding:24px 8px 0; max-height:95dvh; }
+      .modal__scroll { padding:24px 8px env(safe-area-inset-bottom, 0px); max-height:95dvh; }
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
@@ -872,7 +878,7 @@
       .project-links { margin-top:0; grid-column:1/-1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
-      .modal__scroll { padding:24px 16px 0; }
+      .modal__scroll { padding:24px 16px env(safe-area-inset-bottom, 0px); }
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
@@ -2148,6 +2154,8 @@
       document.getElementById('themeColor').content = bg;
       document.documentElement.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
       document.documentElement.style.backgroundColor = bg;
+      document.getElementById('safeBar').style.transition = '';
+      document.getElementById('safeBar').style.background = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2216,8 +2224,10 @@
       function applyProgress(h) {
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
         if (dragStartBg) {
+          const col = lerpHex(dragStartBg, nextBg, p);
           document.documentElement.style.transition = 'none';
-          document.documentElement.style.backgroundColor = lerpHex(dragStartBg, nextBg, p);
+          document.documentElement.style.backgroundColor = col;
+          document.getElementById('safeBar').style.background = col;
         }
       }
 
@@ -2275,6 +2285,7 @@
       document.documentElement.style.transition = 'none';
       document.documentElement.style.backgroundColor = bg;
       document.getElementById('themeColor').content = bg;
+      document.getElementById('safeBar').style.background = bg;
       // Build display-only entering panel (shown during transition only)
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
@@ -2375,6 +2386,8 @@
       document.getElementById('themeColor').content = '#060606';
       document.documentElement.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
       document.documentElement.style.backgroundColor = '#060606';
+      document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
+      document.getElementById('safeBar').style.background = '#060606';
       modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
       modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
@@ -2418,6 +2431,8 @@
         document.getElementById('themeColor').content = '#060606';
         document.documentElement.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
         document.documentElement.style.backgroundColor = '#060606';
+        document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+        document.getElementById('safeBar').style.background = '#060606';
         modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
@@ -2655,5 +2670,6 @@
     window.addEventListener('scroll', updateTileParallax, { passive: true });
     updateTileParallax();
   </script>
+  <div id="safeBar"></div>
 </body>
 </html>
