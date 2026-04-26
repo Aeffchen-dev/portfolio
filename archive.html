@@ -407,18 +407,20 @@
 
     // Render loop
     function render() {
-      let revealFactor = 0;
+      let rox = 0, roy = 0;
       if (_revealStart !== null) {
         const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
-        revealFactor = 1 - _easeOutCubic(elapsed);
+        const f = 1 - _easeOutCubic(elapsed);
+        rox = f * _REVEAL_DIST_X;
+        roy = f * _REVEAL_DIST_Y;
       }
+      // Feed reveal offset into ox/oy so tilePos applies identical parallax as scroll
+      ox += rox; oy += roy;
       tiles.forEach(t => {
         const p = tilePos(t);
-        const par = COL_PAR[t.c];
-        const rx = revealFactor * _REVEAL_DIST_X * par;
-        const ry = revealFactor * _REVEAL_DIST_Y * par;
-        t.el.style.transform = `translate3d(${p.x + rx}px,${p.y + ry}px,0)`;
+        t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
       });
+      ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
         vx *= 0.97; vy *= 0.97;
