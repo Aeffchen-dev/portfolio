@@ -34,7 +34,7 @@ export default async function ProjectPage({ params }: Props) {
         minHeight: "100dvh",
         paddingLeft: 8,
         paddingRight: 8,
-        paddingBottom: 80,
+        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
         fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
       }}
     >
