@@ -59,17 +59,7 @@
     }
     .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:0 8px 32px rgba(0,0,0,0.45); overflow:hidden; }
     @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
-    .nav::before {
-      content:'';
-      position:absolute;
-      width:164%; height:227%;
-      left:-28%; top:-8%;
-      background:url('images/nav-bg.png') center/cover no-repeat;
-      opacity:var(--nav-bg-opacity, 0);
-      z-index:-1;
-    }
-    .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); }
-    .nav.is-open::before { opacity:0.65; }
+
     .nav__bar {
       height:33px; display:flex; align-items:center;
       padding:0 16px; cursor:pointer;
@@ -112,7 +102,8 @@
       opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff;
       transform:rotate(-45deg) scale(0.7);
     }
-    .nav.is-open .nav__menu > span:not(.nav__close-icon):not(:nth-child(3)) { opacity:0; }
+    .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__menu > span:nth-child(3) { animation-play-state:paused; }
     .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     /* hover / tap feedback */
     .nav__menu { transition:transform .2s cubic-bezier(.4,0,.2,1); }
@@ -305,8 +296,8 @@
     }
     .archive-stack__img {
       position:absolute;
-      width:68%; aspect-ratio:16/10;
-      object-fit:cover; border-radius:4px;
+      width:68%; height:auto;
+      border-radius:4px;
       box-shadow:0 4px 16px rgba(0,0,0,0.4);
     }
     .cv-quotes__label { font-size:14px; font-weight:500; color:#fff; margin:0 0 40px; }
@@ -1517,7 +1508,6 @@
         nav.style.top = window.innerWidth >= 1024 ? '16px' : '8px';
         nav.style.borderRadius = lerp(0, 24, t) + 'px';
         nav.style.background = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
-        nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
         const blur = lerp(0, 20, t);
         const sat = lerp(100, 180, t);
         const filterVal = t > 0.01 ? `blur(${blur}px) saturate(${sat}%)` : 'none';
