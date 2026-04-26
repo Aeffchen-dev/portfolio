@@ -31,7 +31,7 @@ export default async function ProjectPage({ params }: Props) {
     <main
       style={{
         backgroundColor: "#0d0d0d",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         paddingLeft: 8,
         paddingRight: 8,
         paddingBottom: 80,
