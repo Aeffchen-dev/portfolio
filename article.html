@@ -12,6 +12,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; }
@@ -53,7 +60,7 @@
       padding-left:calc((100% - var(--pill-w,168px)) / 2 + 16px);
       padding-right:calc((100% - var(--pill-w,168px)) / 2 + 16px);
     }
-    .nav__logo { font-size:12px; font-weight:500; line-height:1; color:#fff; letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap; }
+    .nav__logo { font-family:'HW Left Bold', sans-serif; font-size:12px; font-weight:bold; line-height:1; color:#fff; letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap; }
     .nav__menu { display:flex; flex-direction:row; align-items:center; gap:3px; width:15px; height:13px; flex-shrink:0; position:relative; margin-left:auto; overflow:visible; transition:transform .2s cubic-bezier(.4,0,.2,1); }
     .nav__menu:hover { transform:scale(1.15); }
     .nav__menu > span:not(.nav__close-icon) { display:block; width:3px; height:3px; border-radius:50%; background:#fff; flex-shrink:0; transition:opacity .25s ease; }
@@ -132,16 +139,18 @@
     }
     .back-link {
       display:inline-flex; align-items:center; gap:7px;
-      font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:.09em; text-transform:uppercase;
       color:#fff; transition:opacity .15s;
     }
     .back-link:hover { opacity:.6; }
     .back-link__arrow { display:inline-flex; flex-shrink:0; transform:rotate(180deg); }
     .share-btn {
       display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:.09em; text-transform:uppercase;
       color:#fff; transition:opacity .15s; cursor:pointer;
-      background:none; border:none; font-family:inherit; padding:0;
+      background:none; border:none; padding:0;
     }
     .share-btn:hover { opacity:.6; }
 
@@ -179,7 +188,8 @@
       text-transform:none; letter-spacing:0; color:rgba(255,255,255,0.4);
     }
     .article-page-end .page-links__all {
-      font-size:11px; font-weight:500; letter-spacing:0.48px;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:0.48px;
       text-transform:uppercase; color:rgba(255,255,255,0.6);
       display:inline-flex; align-items:center; gap:5px;
       text-decoration:none; flex-shrink:0;

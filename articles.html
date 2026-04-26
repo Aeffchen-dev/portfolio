@@ -18,6 +18,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
@@ -66,7 +73,8 @@
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
