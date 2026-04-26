@@ -134,10 +134,13 @@
       margin-top: 16px;
     }
 
-    /* === FIRST IMAGE (100vw - 8px, natural height) === */
+    /* === FIRST IMAGE (matches block image width) === */
     .project-hero-img {
       background: #0D0D0D;
-      padding: 0 4px 8px;
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .project-hero-img img {
       width: 100%;
@@ -232,7 +235,7 @@
     @media (max-width: 639px) {
       .project-intro { padding: 20px; }
       .project-text { padding: 20px; }
-      .project-hero-img { padding: 0 4px 4px; }
+      .project-hero-img { padding: 8px; }
       .project-hero-img img { border-radius: 4px; }
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
       .block--full  { grid-column: span 1; }
