@@ -94,7 +94,7 @@
     }
     @keyframes nav-dot-size {
       0%, 100% { width:8px; height:8px; }
-      50%       { width:12px; height:12px; }
+      50%       { width:10px; height:10px; }
     }
     .nav__menu > span:not(.nav__close-icon) {
       display:block; width:3px; height:3px; border-radius:50%;
@@ -2820,12 +2820,15 @@ quoteText.textContent = '“' + q.text + '”';
       const archiveCard = document.getElementById('archiveStackCard');
       if (archiveCard) {
         archiveCard.addEventListener('mouseenter', () => {
-          cards.forEach(el => {
-            const rot = (rand(-4, 4)).toFixed(1);
-            const dx = (rand(-8, 8)).toFixed(1);
-            const dy = (parseFloat((rand(-8,8)).toFixed(1))+16).toFixed(1);
-            el.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(1.1)';
+          const half = (cards.length - 1) / 2;
+          cards.forEach((el, i) => {
+            // spread outward from center: index relative to center
+            const t = (i - half) / half; // -1 (left) to +1 (right)
+            const rot = (t * 18).toFixed(1);          // ±18° fan
+            const dx  = (t * 32).toFixed(1);          // ±32px horizontal spread
+            const dy  = (Math.abs(t) * 12 + 16).toFixed(1); // down + arc up toward center
+            el.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(1.08)';
           });
         });
         archiveCard.addEventListener('mouseleave', () => {
