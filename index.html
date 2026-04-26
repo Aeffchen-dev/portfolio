@@ -16,11 +16,20 @@
   <meta name="twitter:title" content="Jana Gramlich • Portfolio">
   <meta name="twitter:description" content="Hi there! I am Jana Gramlich, an UI / UX Designer based in Berlin. I create creative digital experiences that lead new visual ways for various brands.">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" id="favicon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
@@ -72,7 +81,8 @@
       /* mobile override below in @media (max-width:639px) */
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
@@ -99,7 +109,7 @@
     .nav__menu:active { transform:scale(0.9); }
     .nav__link:active { opacity:0.5 !important; transform:translateY(0) !important; }
     .nav__linkedin { transition:opacity .2s ease, transform .2s cubic-bezier(.4,0,.2,1); }
-    .nav__linkedin:hover { opacity:0.8; }
+    .nav__linkedin:hover { opacity:0.8; color:#171717; }
     .nav__linkedin:active { transform:scale(0.95); }
     .modal-open #mainNav { pointer-events:none; }
     .nav__expand {
@@ -145,7 +155,8 @@
       display:inline-flex; align-items:center; justify-content:center;
       background:#acb0ff; color:#171717;
       border-radius:999px; padding:8px 10px;
-      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
       margin-top:40px;
     }
 
@@ -169,25 +180,37 @@
       display:inline-flex; align-items:center; gap:8px;
       border:1px solid rgba(255,255,255,0.15); border-radius:999px;
       padding:8px 10px;
-      font-size:12px; font-weight:500; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; color:#fff;
       letter-spacing:0.48px; text-transform:uppercase;
       width:fit-content;
       margin-bottom:48px;
       transition:border-color .4s ease-in-out;
     }
     .btn-about:hover { border-color:#989898; }
+    @keyframes dot-pulse {
+      0%,100% { transform:scale(1); opacity:1; }
+      50%      { transform:scale(1.6); opacity:0.7; }
+    }
     .btn-about__dot {
       width:8px; height:8px; border-radius:50%;
-      background:#acb0ff;
+      background:#FF45F0;
       flex-shrink:0;
+    }
+    .btn-about:hover .btn-about__dot {
+      animation: dot-pulse 0.8s ease-in-out infinite;
     }
 
     /* === WORK LIST === */
-    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; }
+    /* Anchor offset: prevent fixed nav from covering targets */
+    #work { scroll-margin-top:57px; }
+    #about { scroll-margin-top:57px; }
+    .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; padding-bottom:8px; }
     .section-label__prefix { font-size:11px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
-    .section-label__links { display:flex; gap:20px; flex-wrap:nowrap; }
-    .section-label__link { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
-    .section-label__link:hover { color:#fff; }
+    .section-label__links { display:flex; gap:24px; flex-wrap:nowrap; }
+    .section-label__link { font-family:'HW Left Bold', sans-serif; font-size:11px; font-weight:bold; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
+    @media (hover:hover) { .section-label__link:hover { color:#fff; } }
+    .section-label__link[href="mailto:hello@janagramlich.com"] { display:none; }
     .work-list { display:flex; flex-direction:column; gap:0; margin-left:-8px; margin-right:-8px; }
     .work-item { cursor:pointer; position:relative; }
     .work-item__image {
@@ -200,17 +223,16 @@
     .work-item__body {
       background:#141414; border-radius:4px;
       padding:8px; aspect-ratio:4/3;
-      position:relative; z-index:1; margin-top:8px; will-change:transform,opacity;
+      position:relative; z-index:1; margin-top:16px; will-change:transform,opacity;
       display:flex; flex-direction:column;
     }
     .work-item__year { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; }
-    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:56px; }
+    .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:auto; }
     .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
     .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
-    .work-item__view { font-size:11px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
-    .work-item__arrow { display:inline-flex; align-self:center; color:rgba(255,255,255,0.5); transition:transform .4s ease-in-out, color .4s ease-in-out; }
-    .work-item:hover .work-item__arrow { transform:translate(2px,-2px); color:rgba(255,255,255,0.7); }
-    .work-item + .work-item .work-item__image { margin-top:8px; }
+    .work-item__view { font-family:'HW Left Bold', sans-serif; font-size:11px; font-weight:bold; color:#989898; letter-spacing:0.48px; text-transform:uppercase; display:flex; align-items:baseline; gap:5px; }
+    .work-item__arrow { display:inline-flex; align-self:center; }
+    .work-item + .work-item .work-item__image { margin-top:16px; }
     .cv-card { opacity:0; }
     .cv-card--about  { opacity:1; }
     .cv-card--quotes { opacity:1; }
@@ -269,12 +291,12 @@
       margin-top:32px; margin-bottom:8px; padding-left:16px; padding-right:16px;
     }
     .cv-card {
-      display:flex; align-items:flex-start; gap:16px;
+      display:flex; align-items:center; gap:16px;
       padding:8px; background:#141414;
       border-radius:4px; margin-bottom:8px;
       text-decoration:none; color:inherit;
     }
-    a.cv-card { transition:background .4s ease-in-out; }
+    a.cv-card { transition:background .4s ease-in-out, color .4s ease-in-out; }
     a.cv-card:hover { background:rgba(255,255,255,0.1); }
     .cv-card__logo {
       width:60px; height:60px; background:#000;
@@ -289,8 +311,9 @@
       font-size:9px; font-weight:500; color:#989898;
       margin-top:auto; text-transform:uppercase; letter-spacing:0.48px;
     }
-    .cv-card__arrow { color:rgba(255,255,255,0.5); flex-shrink:0; line-height:1; display:flex; }
-    .arrow-icon { display:block; }
+    .cv-card__arrow { flex-shrink:0; line-height:1; display:flex; margin-right:12px; color:#333333; }
+    a.cv-card:hover .cv-card__arrow { color:#5a5a5a; }
+    .article-card__arrow { color:#999999; }
     /* About + Awards card */
     .cv-card--about { display:block; padding:12px 8px; }
     .cv-about__section-label { font-size:14px; font-weight:500; color:#fff; margin:0 0 4px; }
@@ -309,12 +332,165 @@
 
     /* === HOME FOOTER === */
     .home-footer {
-      display:flex; justify-content:space-between; align-items:center;
-      padding-top:40px;
-      font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      padding-top:40px; padding-bottom:16px; overflow:hidden;
+      display:flex; flex-direction:column;
     }
-    .home-footer a { color:#fff; transition:opacity .4s ease-in-out; }
-    .home-footer a:hover { opacity:.5; }
+    .footer-grid {
+      display:flex; justify-content:space-between; align-items:flex-start;
+    }
+    .footer-col { display:flex; flex-direction:column; gap:4px; }
+    .footer-col a, .footer-col span {
+      font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898;
+      text-transform:uppercase; text-decoration:none;
+    }
+    .footer-col a { transition:opacity .4s ease-in-out; }
+    .footer-col a:hover { opacity:.5; }
+    .footer-col--right { margin-right:84px; font-size:14px; font-weight:400; }
+    .footer-social-label { margin-top:0; }
+    .footer-social-link { text-transform:none !important; letter-spacing:0 !important; color:#fff !important; }
+    .footer-location, .footer-email { color:#fff !important; text-transform:none !important; letter-spacing:0 !important; }
+    .footer-legal { display:flex; justify-content:space-between; gap:16px; padding:0; }
+    .footer-legal a { font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out; }
+    .footer-legal a:hover { opacity:.5; }
+    .footer-bottom { position:relative; margin-top:auto; z-index:0; }
+    .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
+    .footer-name {
+      font-size:100vw; font-weight:500; line-height:0.85;
+      letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
+      white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
+    }
+    @media (min-width:640px) {
+      .footer-name, .footer-logo, .footer-bottom, .footer-grid { display:none; }
+      .home-footer { min-height:0; padding-top:0; padding-bottom:8px; padding-left:8px; padding-right:8px; }
+    }
+
+    /* === ARTICLES SECTION === */
+    #articles { scroll-margin-top:57px; }
+    .articles-section { margin-top:24px; margin-bottom:64px; }
+    .articles-section__label { font-size:14px; font-weight:500; color:#fff; margin:16px 0 8px; padding-left:8px; }
+    .articles-slider {
+      display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; padding-bottom:1px;
+    }
+    .articles-slider::-webkit-scrollbar { display:none; }
+    .article-card {
+      flex-shrink:0; width:324px; scroll-snap-align:start;
+      display:flex; flex-direction:row; align-items:stretch; gap:0;
+      padding:8px; background:#141414; border-radius:4px;
+      text-decoration:none; color:inherit;
+      transition:background .4s ease-in-out, color .4s ease-in-out;
+    }
+    .article-card:hover { background:rgba(255,255,255,0.1); }
+    .article-card__thumb {
+      width:60px; height:60px; flex-shrink:0;
+      border-radius:4px; overflow:hidden; background:#1a1a1a;
+    }
+    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
+    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
+    .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    /* J — high wide arc, big tilt */
+    @keyframes jana-J {
+      0%   { transform: translate(0,       0px) rotate(  0deg); opacity:1; }
+      5%   { transform: translate(1.5vw,  -8px) rotate(  4deg); opacity:1; }
+      12%  { transform: translate(4vw,   -42px) rotate( 10deg); opacity:1; }
+      22%  { transform: translate(5vw,   -96px) rotate( 15deg); opacity:1; }
+      31%  { transform: translate(3vw,  -128px) rotate(  7deg); opacity:1; }
+      40%  { transform: translate(-4vw, -118px) rotate( -8deg); opacity:1; }
+      50%  { transform: translate(-22vw, -82px) rotate(-20deg); opacity:1; }
+      60%  { transform: translate(-58vw, -22px) rotate(-30deg); opacity:1; }
+      67%  { transform: translate(-115vw, 14px) rotate(-36deg); opacity:0; }
+      68%  { transform: translate( 115vw, 14px) rotate(-36deg); opacity:0; }
+      76%  { transform: translate(  62vw, -20px) rotate(-22deg); opacity:1; }
+      85%  { transform: translate(  12vw, -32px) rotate(  7deg); opacity:1; }
+      93%  { transform: translate(   2vw, -10px) rotate(  2deg); opacity:1; }
+      97%  { transform: translate(  -1vw,  -2px) rotate( -1deg); opacity:1; }
+      100% { transform: translate(0,       0px) rotate(  0deg); opacity:1; }
+    }
+    /* A (1st) — mid height, left-leaning exit */
+    @keyframes jana-A1 {
+      0%   { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+      5%   { transform: translate(1vw,   -5px) rotate(  3deg); opacity:1; }
+      13%  { transform: translate(3vw,  -30px) rotate(  8deg); opacity:1; }
+      23%  { transform: translate(3.5vw,-72px) rotate( 11deg); opacity:1; }
+      33%  { transform: translate(1.5vw,-98px) rotate(  3deg); opacity:1; }
+      42%  { transform: translate(-6vw, -88px) rotate(-11deg); opacity:1; }
+      53%  { transform: translate(-28vw,-52px) rotate(-23deg); opacity:1; }
+      62%  { transform: translate(-68vw,-10px) rotate(-31deg); opacity:1; }
+      69%  { transform: translate(-118vw,10px) rotate(-35deg); opacity:0; }
+      70%  { transform: translate( 118vw,10px) rotate(-35deg); opacity:0; }
+      78%  { transform: translate(  55vw,-16px) rotate(-19deg); opacity:1; }
+      87%  { transform: translate(  10vw,-24px) rotate(  6deg); opacity:1; }
+      94%  { transform: translate(   2vw, -7px) rotate(  2deg); opacity:1; }
+      98%  { transform: translate(  -0.5vw,-1px) rotate(-0.5deg); opacity:1; }
+      100% { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+    }
+    /* N — shallower arc, faster to left */
+    @keyframes jana-N {
+      0%   { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+      6%   { transform: translate(0.8vw, -4px) rotate(  2.5deg); opacity:1; }
+      14%  { transform: translate(2.5vw,-22px) rotate(  7deg); opacity:1; }
+      24%  { transform: translate(3vw,  -58px) rotate(  9deg); opacity:1; }
+      34%  { transform: translate(1vw,  -80px) rotate(  2deg); opacity:1; }
+      43%  { transform: translate(-8vw, -72px) rotate(-13deg); opacity:1; }
+      54%  { transform: translate(-32vw,-40px) rotate(-22deg); opacity:1; }
+      63%  { transform: translate(-74vw, -6px) rotate(-29deg); opacity:1; }
+      70%  { transform: translate(-122vw, 8px) rotate(-33deg); opacity:0; }
+      71%  { transform: translate( 122vw, 8px) rotate(-33deg); opacity:0; }
+      79%  { transform: translate(  50vw,-12px) rotate(-17deg); opacity:1; }
+      88%  { transform: translate(   8vw,-20px) rotate(  5deg); opacity:1; }
+      95%  { transform: translate(   1.5vw,-6px) rotate( 1.5deg); opacity:1; }
+      98%  { transform: translate(  -0.5vw,-1px) rotate(-0.5deg); opacity:1; }
+      100% { transform: translate(0,      0px) rotate(  0deg); opacity:1; }
+    }
+    /* A (2nd/last) — lowest tightest curve, trails in gently */
+    @keyframes jana-A2 {
+      0%   { transform: translate(0,     0px) rotate(  0deg); opacity:1; }
+      6%   { transform: translate(0.5vw,-2px) rotate(  2deg); opacity:1; }
+      15%  { transform: translate(2vw, -14px) rotate(  5deg); opacity:1; }
+      25%  { transform: translate(2.5vw,-44px) rotate(  8deg); opacity:1; }
+      35%  { transform: translate(0.5vw,-62px) rotate(  1deg); opacity:1; }
+      44%  { transform: translate(-10vw,-54px) rotate(-14deg); opacity:1; }
+      55%  { transform: translate(-36vw,-28px) rotate(-21deg); opacity:1; }
+      64%  { transform: translate(-78vw, -4px) rotate(-27deg); opacity:1; }
+      71%  { transform: translate(-124vw, 6px) rotate(-31deg); opacity:0; }
+      72%  { transform: translate( 124vw, 6px) rotate(-31deg); opacity:0; }
+      80%  { transform: translate(  46vw,-10px) rotate(-15deg); opacity:1; }
+      89%  { transform: translate(   6vw,-16px) rotate(  4deg); opacity:1; }
+      96%  { transform: translate(   1vw, -5px) rotate(  1deg); opacity:1; }
+      99%  { transform: translate(  -0.5vw,-1px) rotate(-0.3deg); opacity:1; }
+      100% { transform: translate(0,     0px) rotate(  0deg); opacity:1; }
+    }
+    .footer-name span { display:inline-block; }
+    .footer-name.jana-animate span {
+      animation-duration: 3.4s;
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      animation-fill-mode: forwards;
+    }
+    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay:   0ms; }
+    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 300ms; }
+    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 600ms; }
+    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 900ms; }
+    .article-card--skeleton {
+      pointer-events:none; cursor:default; height:76px;
+      background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
+      background-size:200% 100% !important; animation:shimmer 1.4s infinite;
+    }
+
+    /* === GLOBAL ARROWS === */
+    .arrow-icon { stroke-width:1; width:12px; height:12px; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
+    a:hover .arrow-icon,
+    button:hover .arrow-icon,
+    .work-item:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
+    a { transition:color .4s ease-in-out; }
+    a:hover { color:#fff; }
+    .modal__scroll a:hover { color:#111; }
+    .modal__scroll a:hover .arrow-icon,
+    .modal__scroll button:hover .arrow-icon { color:#000; }
+    button:hover { color:#fff; }
 
     /* === MODAL === */
     .modal {
@@ -334,7 +510,7 @@
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      background:#f2f2f2; padding:24px 8px;
+      background:#f2f2f2; padding:24px 8px 0;
       scrollbar-width:none;
       color:#111;
     }
@@ -350,7 +526,8 @@
       position:fixed; top:0; left:0; right:0; height:5vh;
       background:#000; color:#fff;
       display:flex; align-items:center; justify-content:center; gap:16px;
-      font-size:11px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
       z-index:201; cursor:pointer;
       opacity:0; pointer-events:none;
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
@@ -362,25 +539,59 @@
     }
     .modal-close-bar__icon svg { display:block; }
 
-    /* === NEXT PROJECT BUTTON === */
-    .next-project-btn {
-      display:block; width:100%; text-align:center; cursor:pointer;
-      padding:64px 16px 48px; background:none; color:inherit;
-      border-top:1px solid rgba(0,0,0,.1); margin-top:24px;
-      font-family:'DM Sans',sans-serif;
+    /* === MODAL PAGE END === */
+    .modal-page-end { margin: 72px 0 0; }
+    .modal-page-end .page-links {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; gap: 8px;
     }
-    .next-project-btn__label {
-      display:block;
-      font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
-      color:rgba(0,0,0,.35); margin-bottom:12px;
+    .modal-page-end .page-links__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.48px;
+      text-transform: uppercase; color: #000;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: opacity .15s; cursor: pointer;
     }
-    .next-project-btn__title {
-      display:block;
-      font-size:clamp(36px,8vw,64px); font-weight:400; line-height:1;
-      letter-spacing:-0.02em; color:#111;
-      transition:opacity .2s;
+    .modal-page-end .page-links__all {
+      font-family:'HW Left Bold', sans-serif;
+      font-size: 11px; font-weight: bold; letter-spacing: 0.48px;
+      text-transform: uppercase; color: #000;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: opacity .15s; cursor: pointer;
     }
-    .next-project-btn:hover .next-project-btn__title { opacity:.5; }
+    .modal-page-end .page-links__label:hover,
+    .modal-page-end .page-links__all:hover { opacity: .7; }
+    .modal-page-end .page-links__client { display: none; margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
+    .modal-next-reveal {
+      position: relative; overflow: hidden; cursor: pointer;
+      background: #1a1a1a; height: 55vh; min-height: 55vh;
+      margin: 0; border-radius: 4px;
+    }
+    .modal-next-reveal__bg {
+      position: absolute; inset: 0; opacity: 0;
+    }
+    .modal-next-reveal__bg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .modal-next-reveal__bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 100%);
+    }
+    .modal-next-reveal__inner {
+      position: relative; z-index: 1; height: 100%;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 20px; text-align: center;
+    }
+    .modal-next-reveal__title {
+      font-size: 14px; font-weight: 400;
+      letter-spacing: 0; line-height: 1.3; color: #fff;
+    }
+    @media (min-width:640px) {
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
+      .modal-next-reveal__bg { opacity: 1; }
+      .modal-next-reveal__inner { display: none; }
+      .modal-next-reveal__bg::after { display: none; }
+      .modal-page-end .page-links__client { display: inline; }
+    }
 
     .hero__title { display:none; }
     .modal-name {
@@ -394,7 +605,7 @@
     .hero__desc p { font-size:14px; font-weight:400; line-height:1.3; color:#111; }
 
     /* === BLOCKS GRID === */
-    .blocks { padding:24px 0; }
+    .blocks { padding:72px 0; }
     .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:72px; }
     .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
     .block-image { background:#e8e8e8; }
@@ -413,17 +624,24 @@
     .info-label { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-value { font-size:14px; font-weight:400; color:#111; line-height:1.3; }
     .info-desc { font-size:14px; font-weight:400; line-height:1.3; color:#111; margin-top:0; max-width:500px; }
-    .project-links { margin-top:32px; }
-    .project-link {
-      display:block;
-      font-size:clamp(40px, 8vw, 60px);
-      font-weight:400; line-height:1;
-      text-align:center; text-transform:uppercase; color:#111;
-      border-top:1px solid rgba(0,0,0,.2); padding:0;
-      transition:opacity .4s ease-in-out;
+    .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .modal-link-card {
+      display:flex; align-items:center; gap:12px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.01); border-radius:16px;
+      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(128,128,128,0.1);
+      text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
     }
-    .project-link:last-child { border-bottom:1px solid rgba(0,0,0,.2); }
-    .project-link:hover { opacity:.5; }
+    .modal-link-card:hover { background:rgba(0,0,0,0.025); border-color:rgba(128,128,128,0.25); }
+    .modal-link-card__thumb {
+      width:44px; height:44px; flex-shrink:0;
+      border-radius:8px; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; }
+    .modal-link-card__body { flex:1; min-width:0; }
+    .modal-link-card__title { font-family:'HW Left Bold', sans-serif; display:block; font-size:14px; font-weight:bold; color:#000; line-height:1.3; }
+    .modal-link-card__arrow { color:#000; flex-shrink:0; display:flex; align-items:center; }
 
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
@@ -454,27 +672,35 @@
       .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { padding:24px 8px; max-height:95dvh; }
+      .modal__scroll { padding:24px 8px 0; max-height:95dvh; }
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
-      .project-links { margin-top:64px; text-align:center; }
-      .project-link { font-size:clamp(56px, 6vw, 96px); }
+      .project-links { margin-top:32px; }
     }
     /* === MOBILE ONLY === */
     @media (max-width:639px) {
-      /* 8px side padding; work-list flattened so Douglas PR can interleave */
-      .home-content { display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
-      .home-hero          { order:1; }
-      .section-label      { order:2; }
+      /* no container padding; each element carries its own 8px */
+      .home-content { display:flex; flex-direction:column; padding:0; }
+      .home-hero          { order:1; padding-left:8px; padding-right:8px; padding-top:120px; padding-bottom:120px; min-height:0; justify-content:flex-start; }
+      .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
-      .exp-quotes-row     { order:9; display:flex; flex-direction:column; }
-      .about-quotes-row   { display:flex; flex-direction:column; }
+      .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
+      .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
+      .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .cta-footer-box     { order:10; display:contents; }
-      .cta-section        { order:10; padding-left:8px; padding-right:8px; }
-      .home-footer        { order:11; }
+      .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
+      .articles-slider    { margin-left:8px; padding-right:8px; }
+      .cta-footer-box     { order:12; display:flex; flex-direction:column; min-height:100svh; }
+      .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
+      .cta-section__texts { margin-bottom:32px; }
+      .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
+      .footer-bottom      { position:relative; margin-top:100px; z-index:0; pointer-events:none; }
+      .footer-name        { margin-bottom:-79px; }
+      .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
+      .footer-grid        { position:relative; z-index:1; }
+      .footer-legal       { position:relative; z-index:1; margin-top:auto; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
       .work-list .work-item:nth-child(1) { order:3; } /* About You 2024 */
       .work-item--hero-side              { order:4; } /* Douglas PR 2023 */
@@ -484,6 +710,7 @@
       .work-list .work-item:nth-child(4) { order:8; } /* The Makery 2019 */
       /* no line break in grey experience text */
       .cv-section-heading br { display:none; }
+      .cv-section-heading { margin-bottom:16px; }
       /* modal header: client + title inline */
       .modal-header-left { flex-direction:row; align-items:baseline; gap:16px; }
       .modal-year { margin-top:0; }
@@ -492,29 +719,39 @@
       /* expanded nav: 8px side padding */
       .nav__links  { padding-left:8px; padding-right:8px; }
       .nav__contact { padding-left:8px; padding-right:8px; }
+      .work-item { display:flex; flex-direction:column; gap:8px; will-change:transform,opacity; margin-left:8px; margin-right:8px; }
+      .work-item__image { padding:0; margin:0; margin-top:0 !important; }
+      .work-item__body { margin:0; padding:8px; }
+      /* 8px gap between every consecutive pair of work-items (visual order via order:) */
+      .work-item--hero-side,
+      .work-list .work-item:nth-child(5),
+      .work-list .work-item:nth-child(3),
+      .work-list .work-item:nth-child(2),
+      .work-list .work-item:nth-child(4) { margin-top:8px; }
     }
     /* Tablet only */
     @media (min-width:640px) and (max-width:1023px) {
-      /* 2-col grid; work-list uses display:contents so its items join the grid alongside hero-side */
-      .home-content { display:grid; grid-template-columns:1fr 1fr; column-gap:8px; row-gap:32px; padding-left:8px; padding-right:8px; }
-      .home-hero     { grid-column:1/3; order:1; margin-top:80px; max-width:none; margin-left:0; margin-right:0; }
-      .section-label { grid-column:1/3; order:2; margin-top:0; }
+      /* no container padding; each element carries its own 8px */
+      .home-content { display:grid; grid-template-columns:1fr 1fr; column-gap:8px; row-gap:32px; }
+      .home-hero     { grid-column:1/3; order:1; margin-top:80px; max-width:none; margin-left:0; margin-right:0; padding-left:8px; padding-right:8px; }
+      .section-label { grid-column:1/3; order:2; margin-top:0; padding-left:8px; padding-right:8px; }
       /* Flatten work-list children into home-content grid */
       .work-list { display:contents; }
       /* Project order new→old: About You 2024, Douglas PR 2023, Douglas Hybrid 2022, Zalando 2020, DMEXCO 2020, The Makery 2019 */
-      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; margin-top:-32px; } /* About You 2024 — full width */
+      .work-list .work-item:nth-child(1) { grid-column:1/3; order:3; margin-top:-32px; padding-left:8px; padding-right:8px; } /* About You 2024 — full width */
       .work-list .work-item:nth-child(1) .work-item__image { aspect-ratio:16/9; }
-      .work-item--hero-side { order:4; display:flex; }  /* Douglas PR 2023 */
-      .work-list .work-item:nth-child(5) { order:5; display:flex; } /* Douglas Hybrid 2022 */
-      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; } /* Zalando 2020 — full width */
+      .work-item--hero-side { order:4; display:flex; margin-left:8px; }  /* Douglas PR 2023 — left col */
+      .work-list .work-item:nth-child(5) { order:5; display:flex; margin-right:8px; } /* Douglas Hybrid 2022 — right col */
+      .work-list .work-item:nth-child(3) { grid-column:1/3; order:6; padding-left:8px; padding-right:8px; } /* Zalando 2020 — full width */
       .work-list .work-item:nth-child(3) .work-item__image { aspect-ratio:16/9; }
-      .work-list .work-item:nth-child(2) { order:7; }  /* DMEXCO 2020 */
-      .work-list .work-item:nth-child(4) { order:8; }  /* The Makery 2019 */
+      .work-list .work-item:nth-child(2) { order:7; margin-left:8px; }  /* DMEXCO 2020 — left col */
+      .work-list .work-item:nth-child(4) { order:8; margin-right:8px; }  /* The Makery 2019 — right col */
       /* Experience full-width; about+quotes side by side below */
       .exp-quotes-row  { display:contents; }
-      .cv-section-wrap { grid-column:1/3; order:9; }
+      .articles-section { grid-column:1/3; order:12; margin-top:8px; }
+      .cv-section-wrap { grid-column:1/3; order:10; padding-left:8px; padding-right:8px; }
       .cv-section      { max-width:none; margin-left:0; margin-right:0; width:100%; }
-      .about-quotes-row { grid-column:1/3; order:10; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; }
+      .about-quotes-row { grid-column:1/3; order:11; display:grid; grid-template-columns:2fr 1fr; gap:8px; align-items:start; margin-top:-32px; padding-left:8px; padding-right:8px; }
       .cv-section .cv-card:last-child { margin-bottom:8px; padding-bottom:8px; }
       .cv-card--about { padding-top:8px; }
       .cv-card.cv-card--quotes  { align-self:stretch; height:auto; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; box-sizing:border-box; padding-top:8px; padding-bottom:8px; }
@@ -523,10 +760,10 @@
       .cv-card.cv-card--quotes .cv-quotes__attr  { margin-bottom:auto; text-align:left; width:100%; }
       /* Widen experience cards but not the about/quotes cards */
       .cv-section .cv-card { width:calc(100% + 16px); margin-left:-8px; margin-right:-8px; }
-      .cta-footer-box  { grid-column:1/3; order:11; display:contents; }
-      .cta-section     { grid-column:1/3; order:11; margin-top:70px; justify-content:center; align-items:center; }
+      .cta-footer-box  { grid-column:1/3; order:12; display:contents; }
+      .cta-section     { grid-column:1/3; order:12; margin-top:32px; justify-content:center; align-items:center; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer     { grid-column:1/3; order:12; padding-bottom:8px; }
+      .home-footer     { grid-column:1/3; order:13; padding-left:8px; padding-right:8px; }
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
       /* No description text on half-width (2-col) tiles */
@@ -537,11 +774,13 @@
       /* Portrait images (3/4) with parallax re-enabled — start showing bottom of image */
       .work-item__image img { height:130%; }
       /* Info: meta col left, description text floats right (same as desktop) */
-      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .project-detail { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:32px; align-items:start; justify-content:center; }
+      .project-info { display:contents; }
       .info-meta { margin-bottom:0; }
       /* My Experience heading centered */
       .cv-section-heading { text-align:center; }
       .home-intro.cv-section-heading { text-align:center; font-size:clamp(19px,1.8vw,22px); }
+      .project-links { margin-top:0; grid-column:1/-1; }
     }
     @media (min-width:1024px) {
       /* Nav pill centred in the 6-col content area (ignores 300px CV sidebar) */
@@ -586,28 +825,66 @@
       .cv-section-heading br { display:none; }
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
+      .articles-section   { display:none; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .work-list .work-item:nth-child(4),
       .work-list .work-item:nth-child(3) { margin-bottom:50px; }
       .cta-section        { margin-top:50px; justify-content:center; align-items:center; padding:0; }
       .cta-section__label, .cta-section__heading { text-align:center; }
-      .home-footer        { padding-top:16px; }
-      .nav__link[href="#about"],
-      .section-label__link[href="#about"] { display:none; }
-      .project-info { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:start; justify-content:center; }
+      .home-footer        { padding-top:0; }
+
+      .project-detail { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; row-gap:32px; align-items:start; justify-content:center; }
+      .project-info { display:contents; }
       .info-desc { max-width:none; }
       .info-meta { margin-bottom:0; }
+      .project-links { margin-top:0; grid-column:1/-1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
-      .modal__scroll { padding:24px 16px; }
+      .modal__scroll { padding:24px 16px 0; }
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
       .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
     }
+
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#060606;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-label {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:13px; font-weight:bold; letter-spacing:0.02em;
+      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
+      background-size:300% 100%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmerText 1.6s linear infinite;
+    }
+    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <span class="loading-label">Loading</span>
+  </div>
+  <script>
+  (function() {
+    var screen = document.getElementById('loadingScreen');
+    screen.classList.add('is-visible');
+    function hide() {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    }
+    window.__loaderDone = function() { setTimeout(hide, 300); };
+  })();
+  </script>
 
   <div class="page-wrapper">
 
@@ -623,7 +900,7 @@
           <a href="#work" class="nav__link">Work</a>
           <a href="#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+          <a href="#articles" class="nav__link">Articles</a>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -642,11 +919,10 @@
 
     <div class="section-label" id="work">
       <div class="section-label__links">
-        <a href="#work" class="section-label__link">Work <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="#about" class="section-label__link">About <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="archive.html" class="section-label__link">Archive <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="articles.html" class="section-label__link">Articles <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
-        <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#about" class="section-label__link">About <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="archive.html" class="section-label__link">Archive <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="#articles" class="section-label__link">Articles <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
+        <a href="mailto:hello@janagramlich.com" class="section-label__link">Contact <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></a>
       </div>
     </div>
     <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
@@ -736,6 +1012,18 @@
       </article>
 
     </div>
+
+    <!-- ARTICLES SECTION -->
+    <section class="articles-section" id="articles">
+      <p class="articles-section__label" id="articlesLabel">Articles</p>
+      <div class="articles-slider" id="articlesSlider">
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+        <div class="article-card article-card--skeleton"></div>
+      </div>
+    </section>
 
     <!-- EXPERIENCE + QUOTES ROW -->
     <div class="exp-quotes-row">
@@ -920,8 +1208,26 @@
       </div>
 
       <footer class="home-footer">
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="imprint.html">Imprint</a>
+        <div class="footer-grid">
+          <div class="footer-col footer-col--left">
+            <span class="footer-social-label">Social</span>
+            <a href="https://www.instagram.com/daslebenunddiejana/" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
+            <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" target="_blank" rel="noopener" class="footer-social-link">LinkedIn</a>
+          </div>
+          <div class="footer-col footer-col--right">
+            <span>© Jana Gramlich, 2026</span>
+            <span class="footer-location">Located in Berlin</span>
+            <a href="mailto:hello@janagramlich.com" class="footer-email">hello@janagramlich.com</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <img src="images/logo.svg" alt="Logo" class="footer-logo">
+          <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span></p>
+        </div>
+        <div class="footer-legal">
+          <a href="imprint.html">Imprint</a>
+          <a href="privacy-policy.html">Privacy</a>
+        </div>
       </footer>
     </div>
   </div>
@@ -960,11 +1266,13 @@
       <main class="blocks">
         <div class="blocks__grid" id="modal-blocks"></div>
       </main>
-      <section class="project-info">
-        <div class="info-meta" id="modal-facts"></div>
-        <p class="info-desc"    id="modal-role"></p>
-      </section>
-      <nav class="project-links" id="modal-links"></nav>
+      <div class="project-detail">
+        <section class="project-info">
+          <div class="info-meta" id="modal-facts"></div>
+          <p class="info-desc"    id="modal-role"></p>
+        </section>
+        <nav class="project-links" id="modal-links"></nav>
+      </div>
     </div>
   </div>
 
@@ -1163,34 +1471,42 @@
         return y;
       }
 
-      // Work item cards: 16px peek slide-in, no scale
+      // Tablet/desktop: animate individual image+body cards
       const cards = [...document.querySelectorAll('.work-item__image, .work-item__body')];
-
-      function getPrevCard(el) {
-        if (el.classList.contains('work-item__body')) return el.previousElementSibling;
-        const prevItem = el.closest('.work-item').previousElementSibling;
-        return prevItem ? prevItem.querySelector('.work-item__body') : null;
-      }
+      // Mobile: animate whole .work-item containers as one unit
+      const workItems = [...document.querySelectorAll('.work-item')];
 
       function computeOffsets() {
-        cards.forEach(el => {
-          const prev = getPrevCard(el);
-          el._naturalAbsTop = naturalAbsTop(el);
-          el._initY = prev ? -16 : null;
-        });
+        cards.forEach(el => { el._initY = -8; });
       }
 
       function updateCards() {
-        const endDist = 0.85 * vH;
-        const sy = window.scrollY;
+        const endDist   = 0.85 * vH;
+        const isMobile  = window.innerWidth < 640;
+        const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
+        const isDesktop = window.innerWidth >= 1024;
+
+        if (isMobile) {
+          // Reset individual card styles so they don't interfere
+          cards.forEach(el => { el.style.opacity = ''; el.style.transform = ''; });
+          // Animate each work-item container as a single unit
+          workItems.forEach(el => {
+            const top = el.getBoundingClientRect().top;
+            const t   = Math.min(1, Math.max(0, (vH - top) / endDist));
+            el.style.opacity   = String(t);
+            el.style.transform = `translateY(${-8 * (1 - t)}px)`;
+          });
+          return;
+        }
+
+        // Tablet / Desktop: reset container styles, animate cards individually
+        workItems.forEach(el => { el.style.opacity = ''; el.style.transform = ''; });
         cards.forEach(el => {
           if (el._initY === null) { el.style.opacity = '1'; el.style.transform = 'none'; return; }
-          const nTop = el._naturalAbsTop - sy;
-          const t    = Math.min(1, Math.max(0, (vH - nTop) / endDist));
-          const isBody = el.classList.contains('work-item__body');
-          const isDesktop = window.innerWidth >= 1024;
-          const isTablet  = window.innerWidth >= 640 && window.innerWidth < 1024;
-          const bodyMult = isDesktop ? 3 : isTablet ? 3.33 : 1.5;
+          const isBody   = el.classList.contains('work-item__body');
+          const nTop     = el.getBoundingClientRect().top;
+          const t        = Math.min(1, Math.max(0, (vH - nTop) / endDist));
+          const bodyMult = isDesktop ? 3 : 3.33;
           const opacityT = isDesktop ? Math.min(1, t * 2) : t;
           el.style.opacity   = String(isBody ? Math.min(1, t * bodyMult) : opacityT);
           el.style.transform = `translateY(${el._initY * (1 - t)}px)`;
@@ -1249,7 +1565,7 @@
       const iconPlay     = document.getElementById('cv-icon-play');
       const ringWrap     = document.querySelector('.cv-quotes__ring-wrap');
       const CIRC         = 56.55; // 2π × r(9)
-      const QUOTE_MS     = 6000;
+      const QUOTE_MS     = 10000;
       let   qIndex       = 0;
       let   qStart       = null;
       let   qRafId       = null;
@@ -1447,13 +1763,9 @@
       const descMatch = plain.match(/^(.*?[.!?](?:\s|$)){1,2}/);
       const desc = descMatch ? descMatch[0].trim() : plain.slice(0, 200);
 
-      // Hero video: top-level ACF fields take priority, then first video section
-      // Values may be a string URL or an object with .url
+      // Hero video: top-level ACF hero video fields only (content section videos stay in blocks)
       const getVidUrl = v => !v ? '' : (typeof v === 'string' ? v : (v.url || ''));
-      const heroVideoSection = (acf.section || []).find(s => s.acf_fc_layout === 'video');
-      const heroVideo = getVidUrl(acf._video_file_desktop) || getVidUrl(acf._video_file_mobile)
-        || getVidUrl(heroVideoSection?._video_file_desktop) || getVidUrl(heroVideoSection?._video_file_mobile)
-        || '';
+      const heroVideo = getVidUrl(acf._video_file_desktop) || getVidUrl(acf._video_file_mobile) || '';
 
       return {
         bg:        acf.background_color || '#F2F2F2',
@@ -1578,12 +1890,142 @@
 
     // === NEXT PROJECT SETUP ===
     const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
-    let currentProjectKey = null;
-    let _isTransitioning  = false;
+    let currentProjectKey  = null;
+    let _isTransitioning   = false;
+    let _nextRevealAbort   = null;
 
     function getNextProjectKey(key) {
       const idx = PROJECT_ORDER.indexOf(key);
       return idx >= 0 ? PROJECT_ORDER[(idx + 1) % PROJECT_ORDER.length] : null;
+    }
+
+    const _CARD_ARROW = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+
+    function buildLinkCards(links) {
+      return (links||[]).map((l, i) => {
+        return `<a class="modal-link-card" href="${l.u}" target="_blank" rel="noopener" data-li="${i}">
+          <div class="modal-link-card__thumb"></div>
+          <div class="modal-link-card__body">
+            <span class="modal-link-card__title">${l.t}</span>
+          </div>
+          <span class="modal-link-card__arrow">${_CARD_ARROW}</span>
+        </a>`;
+      }).join('');
+    }
+
+    async function getDominantColor(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const c = document.createElement('canvas');
+            c.width = c.height = 4;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0, 4, 4);
+            const d = ctx.getImageData(0, 0, 4, 4).data;
+            let r = 0, g = 0, b = 0;
+            for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i+1]; b += d[i+2]; }
+            const n = d.length / 4;
+            resolve(`rgb(${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)})`);
+          } catch { resolve(''); }
+        };
+        img.onerror = () => resolve('');
+        img.src = src;
+      });
+    }
+
+    const DOMAIN_ITUNES_IDS = {
+      'douglas.de':  '394685685',
+      'douglas.com': '394685685',
+    };
+    // Direct icon URL overrides per project — string applies to all cards, array applies per-index
+    const PROJECT_LINK_ICONS = {
+      'douglas-premium-relaunch': 'images/douglas-icon.jpg',
+      'douglas-hybrid':           'images/douglas-icon.jpg',
+      'about-you':                [null, 'images/about-you-icon.jpg'],
+    };
+    // Fallback links used when WP API returns no call_to_action for a project
+    const PROJECT_DEFAULT_LINKS = {
+      'douglas-premium-relaunch': [
+        { t: 'Visit the Website', u: 'https://www.douglas.de' },
+        { t: 'App Download',      u: 'https://apps.apple.com/de/app/douglas-beauty/id394685685' },
+      ],
+      'douglas-hybrid': [
+        { t: 'App Download', u: 'https://apps.apple.com/de/app/douglas-beauty/id394685685' },
+      ],
+    };
+    const DOMAIN_FAVICON_BG = {
+      'aboutyou.com': '#000',
+      'aboutyou.de':  '#000',
+    };
+
+    async function resolveThumbData(url) {
+      try {
+        let u = new URL(url);
+        // Unwrap Google ad redirect URLs (adurl param holds the real destination)
+        const adurl = u.searchParams.get('adurl');
+        if (adurl) try { u = new URL(adurl); } catch {}
+        // Also follow plain redirect/url params
+        const redir = u.searchParams.get('url') || u.searchParams.get('redirect');
+        if (redir) try { u = new URL(redir); } catch {}
+        url = u.toString();
+        // Known domain → iTunes ID map (shows app icon even for website links)
+        const knownId = DOMAIN_ITUNES_IDS[u.hostname.replace(/^www\./, '')];
+        if (knownId) {
+          const res = await fetch(`https://itunes.apple.com/lookup?id=${knownId}`);
+          const data = await res.json();
+          const r = data.results?.[0];
+          const artwork = r?.artworkUrl512 || r?.artworkUrl100;
+          if (artwork) return { src: artwork, bg: '' };
+        }
+        if (u.hostname === 'apps.apple.com') {
+          const appId = u.pathname.match(/\/id(\d+)/)?.[1];
+          if (appId) {
+            const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
+            const data = await res.json();
+            const r = data.results?.[0];
+            const artwork = r?.artworkUrl512 || r?.artworkUrl100;
+            if (artwork) return { src: artwork, bg: '' };
+          }
+        }
+        if (u.hostname === 'play.google.com') {
+          const pkgId = u.searchParams.get('id') || '';
+          if (pkgId) {
+            const term = pkgId.replace(/^com\.|\.android$|\.app$|\.mobile$|\.ios$/g, '').replace(/\./g, ' ').trim();
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=software&limit=1&country=de`);
+            const data = await res.json();
+            const r = data.results?.[0];
+            const artwork = r?.artworkUrl512 || r?.artworkUrl100;
+            if (artwork) return { src: artwork, bg: '' };
+          }
+        }
+        const domain = u.hostname.replace(/^www\./, '');
+        return { src: `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`, bg: '', domain };
+      } catch { return { src: '', bg: '', domain: '' }; }
+    }
+
+    async function hydrateLinkThumbs(container, links, forceSrc = null) {
+      for (let i = 0; i < (links||[]).length; i++) {
+        const thumb = container.querySelector(`[data-li="${i}"] .modal-link-card__thumb`);
+        if (!thumb) continue;
+        const overrideSrc = Array.isArray(forceSrc) ? (forceSrc[i] || null) : forceSrc;
+        if (overrideSrc) {
+          thumb.style.background = '';
+          thumb.innerHTML = `<img src="${overrideSrc}" alt="">`;
+          continue;
+        }
+        const resolved = await resolveThumbData(links[i].u);
+        const { src } = resolved;
+        if (!src) continue;
+        const isFavicon = src.includes('google.com/s2/favicons');
+        if (isFavicon) {
+          thumb.style.background = DOMAIN_FAVICON_BG[resolved.domain] || '#fff';
+          thumb.innerHTML = `<img src="${src}" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:0;display:block;">`;
+        } else {
+          thumb.innerHTML = `<img src="${src}" alt="">`;
+        }
+      }
     }
 
     // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
@@ -1592,12 +2034,12 @@
       const modal   = document.getElementById('projectModal');
       const heroImg = document.getElementById('modal-hero');
       const heroVid = document.getElementById('modal-hero-video');
-      if (p.hero) {
+      if (p.heroVideo) {
+        heroVid.src = p.heroVideo; heroVid.style.display = '';
+        heroImg.style.display = 'none';
+      } else if (p.hero) {
         heroImg.src = p.hero; heroImg.style.display = '';
         heroVid.style.display = 'none'; heroVid.src = '';
-      } else if (p.heroVideo) {
-        heroVid.src = p.heroVideo; heroVid.style.display = '';
-        heroImg.style.display = 'none'; heroImg.src = '';
       } else {
         heroImg.style.display = 'none'; heroVid.style.display = 'none';
       }
@@ -1611,30 +2053,112 @@
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
-      document.getElementById('modal-links').innerHTML  = (p.links||[]).map(l =>
-        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const linksEl = document.getElementById('modal-links');
+      const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
+      linksEl.innerHTML = buildLinkCards(externalLinks);
+      hydrateLinkThumbs(linksEl, externalLinks, PROJECT_LINK_ICONS[key] || null);
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
+      document.getElementById('themeColor').content = bg;
+      document.documentElement.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+      document.documentElement.style.backgroundColor = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
-      // Refresh next-project button
-      const oldBtn = modal.querySelector('.next-project-btn');
-      if (oldBtn) oldBtn.remove();
       injectNextBtn(key);
     }
 
     function injectNextBtn(key) {
+      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
+      const oldEnd = document.querySelector('.modal-page-end');
+      if (oldEnd) oldEnd.remove();
+
       const nextKey = getNextProjectKey(key);
-      if (!nextKey) return;
-      const nextP = PROJECTS[nextKey];
-      const btn = document.createElement('button');
-      btn.className = 'next-project-btn';
-      btn.innerHTML =
-        `<span class="next-project-btn__label">Next Project</span>` +
-        `<span class="next-project-btn__title">${nextP ? nextP.client : '→'}</span>`;
-      btn.addEventListener('click', () => goToNextProject(nextKey));
-      document.getElementById('modal-links').insertAdjacentElement('afterend', btn);
+      const nextP   = nextKey ? PROJECTS[nextKey] : null;
+
+      const pageEnd = document.createElement('div');
+      pageEnd.className = 'modal-page-end';
+      pageEnd.innerHTML =
+        `<div class="page-links">` +
+          `<span class="page-links__label">Next Up${nextP ? `<span class="page-links__client">${nextP.client}</span>` : ''}</span>` +
+          `<button class="page-links__all">View All Projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
+        `</div>` +
+        '';
+
+      const detailEl = document.getElementById('modal-links').closest('.project-detail');
+      (detailEl || document.getElementById('modal-links')).insertAdjacentElement('afterend', pageEnd);
+      pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
+
+      if (!nextP) return;
+
+      pageEnd.insertAdjacentHTML('beforeend',
+        `<div class="modal-next-reveal">` +
+          `<div class="modal-next-reveal__bg">` +
+            (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
+             nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
+          `</div>` +
+          `<div class="modal-next-reveal__inner">` +
+            `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+          `</div>` +
+        `</div>`
+      );
+
+      const revealEl = pageEnd.querySelector('.modal-next-reveal');
+      const revealVid = revealEl.querySelector('video');
+      if (revealVid) revealVid.play().catch(() => {});
+      const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
+      const scrollEl = document.querySelector('.modal__scroll');
+      const modalH   = scrollEl.clientHeight;
+      const THRESHOLD = modalH * 0.72;
+      const EASE     = 'cubic-bezier(.4,0,.2,1)';
+      let dragging = false, dragStartY = 0, dragStartH = 0, naturalH = 0, navigating = false;
+
+      function applyProgress(h) {
+        const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
+        bgEl.style.opacity = p;
+      }
+
+      _nextRevealAbort = new AbortController();
+      const sig = { passive: true, signal: _nextRevealAbort.signal };
+
+      revealEl.addEventListener('touchstart', e => {
+        if (navigating) return;
+        if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
+        dragStartY = e.touches[0].clientY;
+        dragStartH = revealEl.getBoundingClientRect().height;
+        dragging = true;
+        revealEl.style.transition = 'none';
+      }, sig);
+
+      revealEl.addEventListener('touchmove', e => {
+        if (!dragging || navigating) return;
+        const dy = dragStartY - e.touches[0].clientY;
+        const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
+        revealEl.style.height = Math.round(newH) + 'px';
+        applyProgress(newH);
+      }, sig);
+
+      revealEl.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        const h = revealEl.getBoundingClientRect().height;
+        if (h >= THRESHOLD && !navigating) {
+          navigating = true;
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = modalH + 'px';
+          applyProgress(modalH);
+          setTimeout(() => goToNextProject(nextKey), 420);
+        } else {
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = naturalH + 'px';
+          applyProgress(naturalH);
+          setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
+        }
+      }, sig);
+
+      revealEl.addEventListener('click', () => {
+        if (!navigating) { navigating = true; goToNextProject(nextKey); }
+      });
     }
 
     function goToNextProject(nextKey) {
@@ -1642,7 +2166,7 @@
       const p = PROJECTS[nextKey]; if (!p) return;
       _isTransitioning = true;
       const modalEl = document.getElementById('projectModal');
-      const txPfx   = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const txPfx   = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       const bg      = p.bg || '#f2f2f2';
       // Build display-only entering panel (shown during transition only)
       const heroHTML = p.hero
@@ -1652,14 +2176,17 @@
         : '';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const linksHTML = (p.links||[]).map(l =>
-        `<a href="${l.u}" class="project-link" target="_blank" rel="noopener">${l.t}</a>`).join('');
+      const linksHTML = buildLinkCards(p.links);
       const panel = document.createElement('div');
+      panel.classList.add('js-nav-panel');
+      const isTabletPlus = window.innerWidth >= 640;
+      const isDesktopP   = window.innerWidth >= 1024;
       panel.style.cssText =
-        'position:fixed;inset:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
-        'overscroll-behavior:contain;scrollbar-width:none;' +
-        `background:${bg};color:#111;padding:24px 8px;` +
-        "font-family:'DM Sans',sans-serif;transform:translateY(100%);";
+        'position:fixed;top:0;bottom:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
+        'overscroll-behavior:contain;scrollbar-width:none;max-height:95dvh;' +
+        `background:${bg};color:#111;padding:24px ${isDesktopP ? 16 : 8}px;` +
+        (isTabletPlus ? 'left:50%;right:auto;width:100%;max-width:1100px;' : 'left:0;right:0;') +
+        `font-family:'DM Sans',sans-serif;transform:${txPfx()}translateY(100%);`;
       panel.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
@@ -1670,11 +2197,13 @@
           `<div class="hero__desc">${p.text||''}</div>` +
         `</header>` +
         `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
-        `<section class="project-info">` +
-          `<div class="info-meta">${factsHTML}</div>` +
-          `<p class="info-desc">${p.myRole||''}</p>` +
-        `</section>` +
-        `<nav class="project-links">${linksHTML}</nav>`;
+        `<div class="project-detail">` +
+          `<section class="project-info">` +
+            `<div class="info-meta">${factsHTML}</div>` +
+            `<p class="info-desc">${p.myRole||''}</p>` +
+          `</section>` +
+          `<nav class="project-links">${linksHTML}</nav>` +
+        `</div>`;
       document.body.appendChild(panel);
       // Double rAF: mount at start position, then kick off animation
       requestAnimationFrame(() => {
@@ -1684,7 +2213,7 @@
           modalEl.style.transition = `transform ${dur}ms ${ease}`;
           modalEl.style.transform  = `${txPfx()}translateY(-108%)`;
           panel.style.transition   = `transform ${dur}ms ${ease}`;
-          panel.style.transform    = 'translateY(0)';
+          panel.style.transform    = txPfx() + 'translateY(0)';
           setTimeout(() => {
             // Swap real modal content silently behind the covering panel
             fillModalContent(nextKey);
@@ -1704,23 +2233,31 @@
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
       fillModalContent(key);
-      const modal = document.getElementById('projectModal');
+      const modal    = document.getElementById('projectModal');
+      const closeBar = document.getElementById('modalCloseBar');
       modal.style.visibility = 'visible';
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
-      document.getElementById('modalCloseBar').classList.add('is-active');
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
+      // Fade close bar in as sheet finishes sliding up
+      closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
+      setTimeout(() => closeBar.classList.add('is-active'), 460);
     }
 
     // === CLOSE MODAL ===
     function closeModal() {
+      document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+      if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
+      _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
       const closeBar = document.getElementById('modalCloseBar');
-      modal.querySelector('.modal__scroll').style.background = '';
-      modal.querySelector('.page-header').style.background   = '';
-      modal.classList.remove('is-open');
-      document.getElementById('modalBackdrop').classList.remove('is-active');
+      const backdrop = document.getElementById('modalBackdrop');
+      const txC      = window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
+      // Ease-out on close bar and backdrop
+      closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
+      backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+      backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
       document.body.style.overflow = '';
@@ -1728,10 +2265,20 @@
       _openedByHover = false;
       _hoverAllowAfter = Date.now() + 800;
       nav.classList.remove('is-open');
-      document.getElementById('themeColor').content = '#171717';
-      document.documentElement.style.backgroundColor = '#171717';
+      document.getElementById('themeColor').content = '#060606';
+      document.documentElement.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
+      document.documentElement.style.backgroundColor = '#060606';
+      modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
+      modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
         modal.style.visibility = 'hidden';
+        modal.style.transition = '';
+        modal.style.transform  = '';
+        modal.querySelector('.modal__scroll').style.background = '';
+        modal.querySelector('.page-header').style.background   = '';
+        closeBar.style.transition = '';
+        backdrop.style.transition = '';
+        modal.classList.remove('is-open');
       }, { once: true });
     }
     document.getElementById('modalCloseBar').addEventListener('click', closeModal);
@@ -1742,7 +2289,7 @@
       const modalEl  = document.getElementById('projectModal');
       const scrollEl = modalEl.querySelector('.modal__scroll');
       const closeBar = document.getElementById('modalCloseBar');
-      const tx = () => window.innerWidth >= 1024 ? 'translateX(-50%) ' : '';
+      const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       let sy = 0, dy = 0, vy = 0, pt = 0, active = false, baseCloseH = 0;
 
       function snapBack() {
@@ -1752,9 +2299,19 @@
       }
 
       function doClose() {
+        document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+        if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
+        _isTransitioning = false;
+        const backdrop = document.getElementById('modalBackdrop');
         closeBar.style.height = '';
+        closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
+        backdrop.style.transition = 'background 0.25s cubic-bezier(0,0,0.2,1)';
         closeBar.classList.remove('is-active');
-        modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+        backdrop.classList.remove('is-active');
+        document.getElementById('themeColor').content = '#060606';
+        document.documentElement.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
+        document.documentElement.style.backgroundColor = '#060606';
+        modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
           modalEl.style.visibility = 'hidden';
@@ -1762,15 +2319,14 @@
           modalEl.style.transform  = '';
           modalEl.querySelector('.modal__scroll').style.background = '';
           modalEl.querySelector('.page-header').style.background   = '';
+          closeBar.style.transition = '';
+          backdrop.style.transition = '';
           modalEl.classList.remove('is-open');
-          document.getElementById('modalBackdrop').classList.remove('is-active');
           document.body.style.overflow = '';
           document.body.classList.remove('modal-open');
           _openedByHover = false;
           _hoverAllowAfter = Date.now() + 800;
           nav.classList.remove('is-open');
-          document.getElementById('themeColor').content = '#060606';
-          document.documentElement.style.backgroundColor = '#060606';
         }, { once: true });
       }
 
@@ -1838,6 +2394,7 @@
               { cache: 'no-store' }
             ).then(r => r.json());
             const p = mapACFProject(data);
+            if (!p.links.length && PROJECT_DEFAULT_LINKS[key]) p.links = PROJECT_DEFAULT_LINKS[key];
             PROJECTS[key] = p;
 
             // Update work tile with live data
@@ -1848,12 +2405,12 @@
               const yearEl   = tile.querySelector('.work-item__year');
               const titleEl  = tile.querySelector('.work-item__title');
               const videoEl = tile.querySelector('.work-item__image video');
-              if (p.hero) {
+              if (p.heroVideo) {
+                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
+                if (imgEl)   { imgEl.style.display = 'none'; }
+              } else if (p.hero) {
                 if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
                 if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
-              } else if (p.heroVideo) {
-                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
-                if (imgEl)   { imgEl.style.display = 'none'; imgEl.src = ''; }
               }
               if (clientEl && p.client) clientEl.textContent = p.client;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
@@ -1866,13 +2423,118 @@
           } catch(e) { console.warn(`Failed to load project "${key}":`, e); }
         })
       );
+      window.__loaderDone?.();
+    })();
+
+    // === ARTICLES SLIDER ===
+    (function() {
+      const slider = document.getElementById('articlesSlider');
+      if (!slider) return;
+
+      async function resolveArticleImg(img) {
+        if (!img) return '';
+        if (typeof img === 'object') return img.url || img.source_url || '';
+        const id = parseInt(img, 10);
+        if (!id) return typeof img === 'string' ? img : '';
+        try {
+          const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(5000) });
+          if (r.ok) return (await r.json()).source_url || '';
+        } catch(e) {}
+        return '';
+      }
+
+      async function fetchArticles() {
+        const FIELDS = 'id,title,date,slug,acf,_links';
+        const bases = ['articles', 'article'];
+        try {
+          const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+          if (idx?.routes) {
+            const SKIP = new Set([...bases, 'posts','pages','media','types','statuses','taxonomies',
+              'tags','categories','users','comments','settings','themes','plugins','blocks',
+              'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+              'menu-items','menu-locations','templates','template-parts','global-styles',
+              'navigation','font-families','font-collections','pattern-directory',
+              'block-types','block-patterns','block-pattern-categories','projects','project']);
+            const others = Object.keys(idx.routes)
+              .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+              .filter(b => b && !SKIP.has(b));
+            bases.push(...others);
+          }
+        } catch(e) {}
+        bases.push('posts');
+        for (const base of bases) {
+          const r = await fetch(`${API}/${base}?per_page=8&_fields=${FIELDS}&_embed=true&acf_format=standard`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+          if (!r || !r.ok) { const code = r ? (await r.json().catch(() => ({}))).code : null; if (!r || code === 'rest_no_route') continue; throw new Error(`HTTP ${r.status}`); }
+          const posts = await r.json();
+          if (!Array.isArray(posts) || posts.length === 0) continue;
+          const hasAcf = posts.some(p => p.acf && (p.acf.test !== undefined || p.acf.content !== undefined));
+          if (!hasAcf && base === 'posts') continue;
+          return posts;
+        }
+        return [];
+      }
+
+      // Local cover images stored in /images/article-covers/ — keyed by article slug
+      const ARTICLE_COVERS = {
+        'building-a-multi-brand-designsystem':        'images/article-covers/multi-brand-design-system.png',
+        'app-vs-web':                                  'images/article-covers/app-vs-web.png',
+        '688-2':                                       'images/article-covers/analytical-mindset.png',
+        'refinement-ready-checklist':                  'images/article-covers/definition-of-done.png',
+        'website-analysis-how-to':                     'images/article-covers/website-analysis.png',
+        'above-the-fold':                              'images/article-covers/above-the-fold.png',
+        'animation-in-ux':                             'images/article-covers/animation-in-ux.png',
+        'image-and-video-preparation-for-the-web':     'images/article-covers/asset-preparation.png',
+      };
+
+      fetchArticles().then(async posts => {
+        if (!posts.length) { slider.innerHTML = ''; return; }
+        const shown = posts.slice(0, 8);
+        const label = document.getElementById('articlesLabel');
+        if (label) label.textContent = `Articles (${shown.length})`;
+        const cards = await Promise.all(shown.map(async post => {
+          const title = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent : 'Untitled';
+          const slug = post.slug || '';
+          const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+          const acf = post.acf || {};
+          const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+          const cmsImg = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+          const img = ARTICLE_COVERS[slug] || cmsImg || '';
+          const ARROW = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+          return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
+            <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
+            <div class="article-card__body">
+              ${img ? `<div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>` : ''}
+              <p class="article-card__title">${title}</p>
+              <span class="article-card__label">Deep Dive</span>
+            </div>
+            <span class="article-card__arrow">${ARROW}</span>
+          </a>`;
+        }));
+        slider.innerHTML = cards.join('');
+      }).catch(() => { slider.innerHTML = ''; });
+    })();
+
+    // === JANA LOGO CLICK ANIMATION ===
+    (() => {
+      const logo = document.querySelector('.footer-logo');
+      const jana = document.querySelector('.footer-name');
+      if (!logo || !jana) return;
+      logo.addEventListener('click', () => {
+        if (jana.classList.contains('jana-animate')) return;
+        jana.classList.add('jana-animate');
+        const lastSpan = jana.querySelector('span:last-child') || jana;
+        lastSpan.addEventListener('animationend', () => jana.classList.remove('jana-animate'), { once: true });
+      });
     })();
 
     // === TILE PARALLAX ===
     function updateTileParallax() {
       const vh = window.innerHeight;
       document.querySelectorAll('.work-item__image').forEach(container => {
-        const img = container.querySelector('img'); if (!img) return;
+        const vidEl = container.querySelector('video');
+        const imgEl2 = container.querySelector('img');
+        const img = (vidEl && vidEl.style.display !== 'none' && vidEl.src) ? vidEl : imgEl2;
+        if (!img) return;
         const rect = container.getBoundingClientRect();
         const extra = rect.height * 0.30;        // 30% extra height (img is 130% of container)
         const center = -extra / 2;               // center image in container
