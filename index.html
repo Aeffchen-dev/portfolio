@@ -544,7 +544,7 @@
       position:fixed; bottom:0; left:0; right:0;
       height:env(safe-area-inset-bottom, 0px);
       z-index:202; pointer-events:none;
-      background:#060606;
+      background:transparent;
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
 
@@ -552,7 +552,7 @@
     .page-header { background:#f2f2f2; }
     .modal-header-left { display:flex; flex-direction:column; }
     .eyebrow-client { font-size:14px; font-weight:500; color:#111; line-height:1.3; }
-    .modal-year { font-size:14px; font-weight:400; color:#555; line-height:1.3; margin-top:4px; }
+    .modal-year { display:none; }
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
       position:fixed; top:0; left:0; right:0; height:5vh;
@@ -2407,7 +2407,7 @@
       closeNav();
       document.getElementById('themeColor').content = '#060606';
       document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
-      document.getElementById('safeBar').style.background = '#060606';
+      document.getElementById('safeBar').style.background = 'transparent';
 
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
@@ -2459,8 +2459,8 @@
         backdrop.classList.remove('is-active');
         document.getElementById('themeColor').content = '#060606';
         document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
-        document.getElementById('safeBar').style.background = '#060606';
-  
+        document.getElementById('safeBar').style.background = 'transparent';
+
         if (window.innerWidth < 640) {
           document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
           document.body.style.backgroundColor = '#060606';
