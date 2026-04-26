@@ -54,10 +54,10 @@
       background:transparent;
       backdrop-filter:none;
       -webkit-backdrop-filter:none;
-      overflow:visible;
+      overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:0 8px 32px rgba(0,0,0,0.45); overflow:hidden; }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
     .nav::before {
       content:'';
@@ -92,20 +92,10 @@
       width:15px; height:13px; flex-shrink:0; position:relative;
       margin-left:auto; overflow:visible;
     }
-    @keyframes nav-dot-pulse {
-      0%, 100% { transform:scale(1); }
-      50%       { transform:scale(2.2); }
-    }
     .nav__menu > span:not(.nav__close-icon) {
       display:block; width:3px; height:3px; border-radius:50%;
       background:#fff; flex-shrink:0;
       transition:opacity .25s ease;
-    }
-    .nav__menu > span:nth-child(3) {
-      width:5px; height:5px; background:#acb0ff;
-      transition:none;
-      animation:nav-dot-pulse 2.8s ease-in-out infinite;
-      animation-play-state:running;
     }
     .nav__close-icon {
       position:absolute; inset:0;
@@ -114,7 +104,6 @@
       transform:rotate(-45deg) scale(0.7);
     }
     .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
-    .nav.is-open .nav__menu > span:nth-child(3) { animation-play-state:paused; }
     .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     /* hover / tap feedback */
     .nav__menu { transition:transform .2s cubic-bezier(.4,0,.2,1); }
@@ -307,8 +296,9 @@
     }
     .archive-stack__img {
       position:absolute;
-      inset:0; width:100%; height:100%;
-      object-fit:cover; border-radius:4px;
+      width:auto; height:90%;
+      border-radius:4px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.4);
     }
     .cv-quotes__label { font-size:14px; font-weight:500; color:#fff; margin:0 0 40px; }
     .cv-quotes__text  { font-size:14px; font-weight:400; line-height:1.4; color:#989898; font-style:normal; margin:16px 0 40px; padding:0; transition:opacity .35s ease; overflow:hidden; }
@@ -2822,7 +2812,7 @@ quoteText.textContent = '“' + q.text + '”';
         const dx = (rand(-8, 8)).toFixed(1);
         const dy = (rand(-8, 8)).toFixed(1);
         const rot = (rand(-10, 10)).toFixed(2);
-        el.style.transition = 'transform 1s cubic-bezier(.4,0,.2,1)';
+        el.style.transition = 'transform 0.6s cubic-bezier(.4,0,.2,1)';
         el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
         if (ontop) el.style.zIndex = N + 1;
       }
@@ -2835,9 +2825,9 @@ quoteText.textContent = '“' + q.text + '”';
         cards.forEach((el, i) => { if (parseInt(el.style.zIndex) === N + 1) el.style.zIndex = i; });
         applyRandom(cards[topIdx], true);
         topIdx = (topIdx - 1 + N) % N;
-        setTimeout(cycle, 1600 + rand(0, 800));
+        setTimeout(cycle, 900 + rand(0, 400));
       }
-      setTimeout(cycle, 1600);
+      setTimeout(cycle, 900);
     })();
 
   </script>
