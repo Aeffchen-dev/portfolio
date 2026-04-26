@@ -330,6 +330,7 @@
     /* === RESPONSIVE === */
     @media (min-width:1024px) {
       .hero-top         { height:60vh; }
+      .hero__title      { letter-spacing:0.04em; }
       .article-page-end { margin-top:40px; margin-bottom:40px; }
       .articles-slider-wrap { padding-bottom:40px; }
     }
@@ -743,6 +744,17 @@
         const titleEl = document.getElementById('articleTitle');
         titleEl.textContent = displayTitle;
 
+        // Enforce min 2 lines with ≥2 words in last row
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          const words = displayTitle.split(/\s+/).filter(Boolean);
+          if (words.length < 3) return;
+          const lh = parseFloat(getComputedStyle(titleEl).lineHeight);
+          if (!isNaN(lh) && titleEl.offsetHeight < lh * 1.5) {
+            const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const breakAt = Math.max(1, Math.min(words.length - 2, Math.ceil(words.length / 2)));
+            titleEl.innerHTML = words.slice(0, breakAt).map(esc).join(' ') + '<br>' + words.slice(breakAt).map(esc).join(' ');
+          }
+        }));
 
         // Subtitle from ACF subtitle field
         const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
