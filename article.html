@@ -85,8 +85,38 @@
     /* === PAGE WRAPPER === */
     body { background:#000; color:#fff; }
 
-    /* === LOADING === */
-    .article-loading { display:flex; align-items:center; justify-content:center; min-height:100dvh; font-size:14px; color:rgba(255,255,255,.4); text-align:center; }
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#000;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-lines { text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
+    .loading-line {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:clamp(12px, 1.4vw, 16px);
+      font-weight:bold; text-transform:uppercase; letter-spacing:0.07em; line-height:1.2;
+      color:rgba(255,255,255,0.08);
+      display:flex; gap:0.4em; flex-wrap:wrap; justify-content:center;
+      transition:color 1s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-line.is-active { color:#fff; }
+    .loading-line.is-past   { color:rgba(255,255,255,0.18); }
+    .loading-word { display:inline-block; opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px); }
+    @keyframes wordReveal {
+      0%   { opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px); }
+      60%  { filter:blur(0); }
+      100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    }
+    .loading-line.is-active .loading-word { animation:wordReveal 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
+    /* error state */
+    .loading-error { display:none; text-align:center; padding:0 24px; }
+    .loading-error.is-visible { display:block; }
+    .loading-error p { font-size:14px; color:rgba(255,255,255,0.45); margin-bottom:16px; }
+    .loading-error a { font-family:'HW Left Bold',sans-serif; font-size:11px; font-weight:bold; letter-spacing:.06em; text-transform:uppercase; color:#fff; }
 
     /* === ARTICLE CONTENT (no modal overlay) === */
     .modal { display:none; }
@@ -285,7 +315,81 @@
   </nav>
 
   <!-- LOADING STATE -->
-  <div class="article-loading" id="articleLoading"><span>Loading…</span></div>
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <div class="loading-lines" id="loadingLines"></div>
+    <div class="loading-error" id="loadingError">
+      <p id="loadingErrorMsg"></p>
+      <a href="index.html#articles">← All Articles</a>
+    </div>
+  </div>
+  <script>
+  (function() {
+    var LINES = [
+      'Loading',
+      'Initializing layout',
+      'Initializing design system',
+      'Reducing complexity',
+      'Establishing consistency',
+      'Making things intuitive',
+      'Improving the flow'
+    ];
+    var screen    = document.getElementById('loadingScreen');
+    var container = document.getElementById('loadingLines');
+    var lineEls   = LINES.map(function(text) {
+      var div = document.createElement('div');
+      div.className = 'loading-line';
+      div.innerHTML = text.split(' ').map(function(w, i) {
+        return '<span class="loading-word" style="animation-delay:' + (i * 95) + 'ms">' + w + '</span>';
+      }).join('');
+      container.appendChild(div);
+      return div;
+    });
+    var current = -1, intervalId = null, isShown = false, isDone = false, showTimer = null;
+
+    function activateLine(idx) {
+      lineEls.forEach(function(el, i) {
+        el.classList.remove('is-active', 'is-past');
+        if (i === idx) {
+          el.querySelectorAll('.loading-word').forEach(function(w) { w.style.animation='none'; void w.offsetWidth; w.style.animation=''; });
+          el.classList.add('is-active');
+        } else if (i < idx) { el.classList.add('is-past'); }
+      });
+    }
+    function advance() {
+      current++;
+      if (current >= lineEls.length) { clearInterval(intervalId); if (isDone) hide(); return; }
+      activateLine(current);
+    }
+    function show() {
+      isShown = true;
+      screen.classList.add('is-visible');
+      advance();
+      intervalId = setInterval(advance, 1000);
+    }
+    function hide() {
+      clearInterval(intervalId);
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 750);
+    }
+    showTimer = setTimeout(function() { if (!isDone) show(); }, 1500);
+
+    window.__loaderDone = function() {
+      isDone = true; clearTimeout(showTimer);
+      if (!isShown) return;
+      setTimeout(hide, 500);
+    };
+    window.__loaderError = function(msg) {
+      isDone = true; clearTimeout(showTimer); clearInterval(intervalId);
+      if (!isShown) { show(); }
+      container.style.display = 'none';
+      var errEl = document.getElementById('loadingError');
+      var msgEl = document.getElementById('loadingErrorMsg');
+      if (msgEl) msgEl.textContent = msg;
+      if (errEl) errEl.classList.add('is-visible');
+    };
+  })();
+  </script>
 
   <!-- ARTICLE MODAL CARD -->
   <div class="modal" id="articleModal">
@@ -468,8 +572,7 @@
   }
 
   function showError(msg) {
-    document.getElementById('articleLoading').innerHTML =
-      `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="index.html#articles" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
+    window.__loaderError?.(msg);
   }
 
   // Resolve an ACF image field to a URL.
@@ -661,7 +764,7 @@
         document.getElementById('blocksGrid').innerHTML = blocksHtml
           || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
 
-        document.getElementById('articleLoading').style.display = 'none';
+        window.__loaderDone?.();
         document.getElementById('articleModal').classList.add('is-visible');
 
         // Inject next article section (non-blocking)
