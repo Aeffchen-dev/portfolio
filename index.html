@@ -119,8 +119,20 @@
     .nav.is-open .nav__expand { padding-top:33px; }
     .nav.is-open .nav__expand { grid-template-rows:1fr; }
     .nav__expand-inner { overflow:hidden; }
+    .nav__top-row { display:flex; justify-content:space-between; align-items:flex-start; }
 
     .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__vibe {
+      padding:32px 16px 0; font-size:11px; font-weight:500;
+      color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
+      text-align:right; max-width:120px;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__vibe {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
     .nav__link {
       display:block;
       font-size:32px; font-weight:400; color:#fff; line-height:1.4;
@@ -359,8 +371,12 @@
       letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
       white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
     }
+    .footer-vibe {
+      font-size:11px; font-weight:500; color:rgba(0,0,0,0.35);
+      letter-spacing:0; line-height:1.5; margin-top:16px;
+    }
     @media (min-width:640px) {
-      .footer-name, .footer-logo, .footer-bottom, .footer-grid { display:none; }
+      .footer-name, .footer-logo, .footer-bottom, .footer-grid, .footer-vibe { display:none; }
       .home-footer { min-height:0; padding-top:0; padding-bottom:8px; padding-left:8px; padding-right:8px; }
     }
 
@@ -938,11 +954,14 @@
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__links">
-          <a href="#work" class="nav__link">Work</a>
-          <a href="#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link">Archive</a>
-          <a href="#articles" class="nav__link">Articles</a>
+        <div class="nav__top-row">
+          <div class="nav__links">
+            <a href="#work" class="nav__link">Work</a>
+            <a href="#about" class="nav__link">About</a>
+            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="#articles" class="nav__link">Articles</a>
+          </div>
+          <p class="nav__vibe">This page is vibe coded with Claude Code</p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -1262,6 +1281,7 @@
             <a href="mailto:hello@janagramlich.com" class="footer-email">hello@janagramlich.com</a>
           </div>
         </div>
+        <p class="footer-vibe">This page is vibe coded with Claude Code</p>
         <div class="footer-bottom">
           <img src="images/logo.svg" alt="Logo" class="footer-logo">
           <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span></p>
