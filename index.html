@@ -496,8 +496,10 @@
     .modal {
       position:fixed;
       bottom:0; left:0;
-      width:100vw;
+      width:100vw; max-height:95dvh;
       z-index:200;
+      border-radius:16px 16px 0 0;
+      overflow:hidden;
       transform:translateY(100%);
       transition:transform .5s cubic-bezier(.4,0,.2,1);
       pointer-events:none;
@@ -507,10 +509,8 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:100dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      background:#f2f2f2;
-      border-radius:16px 16px 0 0;
-      padding:24px 8px calc(env(safe-area-inset-bottom) + 20px);
+      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+      background:#f2f2f2; padding:24px 8px 0;
       scrollbar-width:none;
       color:#111;
     }
