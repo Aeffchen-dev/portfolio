@@ -889,7 +889,8 @@
       .cv-section-heading br { display:none; }
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
-      .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; }
+      .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
+      .articles-section::after { content:""; position:absolute; top:0; right:0; bottom:0; width:64px; background:linear-gradient(to right, transparent, #060606); pointer-events:none; z-index:2; }
       .articles-section__label { padding-left:0; padding-right:0; }
       .articles-slider    { padding-left:8px; padding-bottom:8px; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
