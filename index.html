@@ -912,7 +912,7 @@
       container.appendChild(div);
       return div;
     });
-    var current = -1, intervalId = null, isShown = false, isDone = false, showTimer = null;
+    var current = -1, intervalId = null, isShown = false, isDone = false;
 
     function activateLine(idx) {
       lineEls.forEach(function(el, i) {
@@ -941,7 +941,7 @@
       isShown = true;
       screen.classList.add('is-visible');
       advance();
-      intervalId = setInterval(advance, 1000);
+      intervalId = setInterval(advance, 450);
     }
 
     function hide() {
@@ -951,13 +951,12 @@
       setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 750);
     }
 
-    showTimer = setTimeout(function() { if (!isDone) show(); }, 1500);
+    show();
 
     window.__loaderDone = function() {
       isDone = true;
-      clearTimeout(showTimer);
       if (!isShown) return;
-      setTimeout(hide, current >= 0 ? 500 : 0);
+      setTimeout(hide, 300);
     };
   })();
   </script>
