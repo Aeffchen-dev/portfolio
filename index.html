@@ -561,7 +561,7 @@
       display:flex; align-items:center; justify-content:center; gap:16px;
       font-family:'HW Left Bold', sans-serif;
       font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
-      z-index:201; cursor:pointer;
+      z-index:199; cursor:pointer;
       opacity:0; pointer-events:none;
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
     }
@@ -2167,6 +2167,11 @@
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
       }
+      if (window.innerWidth < 640) {
+        const bd = document.getElementById('modalBackdrop');
+        bd.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
+        bd.style.background = bg;
+      }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2402,6 +2407,7 @@
       // Ease-out on close bar and backdrop
       closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
       backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+      if (window.innerWidth < 640) backdrop.style.background = 'transparent';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
