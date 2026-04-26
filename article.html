@@ -89,7 +89,7 @@
     .loading-screen {
       position:fixed; inset:0; z-index:9999;
       background:#000;
-      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px;
+      display:flex; align-items:center; justify-content:center; flex-direction:row; gap:10px;
       opacity:0; pointer-events:none;
       transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
     }
@@ -107,7 +107,7 @@
       width:8px; height:8px; border-radius:50%; background:#fff;
       animation:pulseDot 1.2s ease-in-out infinite;
     }
-    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.15;transform:scale(1.6)} }
+    @keyframes pulseDot { 0%,100%{transform:scale(1)} 50%{transform:scale(1.7)} }
 
     /* === ARTICLE CONTENT (no modal overlay) === */
     .modal { display:none; }
