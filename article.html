@@ -258,6 +258,8 @@
     .block--half { grid-column:span 2; }
     .block-image { background:#1A1A1A; }
     .block-image img { width:100%; height:auto; display:block; }
+    .block-prototype { background:#1A1A1A; border-radius:4px; overflow:hidden; }
+    .block-prototype iframe { display:block; width:100%; border:none; }
     .block-text { background:#141414; border-radius:8px; }
     .text-inner { padding:12px 16px; }
     .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
@@ -615,6 +617,23 @@
         const url = await resolveImgUrl(s.img || s.image || s.photo || s.src || null);
         if (url) {
           blocks.push(`<div class="block block--full block-image"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+        }
+      } else if (layout === 'prototype') {
+        // Strip <code> wrapper the CMS adds around iframes, then extract the <iframe>
+        const raw = (s.prototype || '').replace(/<\/?code>/gi, '');
+        const match = raw.match(/<iframe[\s\S]*?<\/iframe>/i);
+        if (match) {
+          let iframeHtml = match[0];
+          // Convert figma.com/proto URLs to the embeddable figma.com/embed format
+          iframeHtml = iframeHtml.replace(/src="(https:\/\/www\.figma\.com\/proto\/[^"]+)"/i, (_, rawUrl) => {
+            // Decode HTML entities (&amp; → &) then decode any existing %-encoding before re-encoding
+            const htmlDecoded = rawUrl.replace(/&amp;/g, '&').replace(/&#038;/g, '&');
+            const url = decodeURIComponent(htmlDecoded);
+            return `src="https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}"`;
+          });
+          // Ensure allow="fullscreen" for Figma
+          if (!/allow=/i.test(iframeHtml)) iframeHtml = iframeHtml.replace('<iframe', '<iframe allow="fullscreen"');
+          blocks.push(`<div class="block block--full block-prototype">${iframeHtml}</div>`);
         }
       } else {
         // Text/editor: try known fields, then scan all string fields
