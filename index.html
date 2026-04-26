@@ -434,56 +434,56 @@
     .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    /* J — highest arc */
+    /* J — highest arc, exits left */
     @keyframes jana-J {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(3vw,-50px) rotate(12deg); opacity:1; }
-      32%  { transform: translate(22vw,-62px) rotate(18deg); opacity:1; }
-      47%  { transform: translate(68vw,-18px) rotate(24deg); opacity:1; }
-      54%  { transform: translate(116vw,10px) rotate(26deg); opacity:0; }
-      55%  { transform: translate(116vw,10px) rotate(26deg); opacity:0; }
-      68%  { transform: translate(50vw,-14px) rotate(16deg); opacity:1; }
-      82%  { transform: translate(7vw,-28px) rotate(7deg); opacity:1; }
-      93%  { transform: translate(0.5vw,-3px) rotate(0.5deg); opacity:1; }
+      15%  { transform: translate(-3vw,-50px) rotate(-12deg); opacity:1; }
+      32%  { transform: translate(-22vw,-62px) rotate(-18deg); opacity:1; }
+      47%  { transform: translate(-68vw,-18px) rotate(-24deg); opacity:1; }
+      54%  { transform: translate(-116vw,10px) rotate(-26deg); opacity:0; }
+      55%  { transform: translate(116vw,10px) rotate(-26deg); opacity:0; }
+      68%  { transform: translate(50vw,-14px) rotate(-16deg); opacity:1; }
+      82%  { transform: translate(7vw,-28px) rotate(-7deg); opacity:1; }
+      93%  { transform: translate(0.5vw,-3px) rotate(-0.5deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    /* A (1st) — mid arc */
+    /* A (1st) — mid arc, exits left */
     @keyframes jana-A1 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(2.5vw,-36px) rotate(9deg); opacity:1; }
-      32%  { transform: translate(18vw,-48px) rotate(15deg); opacity:1; }
-      47%  { transform: translate(64vw,-12px) rotate(21deg); opacity:1; }
-      54%  { transform: translate(118vw,8px) rotate(23deg); opacity:0; }
-      55%  { transform: translate(118vw,8px) rotate(23deg); opacity:0; }
-      69%  { transform: translate(47vw,-11px) rotate(14deg); opacity:1; }
-      83%  { transform: translate(6vw,-22px) rotate(6deg); opacity:1; }
-      94%  { transform: translate(0.4vw,-2px) rotate(0.3deg); opacity:1; }
+      15%  { transform: translate(-2.5vw,-36px) rotate(-9deg); opacity:1; }
+      32%  { transform: translate(-18vw,-48px) rotate(-15deg); opacity:1; }
+      47%  { transform: translate(-64vw,-12px) rotate(-21deg); opacity:1; }
+      54%  { transform: translate(-118vw,8px) rotate(-23deg); opacity:0; }
+      55%  { transform: translate(118vw,8px) rotate(-23deg); opacity:0; }
+      69%  { transform: translate(47vw,-11px) rotate(-14deg); opacity:1; }
+      83%  { transform: translate(6vw,-22px) rotate(-6deg); opacity:1; }
+      94%  { transform: translate(0.4vw,-2px) rotate(-0.3deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    /* N — shallower arc */
+    /* N — shallower arc, exits left */
     @keyframes jana-N {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(2vw,-26px) rotate(7deg); opacity:1; }
-      32%  { transform: translate(15vw,-36px) rotate(12deg); opacity:1; }
-      47%  { transform: translate(61vw,-8px) rotate(17deg); opacity:1; }
-      54%  { transform: translate(120vw,6px) rotate(20deg); opacity:0; }
-      55%  { transform: translate(120vw,6px) rotate(20deg); opacity:0; }
-      70%  { transform: translate(44vw,-9px) rotate(12deg); opacity:1; }
-      84%  { transform: translate(5vw,-17px) rotate(5deg); opacity:1; }
-      95%  { transform: translate(0.3vw,-1.5px) rotate(0.2deg); opacity:1; }
+      15%  { transform: translate(-2vw,-26px) rotate(-7deg); opacity:1; }
+      32%  { transform: translate(-15vw,-36px) rotate(-12deg); opacity:1; }
+      47%  { transform: translate(-61vw,-8px) rotate(-17deg); opacity:1; }
+      54%  { transform: translate(-120vw,6px) rotate(-20deg); opacity:0; }
+      55%  { transform: translate(120vw,6px) rotate(-20deg); opacity:0; }
+      70%  { transform: translate(44vw,-9px) rotate(-12deg); opacity:1; }
+      84%  { transform: translate(5vw,-17px) rotate(-5deg); opacity:1; }
+      95%  { transform: translate(0.3vw,-1.5px) rotate(-0.2deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    /* A (2nd) — lowest, tightest arc */
+    /* A (2nd) — lowest, tightest arc, exits left */
     @keyframes jana-A2 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(1.5vw,-18px) rotate(5deg); opacity:1; }
-      32%  { transform: translate(13vw,-26px) rotate(9deg); opacity:1; }
-      47%  { transform: translate(58vw,-5px) rotate(14deg); opacity:1; }
-      54%  { transform: translate(122vw,5px) rotate(17deg); opacity:0; }
-      55%  { transform: translate(122vw,5px) rotate(17deg); opacity:0; }
-      71%  { transform: translate(42vw,-7px) rotate(10deg); opacity:1; }
-      85%  { transform: translate(4vw,-13px) rotate(4deg); opacity:1; }
-      96%  { transform: translate(0.2vw,-1px) rotate(0.1deg); opacity:1; }
+      15%  { transform: translate(-1.5vw,-18px) rotate(-5deg); opacity:1; }
+      32%  { transform: translate(-13vw,-26px) rotate(-9deg); opacity:1; }
+      47%  { transform: translate(-58vw,-5px) rotate(-14deg); opacity:1; }
+      54%  { transform: translate(-122vw,5px) rotate(-17deg); opacity:0; }
+      55%  { transform: translate(122vw,5px) rotate(-17deg); opacity:0; }
+      71%  { transform: translate(42vw,-7px) rotate(-10deg); opacity:1; }
+      85%  { transform: translate(4vw,-13px) rotate(-4deg); opacity:1; }
+      96%  { transform: translate(0.2vw,-1px) rotate(-0.1deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
     .footer-name span { display:inline-block; }
