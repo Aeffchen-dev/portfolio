@@ -851,113 +851,44 @@
     .loading-screen {
       position:fixed; inset:0; z-index:9999;
       background:#060606;
-      display:flex; align-items:center; justify-content:center;
+      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px;
       opacity:0; pointer-events:none;
-      transition:opacity 0.7s cubic-bezier(.4,0,.2,1);
+      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
     }
     .loading-screen.is-visible { opacity:1; pointer-events:auto; }
-    .loading-lines {
-      text-align:center;
-      display:flex; flex-direction:column; align-items:center; gap:14px;
-    }
-    .loading-line {
+    .loading-label {
       font-family:'HW Left Bold', sans-serif;
-      font-size:clamp(12px, 1.4vw, 16px);
-      font-weight:bold; text-transform:uppercase; letter-spacing:0.07em; line-height:1.2;
-      color:rgba(255,255,255,0.08);
-      display:flex; gap:0.4em; flex-wrap:wrap; justify-content:center;
-      transition:color 1s cubic-bezier(.4,0,.2,1);
+      font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em;
+      background:linear-gradient(90deg,rgba(255,255,255,0.15) 0%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.15) 100%);
+      background-size:200% 100%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmerText 1.8s ease-in-out infinite;
     }
-    .loading-line.is-active { color:#fff; }
-    .loading-line.is-past   { color:rgba(255,255,255,0.18); }
-    .loading-word {
-      display:inline-block;
-      opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px);
+    @keyframes shimmerText { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .loading-dot {
+      width:8px; height:8px; border-radius:50%; background:#fff;
+      animation:pulseDot 1.2s ease-in-out infinite;
     }
-    @keyframes wordReveal {
-      0%   { opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px); }
-      60%  { filter:blur(0); }
-      100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
-    }
-    .loading-line.is-active .loading-word {
-      animation:wordReveal 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
-    }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.15;transform:scale(1.6)} }
   </style>
 </head>
 <body>
 
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
-    <div class="loading-lines" id="loadingLines"></div>
+    <span class="loading-label">Loading</span>
+    <span class="loading-dot"></span>
   </div>
   <script>
   (function() {
-    var LINES = [
-      'Loading',
-      'Initializing layout',
-      'Initializing design system',
-      'Reducing complexity',
-      'Establishing consistency',
-      'Making things intuitive',
-      'Improving the flow'
-    ];
-    var screen   = document.getElementById('loadingScreen');
-    var container = document.getElementById('loadingLines');
-    var lineEls  = LINES.map(function(text) {
-      var div = document.createElement('div');
-      div.className = 'loading-line';
-      div.innerHTML = text.split(' ').map(function(w, i) {
-        return '<span class="loading-word" style="animation-delay:' + (i * 95) + 'ms">' + w + '</span>';
-      }).join('');
-      container.appendChild(div);
-      return div;
-    });
-    var current = -1, intervalId = null, isShown = false, isDone = false;
-
-    function activateLine(idx) {
-      lineEls.forEach(function(el, i) {
-        el.classList.remove('is-active', 'is-past');
-        if (i === idx) {
-          // re-trigger word animations
-          el.querySelectorAll('.loading-word').forEach(function(w) {
-            w.style.animation = 'none';
-            void w.offsetWidth;
-            w.style.animation = '';
-          });
-          el.classList.add('is-active');
-        } else if (i < idx) {
-          el.classList.add('is-past');
-        }
-      });
-    }
-
-    function advance() {
-      current++;
-      if (current >= lineEls.length) { clearInterval(intervalId); if (isDone) hide(); return; }
-      activateLine(current);
-    }
-
-    function show() {
-      isShown = true;
-      screen.classList.add('is-visible');
-      advance();
-      intervalId = setInterval(advance, 450);
-    }
-
+    var screen = document.getElementById('loadingScreen');
+    screen.classList.add('is-visible');
     function hide() {
-      clearInterval(intervalId);
       screen.style.opacity = '0';
       screen.style.pointerEvents = 'none';
-      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 750);
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
     }
-
-    show();
-
-    window.__loaderDone = function() {
-      isDone = true;
-      if (!isShown) return;
-      setTimeout(hide, 300);
-    };
+    window.__loaderDone = function() { setTimeout(hide, 300); };
   })();
   </script>
 
