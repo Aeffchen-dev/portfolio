@@ -2179,7 +2179,7 @@
       const nextBg = nextP.bg || '#f2f2f2';
 
       pageEnd.insertAdjacentHTML('beforeend',
-        `<div class="modal-next-reveal">` +
+        `<div class="modal-next-reveal" style="background:${nextBg}">` +
           `<div class="modal-next-reveal__bg">` +
             (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
              nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
@@ -2217,10 +2217,8 @@
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
         bgEl.style.opacity = 0.2 + p * 0.8;
         if (dragStartBg) {
-          const col = lerpHex(dragStartBg, nextBg, p);
           document.documentElement.style.transition = 'none';
-          document.documentElement.style.backgroundColor = col;
-          document.getElementById('themeColor').content = col;
+          document.documentElement.style.backgroundColor = lerpHex(dragStartBg, nextBg, p);
         }
       }
 
