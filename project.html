@@ -92,9 +92,9 @@
       }
     }
 
-    /* === INTRO SECTION (back-link only) === */
+    /* === INTRO SECTION (back-link + hero image) === */
     .project-intro {
-      padding: 32px;
+      padding: 0;
       background: #0D0D0D;
       display: flex;
       flex-direction: column;
@@ -114,13 +114,14 @@
       align-self: flex-start;
       position: sticky;
       top: 32px;
+      margin: 32px 32px 16px;
     }
     .back-link:hover { color: #fff; }
     /* Rotate the standard ↗ arrow 180° to point ↙ */
     .back-link__arrow { display: inline-flex; flex-shrink: 0; transform: rotate(180deg); }
 
-    /* === PROJECT TEXT (title + subline) === */
-    .project-text { padding: 24px 32px; }
+    /* === PROJECT TEXT (title + subline) — hidden === */
+    .project-text { display: none; }
     .project-title {
       font-size: clamp(40px, 14vw, 100px);
       font-weight: 600;
@@ -233,8 +234,7 @@
 
     /* === MOBILE === */
     @media (max-width: 639px) {
-      .project-intro { padding: 20px; }
-      .project-text { padding: 20px; }
+      .back-link { margin: 20px 20px 12px; }
       .project-hero-img { padding: 8px; }
       .project-hero-img img { border-radius: 4px; }
       .blocks__grid { grid-template-columns: 1fr; gap: 8px; }
@@ -243,20 +243,18 @@
 
     }
 
-    /* === MOBILE + TABLET: reorder text before hero image === */
+    /* === MOBILE + TABLET: sheet flex order === */
     @media (max-width: 1023px) {
-      .project-intro   { order: 1; }
-      .project-text    { order: 2; }
-      .project-hero-img { order: 3; }
-      .blocks          { order: 4; }
-      .page-links      { order: 5; }
-      .next-project    { order: 6; }
+      .project-intro { order: 1; }
+      .blocks        { order: 2; }
+      .page-links    { order: 3; }
+      .next-project  { order: 4; }
     }
 
     /* === TABLET === */
     @media (min-width: 640px) and (max-width: 1023px) {
-      .project-intro { padding: 24px; }
-      .project-hero-img { padding: 0 4px 8px; }
+      .back-link { margin: 24px 24px 16px; }
+      .project-hero-img { padding: 8px; }
       .blocks__grid { grid-template-columns: repeat(4, 1fr); }
     }
 
@@ -280,7 +278,7 @@
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
   <div class="project-sheet" id="projectSheet">
 
-  <!-- INTRO: BACK link only -->
+  <!-- INTRO: BACK link + hero image -->
   <section class="project-intro">
     <a href="javascript:history.back()" class="back-link">
       <span class="back-link__arrow">
@@ -291,14 +289,12 @@
       </span>
       <span>Edition</span>
     </a>
+    <div class="project-hero-img">
+      <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
+    </div>
   </section>
 
-  <!-- FIRST IMAGE -->
-  <div class="project-hero-img">
-    <img src="https://janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="eager">
-  </div>
-
-  <!-- TITLE + SUBLINE (below hero on desktop, before hero on mobile via flex order) -->
+  <!-- TITLE + SUBLINE (hidden) -->
   <div class="project-text">
     <h1 class="project-title">Aligning the Douglas app and webshop UI with the premium assortment</h1>
     <p class="project-subline">A cross-platform design system unifying app and web — balancing luxury appeal, accessibility compliance, and scale across Europe's leading beauty retailer.</p>
