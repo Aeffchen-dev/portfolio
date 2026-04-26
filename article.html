@@ -207,6 +207,59 @@
     }
     .share-btn:hover { opacity:.6; }
 
+    /* === HERO THEMES === */
+    .hero__kicker {
+      display:none;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:10px; font-weight:bold; letter-spacing:0.1em;
+      text-transform:uppercase; margin-bottom:2px; order:-1;
+    }
+    /* DARK (refined default) */
+    .article-hero[data-theme="dark"] { background:#0d0d0d; }
+    .article-hero[data-theme="dark"] .hero__kicker { display:block; color:rgba(255,255,255,0.3); }
+
+    /* EDITORIAL — warm cream, bottom-anchored left title */
+    .article-hero[data-theme="editorial"] { background:#F2EDE4; }
+    .article-hero[data-theme="editorial"] .hero-main {
+      align-items:flex-start; justify-content:flex-end; padding-bottom:20px;
+    }
+    .article-hero[data-theme="editorial"] .hero__kicker {
+      display:block; color:rgba(0,0,0,0.35); text-align:left;
+    }
+    .article-hero[data-theme="editorial"] .hero__title {
+      color:#1a1a1a; text-align:left; text-transform:none;
+      font-size:clamp(38px,5.5vw,68px); line-height:1.0; letter-spacing:-0.025em; max-width:10em;
+    }
+    .article-hero[data-theme="editorial"] .hero__subtitle,
+    .article-hero[data-theme="editorial"] .hero__summary { color:rgba(0,0,0,0.4); text-align:left; }
+    .article-hero[data-theme="editorial"] .back-link,
+    .article-hero[data-theme="editorial"] .share-btn { color:#1a1a1a; }
+    .article-hero[data-theme="editorial"] .hero__cover-img { display:none !important; }
+
+    /* VIVID — bold solid color, bg + fg via JS */
+    .article-hero[data-theme="vivid"] .hero__kicker { display:block; }
+    .article-hero[data-theme="vivid"] .hero__title {
+      font-size:clamp(36px,6vw,72px);
+    }
+    .article-hero[data-theme="vivid"] .hero__cover-img { display:none !important; }
+
+    /* OVERSIZED — ultra-large type, very dark */
+    .article-hero[data-theme="oversized"] { background:#080808; }
+    .article-hero[data-theme="oversized"] .hero__kicker { display:block; color:rgba(255,255,255,0.25); align-self:flex-start; }
+    .article-hero[data-theme="oversized"] .hero__title {
+      font-size:clamp(54px,9vw,108px); line-height:0.84; letter-spacing:-0.035em; max-width:7em;
+    }
+    .article-hero[data-theme="oversized"] .hero__subtitle,
+    .article-hero[data-theme="oversized"] .hero__summary { display:none !important; }
+    .article-hero[data-theme="oversized"] .hero__cover-img { display:none !important; }
+
+    /* GRADIENT — rich gradient bg, via JS */
+    .article-hero[data-theme="gradient"] .hero__kicker { display:block; color:rgba(255,255,255,0.4); }
+    .article-hero[data-theme="gradient"] .hero__title {
+      font-size:clamp(32px,5.5vw,60px);
+    }
+    .article-hero[data-theme="gradient"] .hero__cover-img { display:none !important; }
+
     /* === BLOCKS === */
     .blocks { padding:16px 8px 72px; margin:0 auto; max-width:800px; }
     .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); column-gap:4px; row-gap:72px; }
@@ -362,9 +415,10 @@
   <div class="modal" id="articleModal">
     <div class="modal__scroll">
 
-      <div class="article-hero">
+      <div class="article-hero" id="articleHero">
         <div class="hero-top">
           <div class="hero-main">
+            <span class="hero__kicker" id="articleKicker"></span>
             <img id="articleCoverImg" class="hero__cover-img" alt="">
             <h1 class="hero__title" id="articleTitle"></h1>
             <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
@@ -593,6 +647,39 @@
   const slug   = params.get('slug');
   const postId = params.get('id');
 
+  // === HERO THEME (applied immediately from slug, before fetch) ===
+  (function() {
+    const s = slug || String(postId || '');
+    const hash = Math.abs(s.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0));
+    const THEMES = ['dark', 'editorial', 'vivid', 'oversized', 'gradient'];
+    const theme = THEMES[hash % THEMES.length];
+    const hero = document.getElementById('articleHero');
+    hero.dataset.theme = theme;
+
+    if (theme === 'vivid') {
+      const V = [
+        {bg:'#E84012',fg:'#fff'}, {bg:'#0D2952',fg:'#fff'},
+        {bg:'#1C4A28',fg:'#fff'}, {bg:'#9C2040',fg:'#fff'},
+        {bg:'#3D1F5A',fg:'#fff'}, {bg:'#B8D020',fg:'#111'},
+      ];
+      const v = V[(hash >> 2) % V.length];
+      hero.style.background = v.bg;
+      const muted = v.fg === '#fff' ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.4)';
+      hero.querySelectorAll('.hero__title,.back-link,.share-btn').forEach(el => el.style.color = v.fg);
+      hero.querySelectorAll('.hero__kicker,.hero__subtitle,.hero__summary').forEach(el => el.style.color = muted);
+    }
+
+    if (theme === 'gradient') {
+      const G = [
+        'linear-gradient(150deg,#1a1a2e 0%,#4a2080 100%)',
+        'linear-gradient(150deg,#0f2940 0%,#1a5040 100%)',
+        'linear-gradient(150deg,#3a0f18 0%,#5c1a10 100%)',
+        'linear-gradient(150deg,#0a1228 0%,#282060 100%)',
+      ];
+      hero.style.background = G[(hash >> 2) % G.length];
+    }
+  })();
+
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
@@ -666,6 +753,7 @@
         const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').replace(/\s*\.{3,}$|\s*…$/, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
+        if (category) { const k = document.getElementById('articleKicker'); if (k) k.textContent = category; }
         const test2    = acf.test2 || '';
 
         // Convert ALL-CAPS WordPress titles to title case for display
