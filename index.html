@@ -306,7 +306,7 @@
     }
     .archive-stack__img {
       position:absolute;
-      width:90%; height:auto;
+      width:20%; height:auto;
       border-radius:4px;
       box-shadow:0 4px 16px rgba(0,0,0,0.4);
     }
@@ -901,9 +901,9 @@
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
       .articles-section::before,
-      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; }
-      .articles-section::before { left:0; background:linear-gradient(to left, transparent, #060606); opacity:0; }
-      .articles-section::after  { right:0; background:linear-gradient(to right, transparent, #060606); opacity:1; }
+      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:1; }
+      .articles-section::before { left:0; background:linear-gradient(to left, transparent, #060606); }
+      .articles-section::after  { right:0; background:linear-gradient(to right, transparent, #060606); }
       .articles-section.at-start::before { opacity:0; }
       .articles-section.at-end::after    { opacity:0; }
       .articles-section__label { padding-left:0; padding-right:0; }
