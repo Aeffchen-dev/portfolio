@@ -146,20 +146,12 @@
     .modal.is-visible { display:block; }
 
     /* === ARTICLE HERO === */
-    .article-hero {
-      background:transparent; position:relative;
-      background-size:cover; background-position:center; background-repeat:no-repeat;
-    }
-    .article-hero.has-cover::before {
-      content:''; position:absolute; inset:0;
-      background:rgba(0,0,0,0.42); pointer-events:none; z-index:0;
-    }
+    .article-hero { background:transparent; }
     .hero-top {
       height:80vh;
       max-width:800px; margin:0 auto;
       padding:52px 8px 0;
       display:flex; flex-direction:column;
-      position:relative; z-index:1;
     }
     /* center zone: must fit within 80vh — min-height:0 allows shrinking */
     .hero-main {
@@ -187,8 +179,15 @@
       margin-top:16px;
     }
 
-    .hero__cover-img { display:none !important; }
-    .article-hero.has-cover .hero__title { text-shadow:0 2px 16px rgba(0,0,0,0.5); }
+    .hero__cover-img {
+      display:none; max-width:100%; max-height:56vh;
+      border-radius:8px; object-fit:contain; flex-shrink:0;
+    }
+    .article-hero.has-cover .hero__cover-img { display:block; }
+    .article-hero.has-cover .hero__title,
+    .article-hero.has-cover .hero__subtitle,
+    .article-hero.has-cover .hero__summary,
+    .article-hero.has-cover .hero__kicker { display:none !important; }
 
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
@@ -736,9 +735,9 @@
         // Cover image in header — 16px above headline, 20% less wide than headline
         const coverSrc = ARTICLE_COVERS[post.slug || slug || ''] || '';
         if (coverSrc) {
-          const hero = document.getElementById('articleHero');
-          hero.style.backgroundImage = `url('${coverSrc}')`;
-          hero.classList.add('has-cover');
+          const coverImg = document.getElementById('articleCoverImg');
+          coverImg.src = coverSrc;
+          document.getElementById('articleHero').classList.add('has-cover');
         }
 
         // Subtitle from ACF subtitle field
