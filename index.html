@@ -101,9 +101,15 @@
       background:#fff; flex-shrink:0;
       transition:opacity .25s ease;
     }
+    .nav__menu > span:nth-child(3) {
+      width:8px; height:8px; background:#acb0ff;
+      transition:none;
+      animation:nav-dot-size 2s ease-in-out infinite;
+    }
     .nav__menu.is-pill > span:nth-child(2) {
       animation:nav-dot-size 2s ease-in-out infinite !important;
     }
+    .nav__menu.is-pill > span:nth-child(3) { animation:none; }
     .nav__close-icon {
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
@@ -111,6 +117,7 @@
       transform:rotate(-45deg) scale(0.7);
     }
     .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__menu > span:nth-child(3) { animation-play-state:paused; }
     .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     /* hover / tap feedback */
     .nav__menu { transition:transform .2s cubic-bezier(.4,0,.2,1); }
