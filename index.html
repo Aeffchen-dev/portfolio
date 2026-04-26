@@ -564,7 +564,7 @@
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
-      margin: 0; border-radius: 4px;
+      margin: 0; border-radius: 4px 4px 0 0;
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 0;
@@ -586,7 +586,7 @@
       letter-spacing: 0; line-height: 1.3; color: #fff;
     }
     @media (min-width:640px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; }
       .modal-next-reveal__bg { opacity: 1; }
       .modal-next-reveal__inner { display: none; }
       .modal-next-reveal__bg::after { display: none; }
@@ -2348,7 +2348,7 @@
         dy = d; pt = e.timeStamp;
         modalEl.style.transition = 'none';
         modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
-        closeBar.style.height    = (baseCloseH + dy) + 'px';
+        closeBar.style.height    = Math.max(0, modalEl.getBoundingClientRect().top) + 'px';
       }, { passive: false });
 
       modalEl.addEventListener('touchend', () => {
