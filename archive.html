@@ -412,10 +412,11 @@
         const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
         revealFactor = 1 - _easeOutCubic(elapsed);
       }
-      const ry = revealFactor * _REVEAL_DIST_Y;
-      const rx = revealFactor * _REVEAL_DIST_X;
       tiles.forEach(t => {
         const p = tilePos(t);
+        const par = COL_PAR[t.c];
+        const rx = revealFactor * _REVEAL_DIST_X * par;
+        const ry = revealFactor * _REVEAL_DIST_Y * par;
         t.el.style.transform = `translate3d(${p.x + rx}px,${p.y + ry}px,0)`;
       });
       if (!dragging) {
