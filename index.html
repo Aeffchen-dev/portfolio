@@ -846,9 +846,121 @@
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
       .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
     }
+
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#060606;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-lines {
+      text-align:center;
+      display:flex; flex-direction:column; align-items:center; gap:14px;
+    }
+    .loading-line {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:clamp(12px, 1.4vw, 16px);
+      font-weight:bold; text-transform:uppercase; letter-spacing:0.07em; line-height:1.2;
+      color:rgba(255,255,255,0.08);
+      display:flex; gap:0.4em; flex-wrap:wrap; justify-content:center;
+      transition:color 1s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-line.is-active { color:#fff; }
+    .loading-line.is-past   { color:rgba(255,255,255,0.18); }
+    .loading-word {
+      display:inline-block;
+      opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px);
+    }
+    @keyframes wordReveal {
+      0%   { opacity:0; transform:translateY(7px) scale(0.94); filter:blur(4px); }
+      60%  { filter:blur(0); }
+      100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    }
+    .loading-line.is-active .loading-word {
+      animation:wordReveal 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <div class="loading-lines" id="loadingLines"></div>
+  </div>
+  <script>
+  (function() {
+    var LINES = [
+      'Loading',
+      'Initializing layout',
+      'Initializing design system',
+      'Reducing complexity',
+      'Establishing consistency',
+      'Making things intuitive',
+      'Improving the flow'
+    ];
+    var screen   = document.getElementById('loadingScreen');
+    var container = document.getElementById('loadingLines');
+    var lineEls  = LINES.map(function(text) {
+      var div = document.createElement('div');
+      div.className = 'loading-line';
+      div.innerHTML = text.split(' ').map(function(w, i) {
+        return '<span class="loading-word" style="animation-delay:' + (i * 95) + 'ms">' + w + '</span>';
+      }).join('');
+      container.appendChild(div);
+      return div;
+    });
+    var current = -1, intervalId = null, isShown = false, isDone = false, showTimer = null;
+
+    function activateLine(idx) {
+      lineEls.forEach(function(el, i) {
+        el.classList.remove('is-active', 'is-past');
+        if (i === idx) {
+          // re-trigger word animations
+          el.querySelectorAll('.loading-word').forEach(function(w) {
+            w.style.animation = 'none';
+            void w.offsetWidth;
+            w.style.animation = '';
+          });
+          el.classList.add('is-active');
+        } else if (i < idx) {
+          el.classList.add('is-past');
+        }
+      });
+    }
+
+    function advance() {
+      current++;
+      if (current >= lineEls.length) { clearInterval(intervalId); if (isDone) hide(); return; }
+      activateLine(current);
+    }
+
+    function show() {
+      isShown = true;
+      screen.classList.add('is-visible');
+      advance();
+      intervalId = setInterval(advance, 1000);
+    }
+
+    function hide() {
+      clearInterval(intervalId);
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 750);
+    }
+
+    showTimer = setTimeout(function() { if (!isDone) show(); }, 1500);
+
+    window.__loaderDone = function() {
+      isDone = true;
+      clearTimeout(showTimer);
+      if (!isShown) return;
+      setTimeout(hide, current >= 0 ? 500 : 0);
+    };
+  })();
+  </script>
 
   <div class="page-wrapper">
 
@@ -2369,6 +2481,7 @@
           } catch(e) { console.warn(`Failed to load project "${key}":`, e); }
         })
       );
+      window.__loaderDone?.();
     })();
 
     // === ARTICLES SLIDER ===
