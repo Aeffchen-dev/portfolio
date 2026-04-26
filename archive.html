@@ -127,8 +127,7 @@
       position:fixed;
       top:0; left:0;
       width:100vw;
-      height:100dvh; /* fallback */
-      height:100lvh;
+      height:100dvh;
       cursor:grab;
       user-select:none;
       -webkit-user-select:none;
@@ -315,9 +314,11 @@
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // canvas is 100lvh tall (extends behind browser bar); offsetHeight reflects that.
-    const CW = canvas.offsetWidth  || window.innerWidth;
-    const CH = canvas.offsetHeight || screen.height;
+    // Force canvas to full physical screen height so tiles render behind browser bar.
+    const CW = screen.width  || window.innerWidth;
+    const CH = screen.height || window.innerHeight;
+    canvas.style.width  = CW + 'px';
+    canvas.style.height = CH + 'px';
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
