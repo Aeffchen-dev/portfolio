@@ -2165,6 +2165,11 @@
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
       }
+      if (window.innerWidth < 1024) {
+        const bd = document.getElementById('modalBackdrop');
+        bd.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
+        bd.style.background = bg;
+      }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2196,9 +2201,10 @@
       if (!nextP) return;
 
       const nextBg = nextP.bg || '#f2f2f2';
+      const currentBg = (PROJECTS[key] && PROJECTS[key].bg) || '#f2f2f2';
 
       pageEnd.insertAdjacentHTML('beforeend',
-        `<div class="modal-next-reveal" style="background:${nextBg}">` +
+        `<div class="modal-next-reveal" style="background:${currentBg}">` +
           `<div class="modal-next-reveal__bg">` +
             (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
              nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
@@ -2235,6 +2241,7 @@
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
         if (dragStartBg) {
           const col = lerpHex(dragStartBg, nextBg, p);
+          revealEl.style.background = col;
           document.getElementById('safeBar').style.background = col;
           if (window.innerWidth < 640) {
             document.body.style.transition = 'none';
@@ -2398,6 +2405,7 @@
       // Ease-out on close bar and backdrop
       closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
       backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+      if (window.innerWidth < 1024) backdrop.style.background = 'transparent';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
@@ -2426,6 +2434,7 @@
         modal.querySelector('.page-header').style.background   = '';
         closeBar.style.transition = '';
         backdrop.style.transition = '';
+        backdrop.style.background = '';
         modal.classList.remove('is-open');
       }, { once: true });
     }
