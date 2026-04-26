@@ -69,14 +69,50 @@
     .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     .nav__expand { display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1); }
     .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
-    .nav__expand-inner { overflow:hidden; }
-    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__expand-inner { overflow:hidden; padding:0 16px; }
+    .nav__links { padding:16px 0 16px; display:flex; flex-direction:column; width:50%; flex-shrink:0; }
+    .nav__top-row { display:flex; align-items:flex-start; }
+    @keyframes figmaCursor {
+      0%   { transform:translate(4px, 2px); }
+      15%  { transform:translate(22px, 18px); }
+      30%  { transform:translate(38px, 8px); }
+      45%  { transform:translate(28px, 34px); }
+      60%  { transform:translate(8px, 44px); }
+      75%  { transform:translate(44px, 30px); }
+      90%  { transform:translate(16px, 12px); }
+      100% { transform:translate(4px, 2px); }
+    }
+    .nav__vibe {
+      padding:16px 0 16px; width:50%; flex-shrink:0; font-size:14px; font-weight:500;
+      color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
+      text-align:left; position:relative;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__vibe {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
+    .nav__cursor {
+      position:absolute; top:16px; left:0;
+      pointer-events:none;
+      animation:figmaCursor 5s ease-in-out infinite paused;
+    }
+    .nav.is-open .nav__cursor { animation-play-state:running; }
+    .nav__cursor-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
     .nav__link { display:block; font-size:32px; font-weight:400; color:#fff; line-height:1.4; opacity:0; transform:translateY(8px); transition:opacity .2s ease, transform .25s ease, color .15s; }
     .nav.is-open .nav__link { opacity:1; transform:translateY(0); transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s; }
     .nav__link:hover { color:rgba(255,255,255,.5); }
     .nav__divider { height:1px; background:rgba(255,255,255,0.12); margin:16px 0; opacity:0; transition:opacity .2s ease; }
     .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
-    .nav__contact { padding:40px 16px 24px; opacity:0; transform:translateY(6px); transition:opacity .2s ease, transform .25s ease; }
+    .nav__contact { padding:40px 0 24px; opacity:0; transform:translateY(6px); transition:opacity .2s ease, transform .25s ease; }
     .nav.is-open .nav__contact { opacity:1; transform:translateY(0); transition:opacity .2s ease .34s, transform .25s ease .34s; }
     .nav__contact-label { font-size:12px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; }
     .nav__contact-email { display:block; font-size:16px; font-weight:500; color:#989898; margin-top:4px; }
@@ -284,11 +320,14 @@
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__links">
-          <a href="index.html#work" class="nav__link">Work</a>
-          <a href="index.html#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link">Archive</a>
-          <a href="index.html#articles" class="nav__link">Articles</a>
+        <div class="nav__top-row">
+          <div class="nav__links">
+            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html#about" class="nav__link">About</a>
+            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="index.html#articles" class="nav__link">Articles</a>
+          </div>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__divider"></div>
         <div class="nav__contact">
