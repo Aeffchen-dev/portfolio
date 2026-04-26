@@ -2061,6 +2061,8 @@
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
       document.getElementById('themeColor').content = bg;
+      document.documentElement.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+      document.documentElement.style.backgroundColor = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2231,13 +2233,16 @@
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
       fillModalContent(key);
-      const modal = document.getElementById('projectModal');
+      const modal    = document.getElementById('projectModal');
+      const closeBar = document.getElementById('modalCloseBar');
       modal.style.visibility = 'visible';
       modal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
-      document.getElementById('modalCloseBar').classList.add('is-active');
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
+      // Fade close bar in as sheet finishes sliding up
+      closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
+      setTimeout(() => closeBar.classList.add('is-active'), 460);
     }
 
     // === CLOSE MODAL ===
@@ -2247,10 +2252,12 @@
       _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
       const closeBar = document.getElementById('modalCloseBar');
+      const backdrop = document.getElementById('modalBackdrop');
       const txC      = window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
-      modal.querySelector('.modal__scroll').style.background = '';
-      modal.querySelector('.page-header').style.background   = '';
-      document.getElementById('modalBackdrop').classList.remove('is-active');
+      // Ease-out on close bar and backdrop
+      closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
+      backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+      backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
       document.body.style.overflow = '';
@@ -2258,14 +2265,19 @@
       _openedByHover = false;
       _hoverAllowAfter = Date.now() + 800;
       nav.classList.remove('is-open');
-      document.getElementById('themeColor').content = '#171717';
-      document.documentElement.style.backgroundColor = '#171717';
-      modal.style.transition = 'transform .5s cubic-bezier(.4,0,.2,1)';
+      document.getElementById('themeColor').content = '#060606';
+      document.documentElement.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
+      document.documentElement.style.backgroundColor = '#060606';
+      modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
       modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
         modal.style.visibility = 'hidden';
         modal.style.transition = '';
         modal.style.transform  = '';
+        modal.querySelector('.modal__scroll').style.background = '';
+        modal.querySelector('.page-header').style.background   = '';
+        closeBar.style.transition = '';
+        backdrop.style.transition = '';
         modal.classList.remove('is-open');
       }, { once: true });
     }
@@ -2290,9 +2302,16 @@
         document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
         if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
         _isTransitioning = false;
+        const backdrop = document.getElementById('modalBackdrop');
         closeBar.style.height = '';
+        closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
+        backdrop.style.transition = 'background 0.25s cubic-bezier(0,0,0.2,1)';
         closeBar.classList.remove('is-active');
-        modalEl.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+        backdrop.classList.remove('is-active');
+        document.getElementById('themeColor').content = '#060606';
+        document.documentElement.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
+        document.documentElement.style.backgroundColor = '#060606';
+        modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
           modalEl.style.visibility = 'hidden';
@@ -2300,15 +2319,14 @@
           modalEl.style.transform  = '';
           modalEl.querySelector('.modal__scroll').style.background = '';
           modalEl.querySelector('.page-header').style.background   = '';
+          closeBar.style.transition = '';
+          backdrop.style.transition = '';
           modalEl.classList.remove('is-open');
-          document.getElementById('modalBackdrop').classList.remove('is-active');
           document.body.style.overflow = '';
           document.body.classList.remove('modal-open');
           _openedByHover = false;
           _hoverAllowAfter = Date.now() + 800;
           nav.classList.remove('is-open');
-          document.getElementById('themeColor').content = '#060606';
-          document.documentElement.style.backgroundColor = '#060606';
         }, { once: true });
       }
 
