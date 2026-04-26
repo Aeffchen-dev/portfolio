@@ -900,7 +900,12 @@
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
-      .articles-section::after { content:""; position:absolute; top:0; right:0; bottom:0; width:64px; background:linear-gradient(to right, transparent, #060606); pointer-events:none; z-index:2; }
+      .articles-section::before,
+      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; }
+      .articles-section::before { left:0; background:linear-gradient(to left, transparent, #060606); opacity:0; }
+      .articles-section::after  { right:0; background:linear-gradient(to right, transparent, #060606); opacity:1; }
+      .articles-section.at-start::before { opacity:0; }
+      .articles-section.at-end::after    { opacity:0; }
       .articles-section__label { padding-left:0; padding-right:0; }
       .articles-slider    { padding-left:8px; padding-bottom:8px; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
@@ -2628,6 +2633,17 @@ quoteText.textContent = '“' + q.text + '”';
     (function() {
       const slider = document.getElementById('articlesSlider');
       if (!slider) return;
+      const section = slider.closest('.articles-section');
+      function updateFades() {
+        if (!section || window.innerWidth < 1024) return;
+        const atStart = slider.scrollLeft <= 2;
+        const atEnd   = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 2;
+        section.classList.toggle('at-start', atStart);
+        section.classList.toggle('at-end',   atEnd);
+      }
+      slider.addEventListener('scroll', updateFades, { passive: true });
+      window.addEventListener('resize', updateFades);
+      updateFades();
 
       async function resolveArticleImg(img) {
         if (!img) return '';
