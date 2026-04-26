@@ -121,11 +121,11 @@
     .nav__expand-inner { overflow:hidden; }
     .nav__top-row { display:flex; justify-content:space-between; align-items:flex-start; }
 
-    .nav__links { padding:16px 0 0; display:flex; flex-direction:column; }
+    .nav__links { padding:16px 32px 16px 32px; display:flex; flex-direction:column; }
     .nav__vibe {
-      padding:16px 48px 0 0; margin-left:-200px; font-size:14px; font-weight:500;
+      padding:16px 80px 16px 0; margin-left:-200px; font-size:14px; font-weight:500;
       color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
-      text-align:left; max-width:90px;
+      text-align:left; min-width:100px;
       opacity:0; transform:translateY(8px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -153,7 +153,7 @@
     .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
 
     .nav__contact {
-      padding:40px 16px 24px;
+      padding:40px 32px 24px;
       opacity:0; transform:translateY(6px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -961,7 +961,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe">* This page is vibe coded with Claude Code</p>
+          <p class="nav__vibe">This page is vibe coded with Claude Code</p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
