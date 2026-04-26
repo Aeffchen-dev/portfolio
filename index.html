@@ -368,7 +368,7 @@
 
     /* === HOME FOOTER === */
     .home-footer {
-      padding-top:40px; padding-bottom:16px; overflow:hidden;
+      padding-top:40px; padding-bottom:16px;
       display:flex; flex-direction:column;
     }
     .footer-grid {
@@ -492,10 +492,10 @@
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
     }
-    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay:   0ms; }
-    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 180ms; }
-    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 360ms; }
-    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 540ms; }
+    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay: 540ms; }
+    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 360ms; }
+    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 180ms; }
+    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay:   0ms; }
     .article-card--skeleton {
       pointer-events:none; cursor:default; height:76px;
       background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
@@ -2626,7 +2626,7 @@
       logo.addEventListener('click', () => {
         if (jana.classList.contains('jana-animate')) return;
         jana.classList.add('jana-animate');
-        const lastSpan = jana.querySelector('span:last-child') || jana;
+        const lastSpan = jana.querySelector('span:first-child') || jana;
         lastSpan.addEventListener('animationend', () => jana.classList.remove('jana-animate'), { once: true });
       });
     })();
