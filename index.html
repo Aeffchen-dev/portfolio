@@ -872,10 +872,16 @@
       50% { transform:translateY(-5px); opacity:0.85; }
     }
     .modal-next-reveal__hint {
-      display:block; margin-top:8px;
-      font-size:11px; font-weight:500; color:rgba(255,255,255,0.45);
-      letter-spacing:0.04em;
+      display:flex; flex-direction:column; align-items:center; gap:6px;
+      margin-top:10px;
+    }
+    .modal-next-reveal__hint-arrow {
+      display:block; color:rgba(255,255,255,0.55);
       animation:swipeUpHint 2s ease-in-out infinite;
+    }
+    .modal-next-reveal__hint-label {
+      display:block; font-size:11px; font-weight:500;
+      color:rgba(255,255,255,0.4); letter-spacing:0.04em;
     }
     @media (min-width:640px) { .modal-next-reveal__hint { display:none; } }
 
@@ -2136,7 +2142,12 @@
           `</div>` +
           `<div class="modal-next-reveal__inner">` +
             `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
-            `<span class="modal-next-reveal__hint" aria-hidden="true">Swipe up for next</span>` +
+            `<span class="modal-next-reveal__hint" aria-hidden="true">` +
+              `<span class="modal-next-reveal__hint-arrow">` +
+                `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
+              `</span>` +
+              `<span class="modal-next-reveal__hint-label">Swipe up for next</span>` +
+            `</span>` +
           `</div>` +
         `</div>`
       );
