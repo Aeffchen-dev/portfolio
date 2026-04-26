@@ -9,9 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @view-transition { navigation: auto; }
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
+    html  { width:100%; min-height:100lvh; background:#171717; }
     body  { width:100%; min-height:100lvh; background:#171717; }
     body { font-family:'DM Sans', sans-serif; font-optical-sizing:auto; color:#fff; }
     img { display:block; }
@@ -51,7 +59,8 @@
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
@@ -76,8 +85,44 @@
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
-    .nav__expand-inner { overflow:hidden; }
-    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__expand-inner { overflow:hidden; padding:0 16px; }
+    .nav__links { padding:16px 0 16px; display:flex; flex-direction:column; width:50%; flex-shrink:0; }
+    .nav__top-row { display:flex; align-items:flex-start; }
+    @keyframes figmaCursor {
+      0%   { transform:translate(4px, 2px); }
+      15%  { transform:translate(22px, 18px); }
+      30%  { transform:translate(38px, 8px); }
+      45%  { transform:translate(28px, 34px); }
+      60%  { transform:translate(8px, 44px); }
+      75%  { transform:translate(44px, 30px); }
+      90%  { transform:translate(16px, 12px); }
+      100% { transform:translate(4px, 2px); }
+    }
+    .nav__vibe {
+      padding:16px 0 16px; width:50%; flex-shrink:0; font-size:14px; font-weight:500;
+      color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
+      text-align:left; position:relative;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__vibe {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
+    .nav__cursor {
+      position:absolute; top:16px; left:0;
+      pointer-events:none;
+      animation:figmaCursor 5s ease-in-out infinite paused;
+    }
+    .nav.is-open .nav__cursor { animation-play-state:running; }
+    .nav__cursor-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
     .nav__link {
       display:block;
       font-size:32px; font-weight:400; color:#fff; line-height:1.4;
@@ -117,17 +162,18 @@
     /* === CANVAS === */
     #canvas {
       position:fixed;
-      /* edge-to-edge: zero insets, extend under status bar + home indicator */
-      top:0; left:0; right:0; bottom:0;
+      top:0; left:0;
       width:100vw;
-      /* lvh = large viewport = full screen behind browser bars */
-      height:100dvh; /* fallback */
-      height:100lvh;
+      height:100dvh;
+      overflow:visible;
       cursor:grab;
       user-select:none;
       -webkit-user-select:none;
       touch-action:none;
+      opacity:0;
+      transition:opacity 0.8s cubic-bezier(.4,0,.2,1);
     }
+    #canvas.is-revealed { opacity:1; }
     #canvas.is-dragging { cursor:grabbing; }
 
     /* === TILES === */
@@ -149,9 +195,45 @@
       -webkit-user-drag:none;
     }
     @media (min-width:640px) { .nav { top:8px; } }
+
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#171717;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-label {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:13px; font-weight:bold; letter-spacing:0.02em;
+      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
+      background-size:300% 100%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmerText 1.6s linear infinite;
+    }
+    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <span class="loading-label">Loading</span>
+  </div>
+  <script>
+  (function() {
+    var screen = document.getElementById('loadingScreen');
+    screen.classList.add('is-visible');
+    function hide() {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    }
+    window.__loaderDone = function() { setTimeout(hide, 300); };
+  })();
+  </script>
 
   <!-- NAV -->
   <nav class="nav" id="mainNav">
@@ -161,11 +243,14 @@
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__links">
-          <a href="index.html#work" class="nav__link">Work</a>
-          <a href="index.html#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+        <div class="nav__top-row">
+          <div class="nav__links">
+            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html#about" class="nav__link">About</a>
+            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="index.html#articles" class="nav__link">Articles</a>
+          </div>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -270,11 +355,11 @@
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // CW/CH must cover the full physical screen including behind browser bars.
-    // canvas uses position:fixed top/left/right/bottom:0 so offsetWidth/Height
-    // reflect 100lvh — the true full-screen size. screen.height is the safe fallback.
-    const CW = canvas.offsetWidth  || window.innerWidth;
-    const CH = canvas.offsetHeight || screen.height;
+    // Force canvas to full physical screen height so tiles render behind browser bar.
+    const CW = screen.width  || window.innerWidth;
+    const CH = screen.height || window.innerHeight;
+    canvas.style.width  = CW + 'px';
+    canvas.style.height = CH + 'px';
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
@@ -306,7 +391,24 @@
       }
     }
 
+    // Reveal animation state
+    let _revealStart = null;
+    const _REVEAL_DUR = 1600;
+    const _REVEAL_DIST_Y = 200;
+    const _REVEAL_DIST_X = 160;
+    function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
     // Create tile DOM elements
+    let _loadedCount = 0;
+    const _totalTiles = DEFS.length;
+    function _onTileLoad() {
+      _loadedCount++;
+      if (_loadedCount >= _totalTiles) {
+        canvas.classList.add('is-revealed');
+        _revealStart = performance.now();
+        window.__loaderDone?.();
+      }
+    }
     const tiles = DEFS.map((def, i) => {
       const el = document.createElement('div');
       el.className = 'tile';
@@ -316,6 +418,7 @@
       img.src = IMGS[i % IMGS.length];
       img.alt = '';
       img.draggable = false;
+      img.onload = img.onerror = _onTileLoad;
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
@@ -342,10 +445,20 @@
 
     // Render loop
     function render() {
+      let rox = 0, roy = 0;
+      if (_revealStart !== null) {
+        const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
+        const f = 1 - _easeOutCubic(elapsed);
+        rox = f * _REVEAL_DIST_X;
+        roy = f * _REVEAL_DIST_Y;
+      }
+      // Feed reveal offset into ox/oy so tilePos applies identical parallax as scroll
+      ox += rox; oy += roy;
       tiles.forEach(t => {
         const p = tilePos(t);
         t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
       });
+      ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
         vx *= 0.97; vy *= 0.97;

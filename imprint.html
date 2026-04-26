@@ -13,11 +13,21 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Jana Gramlich • Imprint">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @view-transition { navigation: auto; }
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; }
@@ -64,7 +74,8 @@
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
@@ -89,8 +100,44 @@
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
-    .nav__expand-inner { overflow:hidden; }
-    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__expand-inner { overflow:hidden; padding:0 16px; }
+    .nav__links { padding:16px 0 16px; display:flex; flex-direction:column; width:50%; flex-shrink:0; }
+    .nav__top-row { display:flex; align-items:flex-start; }
+    @keyframes figmaCursor {
+      0%   { transform:translate(4px, 2px); }
+      15%  { transform:translate(22px, 18px); }
+      30%  { transform:translate(38px, 8px); }
+      45%  { transform:translate(28px, 34px); }
+      60%  { transform:translate(8px, 44px); }
+      75%  { transform:translate(44px, 30px); }
+      90%  { transform:translate(16px, 12px); }
+      100% { transform:translate(4px, 2px); }
+    }
+    .nav__vibe {
+      padding:16px 0 16px; width:50%; flex-shrink:0; font-size:14px; font-weight:500;
+      color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
+      text-align:left; position:relative;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__vibe {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
+    .nav__cursor {
+      position:absolute; top:16px; left:0;
+      pointer-events:none;
+      animation:figmaCursor 5s ease-in-out infinite paused;
+    }
+    .nav.is-open .nav__cursor { animation-play-state:running; }
+    .nav__cursor-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
     .nav__link {
       display:block;
       font-size:32px; font-weight:400; color:#fff; line-height:1.4;
@@ -152,13 +199,13 @@
     }
 
     .imprint-content p {
-      font-size:14px; font-weight:400; color:#6b6b6b;
+      font-size:14px; font-weight:400; color:#fff;
       line-height:1.65;
     }
     .imprint-content p + p { margin-top:12px; }
 
     .imprint-content a {
-      color:#6b6b6b;
+      color:#fff;
       text-decoration:underline;
       text-underline-offset:3px;
     }
@@ -176,13 +223,14 @@
     #imprint-body h1 { font-size:21px; font-weight:400; color:#fff; line-height:1.4; margin-bottom:16px; }
     #imprint-body h2, #imprint-body h5 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #imprint-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
-    #imprint-body p { font-size:14px; font-weight:400; color:#6b6b6b; line-height:1.65; }
+    #imprint-body p { font-size:14px; font-weight:400; color:#fff; line-height:1.65; }
     #imprint-body p + p { margin-top:12px; }
-    #imprint-body ul, #imprint-body ol { font-size:14px; color:#6b6b6b; line-height:1.65; padding-left:20px; margin-top:8px; }
+    #imprint-body ul, #imprint-body ol { font-size:14px; color:#fff; line-height:1.65; padding-left:20px; margin-top:8px; }
     #imprint-body li + li { margin-top:6px; }
-    #imprint-body a { color:#6b6b6b; text-decoration:underline; text-underline-offset:3px; }
+    #imprint-body a { color:#fff; text-decoration:underline; text-underline-offset:3px; }
     #imprint-body a:hover { color:#fff; }
     #imprint-body strong { font-weight:500; }
+    #imprint-body *, .imprint-content * { background: transparent !important; background-color: transparent !important; }
     @media (min-width:640px) { .nav { top:8px; } }
   </style>
 </head>
@@ -196,11 +244,14 @@
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__links">
-          <a href="index.html#work" class="nav__link">Work</a>
-          <a href="index.html#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+        <div class="nav__top-row">
+          <div class="nav__links">
+            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html#about" class="nav__link">About</a>
+            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="index.html#articles" class="nav__link">Articles</a>
+          </div>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
