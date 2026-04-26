@@ -153,14 +153,6 @@
       padding:52px 8px 0;
       display:flex; flex-direction:column;
     }
-    .hero-rule {
-      height:1px; background:rgba(255,255,255,0.14); flex-shrink:0;
-    }
-    .hero-meta {
-      display:flex; align-items:center;
-      padding:10px 0; flex-shrink:0; min-height:36px;
-    }
-
     /* center zone: must fit within 80vh — min-height:0 allows shrinking */
     .hero-main {
       flex:1; min-height:0; overflow:hidden;
@@ -188,8 +180,8 @@
     }
 
     .hero__cover-img {
-      width:80px; height:80px; border-radius:16px; object-fit:cover; display:none;
-      flex-shrink:0; margin-bottom:8px;
+      width:100px; height:100px; border-radius:20px; object-fit:cover; display:none;
+      flex-shrink:0; margin-bottom:4px;
     }
 
     /* bottom bar: BACK left, SHARE right */
@@ -234,13 +226,10 @@
     }
     .article-hero[data-theme="editorial"] .hero__subtitle,
     .article-hero[data-theme="editorial"] .hero__summary { text-align:left; }
-    .article-hero[data-theme="editorial"] .hero__cover-img { display:none !important; }
-
     /* VIVID — typography emphasis */
     .article-hero[data-theme="vivid"] .hero__title {
       font-size:clamp(36px,6vw,72px);
     }
-    .article-hero[data-theme="vivid"] .hero__cover-img { display:none !important; }
 
     /* OVERSIZED — ultra-large type */
     .article-hero[data-theme="oversized"] .hero__kicker { color:rgba(255,255,255,0.25); }
@@ -249,14 +238,12 @@
     }
     .article-hero[data-theme="oversized"] .hero__subtitle,
     .article-hero[data-theme="oversized"] .hero__summary { display:none !important; }
-    .article-hero[data-theme="oversized"] .hero__cover-img { display:none !important; }
 
     /* GRADIENT — typography emphasis */
     .article-hero[data-theme="gradient"] .hero__kicker { color:rgba(255,255,255,0.4); }
     .article-hero[data-theme="gradient"] .hero__title {
       font-size:clamp(32px,5.5vw,60px);
     }
-    .article-hero[data-theme="gradient"] .hero__cover-img { display:none !important; }
 
     /* === BLOCKS === */
     .blocks { padding:16px 8px 72px; margin:0 auto; max-width:800px; }
@@ -415,18 +402,13 @@
 
       <div class="article-hero" id="articleHero">
         <div class="hero-top">
-          <div class="hero-rule"></div>
-          <div class="hero-meta">
-            <span class="hero__kicker" id="articleKicker"></span>
-          </div>
-          <div class="hero-rule"></div>
           <div class="hero-main">
+            <span class="hero__kicker" id="articleKicker"></span>
             <img id="articleCoverImg" class="hero__cover-img" alt="">
             <h1 class="hero__title" id="articleTitle"></h1>
             <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
             <p class="hero__summary" id="articleSummary" style="display:none"></p>
           </div>
-          <div class="hero-rule"></div>
           <div class="hero-bottom">
             <a href="index.html#articles" class="back-link">
               <span class="back-link__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
