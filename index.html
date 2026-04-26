@@ -101,12 +101,9 @@
       background:#fff; flex-shrink:0;
       transition:opacity .25s ease;
     }
-    .nav__menu > span:nth-child(3) {
-      width:8px; height:8px; background:#acb0ff;
-      transition:none;
-      animation:nav-dot-size 2s ease-in-out infinite;
+    .nav__menu.is-pill > span:nth-child(2) {
+      animation:nav-dot-size 2s ease-in-out infinite !important;
     }
-    .nav.is-open .nav__menu > span:nth-child(3) { animation-play-state:paused; }
     .nav__close-icon {
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
@@ -306,6 +303,7 @@
       transition:transform 0.3s cubic-bezier(.4,0,.2,1);
     }
     .cv-card--archive:hover .archive-stack { transform:scale(1.1); }
+    .cv-card--archive:hover .archive-stack__img { transition:transform 0.35s cubic-bezier(.4,0,.2,1) !important; }
     .archive-stack__img {
       position:absolute;
       width:28%; height:auto;
@@ -1507,6 +1505,7 @@
 
       const navBar = nav.querySelector('.nav__bar');
       const navMenu = nav.querySelector('.nav__menu');
+      const navMenu = nav.querySelector('.nav__menu');
       const dots = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
 
       const logoEl = navBar.querySelector('.nav__logo');
@@ -1536,13 +1535,14 @@
         navBar.style.paddingBottom = '0';
         // Dot merge: outer 2 fade + slide toward center, middle grows and turns purple
         dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
+        dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
         dots[0].style.transform = `translateX(${lerp(0, 6, t)}px)`;
-        const r = Math.round(lerp(255, 172, t));
-        const g = Math.round(lerp(255, 176, t));
-        dots[1].style.background = `rgb(${r},${g},255)`;
+        dots[2].style.transform = `translateX(${lerp(0, -6, t)}px)`;
+        dots[1].style.background = '#acb0ff';
         const dotSz = lerp(3, 8, t) + 'px';
         dots[1].style.width = dotSz;
         dots[1].style.height = dotSz;
+        navMenu.classList.toggle('is-pill', t > 0.95);
         navMenu.style.width = lerp(15, 8, t) + 'px';
       }
 
@@ -2808,7 +2808,27 @@ quoteText.textContent = '“' + q.text + '”';
         if (ontop) el.style.zIndex = N + 1;
       }
 
-      cards.forEach((el, i) => { el.style.zIndex = i; applyRandom(el, false); });
+      cards.forEach((el, i) => {
+        el.style.zIndex = i;
+        applyRandom(el, false);
+        el._baseTransform = el.style.transform;
+      });
+
+      const archiveCard = document.getElementById('archiveStackCard');
+      if (archiveCard) {
+        archiveCard.addEventListener('mouseenter', () => {
+          cards.forEach(el => {
+            const rot = (rand(-4, 4)).toFixed(1);
+            const dx = (rand(-8, 8)).toFixed(1);
+            const dy = (parseFloat((rand(-8,8)).toFixed(1))+16).toFixed(1);
+            el.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(1.1)';
+          });
+        });
+        archiveCard.addEventListener('mouseleave', () => {
+          cards.forEach(el => applyRandom(el, parseInt(el.style.zIndex) === cards.length));
+        });
+      }
 
       let topIdx = N - 1;
       function cycle() {
