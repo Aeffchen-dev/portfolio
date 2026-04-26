@@ -523,7 +523,7 @@
     .modal-year { font-size:14px; font-weight:400; color:#555; line-height:1.3; margin-top:4px; }
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
-      position:fixed; top:0; left:0; right:0; height:calc(5vh - 2px);
+      position:fixed; top:0; left:0; right:0; height:calc(5vh - 1px);
       background:#000; color:#fff;
       display:flex; align-items:center; justify-content:center; gap:16px;
       font-family:'HW Left Bold', sans-serif;
@@ -2139,16 +2139,15 @@
             (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
              nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
           `</div>` +
-          (!(nextP.hero || nextP.heroVideo) ?
-            `<div class="modal-next-reveal__inner">` +
-              `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
-              `<span class="modal-next-reveal__hint" aria-hidden="true">` +
-                `<span class="modal-next-reveal__hint-arrow">` +
-                  `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
-                `</span>` +
-                `<span class="modal-next-reveal__hint-label">Swipe up for next</span>` +
+          `<div class="modal-next-reveal__inner">` +
+            `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+            `<span class="modal-next-reveal__hint" aria-hidden="true">` +
+              `<span class="modal-next-reveal__hint-arrow">` +
+                `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
               `</span>` +
-            `</div>` : '') +
+              `<span class="modal-next-reveal__hint-label">Swipe up for next</span>` +
+            `</span>` +
+          `</div>` +
         `</div>`
       );
 
