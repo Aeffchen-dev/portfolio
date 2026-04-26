@@ -29,12 +29,12 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <main
+      className="page-main"
       style={{
         backgroundColor: "#0d0d0d",
         minHeight: "100dvh",
         paddingLeft: 8,
         paddingRight: 8,
-        paddingBottom: "calc(80px + env(safe-area-inset-bottom))",
         fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
       }}
     >
