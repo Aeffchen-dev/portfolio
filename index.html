@@ -555,7 +555,7 @@
     .modal-year { display:none; }
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
-      position:fixed; top:0; left:0; right:0; height:5vh;
+      position:fixed; top:0; left:0; right:0; height:calc(5vh + 16px);
       background:transparent; color:#fff;
       backdrop-filter:none; -webkit-backdrop-filter:none;
       display:flex; align-items:center; justify-content:center; gap:16px;
@@ -566,6 +566,8 @@
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
     }
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
+    .js-stacked-sheet { z-index:203; }
+    @media (max-width:1023px) { .modal-close-bar { background:#000; } }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       flex-shrink:0;
@@ -2165,11 +2167,6 @@
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
       }
-      if (window.innerWidth < 1024) {
-        const bd = document.getElementById('modalBackdrop');
-        bd.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
-        bd.style.background = bg;
-      }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2405,7 +2402,6 @@
       // Ease-out on close bar and backdrop
       closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
       backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
-      if (window.innerWidth < 1024) backdrop.style.background = 'transparent';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
@@ -2434,7 +2430,6 @@
         modal.querySelector('.page-header').style.background   = '';
         closeBar.style.transition = '';
         backdrop.style.transition = '';
-        backdrop.style.background = '';
         modal.classList.remove('is-open');
       }, { once: true });
     }
