@@ -431,7 +431,7 @@
     .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
     .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
-    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; text-wrap:balance; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
     .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
@@ -659,12 +659,13 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.14); border-radius:16px;
-      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-      border:1px solid rgba(0,0,0,0.18);
-      text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
+      padding:8px 16px 8px 8px; background:rgba(255,255,255,0.38); border-radius:16px;
+      backdrop-filter:blur(20px) saturate(1.8); -webkit-backdrop-filter:blur(20px) saturate(1.8);
+      border:1px solid rgba(255,255,255,0.65);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.06);
+      text-decoration:none; color:inherit; transition:background .3s ease-in-out, border-color .3s ease-in-out, box-shadow .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.22); border-color:rgba(0,0,0,0.28); }
+    .modal-link-card:hover { background:rgba(255,255,255,0.58); border-color:rgba(255,255,255,0.85); box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 4px 12px rgba(0,0,0,0.09); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -946,7 +947,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(0,0,0,0.14); border-color:rgba(0,0,0,0.18); }
+      .modal-link-card:hover { background:rgba(255,255,255,0.38); border-color:rgba(255,255,255,0.65); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.06); }
     }
   </style>
 </head>
@@ -2156,8 +2157,8 @@
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
       document.getElementById('themeColor').content = bg;
-      document.documentElement.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
-      document.documentElement.style.backgroundColor = bg;
+      document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+      document.body.style.backgroundColor = bg;
       document.getElementById('safeBar').style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
       document.getElementById('safeBar').style.background = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
@@ -2230,8 +2231,8 @@
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
         if (dragStartBg) {
           const col = lerpHex(dragStartBg, nextBg, p);
-          document.documentElement.style.transition = 'none';
-          document.documentElement.style.backgroundColor = col;
+          document.body.style.transition = 'none';
+          document.body.style.backgroundColor = col;
           document.getElementById('safeBar').style.background = col;
         }
       }
@@ -2286,10 +2287,10 @@
       _isTransitioning = true;
 
       const bg = p.bg || '#f2f2f2';
-      document.documentElement.style.transition = 'none';
-      document.documentElement.style.backgroundColor = bg;
+      document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+      document.body.style.backgroundColor = bg;
       document.getElementById('themeColor').content = bg;
-      document.getElementById('safeBar').style.transition = 'none';
+      document.getElementById('safeBar').style.transition = 'background 0.5s cubic-bezier(.4,0,.2,1)';
       document.getElementById('safeBar').style.background = bg;
 
       const heroHTML = p.hero
@@ -2397,8 +2398,8 @@
       _hoverAllowAfter = Date.now() + 800;
       closeNav();
       document.getElementById('themeColor').content = '#060606';
-      document.documentElement.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
-      document.documentElement.style.backgroundColor = '#060606';
+      document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
+      document.body.style.backgroundColor = '#060606';
       document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
       document.getElementById('safeBar').style.background = '#060606';
       modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
@@ -2444,8 +2445,8 @@
         closeBar.classList.remove('is-active');
         backdrop.classList.remove('is-active');
         document.getElementById('themeColor').content = '#060606';
-        document.documentElement.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
-        document.documentElement.style.backgroundColor = '#060606';
+        document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
+        document.body.style.backgroundColor = '#060606';
         document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
         document.getElementById('safeBar').style.background = '#060606';
         modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
