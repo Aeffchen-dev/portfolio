@@ -112,7 +112,7 @@
       opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff;
       transform:rotate(-45deg) scale(0.7);
     }
-    .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
+    .nav.is-open .nav__menu > span:not(.nav__close-icon):not(:nth-child(3)) { opacity:0; }
     .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     /* hover / tap feedback */
     .nav__menu { transition:transform .2s cubic-bezier(.4,0,.2,1); }
