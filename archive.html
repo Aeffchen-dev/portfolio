@@ -125,8 +125,10 @@
     /* === CANVAS === */
     #canvas {
       position:fixed;
-      /* extend into all safe zones — viewport-fit:cover is set on the meta tag */
-      top:0; left:0; right:0; bottom:0;
+      top:0; left:0;
+      width:100vw;
+      height:100dvh; /* fallback */
+      height:100lvh;
       cursor:grab;
       user-select:none;
       -webkit-user-select:none;
@@ -313,9 +315,9 @@
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // Use physical screen dimensions so tiles cover safe zones (status bar, browser bar).
-    const CW = screen.width  || window.innerWidth;
-    const CH = screen.height || window.innerHeight;
+    // canvas is 100lvh tall (extends behind browser bar); offsetHeight reflects that.
+    const CW = canvas.offsetWidth  || window.innerWidth;
+    const CH = canvas.offsetHeight || screen.height;
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
