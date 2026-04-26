@@ -1808,23 +1808,7 @@
         else cvCards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
       });
       computeOffsets();
-      if (window.innerWidth < 1024) {
-        computeCvOffsets(); updateCvCards();
-        // In-viewport cards get a time-based entry instead of scroll-driven
-        const inView = cvCards.filter(el => el._initY === null);
-        inView.forEach(el => {
-          el.style.opacity = '0';
-          el.style.transform = `translateY(${-el.offsetHeight}px) scale(0.92)`;
-        });
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          inView.forEach((el, i) => {
-            el.style.transition = `opacity 0.5s ${i * 0.1}s cubic-bezier(.4,0,.2,1), transform 0.5s ${i * 0.1}s cubic-bezier(.4,0,.2,1)`;
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-          });
-          setTimeout(() => inView.forEach(el => { el.style.transition = ''; }), 600 + inView.length * 100);
-        }));
-      }
+      if (window.innerWidth < 1024) { computeCvOffsets(); updateCvCards(); }
       updateCards();
       } // end mobile/tablet cv animation
     })();
