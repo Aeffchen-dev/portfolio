@@ -58,7 +58,7 @@
       z-index:100;
     }
     .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
-    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
+    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } .cv-card--archive { display:none !important; } }
     .nav::before {
       content:'';
       position:absolute;
@@ -297,12 +297,17 @@
       display:block; font-size:14px; font-weight:500; color:#fff;
       position:relative; z-index:2;
     }
-    .archive-stack {
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+    .archive-mini {
+      position:absolute; inset:0; top:30px;
+      overflow:hidden; border-radius:0 0 4px 4px;
+      cursor:grab;
     }
-    .cv-card--archive:hover .archive-stack { transform:scale(1.1); }
+    .archive-mini.is-dragging { cursor:grabbing; }
+    .archive-mini-canvas { position:absolute; top:0; left:0; }
+    .archive-mini-tile {
+      position:absolute; border-radius:6px; overflow:hidden; background:#2a2a2a;
+    }
+    .archive-mini-tile img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
     .cv-card--archive:hover .archive-stack__img { transition:transform 0.35s cubic-bezier(.4,0,.2,1) !important; }
     .archive-stack__img {
       position:absolute;
@@ -901,12 +906,8 @@
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
-      .articles-section::before,
-      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; }
-      .articles-section::before { left:0; background:linear-gradient(to left, transparent, #060606); }
-      .articles-section::after  { right:0; background:linear-gradient(to right, transparent, #060606); }
-      .articles-section:not(.at-start)::before { opacity:1; }
-      .articles-section:not(.at-end)::after    { opacity:1; }
+      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #060606); }
+      .articles-section:not(.at-end)::after { opacity:1; }
       .articles-section__label { padding-left:0; padding-right:0; }
       .articles-slider    { padding-left:8px; padding-bottom:8px; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
@@ -1326,7 +1327,7 @@
       <!-- Archive stack card (desktop-only) -->
       <a href="archive.html" class="cv-card cv-card--archive" id="archiveStackCard">
         <span class="cv-card--archive__label">Archive</span>
-        <div class="archive-stack" id="archiveStack"></div>
+        <div class="archive-mini" id="archiveMini"></div>
       </a>
 
     </div><!-- /.exp-quotes-row -->
@@ -2768,83 +2769,98 @@ quoteText.textContent = '“' + q.text + '”';
     window.addEventListener('scroll', updateTileParallax, { passive: true });
     updateTileParallax();
 
-    // === ARCHIVE STACK ANIMATION ===
+    // === ARCHIVE MINI CANVAS ===
     (function() {
-      const imgs = [
-        'images/parallax/p01.png',
-        'images/parallax/p05.png',
-        'images/parallax/p10.png',
-        'images/parallax/p15.png',
-        'images/parallax/p20.png',
-        'images/parallax/p25.png',
-      ];
-      const stack = document.getElementById('archiveStack');
-      if (!stack) return;
+      const mini = document.getElementById('archiveMini');
+      if (!mini) return;
 
-      let seed = 42;
-      function rand(min, max) {
-        seed = (seed * 1664525 + 1013904223) & 0xffffffff;
-        const t = (seed >>> 0) / 4294967296;
-        return min + t * (max - min);
-      }
+      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
+        .sort(() => Math.random() - 0.5);
 
-      const N = Math.min(6, imgs.length);
-      const shuffled = [...imgs].sort(() => rand(-1, 1));
-      const cards = [];
-      for (let i = 0; i < N; i++) {
-        const img = document.createElement('img');
-        img.className = 'archive-stack__img';
-        img.src = shuffled[i];
-        img.loading = 'lazy';
-        img.alt = '';
-        img.style.zIndex = i;
-        stack.appendChild(img);
-        cards.push(img);
-      }
+      const COLS = 3, ROWS = 4;
+      const GAP  = 6;
 
-      function applyRandom(el, ontop) {
-        const dx = (rand(-8, 8)).toFixed(1);
-        const dy = (rand(-8, 8)).toFixed(1);
-        const rot = (rand(-10, 10)).toFixed(2);
-        el.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-        el.style.transform = 'translate(' + dx + 'px,' + (parseFloat(dy)+16) + 'px) rotate(' + rot + 'deg)';
-        if (ontop) el.style.zIndex = N + 1;
-      }
+      function init() {
+        const CW = mini.offsetWidth;
+        const CH = mini.offsetHeight;
+        if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-      cards.forEach((el, i) => {
-        el.style.zIndex = i;
-        applyRandom(el, false);
-        el._baseTransform = el.style.transform;
-      });
+        const TW = (CW - GAP * (COLS - 1)) / COLS;
+        const TH = TW * (253 / 120); // same portrait ratio as archive page
+        const RX = COLS * (TW + GAP);
+        const RY = ROWS * (TH + GAP);
 
-      const archiveCard = document.getElementById('archiveStackCard');
-      if (archiveCard) {
-        archiveCard.addEventListener('mouseenter', () => {
-          const half = (cards.length - 1) / 2;
-          cards.forEach((el, i) => {
-            // spread outward from center: index relative to center
-            const t = (i - half) / half; // -1 (left) to +1 (right)
-            const rot = (t * 18).toFixed(1);          // ±18° fan
-            const dx  = (t * 32).toFixed(1);          // ±32px horizontal spread
-            const dy  = (Math.abs(t) * 12 + 16).toFixed(1); // down + arc up toward center
-            el.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(1.08)';
+        const COL_PAR  = [0.85, 1.0, 1.15];
+        const COL_YOFF = [0, 0.5, 0.25];
+
+        const DEFS = [];
+        for (let r = 0; r < ROWS; r++) {
+          for (let col = 0; col < COLS; col++) {
+            const yo = COL_YOFF[col] * (TH + GAP);
+            DEFS.push({ x: col * (TW + GAP), y: r * (TH + GAP) + yo, w: TW, h: TH, c: col });
+          }
+        }
+
+        const wrap = document.createElement('div');
+        wrap.className = 'archive-mini-canvas';
+        wrap.style.width  = CW + 'px';
+        wrap.style.height = CH + 'px';
+        mini.appendChild(wrap);
+
+        const tiles = DEFS.map((def, i) => {
+          const el = document.createElement('div');
+          el.className = 'archive-mini-tile';
+          el.style.width  = def.w + 'px';
+          el.style.height = def.h + 'px';
+          const img = document.createElement('img');
+          img.src = IMGS[i % IMGS.length];
+          img.alt = '';
+          img.loading = 'lazy';
+          el.appendChild(img);
+          wrap.appendChild(el);
+          return Object.assign({}, def, { el });
+        });
+
+        let ox = 0, oy = 0, vx = 0, vy = 0, dragging = false, lx = 0, ly = 0, lt = 0;
+
+        function tilePos(t) {
+          const p  = COL_PAR[t.c];
+          const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2 + CW / 2;
+          const poy = oy * p + ox * (p - 1.0) * 0.3;
+          const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2 + CH / 2;
+          return { x: wx - t.w / 2, y: wy - t.h / 2 };
+        }
+
+        function render() {
+          tiles.forEach(t => {
+            const p = tilePos(t);
+            t.el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
           });
+          if (!dragging) { ox += vx; oy += vy; vx *= 0.97; vy *= 0.97; }
+          requestAnimationFrame(render);
+        }
+
+        // Auto-drift
+        vx = 0.3; vy = 0.15;
+
+        mini.addEventListener('pointerdown', e => {
+          dragging = true; mini.classList.add('is-dragging');
+          lx = e.clientX; ly = e.clientY; lt = performance.now();
+          vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
         });
-        archiveCard.addEventListener('mouseleave', () => {
-          cards.forEach(el => applyRandom(el, parseInt(el.style.zIndex) === cards.length));
+        mini.addEventListener('pointermove', e => {
+          if (!dragging) return;
+          const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
+          vx = dx / dt * 16; vy = dy / dt * 16;
+          ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
+        mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
+        mini.addEventListener('pointercancel', () => { dragging = false; mini.classList.remove('is-dragging'); });
+
+        render();
       }
 
-      let topIdx = N - 1;
-      function cycle() {
-        // reset previous top card z-index
-        cards.forEach((el, i) => { if (parseInt(el.style.zIndex) === N + 1) el.style.zIndex = i; });
-        applyRandom(cards[topIdx], true);
-        topIdx = (topIdx - 1 + N) % N;
-        setTimeout(cycle, 900 + rand(0, 400));
-      }
-      setTimeout(cycle, 900);
+      requestAnimationFrame(init);
     })();
 
   </script>
