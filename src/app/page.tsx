@@ -4,12 +4,12 @@ import { projects } from "@/data/projects";
 export default function Home() {
   return (
     <main
-      className="page-main"
       style={{
         backgroundColor: "#0d0d0d",
-        minHeight: "100dvh",
+        minHeight: "100vh",
         paddingLeft: 8,
         paddingRight: 8,
+        paddingBottom: 80,
         fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
       }}
     >
