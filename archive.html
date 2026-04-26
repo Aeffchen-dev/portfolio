@@ -356,8 +356,8 @@
     // Reveal animation state
     let _revealStart = null;
     const _REVEAL_DUR = 1600;
-    const _REVEAL_DIST_Y = 220;
-    const _REVEAL_DIST_X = 80; // spread per column from center
+    const _REVEAL_DIST_Y = 200;
+    const _REVEAL_DIST_X = 160;
     function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
     // Create tile DOM elements
@@ -412,10 +412,10 @@
         const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
         revealFactor = 1 - _easeOutCubic(elapsed);
       }
+      const ry = revealFactor * _REVEAL_DIST_Y;
+      const rx = revealFactor * _REVEAL_DIST_X;
       tiles.forEach(t => {
         const p = tilePos(t);
-        const ry = revealFactor * _REVEAL_DIST_Y * COL_PAR[t.c];
-        const rx = revealFactor * _REVEAL_DIST_X * (t.c - 2.5) / 2.5;
         t.el.style.transform = `translate3d(${p.x + rx}px,${p.y + ry}px,0)`;
       });
       if (!dragging) {
