@@ -292,10 +292,9 @@
     }
     .cv-card {
       display:flex; align-items:center; gap:16px;
-      padding:8px; background:#1c1c1c;
+      padding:8px; background:#141414;
       border-radius:4px; margin-bottom:8px;
       text-decoration:none; color:inherit;
-      border:1px solid rgba(255,255,255,0.1);
     }
     a.cv-card { transition:background .4s ease-in-out, color .4s ease-in-out; }
     a.cv-card:hover { background:rgba(255,255,255,0.1); }
@@ -628,12 +627,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.01); border-radius:16px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:16px;
       backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-      border:1px solid rgba(128,128,128,0.1);
+      border:1px solid rgba(128,128,128,0.22);
       text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.025); border-color:rgba(128,128,128,0.25); }
+    .modal-link-card:hover { background:rgba(0,0,0,0.09); border-color:rgba(128,128,128,0.38); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -869,12 +868,14 @@
 
     /* === SWIPE HINT === */
     @keyframes swipeUpHint {
-      0%,100% { transform:translateY(0); opacity:0.4; }
-      50% { transform:translateY(-8px); opacity:0.9; }
+      0%,100% { transform:translateY(0); opacity:0.45; }
+      50% { transform:translateY(-5px); opacity:0.85; }
     }
     .modal-next-reveal__hint {
-      display:block; color:rgba(255,255,255,0.7); margin-bottom:10px;
-      animation:swipeUpHint 1.8s ease-in-out infinite;
+      display:block; margin-top:8px;
+      font-size:11px; font-weight:500; color:rgba(255,255,255,0.45);
+      letter-spacing:0.04em;
+      animation:swipeUpHint 2s ease-in-out infinite;
     }
     @media (min-width:640px) { .modal-next-reveal__hint { display:none; } }
 
@@ -885,7 +886,7 @@
       .nav__linkedin:hover { opacity:1; }
       .btn-about:hover { border-color:rgba(255,255,255,0.15); }
       .btn-about:hover .btn-about__dot { transform:none; }
-      a.cv-card:hover { background:#1c1c1c; }
+      a.cv-card:hover { background:#141414; }
       a.cv-card:hover .cv-card__arrow { color:#333333; }
       .footer-col a:hover, .footer-legal a:hover { opacity:1; }
       .article-card:hover { background:none; }
@@ -897,7 +898,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(0,0,0,0.01); border-color:rgba(128,128,128,0.1); }
+      .modal-link-card:hover { background:rgba(0,0,0,0.05); border-color:rgba(128,128,128,0.22); }
     }
   </style>
 </head>
@@ -2134,10 +2135,8 @@
              nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
           `</div>` +
           `<div class="modal-next-reveal__inner">` +
-            `<span class="modal-next-reveal__hint" aria-hidden="true">` +
-              `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
-            `</span>` +
             `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
+            `<span class="modal-next-reveal__hint" aria-hidden="true">Swipe up for next</span>` +
           `</div>` +
         `</div>`
       );
