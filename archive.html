@@ -135,7 +135,10 @@
       user-select:none;
       -webkit-user-select:none;
       touch-action:none;
+      opacity:0; transform:translateY(16px);
+      transition:opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
     }
+    #canvas.is-revealed { opacity:1; transform:translateY(0); }
     #canvas.is-dragging { cursor:grabbing; }
 
     /* === TILES === */
@@ -355,7 +358,10 @@
     const _totalTiles = DEFS.length;
     function _onTileLoad() {
       _loadedCount++;
-      if (_loadedCount >= _totalTiles) window.__loaderDone?.();
+      if (_loadedCount >= _totalTiles) {
+        canvas.classList.add('is-revealed');
+        window.__loaderDone?.();
+      }
     }
     const tiles = DEFS.map((def, i) => {
       const el = document.createElement('div');
