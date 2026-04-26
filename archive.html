@@ -157,9 +157,45 @@
       -webkit-user-drag:none;
     }
     @media (min-width:640px) { .nav { top:8px; } }
+
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#171717;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-label {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:13px; font-weight:bold; letter-spacing:0.02em;
+      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
+      background-size:300% 100%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmerText 1.6s linear infinite;
+    }
+    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <span class="loading-label">Loading</span>
+  </div>
+  <script>
+  (function() {
+    var screen = document.getElementById('loadingScreen');
+    screen.classList.add('is-visible');
+    function hide() {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    }
+    window.__loaderDone = function() { setTimeout(hide, 300); };
+  })();
+  </script>
 
   <!-- NAV -->
   <nav class="nav" id="mainNav">
@@ -315,6 +351,12 @@
     }
 
     // Create tile DOM elements
+    let _loadedCount = 0;
+    const _totalTiles = DEFS.length;
+    function _onTileLoad() {
+      _loadedCount++;
+      if (_loadedCount >= _totalTiles) window.__loaderDone?.();
+    }
     const tiles = DEFS.map((def, i) => {
       const el = document.createElement('div');
       el.className = 'tile';
@@ -324,6 +366,7 @@
       img.src = IMGS[i % IMGS.length];
       img.alt = '';
       img.draggable = false;
+      img.onload = img.onerror = _onTileLoad;
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
