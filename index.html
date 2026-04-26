@@ -556,7 +556,7 @@
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
       position:fixed; top:0; left:0; right:0; height:5vh;
-      background:#000; color:#fff;
+      background:transparent; color:#fff;
       backdrop-filter:none; -webkit-backdrop-filter:none;
       display:flex; align-items:center; justify-content:center; gap:16px;
       font-family:'HW Left Bold', sans-serif;
@@ -701,7 +701,7 @@
       pointer-events:auto;
     }
     @media (max-width:1023px) {
-      .modal-backdrop.is-active { background:transparent; pointer-events:auto; }
+      .modal-backdrop.is-active { background:#000; pointer-events:auto; }
     }
 
     /* === TABLET + DESKTOP === */
@@ -888,7 +888,7 @@
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
       .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
-      .modal-close-bar { background:rgba(0,0,0,0.35); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+      .modal-close-bar { }
     }
 
     /* === LOADING SCREEN === */
