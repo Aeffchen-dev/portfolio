@@ -57,7 +57,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:0 8px 32px rgba(0,0,0,0.32); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
     .nav::before {
       content:'';
@@ -305,7 +305,6 @@
     .cv-section-sub { color:#989898; }
     @media (min-width:640px) { .cv-section-heading { margin-bottom:32px; font-size:clamp(19px,1.8vw,22px); } }
     @media (min-width:640px) { .cv-section { width:100%; max-width:580px; margin-left:auto; margin-right:auto; } }
-    @media (min-width:640px) { .cv-awards-grid { column-gap:24px; } }
     .cta-section {
       margin-top:100px;
       padding-left:8px; padding-right:8px; padding-bottom:16px;
@@ -333,7 +332,6 @@
       padding:8px; background:#141414;
       border-radius:4px; margin-bottom:8px;
       text-decoration:none; color:inherit;
-      border:1px solid rgba(255,255,255,0.08);
     }
     a.cv-card { transition:background .4s ease-in-out, color .4s ease-in-out; }
     a.cv-card:hover { background:rgba(255,255,255,0.1); }
@@ -430,7 +428,7 @@
       width:60px; height:60px; flex-shrink:0;
       border-radius:4px; overflow:hidden; background:#1a1a1a;
     }
-    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(1); }
+    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
     .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
     .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
@@ -627,15 +625,6 @@
       .modal-next-reveal__bg::after { display: none; }
     }
 
-    @keyframes swipeHint {
-      0%,100% { transform:translateY(0); opacity:.25; }
-      45%,55% { transform:translateY(-7px); opacity:.75; }
-    }
-    .next-project-btn__hint {
-      display:block; margin-bottom:20px; color:rgba(0,0,0,.4);
-      animation:swipeHint 2s ease-in-out infinite;
-    }
-
     .hero__title { display:none; }
     .modal-name {
       display:none;
@@ -670,13 +659,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(255,255,255,0.38);
+      padding:8px 16px 8px 8px; background:rgba(255,255,255,0.38); border-radius:16px;
       backdrop-filter:blur(20px) saturate(1.8); -webkit-backdrop-filter:blur(20px) saturate(1.8);
-      border:none;
-      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      box-shadow:0 0 2px 2px rgba(0,0,0,0.05);
       text-decoration:none; color:inherit; transition:background .3s ease-in-out, box-shadow .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(255,255,255,0.58); box-shadow:0 4px 12px rgba(0,0,0,0.09); }
+    .modal-link-card:hover { background:rgba(255,255,255,0.58); box-shadow:0 1px 2px 2px rgba(0,0,0,0.07); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -963,21 +951,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(255,255,255,0.38); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-    }
-
-    /* === TOUCH: DISABLE HOVER EFFECTS === */
-    @media (hover: none) {
-      .nav__menu:hover { transform:none; }
-      .nav__link:hover { color:#fff; }
-      .nav__linkedin:hover { opacity:1; }
-      .btn-about:hover { border-color:rgba(255,255,255,0.15); }
-      .section-label__link:hover { color:#989898; }
-      .work-item:hover .work-item__arrow { transform:none; color:rgba(255,255,255,0.5); }
-      a.cv-card:hover { background:#1a1a1a; }
-      .home-footer a:hover { opacity:1; }
-      .project-link:hover { opacity:1; }
-      .next-project-btn:hover .next-project-btn__title { opacity:1; }
+      .modal-link-card:hover { background:rgba(255,255,255,0.38); }
     }
   </style>
 </head>
@@ -1272,7 +1246,7 @@
           </div>
           <div class="cv-award">
             <span class="cv-award__title">Red Dot Award</span>
-            <span class="cv-award__company">Atlantic Food Lab</span>
+            <span class="cv-award__company">Atlantic Food Labs</span>
           </div>
           <div class="cv-award">
             <span class="cv-award__title">German Design Award</span>
@@ -1819,13 +1793,16 @@
           el._cvT = Math.min(1, Math.max(0, (sy - triggerStart) / CV_WINDOW));
           animIdx++;
         });
-        cvCards.forEach((el) => {
+        // Find the first card not yet fully in (t < 1) — its predecessor gets the highlight
+        const firstIncompleteIdx = cvCards.findIndex(el => el._cvT < 1);
+        cvCards.forEach((el, i) => {
           const t = el._cvT;
           if (el._initY === null) {
-            el.style.opacity = '1'; el.style.transform = 'none'; return;
+            el.style.opacity = '1'; el.style.transform = 'none'; el.style.background = ''; return;
           }
           el.style.opacity   = String(Math.min(1, t * 1.5));
           el.style.transform = `translateY(${el._initY * (1 - t)}px) scale(${0.92 + 0.08 * t})`;
+          el.style.background = (firstIncompleteIdx > 0 && i === firstIncompleteIdx - 1) ? '#232323' : '';
         });
       }
 
@@ -2280,7 +2257,6 @@
         dragStartBg = (PROJECTS[currentProjectKey] && PROJECTS[currentProjectKey].bg) || '#f2f2f2';
         dragging = true;
         revealEl.style.transition = 'none';
-        document.getElementById('safeBar').style.transition = 'none';
       }, sig);
 
       revealEl.addEventListener('touchmove', e => {
@@ -2304,7 +2280,6 @@
         } else {
           revealEl.style.transition = `height 0.42s ${EASE}`;
           revealEl.style.height = naturalH + 'px';
-          document.getElementById('safeBar').style.transition = `background 0.42s ${EASE}`;
           applyProgress(naturalH);
           setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
         }
