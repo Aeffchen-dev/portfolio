@@ -349,6 +349,19 @@
     .art-block-text h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
     .art-block-text h3 { font-size:clamp(15px,1.8vw,20px); font-weight:500; color:#fff; margin:20px 0 8px; }
     .art-block-text a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
+
+    /* === VIEW TRANSITIONS === */
+    @media (prefers-reduced-motion: no-preference) {
+      ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.2s; }
+      ::view-transition-group(art-hero) {
+        animation-duration: 0.5s;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      ::view-transition-old(art-hero), ::view-transition-new(art-hero) {
+        width: 100%; height: 100%;
+        object-fit: cover; mix-blend-mode: normal;
+      }
+    }
   </style>
 </head>
 <body>
@@ -644,9 +657,10 @@
   const artScroll   = document.getElementById('artSheetScroll');
   const artBackdrop = document.getElementById('artBackdrop');
   const artBackBtn  = document.getElementById('artBackBtn');
+  const heroWrap    = document.querySelector('.art-hero__img-wrap');
   let artCurrentSlug = null;
 
-  function openSheet(slug, title, date, thumb) {
+  function _openSheetDOM(slug, title, date, thumb) {
     artCurrentSlug = slug;
     document.getElementById('artHeroTitle').textContent = title;
     document.getElementById('artHeroDate').textContent  = date;
@@ -663,6 +677,10 @@
     artBackdrop.classList.add('is-active');
     document.body.style.overflow = 'hidden';
     artScroll.scrollTop = 0;
+  }
+
+  function openSheet(slug, title, date, thumb) {
+    _openSheetDOM(slug, title, date, thumb);
     fetchAndRenderArticle(slug);
   }
 
@@ -673,29 +691,93 @@
     artCurrentSlug = null;
   }
 
-  artBackBtn.addEventListener('click', closeSheet);
-  artBackdrop.addEventListener('click', closeSheet);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && artCurrentSlug) closeSheet(); });
+  function openSheetWithVT(card) {
+    const slug  = decodeURIComponent(card.dataset.slug);
+    const title = card.dataset.title || '';
+    const date  = card.dataset.date  || '';
+    const thumb = card.dataset.thumb || '';
+    const thumbEl = card.querySelector('.cv-card__thumb');
+
+    if (!document.startViewTransition || !thumbEl) {
+      openSheet(slug, title, date, thumb);
+      return;
+    }
+
+    artCurrentSlug = slug;
+    thumbEl.style.viewTransitionName = 'art-hero';
+
+    const vt = document.startViewTransition(() => {
+      thumbEl.style.viewTransitionName = '';
+      heroWrap.style.viewTransitionName = 'art-hero';
+      artSheet.style.transition = 'none';
+      artBackdrop.style.transition = 'none';
+      _openSheetDOM(slug, title, date, thumb);
+    });
+
+    vt.ready.then(() => fetchAndRenderArticle(slug));
+
+    vt.finished.then(() => {
+      heroWrap.style.viewTransitionName = '';
+      artSheet.style.transition = '';
+      artBackdrop.style.transition = '';
+    }).catch(() => {
+      heroWrap.style.viewTransitionName = '';
+      artSheet.style.transition = '';
+      artBackdrop.style.transition = '';
+    });
+  }
+
+  function closeSheetWithVT() {
+    if (!artCurrentSlug) { closeSheet(); return; }
+
+    const slug       = artCurrentSlug;
+    const matchCard  = document.querySelector(`.cv-card[data-slug="${encodeURIComponent(slug)}"]`);
+    const matchThumb = matchCard?.querySelector('.cv-card__thumb');
+
+    if (!document.startViewTransition || !matchThumb) {
+      closeSheet();
+      return;
+    }
+
+    heroWrap.style.viewTransitionName = 'art-hero';
+
+    const vt = document.startViewTransition(() => {
+      heroWrap.style.viewTransitionName = '';
+      matchThumb.style.viewTransitionName = 'art-hero';
+      artSheet.style.transition = 'none';
+      artBackdrop.style.transition = 'none';
+      closeSheet();
+    });
+
+    vt.finished.then(() => {
+      matchThumb.style.viewTransitionName = '';
+      artSheet.style.transition = '';
+      artBackdrop.style.transition = '';
+    }).catch(() => {
+      matchThumb.style.viewTransitionName = '';
+      artSheet.style.transition = '';
+      artBackdrop.style.transition = '';
+    });
+  }
+
+  artBackBtn.addEventListener('click', closeSheetWithVT);
+  artBackdrop.addEventListener('click', closeSheetWithVT);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && artCurrentSlug) closeSheetWithVT(); });
 
   // Click on article card
   document.getElementById('articleList').addEventListener('click', e => {
     const card = e.target.closest('.cv-card[data-slug]');
     if (!card) return;
-    openSheet(
-      decodeURIComponent(card.dataset.slug),
-      card.dataset.title || '',
-      card.dataset.date  || '',
-      card.dataset.thumb || ''
-    );
+    openSheetWithVT(card);
   });
   document.getElementById('articleList').addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       const card = e.target.closest('.cv-card[data-slug]');
-      if (card) { e.preventDefault(); card.click(); }
+      if (card) { e.preventDefault(); openSheetWithVT(card); }
     }
   });
 
-  // Swipe-to-close
+  // Swipe-to-close (no VT — gesture already provides visual feedback)
   (function() {
     let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
     artSheet.addEventListener('touchstart', e => {
