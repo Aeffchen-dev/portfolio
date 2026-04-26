@@ -183,11 +183,7 @@
       display:none; max-width:100%; max-height:56vh;
       border-radius:8px; object-fit:contain; flex-shrink:0;
     }
-    .article-hero.has-cover .hero__cover-img { display:block; }
-    .article-hero.has-cover .hero__title,
-    .article-hero.has-cover .hero__subtitle,
-    .article-hero.has-cover .hero__summary,
-    .article-hero.has-cover .hero__kicker { display:none !important; }
+    .hero__cover-img { display:none !important; }
 
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
@@ -752,13 +748,6 @@
         const titleEl = document.getElementById('articleTitle');
         titleEl.textContent = displayTitle;
 
-        // Cover image in header — 16px above headline, 20% less wide than headline
-        const coverSrc = ARTICLE_COVERS[post.slug || slug || ''] || '';
-        if (coverSrc) {
-          const coverImg = document.getElementById('articleCoverImg');
-          coverImg.src = coverSrc;
-          document.getElementById('articleHero').classList.add('has-cover');
-        }
 
         // Subtitle from ACF subtitle field
         const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
