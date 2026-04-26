@@ -499,20 +499,17 @@
       96%  { transform: translate(0.3vw,-1.5px) rotate(-0.2deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    /* A (2nd) — delayed sweep, enters viewport at 55% (after N exits at 54%), faster traversal */
+    /* A (2nd) — mirrors N arc, slightly shallower */
     @keyframes jana-A2 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(-15vw,-10px) rotate(-3deg); opacity:1; }
-      32%  { transform: translate(-45vw,-20px) rotate(-8deg); opacity:1; }
-      47%  { transform: translate(-72vw,-26px) rotate(-11deg); opacity:1; }
-      55%  { transform: translate(-85vw,-24px) rotate(-13deg); opacity:1; }
-      58%  { transform: translate(-120vw,-32px) rotate(-16deg); opacity:1; }
-      62%  { transform: translate(-155vw,-8px) rotate(-18deg); opacity:1; }
-      65%  { transform: translate(-235vw,6px) rotate(-21deg); opacity:0; }
-      66%  { transform: translate(50vw,6px) rotate(-21deg); opacity:0; }
-      80%  { transform: translate(22vw,-5px) rotate(-12deg); opacity:1; }
-      92%  { transform: translate(3vw,-8px) rotate(-4deg); opacity:1; }
-      97%  { transform: translate(0.2vw,-1px) rotate(-0.1deg); opacity:1; }
+      12%  { transform: translate(-1.5vw,-22px) rotate(-6deg); opacity:1; }
+      30%  { transform: translate(-12vw,-32px) rotate(-11deg); opacity:1; }
+      46%  { transform: translate(-58vw,-6px) rotate(-16deg); opacity:1; }
+      54%  { transform: translate(-122vw,5px) rotate(-19deg); opacity:0; }
+      55%  { transform: translate(122vw,5px) rotate(-19deg); opacity:0; }
+      74%  { transform: translate(42vw,-8px) rotate(-11deg); opacity:1; }
+      88%  { transform: translate(4vw,-15px) rotate(-4deg); opacity:1; }
+      96%  { transform: translate(0.2vw,-1px) rotate(-0.1deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
     .footer-name span { display:inline-block; }
@@ -524,7 +521,7 @@
     .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay:   0ms; }
     .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 180ms; }
     .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 360ms; }
-    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 540ms; }
+    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 420ms; }
     .article-card--skeleton {
       pointer-events:none; cursor:default; height:76px;
       background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
