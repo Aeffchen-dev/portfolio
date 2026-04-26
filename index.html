@@ -306,7 +306,7 @@
     }
     .archive-stack__img {
       position:absolute;
-      width:35%; height:auto;
+      width:28%; height:auto;
       border-radius:4px;
       box-shadow:0 4px 16px rgba(0,0,0,0.4);
     }
@@ -1145,7 +1145,7 @@
     </div>
 
     <!-- ARTICLES SECTION -->
-    <section class="articles-section" id="articles">
+    <section class="articles-section at-start" id="articles">
       <p class="articles-section__label" id="articlesLabel">Articles</p>
       <div class="articles-slider" id="articlesSlider">
         <div class="article-card article-card--skeleton"></div>
@@ -1533,9 +1533,7 @@
         navBar.style.paddingBottom = '0';
         // Dot merge: outer 2 fade + slide toward center, middle grows and turns purple
         dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
-        dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
         dots[0].style.transform = `translateX(${lerp(0, 6, t)}px)`;
-        dots[2].style.transform = `translateX(${lerp(0, -6, t)}px)`;
         const r = Math.round(lerp(255, 172, t));
         const g = Math.round(lerp(255, 176, t));
         dots[1].style.background = `rgb(${r},${g},255)`;
@@ -2768,45 +2766,11 @@ quoteText.textContent = '“' + q.text + '”';
     (function() {
       const imgs = [
         'images/parallax/p01.png',
-        'images/parallax/p02.png',
-        'images/parallax/p03.png',
-        'images/parallax/p04.png',
         'images/parallax/p05.png',
-        'images/parallax/p06.png',
-        'images/parallax/p07.png',
-        'images/parallax/p08.png',
-        'images/parallax/p09.png',
         'images/parallax/p10.png',
-        'images/parallax/p11.png',
-        'images/parallax/p12.png',
-        'images/parallax/p13.png',
-        'images/parallax/p14.png',
         'images/parallax/p15.png',
-        'images/parallax/p16.png',
-        'images/parallax/p17.png',
-        'images/parallax/p18.png',
-        'images/parallax/p19.png',
         'images/parallax/p20.png',
-        'images/parallax/p21.png',
-        'images/parallax/p22.png',
-        'images/parallax/p23.png',
-        'images/parallax/p24.png',
         'images/parallax/p25.png',
-        'images/parallax/p26.png',
-        'images/parallax/p27.png',
-        'images/parallax/p28.png',
-        'images/parallax/p29.png',
-        'images/parallax/p30.png',
-        'images/parallax/p31.png',
-        'images/parallax/p32.png',
-        'images/parallax/p33.png',
-        'images/parallax/p34.png',
-        'images/parallax/p35.png',
-        'images/parallax/p36.png',
-        'images/parallax/p37.png',
-        'images/parallax/p38.png',
-        'images/parallax/p39.png',
-        'images/parallax/p40.png',
       ];
       const stack = document.getElementById('archiveStack');
       if (!stack) return;
@@ -2836,8 +2800,8 @@ quoteText.textContent = '“' + q.text + '”';
         const dx = (rand(-8, 8)).toFixed(1);
         const dy = (rand(-8, 8)).toFixed(1);
         const rot = (rand(-10, 10)).toFixed(2);
-        el.style.transition = 'transform 0.6s cubic-bezier(.4,0,.2,1)';
-        el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
+        el.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+        el.style.transform = 'translate(' + dx + 'px,' + (parseFloat(dy)+16) + 'px) rotate(' + rot + 'deg)';
         if (ontop) el.style.zIndex = N + 1;
       }
 
