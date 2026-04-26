@@ -2157,10 +2157,12 @@
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
       document.getElementById('themeColor').content = bg;
-      document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
-      document.body.style.backgroundColor = bg;
-      document.getElementById('safeBar').style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
-      document.getElementById('safeBar').style.background = bg;
+      if (window.innerWidth < 640) {
+        document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+        document.body.style.backgroundColor = bg;
+        document.getElementById('safeBar').style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
+        document.getElementById('safeBar').style.background = bg;
+      }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2229,7 +2231,7 @@
 
       function applyProgress(h) {
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
-        if (dragStartBg) {
+        if (dragStartBg && window.innerWidth < 640) {
           const col = lerpHex(dragStartBg, nextBg, p);
           document.body.style.transition = 'none';
           document.body.style.backgroundColor = col;
@@ -2287,11 +2289,13 @@
       _isTransitioning = true;
 
       const bg = p.bg || '#f2f2f2';
-      document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
-      document.body.style.backgroundColor = bg;
       document.getElementById('themeColor').content = bg;
-      document.getElementById('safeBar').style.transition = 'background 0.5s cubic-bezier(.4,0,.2,1)';
-      document.getElementById('safeBar').style.background = bg;
+      if (window.innerWidth < 640) {
+        document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
+        document.body.style.backgroundColor = bg;
+        document.getElementById('safeBar').style.transition = 'background 0.5s cubic-bezier(.4,0,.2,1)';
+        document.getElementById('safeBar').style.background = bg;
+      }
 
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
@@ -2398,10 +2402,14 @@
       _hoverAllowAfter = Date.now() + 800;
       closeNav();
       document.getElementById('themeColor').content = '#060606';
-      document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
-      document.body.style.backgroundColor = '#060606';
-      document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
-      document.getElementById('safeBar').style.background = '#060606';
+      if (window.innerWidth < 640) {
+        document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
+        document.body.style.backgroundColor = '#060606';
+        document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
+        document.getElementById('safeBar').style.background = '#060606';
+      } else {
+        document.body.style.backgroundColor = '';
+      }
       modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
       modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
@@ -2445,10 +2453,14 @@
         closeBar.classList.remove('is-active');
         backdrop.classList.remove('is-active');
         document.getElementById('themeColor').content = '#060606';
-        document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
-        document.body.style.backgroundColor = '#060606';
-        document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
-        document.getElementById('safeBar').style.background = '#060606';
+        if (window.innerWidth < 640) {
+          document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
+          document.body.style.backgroundColor = '#060606';
+          document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+          document.getElementById('safeBar').style.background = '#060606';
+        } else {
+          document.body.style.backgroundColor = '';
+        }
         modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
