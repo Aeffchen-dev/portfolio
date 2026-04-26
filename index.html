@@ -431,7 +431,7 @@
     .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
     .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
-    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; text-wrap:balance; }
     .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
@@ -474,18 +474,21 @@
       96%  { transform: translate(0.3vw,-1.5px) rotate(-0.2deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    /* A (2nd) — N's exact arc + Y + rotation, X shifted by natural-position offset (~70vw) */
+    /* A (2nd) — delayed sweep, enters viewport at 55% (after N exits at 54%), faster traversal */
     @keyframes jana-A2 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(-72vw,-26px) rotate(-7deg); opacity:1; }
-      32%  { transform: translate(-85vw,-36px) rotate(-12deg); opacity:1; }
-      47%  { transform: translate(-131vw,-8px) rotate(-17deg); opacity:1; }
-      54%  { transform: translate(-190vw,6px) rotate(-20deg); opacity:0; }
-      55%  { transform: translate(50vw,6px) rotate(-20deg); opacity:0; }
-      74%  { transform: translate(-26vw,-9px) rotate(-12deg); opacity:1; }
-      88%  { transform: translate(-65vw,-17px) rotate(-5deg); opacity:1; }
-      96%  { transform: translate(-70vw,-1.5px) rotate(-0.2deg); opacity:1; }
-      100% { transform: translate(-70vw,0) rotate(0deg); opacity:1; }
+      15%  { transform: translate(-15vw,-10px) rotate(-3deg); opacity:1; }
+      32%  { transform: translate(-45vw,-20px) rotate(-8deg); opacity:1; }
+      47%  { transform: translate(-72vw,-26px) rotate(-11deg); opacity:1; }
+      55%  { transform: translate(-85vw,-24px) rotate(-13deg); opacity:1; }
+      58%  { transform: translate(-120vw,-32px) rotate(-16deg); opacity:1; }
+      62%  { transform: translate(-155vw,-8px) rotate(-18deg); opacity:1; }
+      65%  { transform: translate(-235vw,6px) rotate(-21deg); opacity:0; }
+      66%  { transform: translate(50vw,6px) rotate(-21deg); opacity:0; }
+      80%  { transform: translate(22vw,-5px) rotate(-12deg); opacity:1; }
+      92%  { transform: translate(3vw,-8px) rotate(-4deg); opacity:1; }
+      97%  { transform: translate(0.2vw,-1px) rotate(-0.1deg); opacity:1; }
+      100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
     .footer-name span { display:inline-block; }
     .footer-name.jana-animate span {
@@ -656,12 +659,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:16px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.14); border-radius:16px;
       backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-      border:1px solid rgba(128,128,128,0.22);
+      border:1px solid rgba(0,0,0,0.18);
       text-decoration:none; color:inherit; transition:background .4s ease-in-out, border-color .4s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.09); border-color:rgba(128,128,128,0.38); }
+    .modal-link-card:hover { background:rgba(0,0,0,0.22); border-color:rgba(0,0,0,0.28); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -669,7 +672,7 @@
     }
     .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; }
     .modal-link-card__body { flex:1; min-width:0; }
-    .modal-link-card__title { font-family:'HW Left Bold', sans-serif; display:block; font-size:14px; font-weight:bold; color:#000; line-height:1.3; }
+    .modal-link-card__title { font-family:'DM Sans', sans-serif; display:block; font-size:14px; font-weight:400; color:#000; line-height:1.3; }
     .modal-link-card__arrow { color:#000; flex-shrink:0; display:flex; align-items:center; }
 
     /* === MODAL HERO === */
@@ -943,7 +946,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(0,0,0,0.05); border-color:rgba(128,128,128,0.22); }
+      .modal-link-card:hover { background:rgba(0,0,0,0.14); border-color:rgba(0,0,0,0.18); }
     }
   </style>
 </head>
@@ -1984,6 +1987,7 @@
     let currentProjectKey  = null;
     let _isTransitioning   = false;
     let _nextRevealAbort   = null;
+    let _sheetStack        = [];
 
     function getNextProjectKey(key) {
       const idx = PROJECT_ORDER.indexOf(key);
@@ -2161,9 +2165,10 @@
       injectNextBtn(key);
     }
 
-    function injectNextBtn(key) {
+    function injectNextBtn(key, scrollEl) {
+      scrollEl = scrollEl || document.querySelector('#projectModal .modal__scroll');
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
-      const oldEnd = document.querySelector('.modal-page-end');
+      const oldEnd = scrollEl.querySelector('.modal-page-end');
       if (oldEnd) oldEnd.remove();
 
       const nextKey = getNextProjectKey(key);
@@ -2178,8 +2183,9 @@
         `</div>` +
         '';
 
-      const detailEl = document.getElementById('modal-links').closest('.project-detail');
-      (detailEl || document.getElementById('modal-links')).insertAdjacentElement('afterend', pageEnd);
+      const linksEl = scrollEl.querySelector('.project-links');
+      const detailEl = linksEl ? linksEl.closest('.project-detail') : null;
+      (detailEl || linksEl || scrollEl.lastElementChild).insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
 
       if (!nextP) return;
@@ -2208,7 +2214,6 @@
       const revealVid = revealEl.querySelector('video');
       if (revealVid) revealVid.play().catch(() => {});
       const bgEl     = revealEl.querySelector('.modal-next-reveal__bg');
-      const scrollEl = document.querySelector('.modal__scroll');
       const modalH   = scrollEl.clientHeight;
       const THRESHOLD = modalH * 0.72;
       const EASE     = 'cubic-bezier(.4,0,.2,1)';
@@ -2279,15 +2284,14 @@
       if (_isTransitioning) return;
       const p = PROJECTS[nextKey]; if (!p) return;
       _isTransitioning = true;
-      const modalEl = document.getElementById('projectModal');
-      const txPfx   = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
-      const bg      = p.bg || '#f2f2f2';
+
+      const bg = p.bg || '#f2f2f2';
       document.documentElement.style.transition = 'none';
       document.documentElement.style.backgroundColor = bg;
       document.getElementById('themeColor').content = bg;
       document.getElementById('safeBar').style.transition = 'none';
       document.getElementById('safeBar').style.background = bg;
-      // Build display-only entering panel (shown during transition only)
+
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
         : p.heroVideo
@@ -2295,18 +2299,16 @@
         : '';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const linksHTML = buildLinkCards(p.links);
-      const panel = document.createElement('div');
-      panel.classList.add('js-nav-panel');
-      const isTabletPlus = window.innerWidth >= 640;
-      const isDesktopP   = window.innerWidth >= 1024;
-      panel.style.cssText =
-        'position:fixed;top:0;bottom:0;z-index:205;overflow-y:auto;overflow-x:hidden;' +
-        'overscroll-behavior:contain;scrollbar-width:none;max-height:95dvh;' +
-        `background:${bg};color:#111;padding:24px ${isDesktopP ? 16 : 8}px;` +
-        (isTabletPlus ? 'left:50%;right:auto;width:100%;max-width:1100px;' : 'left:0;right:0;') +
-        `font-family:'DM Sans',sans-serif;transform:${txPfx()}translateY(100%);`;
-      panel.innerHTML =
+      const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
+      const linksHTML = buildLinkCards(externalLinks);
+
+      const sheet = document.createElement('div');
+      sheet.className = 'modal js-stacked-sheet';
+
+      const scrollDiv = document.createElement('div');
+      scrollDiv.className = 'modal__scroll';
+      scrollDiv.style.background = bg;
+      scrollDiv.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
           `<div class="modal-header-left">` +
@@ -2323,27 +2325,35 @@
           `</section>` +
           `<nav class="project-links">${linksHTML}</nav>` +
         `</div>`;
-      document.body.appendChild(panel);
-      // Double rAF: mount at start position, then kick off animation
+
+      sheet.appendChild(scrollDiv);
+      document.body.appendChild(sheet);
+
+      if (externalLinks.length) {
+        hydrateLinkThumbs(scrollDiv.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[nextKey] || null);
+      }
+
+      // Swipe-down on stacked sheet closes all sheets
+      let _ssy = 0, _sActive = false;
+      scrollDiv.addEventListener('touchstart', e => {
+        if (scrollDiv.scrollTop > 0) return;
+        _ssy = e.touches[0].clientY; _sActive = true;
+      }, { passive: true });
+      scrollDiv.addEventListener('touchmove', e => {
+        if (!_sActive) return;
+        if (e.touches[0].clientY - _ssy > 60) { _sActive = false; closeModal(); }
+      }, { passive: true });
+      scrollDiv.addEventListener('touchend', () => { _sActive = false; }, { passive: true });
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const dur  = 460;
-          const ease = 'cubic-bezier(0.32,0.72,0,1)';
-          modalEl.style.transition = `transform ${dur}ms ${ease}`;
-          modalEl.style.transform  = `${txPfx()}translateY(-108%)`;
-          panel.style.transition   = `transform ${dur}ms ${ease}`;
-          panel.style.transform    = txPfx() + 'translateY(0)';
+          sheet.classList.add('is-open');
           setTimeout(() => {
-            // Swap real modal content silently behind the covering panel
-            fillModalContent(nextKey);
-            modalEl.style.transition = 'none';
-            modalEl.style.transform  = txPfx() + 'translateY(0)';
-            panel.remove();
-            requestAnimationFrame(() => {
-              modalEl.style.transition = '';
-              _isTransitioning = false;
-            });
-          }, dur + 20);
+            _sheetStack.push(sheet);
+            currentProjectKey = nextKey;
+            injectNextBtn(nextKey, scrollDiv);
+            _isTransitioning = false;
+          }, 520);
         });
       });
     }
@@ -2367,6 +2377,8 @@
     // === CLOSE MODAL ===
     function closeModal() {
       document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+      _sheetStack.forEach(s => { s.classList.remove('is-open'); setTimeout(() => s.remove(), 500); });
+      _sheetStack = [];
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
       _isTransitioning = false;
       const modal    = document.getElementById('projectModal');
@@ -2421,6 +2433,8 @@
 
       function doClose() {
         document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
+        _sheetStack.forEach(s => { s.classList.remove('is-open'); setTimeout(() => s.remove(), 400); });
+        _sheetStack = [];
         if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
         _isTransitioning = false;
         const backdrop = document.getElementById('modalBackdrop');
