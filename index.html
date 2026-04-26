@@ -2167,11 +2167,12 @@
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
       }
-      if (window.innerWidth < 640) {
-        const bd = document.getElementById('modalBackdrop');
-        bd.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
-        bd.style.background = bg;
-      }
+      const bd = document.getElementById('modalBackdrop');
+      const closeBarEl = document.getElementById('modalCloseBar');
+      bd.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
+      bd.style.background = bg;
+      closeBarEl.style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1), opacity .5s cubic-bezier(.4,0,.2,1)';
+      closeBarEl.style.background = bg;
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2407,7 +2408,8 @@
       // Ease-out on close bar and backdrop
       closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
       backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
-      if (window.innerWidth < 640) backdrop.style.background = 'transparent';
+      backdrop.style.background = 'transparent';
+      closeBar.style.background = 'transparent';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
