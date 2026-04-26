@@ -146,12 +146,20 @@
     .modal.is-visible { display:block; }
 
     /* === ARTICLE HERO === */
-    .article-hero { background:transparent; }
+    .article-hero {
+      background:transparent; position:relative;
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+    }
+    .article-hero.has-cover::before {
+      content:''; position:absolute; inset:0;
+      background:rgba(0,0,0,0.42); pointer-events:none; z-index:0;
+    }
     .hero-top {
       height:80vh;
       max-width:800px; margin:0 auto;
       padding:52px 8px 0;
       display:flex; flex-direction:column;
+      position:relative; z-index:1;
     }
     /* center zone: must fit within 80vh — min-height:0 allows shrinking */
     .hero-main {
@@ -179,10 +187,8 @@
       margin-top:16px;
     }
 
-    .hero__cover-img {
-      width:100px; height:100px; border-radius:20px; object-fit:cover; display:none;
-      flex-shrink:0; margin-bottom:4px;
-    }
+    .hero__cover-img { display:none !important; }
+    .article-hero.has-cover .hero__title { text-shadow:0 2px 16px rgba(0,0,0,0.5); }
 
     /* bottom bar: BACK left, SHARE right */
     .hero-bottom {
@@ -562,6 +568,7 @@
     'above-the-fold':                              'images/article-covers/above-the-fold.png',
     'animation-in-ux':                             'images/article-covers/animation-in-ux.png',
     'image-and-video-preparation-for-the-web':     'images/article-covers/asset-preparation.png',
+    'figma-vs-sketch':                             'images/article-covers/figma-vs-sketch.png',
   };
 
   function cleanSummary(s) {
@@ -729,9 +736,9 @@
         // Cover image in header — 16px above headline, 20% less wide than headline
         const coverSrc = ARTICLE_COVERS[post.slug || slug || ''] || '';
         if (coverSrc) {
-          const coverImg = document.getElementById('articleCoverImg');
-          coverImg.src = coverSrc;
-          coverImg.style.display = 'block';
+          const hero = document.getElementById('articleHero');
+          hero.style.backgroundImage = `url('${coverSrc}')`;
+          hero.classList.add('has-cover');
         }
 
         // Subtitle from ACF subtitle field
