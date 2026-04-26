@@ -2788,19 +2788,22 @@ quoteText.textContent = '“' + q.text + '”';
         cards.push(img);
       }
 
-      function applyRandom(el) {
+      function applyRandom(el, ontop) {
         const dx = (rand(-8, 8)).toFixed(1);
         const dy = (rand(-8, 8)).toFixed(1);
         const rot = (rand(-10, 10)).toFixed(2);
         el.style.transition = 'transform 1s cubic-bezier(.4,0,.2,1)';
         el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
+        if (ontop) el.style.zIndex = N + 1;
       }
 
-      cards.forEach(applyRandom);
+      cards.forEach((el, i) => { el.style.zIndex = i; applyRandom(el, false); });
 
       let topIdx = N - 1;
       function cycle() {
-        applyRandom(cards[topIdx]);
+        // reset previous top card z-index
+        cards.forEach((el, i) => { if (parseInt(el.style.zIndex) === N + 1) el.style.zIndex = i; });
+        applyRandom(cards[topIdx], true);
         topIdx = (topIdx - 1 + N) % N;
         setTimeout(cycle, 1600 + rand(0, 800));
       }
