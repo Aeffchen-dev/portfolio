@@ -135,10 +135,10 @@
       user-select:none;
       -webkit-user-select:none;
       touch-action:none;
-      opacity:0; transform:translateY(16px);
-      transition:opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+      opacity:0;
+      transition:opacity 0.8s cubic-bezier(.4,0,.2,1);
     }
-    #canvas.is-revealed { opacity:1; transform:translateY(0); }
+    #canvas.is-revealed { opacity:1; }
     #canvas.is-dragging { cursor:grabbing; }
 
     /* === TILES === */
@@ -353,6 +353,12 @@
       }
     }
 
+    // Reveal animation state
+    let _revealStart = null;
+    const _REVEAL_DUR = 1400;
+    const _REVEAL_DIST = 120;
+    function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
     // Create tile DOM elements
     let _loadedCount = 0;
     const _totalTiles = DEFS.length;
@@ -360,6 +366,7 @@
       _loadedCount++;
       if (_loadedCount >= _totalTiles) {
         canvas.classList.add('is-revealed');
+        _revealStart = performance.now();
         window.__loaderDone?.();
       }
     }
@@ -399,9 +406,14 @@
 
     // Render loop
     function render() {
+      let revealY = 0;
+      if (_revealStart !== null) {
+        const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
+        revealY = (1 - _easeOutCubic(elapsed)) * _REVEAL_DIST;
+      }
       tiles.forEach(t => {
         const p = tilePos(t);
-        t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
+        t.el.style.transform = `translate3d(${p.x}px,${p.y + revealY * COL_PAR[t.c]}px,0)`;
       });
       if (!dragging) {
         ox += vx; oy += vy;
