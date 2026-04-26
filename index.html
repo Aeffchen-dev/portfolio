@@ -2157,11 +2157,11 @@
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
       document.getElementById('themeColor').content = bg;
+      document.getElementById('safeBar').style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
+      document.getElementById('safeBar').style.background = bg;
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
-        document.getElementById('safeBar').style.transition = 'background 0.4s 0.05s cubic-bezier(.4,0,.2,1)';
-        document.getElementById('safeBar').style.background = bg;
       }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
@@ -2231,11 +2231,13 @@
 
       function applyProgress(h) {
         const p = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
-        if (dragStartBg && window.innerWidth < 640) {
+        if (dragStartBg) {
           const col = lerpHex(dragStartBg, nextBg, p);
-          document.body.style.transition = 'none';
-          document.body.style.backgroundColor = col;
           document.getElementById('safeBar').style.background = col;
+          if (window.innerWidth < 640) {
+            document.body.style.transition = 'none';
+            document.body.style.backgroundColor = col;
+          }
         }
       }
 
@@ -2290,11 +2292,11 @@
 
       const bg = p.bg || '#f2f2f2';
       document.getElementById('themeColor').content = bg;
+      document.getElementById('safeBar').style.transition = 'background 0.5s cubic-bezier(.4,0,.2,1)';
+      document.getElementById('safeBar').style.background = bg;
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
         document.body.style.backgroundColor = bg;
-        document.getElementById('safeBar').style.transition = 'background 0.5s cubic-bezier(.4,0,.2,1)';
-        document.getElementById('safeBar').style.background = bg;
       }
 
       const heroHTML = p.hero
@@ -2402,11 +2404,11 @@
       _hoverAllowAfter = Date.now() + 800;
       closeNav();
       document.getElementById('themeColor').content = '#060606';
+      document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
+      document.getElementById('safeBar').style.background = '#060606';
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
         document.body.style.backgroundColor = '#060606';
-        document.getElementById('safeBar').style.transition = 'background 0.45s cubic-bezier(0,0,0.2,1)';
-        document.getElementById('safeBar').style.background = '#060606';
       } else {
         document.body.style.backgroundColor = '';
       }
@@ -2453,11 +2455,11 @@
         closeBar.classList.remove('is-active');
         backdrop.classList.remove('is-active');
         document.getElementById('themeColor').content = '#060606';
+        document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
+        document.getElementById('safeBar').style.background = '#060606';
         if (window.innerWidth < 640) {
           document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
           document.body.style.backgroundColor = '#060606';
-          document.getElementById('safeBar').style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
-          document.getElementById('safeBar').style.background = '#060606';
         } else {
           document.body.style.backgroundColor = '';
         }
