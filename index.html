@@ -293,14 +293,18 @@
       cursor:pointer; text-decoration:none;
       aspect-ratio:1/1;
     }
-    .cv-card--archive__label {
-      display:flex; align-items:center; justify-content:space-between;
+    .cv-card--archive__label,
+    .cv-card--archive__arrow {
+      position:absolute; z-index:3; top:8px;
+      background:#141414; border-radius:999px;
       font-size:14px; font-weight:500; color:#fff;
-      position:relative; z-index:2; padding:0 12px 16px;
+      line-height:1;
     }
+    .cv-card--archive__label { left:8px; padding:5px 10px; }
+    .cv-card--archive__arrow { right:8px; padding:5px 8px; display:flex; align-items:center; }
     .archive-mini {
-      position:absolute; inset:0; top:46px;
-      overflow:hidden; border-radius:0 0 4px 4px;
+      position:absolute; inset:0;
+      overflow:hidden; border-radius:4px;
       cursor:pointer;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
@@ -1328,7 +1332,8 @@
 
       <!-- Archive stack card (desktop-only) -->
       <a href="archive.html" class="cv-card cv-card--archive" id="archiveStackCard">
-        <span class="cv-card--archive__label">Archive <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        <span class="cv-card--archive__label">Archive</span>
+        <span class="cv-card--archive__arrow"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
         <div class="archive-mini" id="archiveMini"></div>
       </a>
 
