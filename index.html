@@ -2787,7 +2787,7 @@ quoteText.textContent = '“' + q.text + '”';
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = (CW - GAP * (COLS - 1)) / COLS;
+        const TW = (CW - GAP * 3.5) / 4.5; // 4.5 cols fill full width
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
