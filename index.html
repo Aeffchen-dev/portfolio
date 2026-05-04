@@ -300,8 +300,8 @@
       font-size:14px; font-weight:500; color:#fff;
       line-height:1;
     }
-    .cv-card--archive__label { left:8px; padding:8px 14px; }
-    .cv-card--archive__arrow { right:8px; padding:8px 12px; display:flex; align-items:center; }
+    .cv-card--archive__label { left:8px; padding:10px 18px; }
+    .cv-card--archive__arrow { right:8px; padding:10px 16px; display:flex; align-items:center; }
     .archive-mini {
       position:absolute; inset:0;
       overflow:hidden; border-radius:4px;
@@ -2792,7 +2792,7 @@ quoteText.textContent = '“' + q.text + '”';
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = (CW - GAP * 3.5) / 4.5; // 4.5 cols fill full width
+        const TW = (CW - GAP * 2.5) / 3.5; // 3.5 cols fill full width
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
