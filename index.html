@@ -294,18 +294,19 @@
       aspect-ratio:1/1;
     }
     .cv-card--archive__label {
-      display:block; font-size:14px; font-weight:500; color:#fff;
-      position:relative; z-index:2; text-align:left; padding:0 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:14px; font-weight:500; color:#fff;
+      position:relative; z-index:2; padding:0 12px 16px;
     }
     .archive-mini {
-      position:absolute; inset:0; top:38px;
+      position:absolute; inset:0; top:46px;
       overflow:hidden; border-radius:0 0 4px 4px;
       cursor:default;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
     .archive-mini-tile {
-      position:absolute; border-radius:6px; overflow:hidden; background:#2a2a2a;
+      position:absolute; border-radius:12px; overflow:hidden; background:#2a2a2a;
     }
     .archive-mini-tile img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
     .cv-card--archive:hover .archive-stack__img { transition:transform 0.35s cubic-bezier(.4,0,.2,1) !important; }
@@ -1327,7 +1328,7 @@
 
       <!-- Archive stack card (desktop-only) -->
       <a href="archive.html" class="cv-card cv-card--archive" id="archiveStackCard">
-        <span class="cv-card--archive__label">Archive</span>
+        <span class="cv-card--archive__label">Archive <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
         <div class="archive-mini" id="archiveMini"></div>
       </a>
 
@@ -2778,15 +2779,15 @@ quoteText.textContent = '“' + q.text + '”';
       const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
         .sort(() => Math.random() - 0.5);
 
-      const COLS = 3, ROWS = 4;
-      const GAP  = 6;
+      const COLS = 3, ROWS = 5;
+      const GAP  = 8;
 
       function init() {
         const CW = mini.offsetWidth;
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = (CW - GAP * (COLS - 1)) / COLS * 0.7;
+        const TW = (CW - GAP * (COLS - 1)) / COLS;
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
