@@ -301,7 +301,7 @@
     .archive-mini {
       position:absolute; inset:0; top:46px;
       overflow:hidden; border-radius:0 0 4px 4px;
-      cursor:default;
+      cursor:pointer;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
@@ -768,7 +768,7 @@
       .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
-      .cv-card--archive   { display:block; height:280px; aspect-ratio:unset; margin-top:8px; }
+      .cv-card--archive   { display:block; height:420px; aspect-ratio:unset; margin-top:8px; }
       .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
       .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
@@ -2779,7 +2779,7 @@ quoteText.textContent = '“' + q.text + '”';
       const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
         .sort(() => Math.random() - 0.5);
 
-      const COLS = 3, ROWS = 10;
+      const COLS = 10, ROWS = 10;
       const GAP  = 8;
 
       function init() {
@@ -2792,8 +2792,8 @@ quoteText.textContent = '“' + q.text + '”';
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
 
-        const COL_PAR  = [0.85, 1.0, 1.15];
-        const COL_YOFF = [0, 0.5, 0.25];
+        const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18, 0.82, 1.0, 1.18, 0.82];
+        const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15, 0.6, 0.3, 0.8, 0.1];
 
         const DEFS = [];
         for (let r = 0; r < ROWS; r++) {
