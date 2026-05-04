@@ -2797,8 +2797,8 @@ quoteText.textContent = '“' + q.text + '”';
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
 
-        const COL_PAR  = [0.94, 1.0, 1.06, 0.94, 1.0, 1.06, 0.94, 1.0, 1.06, 0.94];
-        const COL_YOFF = [0, 0.4, 0.2, 0.6, 0.3, 0.1, 0.5, 0.25, 0.7, 0.15];
+        const COL_PAR  = [0.87, 1.0, 1.13, 0.87, 1.0, 1.13, 0.87, 1.0, 1.13, 0.87];
+        const COL_YOFF = [0, 0.45, 0.22, 0.68, 0.35, 0.12, 0.55, 0.28, 0.72, 0.18];
 
         const DEFS = [];
         for (let r = 0; r < ROWS; r++) {
@@ -2828,7 +2828,7 @@ quoteText.textContent = '“' + q.text + '”';
           return Object.assign({}, def, { el });
         });
 
-        const AUTO_VX = 0.12, AUTO_VY = 0.06; // constant slow drift
+        const AUTO_VX = 0.35, AUTO_VY = 0.18; // constant auto drift
         let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
@@ -2853,12 +2853,11 @@ quoteText.textContent = '“' + q.text + '”';
           requestAnimationFrame(render);
         }
 
-        // Wheel / trackpad scroll (desktop)
+        // Wheel / trackpad scroll (desktop) — velocity-based for smooth inertia
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          ox -= e.deltaX * 0.6;
-          oy -= e.deltaY * 0.6;
-          vx = 0; vy = 0; // resumes auto-drift via lerp
+          vx -= e.deltaX * 0.4;
+          vy -= e.deltaY * 0.4;
         }, { passive: false });
 
         // Drag (mobile/tablet only)
@@ -2871,7 +2870,8 @@ quoteText.textContent = '“' + q.text + '”';
         mini.addEventListener('pointermove', e => {
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          vx = dx / dt * 16; vy = dy / dt * 16;
+          const rawVx = dx / dt * 16, rawVy = dy / dt * 16;
+          vx = vx * 0.5 + rawVx * 0.5; vy = vy * 0.5 + rawVy * 0.5;
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
         mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
