@@ -363,11 +363,11 @@
 
     // Grid config — portrait tiles (9:19 ratio)
     // Scale so 6 columns always fill exactly 100vw
-    const COLS   = 6;
+    const COLS   = 8;
     const ROWS   = 5;
     const BASE_W = 120;
     const BASE_G = 12;
-    const mult   = CW < 640 ? 2.3 : 0.9;
+    const mult   = CW < 640 ? 2.3 : 1.1;
     const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
     const TILE_H = 253   * scale;
@@ -379,8 +379,8 @@
       .sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18]; // subtle vertical parallax
-    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15]; // initial vertical offset (fraction of tile+gap)
+    const COL_PAR  = [0.94, 1.0, 1.06, 0.94, 1.0, 1.06, 0.94, 1.0]; // subtle vertical parallax
+    const COL_YOFF = [0, 0.4, 0.2, 0.6, 0.3, 0.1, 0.5, 0.25]; // initial vertical offset (fraction of tile+gap)
 
     // Generate grid positions (store column index for parallax)
     const DEFS = [];
