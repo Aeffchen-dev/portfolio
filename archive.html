@@ -16,7 +16,9 @@
   <meta name="twitter:title" content="Archive — Jana Gramlich">
   <meta name="twitter:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -396,45 +398,6 @@
       window.addEventListener('resize', setPillState);
       setPillState();
     })();
-
-    // === LIGHTBOX ===
-    const lightbox    = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxClose = document.getElementById('lightboxClose');
-
-    function openLightbox(src) {
-      lightboxImg.src = src;
-      lightbox.classList.add('is-open');
-      // Prevent body scroll on iOS when lightbox is open
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    }
-    function closeLightbox() {
-      lightbox.classList.remove('is-open');
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      // Clear src after transition to avoid flash on next open
-      setTimeout(() => { if (!lightbox.classList.contains('is-open')) lightboxImg.src = ''; }, 350);
-    }
-
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxClose.addEventListener('touchend', e => { e.preventDefault(); closeLightbox(); });
-
-    // Close on backdrop tap (not on image itself)
-    lightbox.addEventListener('pointerup', e => {
-      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) closeLightbox();
-    });
-    // iOS Safari: also handle touchend on backdrop
-    lightbox.addEventListener('touchend', e => {
-      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) {
-        e.preventDefault();
-        closeLightbox();
-      }
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
-    });
 
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
