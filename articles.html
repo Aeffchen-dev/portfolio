@@ -57,7 +57,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } }
     .nav::before {
       content:'';
@@ -384,6 +384,7 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
+            <a href="index.html" class="nav__link">Home</a>
             <a href="index.html#work" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
             <a href="archive.html" class="nav__link">Archive</a>
@@ -391,7 +392,7 @@
           </div>
           <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
-        <div class="nav__divider"></div>
+
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>

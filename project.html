@@ -198,6 +198,62 @@
     }
     .page-links__all:hover { color: #fff; }
 
+    /* === MORE PROJECTS === */
+    .more-projects {
+      padding: 8px;
+      margin: 0;
+    }
+    .more-projects__label {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+      padding: 8px 0 12px;
+    }
+    .more-projects__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 640px) {
+      .more-projects__grid { grid-template-columns: 1fr 1fr; }
+    }
+    .more-proj-item {
+      display: flex; flex-direction: column;
+      cursor: pointer; color: inherit; text-decoration: none;
+    }
+    .more-proj-item__img {
+      overflow: hidden; border-radius: 4px;
+      aspect-ratio: 3/4; background: #1A1A1A;
+    }
+    @media (min-width: 640px) {
+      .more-proj-item__img { aspect-ratio: 4/3; }
+    }
+    .more-proj-item__img img {
+      width: 100%; height: 130%; object-fit: cover; display: block;
+      will-change: transform; transition: transform .5s cubic-bezier(.4,0,.2,1);
+    }
+    .more-proj-item:hover .more-proj-item__img img { transform: scale(1.04) translateY(-2%); }
+    .more-proj-item__body {
+      padding: 10px 2px 4px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .more-proj-item__year {
+      font-size: 11px; font-weight: 500; color: #989898;
+      letter-spacing: .48px; text-transform: uppercase;
+    }
+    .more-proj-item__client {
+      font-size: 14px; font-weight: 500; color: #fff; line-height: 1.3; margin-top: 2px;
+    }
+    .more-proj-item__title {
+      font-size: 13px; font-weight: 400; color: #989898; line-height: 1.35; margin-top: 2px;
+    }
+    .more-proj-item__view {
+      font-size: 11px; font-weight: 500; letter-spacing: .09em;
+      text-transform: uppercase; color: #989898;
+      display: flex; align-items: center; gap: 5px; margin-top: 8px;
+    }
+    .more-proj-item__view svg { transition: transform .2s ease; }
+    .more-proj-item:hover .more-proj-item__view svg { transform: translate(3px,-3px); }
+
     /* === NEXT PROJECT (scroll-height reveal) === */
     .next-project {
       overflow: hidden; cursor: pointer;
@@ -397,6 +453,74 @@
     <span class="page-links__label">Next Up</span>
     <a href="index.html" class="page-links__all">[ View All Projects ]</a>
   </div>
+
+  <!-- MORE PROJECTS -->
+  <section class="more-projects">
+    <p class="more-projects__label">More Projects</p>
+    <div class="more-projects__grid">
+
+      <a class="more-proj-item" href="index.html">
+        <div class="more-proj-item__img">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="lazy">
+        </div>
+        <div class="more-proj-item__body">
+          <span class="more-proj-item__year">2024</span>
+          <p class="more-proj-item__client">About You</p>
+          <p class="more-proj-item__title">Building a scalable design system for a fashion platform used by millions.</p>
+          <span class="more-proj-item__view">View project <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        </div>
+      </a>
+
+      <a class="more-proj-item" href="index.html">
+        <div class="more-proj-item__img">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
+        </div>
+        <div class="more-proj-item__body">
+          <span class="more-proj-item__year">2021–2022</span>
+          <p class="more-proj-item__client">Douglas</p>
+          <p class="more-proj-item__title">Bridging online and in-store experiences through a seamless hybrid app.</p>
+          <span class="more-proj-item__view">View project <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        </div>
+      </a>
+
+      <a class="more-proj-item" href="index.html">
+        <div class="more-proj-item__img">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Zalando Connected Retail" loading="lazy">
+        </div>
+        <div class="more-proj-item__body">
+          <span class="more-proj-item__year">2020</span>
+          <p class="more-proj-item__client">Zalando</p>
+          <p class="more-proj-item__title">Connecting independent retailers to Europe's largest fashion platform.</p>
+          <span class="more-proj-item__view">View project <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        </div>
+      </a>
+
+      <a class="more-proj-item" href="index.html">
+        <div class="more-proj-item__img">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
+        </div>
+        <div class="more-proj-item__body">
+          <span class="more-proj-item__year">2017–2020</span>
+          <p class="more-proj-item__client">DMEXCO</p>
+          <p class="more-proj-item__title">Designing the digital event experience for Europe's leading marketing conference.</p>
+          <span class="more-proj-item__view">View project <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        </div>
+      </a>
+
+      <a class="more-proj-item" href="index.html">
+        <div class="more-proj-item__img">
+          <img src="https://cms.janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
+        </div>
+        <div class="more-proj-item__body">
+          <span class="more-proj-item__year">2018–2019</span>
+          <p class="more-proj-item__client">The Makery</p>
+          <p class="more-proj-item__title">Relaunching the brand and website for a Berlin-based creative marketplace.</p>
+          <span class="more-proj-item__view">View project <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
 
   <!-- NEXT PROJECT (scroll-height reveal) -->
   <section class="next-project" id="nextProject" data-href="#" data-img="" data-video="">

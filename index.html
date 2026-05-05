@@ -615,6 +615,64 @@
     .modal-page-end .page-links__all:hover { opacity: .7; }
     .modal-page-end .page-links__client { display: inline; margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
 
+    /* === MODAL MORE PROJECTS === */
+    .modal-more-projects { margin: 16px -8px 0; }
+    .modal-more-projects__grid { display: flex; flex-direction: column; padding: 0 8px; }
+    @media (min-width:1024px) { .modal-more-projects { margin: 16px -16px 0; } .modal-more-projects__grid { padding: 0 16px; } }
+    .modal-proj-card {
+      display: flex; flex-direction: column;
+      cursor: pointer; color: inherit; text-decoration: none;
+      background: none; border: none; font-family: inherit; text-align: left;
+      position: relative; will-change: transform, opacity;
+    }
+    .modal-proj-card + .modal-proj-card .modal-proj-card__img { margin-top: 16px; }
+    .modal-proj-card__img {
+      width: 100%; height: 55vh;
+      border-radius: 4px; overflow: hidden;
+      background: #141414; position: relative; z-index: 2; will-change: transform, opacity;
+    }
+    .modal-proj-card__img img,
+    .modal-proj-card__img video {
+      width: 100%; height: 130%; object-fit: cover; display: block; will-change: transform;
+    }
+    .modal-proj-card__img video { display: none; }
+    .modal-proj-card__img video[src]:not([src=""]) { display: block; }
+    .modal-proj-card__body {
+      background: #141414; border-radius: 4px;
+      padding: 8px; aspect-ratio: 4/3;
+      position: relative; z-index: 1; margin-top: 16px; will-change: transform, opacity;
+      display: flex; flex-direction: column;
+    }
+    .modal-proj-card__year { font-size: 11px; font-weight: 500; color: #989898; letter-spacing: 0.48px; text-transform: uppercase; }
+    .modal-proj-card__client { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.3; margin-top: auto; }
+    .modal-proj-card__title { font-size: 14px; font-weight: 400; color: #989898; margin-top: 4px; line-height: 1.3; }
+    .modal-proj-card__footer { display: flex; align-items: baseline; gap: 6px; margin-top: auto; }
+    .modal-proj-card__view {
+      font-family: 'HW Left Bold', sans-serif;
+      font-size: 11px; font-weight: bold; letter-spacing: 0.48px;
+      text-transform: uppercase; color: #989898;
+      display: flex; align-items: baseline; gap: 5px;
+    }
+    .modal-proj-card__view .arrow-icon { display: inline-flex; align-self: center; transition: transform .2s ease, color .2s ease; }
+    .modal-proj-card:hover .modal-proj-card__view .arrow-icon { transform: translate(3px,-3px); color: #fff; }
+    /* Tablet: 2-column grid, portrait images, transparent body grid */
+    @media (min-width: 640px) {
+      .modal-more-projects__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .modal-proj-card + .modal-proj-card .modal-proj-card__img { margin-top: 0; }
+      .modal-proj-card__img { height: auto; aspect-ratio: 3/4; }
+      .modal-proj-card__img img,
+      .modal-proj-card__img video { height: 130%; }
+      .modal-proj-card__body {
+        background: none; border-radius: 0; aspect-ratio: auto; margin-top: 8px;
+        display: grid; grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 2px; align-items: start;
+      }
+      .modal-proj-card__year { grid-column: 1; grid-row: 2; }
+      .modal-proj-card__client { grid-column: 1; grid-row: 1; margin-top: 0; }
+      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+      .modal-proj-card__footer { grid-column: 1; grid-row: 3; margin-top: 0; }
+      .modal-proj-card__view .view-text { display: none; }
+    }
+
     .hero__title { display:none; }
     .modal-name {
       display:none;
@@ -884,8 +942,8 @@
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
-      .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
-      .modal-close-bar { background:rgba(0,0,0,0.35); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+      .modal-backdrop.is-active { background:rgba(0,0,0,0.6); }
+      .modal-close-bar { background:#000; backdrop-filter:none; -webkit-backdrop-filter:none; }
     }
 
     /* === LOADING SCREEN === */
@@ -2159,18 +2217,62 @@ quoteText.textContent = '“' + q.text + '”';
       const nextKey = getNextProjectKey(key);
       const nextP   = nextKey ? PROJECTS[nextKey] : null;
 
+      // Build project cards for all projects except the current one
+      const otherKeys = Object.keys(WP_PROJECT_IDS).filter(k => k !== key);
+      const arrowSvg = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+      const cardsHtml = otherKeys.map(k => {
+        const p2 = PROJECTS[k] || PROJECTS_FALLBACK[k]; if (!p2) return '';
+        const titleEl = document.querySelector(`.work-item[data-project="${k}"] .work-item__title`);
+        const title = titleEl ? titleEl.textContent : '';
+        const hasVid = p2.heroVideo ? `src="${p2.heroVideo}"` : '';
+        return `<button class="modal-proj-card" data-key="${k}">` +
+          `<div class="modal-proj-card__img">` +
+            `<img src="${p2.hero}" alt="${p2.client}" loading="lazy" style="${p2.heroVideo ? 'display:none' : ''}">` +
+            `<video autoplay muted loop playsinline ${hasVid} style="${p2.heroVideo ? '' : 'display:none'}"></video>` +
+          `</div>` +
+          `<div class="modal-proj-card__body">` +
+            `<span class="modal-proj-card__year">${p2.year}</span>` +
+            `<p class="modal-proj-card__client">${p2.client}</p>` +
+            `<p class="modal-proj-card__title">${title}</p>` +
+            `<div class="modal-proj-card__footer"><span class="modal-proj-card__view"><span class="view-text">View project </span><span class="arrow-icon">${arrowSvg}</span></span></div>` +
+          `</div></button>`;
+      }).join('');
+
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
       pageEnd.innerHTML =
         `<div class="page-links">` +
-          `<span class="page-links__label">Next Up${nextP ? `<span class="page-links__client">${nextP.client}</span>` : ''}</span>` +
+          `<span class="page-links__label">Next Up</span>` +
           `<button class="page-links__all">View All Projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
+        `</div>` +
+        `<div class="modal-more-projects">` +
+          `<div class="modal-more-projects__grid">${cardsHtml}</div>` +
         `</div>`;
 
       const linksEl = scrollEl.querySelector('.project-links');
       const detailEl = linksEl ? linksEl.closest('.project-detail') : null;
       (detailEl || linksEl || scrollEl.lastElementChild).insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
+      pageEnd.querySelectorAll('.modal-proj-card[data-key]').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.dataset.key));
+      });
+
+      // Scroll-reveal animation for modal cards (same as homepage work-items)
+      const modalCards = [...pageEnd.querySelectorAll('.modal-proj-card')];
+      modalCards.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; });
+      function updateModalCardReveal() {
+        const vH = window.innerHeight;
+        const endDist = 0.85 * vH;
+        modalCards.forEach(el => {
+          const top = el.getBoundingClientRect().top;
+          const t = Math.min(1, Math.max(0, (vH - top) / endDist));
+          el.style.opacity = String(t);
+          el.style.transform = `translateY(${-8 * (1 - t)}px)`;
+        });
+      }
+      const modalScrollEl = scrollEl;
+      modalScrollEl.addEventListener('scroll', updateModalCardReveal, { passive: true });
+      updateModalCardReveal();
     }
 
 
@@ -2494,6 +2596,24 @@ quoteText.textContent = '“' + q.text + '”';
     }
     window.addEventListener('scroll', updateTileParallax, { passive: true });
     updateTileParallax();
+
+    // Also run parallax when modal scrolls (modal cards use same image structure)
+    function updateModalParallax() {
+      const vh = window.innerHeight;
+      document.querySelectorAll('.modal-proj-card__img').forEach(container => {
+        const img = container.querySelector('video[src]:not([src=""])') || container.querySelector('img');
+        if (!img) return;
+        const rect = container.getBoundingClientRect();
+        const extra = rect.height * 0.30;
+        const center = -extra / 2;
+        const ratio  = (rect.top + rect.height / 2) / vh - 0.5;
+        const raw    = center + (window.innerWidth >= 640 ? -1 : 1) * ratio * extra * 0.8;
+        const shift  = Math.max(-extra, Math.min(0, raw));
+        img.style.transform = `translateY(${shift}px)`;
+      });
+    }
+    document.getElementById('projectModal')?.querySelector('.modal__scroll')
+      ?.addEventListener('scroll', updateModalParallax, { passive: true });
 
     // === ARCHIVE MINI CANVAS ===
     (function() {

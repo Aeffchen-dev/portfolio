@@ -53,7 +53,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     .nav::before {
       content:'';
       position:absolute;
@@ -246,6 +246,7 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
+            <a href="index.html" class="nav__link">Home</a>
             <a href="index.html#work" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
             <a href="archive.html" class="nav__link">Archive</a>

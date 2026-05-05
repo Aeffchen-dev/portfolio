@@ -51,7 +51,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     .nav::before {
       content:'';
       position:absolute;
@@ -241,28 +241,6 @@
     @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
 
     /* === LIGHTBOX === */
-    .arch-lightbox {
-      position:fixed; inset:0; z-index:500;
-      background:transparent;
-      display:flex; align-items:center; justify-content:center;
-      pointer-events:none;
-      transition:background 0.35s cubic-bezier(0.4,0,0.2,1);
-      cursor:pointer;
-    }
-    .arch-lightbox.is-open {
-      background:rgba(0,0,0,0.72);
-      pointer-events:auto;
-    }
-    .arch-lightbox__img {
-      max-height:70vh; max-width:70vw; width:auto; height:auto;
-      border-radius:12px; object-fit:contain; display:block;
-      transform:scale(0.88) translateY(20px); opacity:0;
-      transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.28s ease;
-      pointer-events:none;
-    }
-    .arch-lightbox.is-open .arch-lightbox__img {
-      transform:scale(1) translateY(0); opacity:1;
-    }
   </style>
 </head>
 <body>
@@ -294,14 +272,14 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
+            <a href="index.html" class="nav__link">Home</a>
             <a href="index.html#work" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
-            <a href="archive.html" class="nav__link is-current">Archive</a>
+            <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
           <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
-        <div class="nav__divider"></div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
@@ -313,9 +291,6 @@
 
   <!-- INFINITE CANVAS -->
   <div id="canvas"></div>
-  <div class="arch-lightbox" id="archLightbox">
-    <img class="arch-lightbox__img" id="archLightboxImg" src="" alt="">
-  </div>
 
   <script>
     // === NAV ===
@@ -541,27 +516,10 @@
 
     let _lastInteraction = 0;
 
-    // Lightbox
-    const lightbox  = document.getElementById('archLightbox');
-    const lbImg     = document.getElementById('archLightboxImg');
-    let lbOpen = false;
-    function openLightbox(src) {
-      lbImg.style.maxWidth = '70vw'; lbImg.style.maxHeight = '70vh';
-      lbImg.onload = () => {
-        lbImg.style.maxWidth  = Math.min(lbImg.naturalWidth,  window.innerWidth  * 0.7) + 'px';
-        lbImg.style.maxHeight = Math.min(lbImg.naturalHeight, window.innerHeight * 0.7) + 'px';
-      };
-      lbImg.src = src;
-      lightbox.classList.add('is-open'); lbOpen = true;
-    }
-    function closeLightbox() { lightbox.classList.remove('is-open'); lbOpen = false; }
-    lightbox.addEventListener('click', closeLightbox);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
     // Pointer events
     let dragDist = 0;
     canvas.addEventListener('pointerdown', e => {
-      if (lbOpen) return;
       pauseDrift();
       dragging = true; dragDist = 0; _lastInteraction = performance.now();
       canvas.classList.add('is-dragging');
@@ -584,11 +542,6 @@
 
     canvas.addEventListener('pointerup', e => {
       dragging = false; canvas.classList.remove('is-dragging');
-      if (dragDist < 6) {
-        const tileEl = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
-        const img = tileEl && tileEl.querySelector('img');
-        if (img) openLightbox(img.src);
-      }
     });
     canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
 
