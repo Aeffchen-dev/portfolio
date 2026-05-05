@@ -545,7 +545,15 @@
     const lightbox  = document.getElementById('archLightbox');
     const lbImg     = document.getElementById('archLightboxImg');
     let lbOpen = false;
-    function openLightbox(src) { lbImg.src = src; lightbox.classList.add('is-open'); lbOpen = true; }
+    function openLightbox(src) {
+      lbImg.style.maxWidth = '70vw'; lbImg.style.maxHeight = '70vh';
+      lbImg.onload = () => {
+        lbImg.style.maxWidth  = Math.min(lbImg.naturalWidth,  window.innerWidth  * 0.7) + 'px';
+        lbImg.style.maxHeight = Math.min(lbImg.naturalHeight, window.innerHeight * 0.7) + 'px';
+      };
+      lbImg.src = src;
+      lightbox.classList.add('is-open'); lbOpen = true;
+    }
     function closeLightbox() { lightbox.classList.remove('is-open'); lbOpen = false; }
     lightbox.addEventListener('click', closeLightbox);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
