@@ -589,7 +589,7 @@
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
-      flex-shrink:0;
+      height:1.5em; flex-shrink:0;
     }
     .modal-close-bar__icon svg { display:block; }
 
@@ -694,8 +694,8 @@
     }
     /* Desktop overrides for modal cards — must come after the 640px block */
     @media (min-width:1024px) {
-      .modal-more-projects__grid { gap: 8px; row-gap: 24px; }
-      .modal-proj-card__img { aspect-ratio: 4/5; }
+      .modal-more-projects__grid { gap: 16px; row-gap: 32px; }
+      .modal-proj-card__img { aspect-ratio: 3/4; }
       .modal-proj-card__body { column-gap: 80px; }
       .modal-proj-card__title { max-width: 280px; }
       .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
@@ -1046,25 +1046,46 @@
   </div>
   <script>
   (function() {
+    var phrases = [
+      "Design isn\u2019t decoration\u2014\nit serves a purpose.",
+      "I make complexity\neasy to understand.",
+      "Consistency is key.",
+      "I reduce noise\nto what matters."
+    ];
+    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
     var overlay = document.getElementById('loadingScreen');
-    var letters = document.querySelectorAll('.loading-letter');
+    var phraseEl = document.getElementById('loadingPhrase');
     var counterEl = document.getElementById('loadingCounter');
     var countEl = document.getElementById('loadingCount');
 
-    // Animate letters in from the right, one by one
-    letters.forEach(function(l, i) {
-      setTimeout(function() { l.classList.add('is-in'); }, 60 + i * 90);
-    });
+    phraseEl.innerHTML = phrase.replace(/\n/g, '<br>');
+    setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
 
-    // Position counter at top-left of phrase text box
-    function placeCounter() {
+    // Move cursor around the phrase text box
+    var moveTimer = null;
+    function moveCursor() {
       var rect = phraseEl.getBoundingClientRect();
-      counterEl.style.left = rect.left + 'px';
-      counterEl.style.top  = (rect.top - 18) + 'px';
+      if (!rect.width) return;
+      var pad = 44, side = Math.floor(Math.random() * 4), x, y;
+      if (side === 0) { x = rect.left + Math.random() * rect.width; y = rect.top - 6 - Math.random() * pad; }
+      else if (side === 1) { x = rect.right + 6 + Math.random() * pad; y = rect.top + Math.random() * rect.height; }
+      else if (side === 2) { x = rect.left + Math.random() * rect.width; y = rect.bottom + 6 + Math.random() * pad; }
+      else { x = rect.left - 6 - Math.random() * pad; y = rect.top + Math.random() * rect.height; }
+      counterEl.style.left = x + 'px';
+      counterEl.style.top  = y + 'px';
+      moveTimer = setTimeout(moveCursor, 900 + Math.random() * 600);
     }
+    // Start at top-left of phrase, then begin wandering
     counterEl.style.transition = 'none';
-    placeCounter();
-    requestAnimationFrame(function() { counterEl.style.transition = ''; });
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        var rect = phraseEl.getBoundingClientRect();
+        counterEl.style.left = rect.left + 'px';
+        counterEl.style.top  = (rect.top - 18) + 'px';
+        counterEl.style.transition = '';
+        setTimeout(moveCursor, 1000);
+      });
+    });
 
     // Increment counter 0→100
     var start = performance.now(), dur = 1800;
@@ -1075,16 +1096,18 @@
     }
     requestAnimationFrame(tick);
 
-    // Exit: letters fade out, then overlay dissolves
+    // Exit: phrase fades out, then overlay dissolves
     var minDone = false, apiFetched = false;
     function tryExit() {
       if (!minDone || !apiFetched) return;
-      letters.forEach(function(l) { l.style.transition = 'opacity 0.3s ease, transform 0.3s ease'; l.style.opacity = '0'; l.style.transform = 'translateX(-16px)'; });
+      if (moveTimer) clearTimeout(moveTimer);
+      phraseEl.style.transition = 'opacity 0.4s ease';
+      phraseEl.style.opacity = '0';
       counterEl.style.opacity = '0';
       setTimeout(function() {
         overlay.classList.add('is-out');
         setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 800);
-      }, 380);
+      }, 450);
     }
     setTimeout(function() { minDone = true; tryExit(); }, 1600);
     window.__loaderDone = function() { apiFetched = true; tryExit(); };
@@ -2340,7 +2363,8 @@ quoteText.textContent = '“' + q.text + '”';
           ghost.removeAttribute('id');
           ghost.style.pointerEvents = 'none';
           ghost.style.transition = 'none';
-          // Insert before original so original (later in DOM) renders on top
+          ghost.style.zIndex = '199';
+          // Insert before original; original has z-index:200 so always on top
           modal.parentNode.insertBefore(ghost, modal);
           // Instantly move original off-screen
           modal.style.transition = 'none';
