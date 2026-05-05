@@ -13,11 +13,20 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Jana Gramlich • Imprint">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; }
@@ -64,7 +73,8 @@
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
@@ -152,13 +162,13 @@
     }
 
     .imprint-content p {
-      font-size:14px; font-weight:400; color:#6b6b6b;
+      font-size:14px; font-weight:400; color:#fff;
       line-height:1.65;
     }
     .imprint-content p + p { margin-top:12px; }
 
     .imprint-content a {
-      color:#6b6b6b;
+      color:#fff;
       text-decoration:underline;
       text-underline-offset:3px;
     }
@@ -176,13 +186,14 @@
     #imprint-body h1 { font-size:21px; font-weight:400; color:#fff; line-height:1.4; margin-bottom:16px; }
     #imprint-body h2, #imprint-body h5 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #imprint-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
-    #imprint-body p { font-size:14px; font-weight:400; color:#6b6b6b; line-height:1.65; }
+    #imprint-body p { font-size:14px; font-weight:400; color:#fff; line-height:1.65; }
     #imprint-body p + p { margin-top:12px; }
-    #imprint-body ul, #imprint-body ol { font-size:14px; color:#6b6b6b; line-height:1.65; padding-left:20px; margin-top:8px; }
+    #imprint-body ul, #imprint-body ol { font-size:14px; color:#fff; line-height:1.65; padding-left:20px; margin-top:8px; }
     #imprint-body li + li { margin-top:6px; }
-    #imprint-body a { color:#6b6b6b; text-decoration:underline; text-underline-offset:3px; }
+    #imprint-body a { color:#fff; text-decoration:underline; text-underline-offset:3px; }
     #imprint-body a:hover { color:#fff; }
     #imprint-body strong { font-weight:500; }
+    #imprint-body *, .imprint-content * { background: transparent !important; background-color: transparent !important; }
     @media (min-width:640px) { .nav { top:8px; } }
   </style>
 </head>
@@ -200,7 +211,7 @@
           <a href="index.html#work" class="nav__link">Work</a>
           <a href="index.html#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+          <a href="index.html#articles" class="nav__link">Articles</a>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>

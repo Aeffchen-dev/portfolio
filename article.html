@@ -5,11 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Article — Jana Gramlich</title>
   <meta name="description" content="">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { -webkit-font-smoothing:antialiased; }
@@ -45,13 +54,13 @@
     .nav.is-open::before { transition:opacity .4s cubic-bezier(.4,0,.2,1); opacity:0.65; }
     .nav__bar {
       height:33px; display:flex; align-items:center;
-      padding:0 16px; cursor:pointer; width:100%;
+      padding:0 8px; cursor:pointer; width:100%;
     }
     .nav.is-open .nav__bar {
       padding-left:calc((100% - var(--pill-w,168px)) / 2 + 16px);
       padding-right:calc((100% - var(--pill-w,168px)) / 2 + 16px);
     }
-    .nav__logo { font-size:12px; font-weight:500; line-height:1; color:#fff; letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap; }
+    .nav__logo { font-family:'HW Left Bold', sans-serif; font-size:12px; font-weight:bold; line-height:1; color:#fff; letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap; }
     .nav__menu { display:flex; flex-direction:row; align-items:center; gap:3px; width:15px; height:13px; flex-shrink:0; position:relative; margin-left:auto; overflow:visible; transition:transform .2s cubic-bezier(.4,0,.2,1); }
     .nav__menu:hover { transform:scale(1.15); }
     .nav__menu > span:not(.nav__close-icon) { display:block; width:3px; height:3px; border-radius:50%; background:#fff; flex-shrink:0; transition:opacity .25s ease; }
@@ -74,193 +83,192 @@
     .nav__linkedin { display:inline-flex; align-items:center; justify-content:center; background:#acb0ff; color:#171717; border-radius:999px; padding:8px 10px; font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase; margin-top:40px; }
 
     /* === PAGE WRAPPER === */
-    .page-wrapper { background:#fafafa; min-height:100dvh; }
+    body { background:#000; color:#fff; }
 
-    /* === BACK LINK === */
-    .article-back {
-      position:fixed; top:0; left:0; right:0;
-      height:49px; /* same as nav bar + top */
-      display:flex; align-items:center;
-      padding:0 16px;
-      pointer-events:none; z-index:90;
-    }
-    .article-back__link {
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:500; color:#111;
-      letter-spacing:0.48px; text-transform:uppercase;
-      opacity:0; pointer-events:none;
-      transition:opacity .3s ease;
-    }
-    .article-back__link.is-visible { opacity:1; pointer-events:auto; }
-
-    /* === LOADING / ERROR === */
-    .article-loading {
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:#000;
       display:flex; align-items:center; justify-content:center;
-      min-height:80dvh; font-size:14px; color:#999; text-align:center;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
     }
+    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
+    .loading-label {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:13px; font-weight:bold; letter-spacing:0.02em;
+      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
+      background-size:300% 100%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:shimmerText 1.6s linear infinite;
+    }
+    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
 
-    /* === ARTICLE LAYOUT === */
-    .article-wrap { display:none; } /* shown by JS after load */
-    .article-wrap.is-loaded { display:block; }
+    /* === ARTICLE CONTENT (no modal overlay) === */
+    .modal { display:none; }
+    .modal.is-visible { display:block; }
 
-    /* HEADER */
-    .article-header {
-      padding: max(72px, 10dvh) 16px 0;
+    /* === ARTICLE HERO === */
+    .article-hero { background:#000; }
+    .hero-top {
+      height:80vh;
       max-width:800px; margin:0 auto;
-    }
-    .article-meta {
-      display:flex; align-items:center; gap:10px;
-      margin-bottom:24px;
-    }
-    .article-category {
-      font-size:10px; font-weight:500; color:#111;
-      letter-spacing:0.8px; text-transform:uppercase;
-      border:1px solid rgba(0,0,0,0.15); border-radius:999px;
-      padding:4px 10px;
-    }
-    .article-meta-sep { width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,0.2); flex-shrink:0; }
-    .article-date { font-size:11px; font-weight:400; color:#666; }
-    .article-title {
-      font-size:clamp(32px, 6vw, 72px);
-      font-weight:500; line-height:1.05;
-      letter-spacing:-0.03em; color:#111;
-      margin-bottom:0;
-    }
-    .article-excerpt {
-      margin-top:24px;
-      font-size:clamp(16px, 1.6vw, 20px);
-      font-weight:300; line-height:1.6; color:#444;
-      max-width:620px;
+      padding:24px 8px 0;
+      display:flex; flex-direction:column;
     }
 
-    /* HERO IMAGE */
-    .article-hero {
-      margin-top:48px;
-      width:100%;
-      max-height:600px;
-      overflow:hidden;
+    /* center zone: must fit within 80vh — min-height:0 allows shrinking */
+    .hero-main {
+      flex:1; min-height:0; overflow:hidden;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:8px;
+      padding:0;
     }
-    .article-hero img {
-      width:100%; height:100%;
-      object-fit:cover; display:block;
+    .hero__title {
+      font-size:clamp(28px, 5vw, 44px); font-weight:700;
+      letter-spacing:0; line-height:0.9; color:#fff;
+      text-align:center; text-transform:uppercase;
+      max-width:8em;
     }
-    .article-hero--full {
-      margin-left:0; margin-right:0;
+    .hero-main .hero__subtitle {
+      font-size:11px !important; font-weight:500; line-height:1.4; letter-spacing:.09em;
+      color:rgba(255,255,255,.55); text-align:center; max-width:36em;
+      text-transform:none !important;
     }
-
-    /* DIVIDER */
-    .article-divider {
-      height:1px; background:rgba(0,0,0,0.08);
-      margin:48px 16px 0;
-      max-width:800px; margin-left:auto; margin-right:auto;
-    }
-
-    /* BODY */
-    .article-body {
-      padding:48px 16px 80px;
-      max-width:680px; margin:0 auto;
+    .hero-main .hero__summary {
+      font-size:12px !important; font-weight:500; line-height:1.2; letter-spacing:0;
+      color:rgba(255,255,255,.4); text-align:center; max-width:22em;
+      text-transform:none !important;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+      margin-top:16px;
     }
 
-    /* Editorial typography for WP rendered content */
-    .article-body p {
-      font-size:17px; font-weight:400; line-height:1.75;
-      color:#222; margin-bottom:28px;
+    .hero__cover-img {
+      width:80px; height:80px; border-radius:16px; object-fit:cover; display:none;
+      flex-shrink:0; margin-bottom:8px;
     }
-    .article-body h2 {
-      font-size:clamp(22px, 3vw, 32px);
-      font-weight:500; letter-spacing:-0.025em; line-height:1.2;
-      color:#111; margin:56px 0 16px;
-    }
-    .article-body h3 {
-      font-size:clamp(18px, 2.2vw, 22px);
-      font-weight:500; line-height:1.3;
-      color:#111; margin:40px 0 12px;
-    }
-    .article-body h4 {
-      font-size:16px; font-weight:500; color:#111;
-      text-transform:uppercase; letter-spacing:0.06em;
-      margin:32px 0 8px;
-    }
-    .article-body img {
-      width:calc(100% + 32px); margin-left:-16px;
-      display:block; margin-bottom:8px; margin-top:8px;
-    }
-    .article-body figure { margin:40px 0; }
-    .article-body figure img { width:calc(100% + 32px); margin-left:-16px; }
-    .article-body figcaption {
-      font-size:12px; color:#999; margin-top:8px;
-      padding-left:0; font-style:italic;
-    }
-    .article-body blockquote {
-      margin:48px 0;
-      padding-left:20px;
-      border-left:2px solid #111;
-    }
-    .article-body blockquote p {
-      font-size:clamp(20px, 2.8vw, 28px);
-      font-weight:400; line-height:1.4; color:#111;
-      font-style:italic; margin-bottom:0;
-    }
-    .article-body blockquote cite {
-      display:block; margin-top:16px;
-      font-size:12px; font-weight:500; color:#666;
-      letter-spacing:0.06em; text-transform:uppercase;
-      font-style:normal;
-    }
-    .article-body ul, .article-body ol {
-      padding-left:24px; margin-bottom:28px;
-    }
-    .article-body li {
-      font-size:17px; line-height:1.75; color:#222; margin-bottom:6px;
-    }
-    .article-body a {
-      color:#111; border-bottom:1px solid rgba(0,0,0,0.25);
-      transition:border-color .15s;
-    }
-    .article-body a:hover { border-color:#111; }
-    .article-body hr {
-      border:none; height:1px;
-      background:rgba(0,0,0,0.1); margin:48px 0;
-    }
-    .article-body .wp-block-image img { width:calc(100% + 32px); margin-left:-16px; margin-bottom:0; }
-    .article-body .wp-block-image figcaption { font-size:12px; color:#999; font-style:italic; padding-top:6px; }
-    .article-body .wp-block-quote { margin:48px 0; padding-left:20px; border-left:2px solid #111; }
-    .article-body .wp-block-quote p { font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.4; color:#111; font-style:italic; margin-bottom:0; }
-    .article-body .wp-block-separator { border:none; height:1px; background:rgba(0,0,0,0.1); margin:48px 0; }
 
-    /* FOOTER */
-    .article-footer {
-      padding:0 16px 48px;
-      max-width:680px; margin:0 auto;
-      border-top:1px solid rgba(0,0,0,0.08);
-      padding-top:32px;
-      display:flex; align-items:center; justify-content:space-between;
+    /* bottom bar: BACK left, SHARE right */
+    .hero-bottom {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-shrink:0;
     }
-    .article-footer__back {
-      display:inline-flex; align-items:center; gap:8px;
-      font-size:11px; font-weight:500; color:#111;
-      letter-spacing:0.48px; text-transform:uppercase;
-      transition:opacity .3s;
+    .back-link {
+      display:inline-flex; align-items:center; gap:7px;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:.09em; text-transform:uppercase;
+      color:#fff; transition:opacity .15s;
     }
-    .article-footer__back:hover { opacity:0.5; }
-    .article-footer__nav { display:flex; gap:24px; }
-    .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
-    .article-footer__nav a:hover { color:#111; }
+    .back-link:hover { opacity:.6; }
+    .back-link__arrow { display:inline-flex; flex-shrink:0; transform:rotate(180deg); }
+    .share-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:.09em; text-transform:uppercase;
+      color:#fff; transition:opacity .15s; cursor:pointer;
+      background:none; border:none; padding:0;
+    }
+    .share-btn:hover { opacity:.6; }
 
-    /* === DESKTOP === */
+    /* === BLOCKS === */
+    .blocks { padding:16px 8px 72px; margin:0 auto; max-width:800px; }
+    .blocks__grid { display:grid; grid-template-columns:repeat(4,1fr); column-gap:4px; row-gap:72px; }
+    .block { border-radius:8px; overflow:hidden; }
+    .block--full { grid-column:span 4; }
+    .block--half { grid-column:span 2; }
+    .block-image { background:#1A1A1A; }
+    .block-image img { width:100%; height:auto; display:block; }
+    .block-text { background:#141414; border-radius:8px; }
+    .text-inner { padding:12px 16px; }
+    .text-body { font-size:14.5px; font-weight:400; line-height:1.65; color:rgba(255,255,255,.55); }
+    .text-body > *:first-child { margin-top:0; }
+    .text-body p { margin-bottom:20px; }
+    .text-body p:last-child { margin-bottom:0; }
+    .text-body p:empty { display:none; }
+    .text-body h2 { font-size:clamp(18px,2.5vw,26px); font-weight:500; color:#fff; letter-spacing:-0.02em; margin:28px 0 10px; }
+    .text-body h3 { font-size:clamp(15px,1.8vw,20px); font-weight:500; color:#fff; margin:20px 0 8px; }
+    .text-body a { color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.2); }
+
+    /* === ARTICLE PAGE END === */
+    .article-page-end { margin:0 8px; }
+    .article-page-end .page-links {
+      display:flex; justify-content:space-between; align-items:baseline;
+      padding:0 0 12px; gap:8px;
+    }
+    .article-page-end .page-links__label {
+      font-size:11px; font-weight:500; letter-spacing:0.48px;
+      text-transform:uppercase; color:rgba(255,255,255,0.6);
+    }
+    .article-page-end .page-links__client {
+      display:none; margin-left:12px; font-weight:400;
+      text-transform:none; letter-spacing:0; color:rgba(255,255,255,0.4);
+    }
+    .article-page-end .page-links__all {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:0.48px;
+      text-transform:uppercase; color:rgba(255,255,255,0.6);
+      display:inline-flex; align-items:center; gap:5px;
+      text-decoration:none; flex-shrink:0;
+    }
     @media (min-width:640px) {
-      .article-header { padding-top:max(80px, 12dvh); }
-      .article-hero { max-height:520px; }
+      .article-page-end .page-links__client { display:inline; }
     }
+
+    /* === ARTICLE END SLIDER === */
+    .articles-slider-wrap {
+      overflow-x:auto; scroll-snap-type:x mandatory;
+      scrollbar-width:none; width:100vw; margin-left:0; margin-bottom:8px;
+    }
+    .articles-slider-wrap::-webkit-scrollbar { display:none; }
+    .articles-slider {
+      display:flex; gap:8px; overflow-x:visible; margin:0 8px;
+    }
+    .article-card {
+      flex-shrink:0; width:324px; scroll-snap-align:start;
+      display:flex; flex-direction:row; align-items:stretch; gap:0;
+      padding:8px; background:#141414; border-radius:4px;
+      text-decoration:none; color:inherit;
+      transition:background .4s ease-in-out;
+    }
+    .article-card:hover { background:rgba(255,255,255,0.1); }
+    .article-card__thumb {
+      width:60px; height:60px; flex-shrink:0;
+      border-radius:4px; overflow:hidden; background:#1a1a1a;
+    }
+    .article-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .article-card__body { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:8px; height:60px; padding-left:16px; position:relative; }
+    .article-card__bg { position:absolute; width:72px; height:72px; left:50%; top:50%; transform:translate(-56%,-50%); border-radius:6px; background-size:cover; background-position:center; opacity:0.1; z-index:0; pointer-events:none; mix-blend-mode:luminosity; }
+    .article-card__title { font-size:14px; font-weight:500; color:#fff; line-height:1.3; position:relative; z-index:1; }
+    .article-card__label { font-size:9px; font-weight:500; color:#989898; text-transform:uppercase; letter-spacing:0.48px; position:relative; z-index:1; }
+    .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
+
+    /* === GLOBAL ARROWS === */
+    .arrow-icon { stroke-width:1; width:12px; height:12px; color:#989898; transition:transform .2s ease-out, color .4s ease-in-out; }
+    a:hover .arrow-icon,
+    button:hover .arrow-icon { transform:translate(3px,-3px); color:#fff; }
+    a { transition:color .4s ease-in-out; }
+    a:hover { color:#fff; }
+    button:hover { color:#fff; }
+    .text-body a:hover { color:#fff; }
+    .share-btn svg { transition:transform .2s ease-out; }
+    .share-btn:hover { opacity:1; }
+    .share-btn:hover svg { transform:translateX(-4px); }
+
+    /* === RESPONSIVE === */
     @media (min-width:1024px) {
-      .article-header { max-width:1000px; padding:max(100px,12dvh) 40px 0; }
-      .article-body   { max-width:720px; padding:56px 40px 100px; }
-      .article-divider { max-width:1000px; margin-left:auto; margin-right:auto; }
-      .article-footer { max-width:720px; padding-left:40px; padding-right:40px; }
-      .article-hero { margin-left:0; }
-      .article-body img,
-      .article-body .wp-block-image img,
-      .article-body figure img { width:calc(100% + 80px); margin-left:-40px; }
+      .hero-top         { height:60vh; }
+      .article-page-end { margin-top:40px; margin-bottom:40px; }
+      .articles-slider-wrap { padding-bottom:40px; }
+    }
+    @media (max-width:639px) {
+      .hero-top { height:80dvh; padding:20px 8px 0; }
+      .hero-main { padding:0; }
+      .blocks__grid { grid-template-columns:1fr; }
+      .block--full, .block--half { grid-column:span 1; }
+    }
+    @media (min-width:640px) and (max-width:1023px) {
+      .hero-top { padding:24px 8px 0; }
+      .hero-main { padding:0; }
     }
   </style>
 </head>
@@ -280,7 +288,7 @@
           <a href="index.html#work" class="nav__link">Work</a>
           <a href="index.html#about" class="nav__link">About</a>
           <a href="archive.html" class="nav__link">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+          <a href="index.html#articles" class="nav__link">Articles</a>
         </div>
         <div class="nav__divider"></div>
         <div class="nav__contact">
@@ -293,48 +301,81 @@
   </nav>
 
   <!-- LOADING STATE -->
-  <div class="article-loading" id="articleLoading">
-    <span>Loading…</span>
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <span class="loading-label">Loading</span>
   </div>
+  <script>
+  (function() {
+    var screen = document.getElementById('loadingScreen');
+    screen.classList.add('is-visible');
+    function hide() {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    }
+    window.__loaderDone = function() { setTimeout(hide, 300); };
+    window.__loaderError = function() { hide(); };
+  })();
+  </script>
 
-  <!-- ARTICLE (shown after load) -->
-  <div class="article-wrap" id="articleWrap">
+  <!-- ARTICLE MODAL CARD -->
+  <div class="modal" id="articleModal">
+    <div class="modal__scroll">
 
-    <header class="article-header" id="articleHeader">
-      <div class="article-meta" id="articleMeta"></div>
-      <h1 class="article-title" id="articleTitle"></h1>
-      <p class="article-excerpt" id="articleExcerpt"></p>
-    </header>
+      <div class="article-hero">
+        <div class="hero-top">
+          <div class="hero-main">
+            <img id="articleCoverImg" class="hero__cover-img" alt="">
+            <h1 class="hero__title" id="articleTitle"></h1>
+            <p class="hero__subtitle" id="articleSubtitle" style="display:none"></p>
+            <p class="hero__summary" id="articleSummary" style="display:none"></p>
 
-    <div class="article-hero" id="articleHero" style="display:none">
-      <img id="articleHeroImg" src="" alt="">
+          </div>
+          <div class="hero-bottom">
+            <a href="index.html#articles" class="back-link">
+              <span class="back-link__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span>
+              <span>Back</span>
+            </a>
+            <button class="share-btn" id="shareBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <span>Share Article</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <main class="blocks">
+        <div class="blocks__grid" id="blocksGrid"></div>
+      </main>
+
     </div>
-
-    <div class="article-divider"></div>
-
-    <main class="article-body" id="articleBody"></main>
-
-    <footer class="article-footer">
-      <a href="articles.html" class="article-footer__back">
-        <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M7.696 2.306L2.611 7.391" stroke-linecap="square"/><path d="M7.696 7.853H2.149V2.306" stroke-linecap="square"/></svg>
-        All Articles
-      </a>
-      <nav class="article-footer__nav">
-        <a href="privacy-policy.html">Privacy</a>
-        <a href="imprint.html">Imprint</a>
-      </nav>
-    </footer>
-
   </div>
+
+  <!-- next article + footer (outside modal scroll, injected / static) -->
+  <div id="articlePageEnd"></div>
+
+
 
 </div><!-- /.page-wrapper -->
 
 <script>
   // === NAV ===
   const nav = document.getElementById('mainNav');
-  nav.addEventListener('mouseenter', () => nav.classList.add('is-open'));
-  let _mlSuppress = false;
-  nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
+  let _mlSuppress = false, _openedByHover = false, _hoverAllowAfter = 0;
+  function closeByHover() {
+    _openedByHover = false;
+    _hoverAllowAfter = Date.now() + 600;
+    nav.classList.remove('is-open');
+  }
+  nav.addEventListener('mouseenter', () => {
+    if (window.innerWidth < 640) return;
+    if (Date.now() < _hoverAllowAfter) return;
+    _openedByHover = true;
+    nav.classList.add('is-open');
+  });
+  nav.addEventListener('mouseleave', () => {
+    if (window.innerWidth >= 640 && !_mlSuppress && _openedByHover) closeByHover();
+  });
   nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive:true });
   nav.querySelector('.nav__logo').addEventListener('touchend', e => {
     if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
@@ -362,50 +403,92 @@
     const dots    = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
     const logoEl  = navBar.querySelector('.nav__logo');
 
-    function setPillState() {
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function updateNavScroll() {
+      if (nav.classList.contains('is-open')) return;
+      const isMobile = window.innerWidth < 1024;
+      const t = isMobile ? Math.min(1, window.scrollY / 40) : 1;
       const targetW = logoEl.offsetWidth + 48;
-      nav.style.width = targetW + 'px';
-      nav.style.top   = window.innerWidth >= 640 ? '8px' : '4px';
-      nav.style.borderRadius = '24px';
-      nav.style.background   = 'rgba(0,0,0,0.45)';
-      nav.style.setProperty('--nav-bg-opacity','0');
-      nav.style.backdropFilter       = 'blur(20px) saturate(180%)';
-      nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+      nav.style.width        = lerp(window.innerWidth, targetW, t) + 'px';
+      nav.style.top          = window.innerWidth >= 1024 ? '16px' : '8px';
+      nav.style.borderRadius = lerp(0, 24, t) + 'px';
+      nav.style.background   = `rgba(255,255,255,${lerp(0, 0.05, t)})`;
+      nav.style.setProperty('--nav-bg-opacity', String(lerp(0, 0.65, t)));
+      const filterVal = t > 0.01 ? `blur(${lerp(0,20,t)}px) saturate(${lerp(100,180,t)}%)` : 'none';
+      nav.style.backdropFilter = filterVal;
+      nav.style.webkitBackdropFilter = filterVal;
       nav.style.setProperty('--pill-w', targetW + 'px');
-      navBar.style.paddingLeft  = '16px'; navBar.style.paddingRight = '16px';
-      navBar.style.paddingTop   = '0';   navBar.style.paddingBottom= '0';
-      dots[0].style.opacity = '0'; dots[2].style.opacity = '0';
-      dots[0].style.transform = 'translateX(6px)'; dots[2].style.transform = 'translateX(-6px)';
-      dots[1].style.background = 'rgb(172,176,255)';
-      dots[1].style.width = '8px'; dots[1].style.height = '8px';
-      navMenu.style.width = '8px';
+      const hPad = isMobile ? Math.round(lerp(8, 16, t)) : 16;
+      navBar.style.paddingLeft  = hPad + 'px';
+      navBar.style.paddingRight = hPad + 'px';
+      navBar.style.paddingBottom = '0';
+      dots[0].style.opacity = String(Math.max(0, 1 - t * 1.5));
+      dots[2].style.opacity = String(Math.max(0, 1 - t * 1.5));
+      dots[0].style.transform = `translateX(${lerp(0, 6, t)}px)`;
+      dots[2].style.transform = `translateX(${lerp(0, -6, t)}px)`;
+      dots[1].style.background = `rgb(${Math.round(lerp(255,172,t))},${Math.round(lerp(255,176,t))},255)`;
+      const dotSz = lerp(3, 8, t) + 'px';
+      dots[1].style.width = dotSz; dots[1].style.height = dotSz;
+      navMenu.style.width = lerp(15, 8, t) + 'px';
     }
 
     const EASE = 'cubic-bezier(.4,0,.2,1)';
     const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
 
     new MutationObserver(() => {
-      nav.style.transition = NAV_TRANS;
-      void nav.offsetHeight;
       if (nav.classList.contains('is-open')) {
+        const pillW = logoEl.offsetWidth + 48;
+        const currentW = parseFloat(nav.style.width) || pillW;
+        if (currentW < pillW * 1.5) {
+          nav.style.transition = 'none';
+          nav.style.width = pillW + 'px';
+          nav.style.borderRadius = '24px';
+          void nav.offsetHeight;
+        }
+        nav.style.transition = NAV_TRANS;
         nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
         nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
-        navBar.style.paddingLeft=''; navBar.style.paddingRight='';
-        navBar.style.paddingTop=''; navBar.style.paddingBottom='';
+        const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+        const openNavW = isTablet ? window.innerWidth - 16 : Math.min(window.innerWidth - 16, 400);
+        const openPad  = Math.max(16, Math.round((openNavW - (logoEl.offsetWidth + 48)) / 2) + 16);
+        navBar.style.paddingLeft = openPad + 'px';
+        navBar.style.paddingRight = openPad + 'px';
+        navBar.style.paddingTop = ''; navBar.style.paddingBottom = '';
         dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
         navMenu.style.width = '8px';
       } else {
-        setPillState();
+        nav.style.transition = NAV_TRANS;
+        void nav.offsetHeight;
+        updateNavScroll();
+        setTimeout(() => { nav.style.transition = ''; }, 450);
       }
-      setTimeout(() => { nav.style.transition = ''; }, 450);
     }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
-    window.addEventListener('resize', setPillState);
-    setPillState();
+    window.addEventListener('scroll', updateNavScroll, { passive: true });
+    window.addEventListener('resize', updateNavScroll);
+    updateNavScroll();
+
+    window._initScrollNav = function() { updateNavScroll(); };
   })();
 
   // === ARTICLE FETCH ===
   const API = 'https://cms.janagramlich.com/wp-json/wp/v2';
+
+  const ARTICLE_COVERS = {
+    'building-a-multi-brand-designsystem':        'images/article-covers/multi-brand-design-system.png',
+    'app-vs-web':                                  'images/article-covers/app-vs-web.png',
+    '688-2':                                       'images/article-covers/analytical-mindset.png',
+    'refinement-ready-checklist':                  'images/article-covers/definition-of-done.png',
+    'website-analysis-how-to':                     'images/article-covers/website-analysis.png',
+    'above-the-fold':                              'images/article-covers/above-the-fold.png',
+    'animation-in-ux':                             'images/article-covers/animation-in-ux.png',
+    'image-and-video-preparation-for-the-web':     'images/article-covers/asset-preparation.png',
+  };
+
+  function cleanSummary(s) {
+    return (s || '').replace(/^["'„]|["'"]$/g, '').replace(/[.…]{2,}$/, '').trim();
+  }
 
   function stripHtml(html) {
     return new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
@@ -416,8 +499,54 @@
   }
 
   function showError(msg) {
-    document.getElementById('articleLoading').innerHTML =
-      `<div style="max-width:400px;padding:0 16px"><p style="margin-bottom:16px">${msg}</p><a href="articles.html" style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#111;border-bottom:1px solid rgba(0,0,0,.25)">← All Articles</a></div>`;
+    window.__loaderError?.(msg);
+  }
+
+  // Resolve an ACF image field to a URL.
+  // acf_format=standard → object with .url; without it → integer attachment ID.
+  async function resolveImgUrl(img) {
+    if (!img) return '';
+    if (typeof img === 'object') return img.url || img.source_url || '';
+    // Integer or numeric string → attachment ID, fetch the URL
+    const id = parseInt(img, 10);
+    if (!id) return typeof img === 'string' ? img : '';
+    try {
+      const r = await fetch(`${API}/media/${id}?_fields=source_url`, { signal: AbortSignal.timeout(6000) });
+      if (r.ok) return (await r.json()).source_url || '';
+    } catch(e) {}
+    return '';
+  }
+
+  // Build project-style blocks from ACF flexible content rows.
+  async function renderBlocks(sections, test2) {
+    const blocks = [];
+    if (test2) {
+      blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body"><p>${test2}</p></div></div></div>`);
+    }
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      console.log(`[article] row[${i}]:`, JSON.stringify(s));
+      const layout = (s.acf_fc_layout || '').toLowerCase();
+      if (layout === 'image' || layout === 'img' || layout === 'photo') {
+        const url = await resolveImgUrl(s.img || s.image || s.photo || s.src || null);
+        if (url) {
+          blocks.push(`<div class="block block--full block-image"><img src="${url}" alt="${s.caption||''}" loading="lazy"></div>`);
+        }
+      } else {
+        // Text/editor: try known fields, then scan all string fields
+        let html = s.wysiwyg || s.text || (typeof s.content === 'string' ? s.content : '') || s.html || s.body || '';
+        if (!html) {
+          for (const [k, v] of Object.entries(s)) {
+            if (k !== 'acf_fc_layout' && typeof v === 'string' && v.trim()) { html = v; break; }
+          }
+        }
+        if (html) {
+          html = html.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '').replace(/(<br\s*\/?>){2,}/gi, '');
+          blocks.push(`<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${html}</div></div></div>`);
+        }
+      }
+    }
+    return { html: blocks.join('') };
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -427,72 +556,224 @@
   if (!slug && !postId) {
     showError('No article specified.');
   } else {
-    const endpoint = slug
-      ? `${API}/posts?slug=${encodeURIComponent(slug)}&_embed=true&acf_format=standard`
-      : `${API}/posts/${postId}?_embed=true&acf_format=standard`;
+    // acf_format=standard removed — wysiwyg always returns HTML regardless,
+    // and integer image IDs are resolved via resolveImgUrl() → /media/{id}
+    const FIELDS = 'id,title,date,excerpt,slug,content,acf,_links';
 
-    fetch(endpoint)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(data => {
-        // Slug lookup returns array; ID lookup returns single object
-        const post = Array.isArray(data) ? data[0] : data;
-        if (!post) throw new Error('Article not found');
+    function buildUrl(base) {
+      return slug
+        ? `${API}/${base}?slug=${encodeURIComponent(slug)}&_fields=${FIELDS}&_embed=true`
+        : `${API}/${base}/${postId}?_fields=${FIELDS}&_embed=true`;
+    }
+
+    async function fetchArticle() {
+      const bases = [];
+      try {
+        const idx = await fetch(API.replace('/wp/v2', ''), { signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
+        if (idx?.routes) {
+          const SKIP = new Set(['articles','article','posts','pages','media','types','statuses','taxonomies',
+            'tags','categories','users','comments','settings','themes','plugins','blocks',
+            'block-renderer','search','batch','sidebars','widgets','widget-types','menus',
+            'menu-items','menu-locations','templates','template-parts','global-styles',
+            'navigation','font-families','font-collections','pattern-directory',
+            'block-types','block-patterns','block-pattern-categories','projects','project']);
+          const others = Object.keys(idx.routes)
+            .map(p => p.match(/^\/wp\/v2\/([^/?(]+)$/)?.[1])
+            .filter(b => b && !SKIP.has(b));
+          bases.push(...others);
+        }
+      } catch(e) {}
+      bases.push('posts'); // final fallback
+
+      for (const base of bases) {
+        // Try acf_format=standard first (returns full image objects from ACF),
+        // then without it as fallback (some WP configs reject the param).
+        let post = null;
+        for (const acfSuffix of ['&acf_format=standard', '']) {
+          const r = await fetch(buildUrl(base) + acfSuffix, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+          if (!r) continue;
+          if (!r.ok) {
+            const body = await r.json().catch(() => ({}));
+            if (body.code === 'rest_no_route' || r.status === 404) { post = null; break; } // expected miss
+            console.warn(`[article] /${base}${acfSuffix}: HTTP ${r.status}`, body.code);
+            continue; // try next suffix
+          }
+          const data = await r.json();
+          const candidate = Array.isArray(data) ? data[0] : data;
+          if (!candidate?.id) continue;
+          const hasAcf = candidate.acf && typeof candidate.acf === 'object'
+                      && Object.keys(candidate.acf).length > 0;
+          console.log(`[article] /${base}${acfSuffix ? ' +std' : ''} → id=${candidate.id} hasAcf=${hasAcf}`);
+          if (hasAcf) { post = candidate; break; } // got ACF data — done
+          if (!post) post = candidate;              // keep as fallback
+        }
+        if (post?.id) { console.log('[article] using post', post); return post; }
+      }
+      throw new Error('Article not found');
+    }
+
+    fetchArticle()
+      .then(async post => {
+        const acf = post.acf || {};
+        console.log('[article] ACF keys:', Object.keys(acf));
+
+        const check = v => Array.isArray(v) && v.length > 0
+                        && typeof v[0] === 'object' && v[0] !== null && 'acf_fc_layout' in v[0];
+        const flexRows = check(acf.content) ? acf.content
+                       : (Object.values(acf).find(check) || []);
 
         const title    = stripHtml(post.title?.rendered || 'Untitled');
-        const content  = post.content?.rendered || '';
-        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[\&hellip;\]|\[…\]/g, '').trim();
+        const excerpt  = stripHtml(post.excerpt?.rendered || '').replace(/\[&hellip;\]|\[…\]/g, '').replace(/\s*\.{3,}$|\s*…$/, '').trim();
         const date     = formatDate(post.date);
         const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
-        const heroImg  = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+        const test2    = acf.test2 || '';
 
-        // Update <title> and meta
-        document.title = title + ' — Jana Gramlich';
+        // Convert ALL-CAPS WordPress titles to title case for display
+        const displayTitle = title === title.toUpperCase()
+          ? title.toLowerCase().replace(/(^|[\s\-–—])\S/g, c => c.toUpperCase())
+          : title;
+        document.title = displayTitle + ' — Jana Gramlich';
+        const titleEl = document.getElementById('articleTitle');
+        titleEl.textContent = displayTitle;
 
-        // Meta row (category + date)
-        const metaEl = document.getElementById('articleMeta');
-        metaEl.innerHTML = (category
-          ? `<span class="article-category">${category}</span><span class="article-meta-sep"></span>` : '')
-          + `<span class="article-date">${date}</span>`;
-
-        // Title
-        document.getElementById('articleTitle').textContent = title;
-
-        // Excerpt — only show if content starts with it
-        const excerptEl = document.getElementById('articleExcerpt');
-        if (excerpt && excerpt.length > 20) {
-          excerptEl.textContent = excerpt;
-        } else {
-          excerptEl.style.display = 'none';
+        // Cover image in header — 16px above headline, 20% less wide than headline
+        const coverSrc = ARTICLE_COVERS[post.slug || slug || ''] || '';
+        if (coverSrc) {
+          const coverImg = document.getElementById('articleCoverImg');
+          coverImg.src = coverSrc;
+          coverImg.style.display = 'block';
         }
 
-        // Hero image
-        if (heroImg) {
-          const heroEl = document.getElementById('articleHero');
-          document.getElementById('articleHeroImg').src  = heroImg;
-          document.getElementById('articleHeroImg').alt  = title;
-          heroEl.style.display = '';
+        // Subtitle from ACF subtitle field
+        const subtitle = acf.subtitle || acf.sub_title || acf.subline || acf.tagline || acf.kicker || '';
+        if (subtitle) {
+          const el = document.getElementById('articleSubtitle');
+          el.textContent = subtitle;
+          el.style.setProperty('display', 'block');
         }
 
-        // Body
-        document.getElementById('articleBody').innerHTML = content;
+        // AI-generated one-sentence summary
+        const textContent = [
+          ...flexRows
+            .filter(r => { const l = (r.acf_fc_layout||'').toLowerCase(); return l.includes('text')||l.includes('wysiwyg')||l.includes('paragraph')||l.includes('copy')||l.includes('body'); })
+            .map(r => stripHtml(r.text||r.wysiwyg||r.content||r.body||r.copy||'')),
+          ...Object.entries(acf)
+            .filter(([k,v]) => typeof v==='string' && v.length>60 && !['subtitle','sub_title','tagline','test2'].includes(k))
+            .map(([,v]) => stripHtml(v)),
+          stripHtml((post.content?.rendered||'').replace(/<\/p>/gi,' ')).trim(),
+        ].filter(Boolean).join(' ').trim();
+        const summaryEl = document.getElementById('articleSummary');
+        const summaryText = cleanSummary(excerpt)
+          || cleanSummary(textContent.replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).find(s => s.length > 20 && s.length < 300) || '');
+        if (summaryText) {
+          summaryEl.textContent = summaryText;
+          summaryEl.style.setProperty('display', 'block');
+        }
 
-        // Show article, hide loader
-        document.getElementById('articleLoading').style.display = 'none';
-        document.getElementById('articleWrap').classList.add('is-loaded');
-
-        // Make images inside body lazy
-        document.querySelectorAll('.article-body img').forEach(img => {
-          if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+        // Share button — native share API with copy-link fallback
+        const shareBtn = document.getElementById('shareBtn');
+        shareBtn.style.display = '';
+        shareBtn.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({ title, text: summaryText, url: location.href }).catch(() => {});
+          } else {
+            navigator.clipboard.writeText(location.href).then(() => {
+              const span = shareBtn.querySelector('span');
+              const orig = span.textContent;
+              span.textContent = 'Copied!';
+              setTimeout(() => { span.textContent = orig; }, 1500);
+            }).catch(() => {});
+          }
         });
+
+        const { html: blocksHtml } = await renderBlocks(flexRows, test2);
+        const fallback = (post.content?.rendered || '').trim();
+        document.getElementById('blocksGrid').innerHTML = blocksHtml
+          || (fallback ? `<div class="block block--full block-text"><div class="text-inner"><div class="text-body">${fallback}</div></div></div>` : '');
+
+        window.__loaderDone?.();
+        document.getElementById('articleModal').classList.add('is-visible');
+
+        // Inject next article section (non-blocking)
+        injectNextArticle(post.slug || slug || '');
       })
       .catch(err => {
         console.error('[article] fetch failed:', err);
-        showError('Could not load article — ' + (err.message || 'network error') + '.');
+        const msg = err.name === 'TimeoutError' ? 'Request timed out.' : (err.message || 'network error');
+        showError('Could not load article — ' + msg);
       });
   }
+
+  async function injectNextArticle(currentSlug) {
+    const FIELDS = 'id,slug,title,acf,_links';
+    let articles = [];
+    try {
+      const r = await fetch(`${API}/posts?_fields=${FIELDS}&_embed=true&acf_format=standard&per_page=100`, { signal: AbortSignal.timeout(8000) });
+      if (r.ok) { const data = await r.json(); if (Array.isArray(data)) articles = data; }
+    } catch(e) {}
+    if (!articles.length) return;
+
+    const ARROW_SVG = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+
+    const cards = await Promise.all(articles.map(async post => {
+      const title  = stripHtml(post.title?.rendered || 'Untitled');
+      const postSlug = post.slug || '';
+      const acf    = post.acf || {};
+      const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
+      const imgObj = imgRow?.image || imgRow?.img;
+      const cmsImg = (typeof imgObj === 'object' ? (imgObj.sizes?.medium_large || imgObj.sizes?.thumbnail || imgObj.url || '') : (imgObj || ''))
+                  || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+      const img = ARTICLE_COVERS[postSlug] || cmsImg || '';
+      return `<a class="article-card" href="article.html?slug=${encodeURIComponent(postSlug)}">
+        <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
+        <div class="article-card__body">
+          ${img ? `<div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>` : ''}
+          <p class="article-card__title">${title}</p>
+          <span class="article-card__label">Deep Dive</span>
+        </div>
+        <span class="article-card__arrow">${ARROW_SVG}</span>
+      </a>`;
+    }));
+
+    const idx = articles.findIndex(a => a.slug === currentSlug);
+    const next = idx >= 0 ? articles[(idx + 1) % articles.length] : null;
+    const nextTitle = next ? stripHtml(next.title?.rendered || '') : '';
+
+    const pageEnd = document.getElementById('articlePageEnd');
+    pageEnd.className = 'article-page-end';
+    pageEnd.innerHTML =
+      `<div class="page-links">` +
+        `<span class="page-links__label">Next Up</span>` +
+        `<a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
+      `</div>` +
+      `<div class="articles-slider-wrap"><div class="articles-slider">${cards.join('')}</div></div>`;
+
+    const sliderWrap = pageEnd.querySelector('.articles-slider-wrap');
+    const slider = sliderWrap.querySelector('.articles-slider');
+    const allCards = [...slider.querySelectorAll('.article-card')];
+    // Scroll past the current article's card so it's off-screen left
+    const currentCard = allCards.find(c => {
+      try { return new URL(c.href).searchParams.get('slug') === currentSlug; } catch { return false; }
+    });
+    const savedScroll = sessionStorage.getItem('sliderScroll');
+    if (savedScroll !== null) {
+      sliderWrap.scrollLeft = parseInt(savedScroll, 10);
+      sessionStorage.removeItem('sliderScroll');
+    } else if (currentCard) {
+      const nextCard = allCards[allCards.indexOf(currentCard) + 1] || allCards[0];
+      sliderWrap.scrollLeft = nextCard.offsetLeft;
+    }
+    sliderWrap.addEventListener('click', e => {
+      const card = e.target.closest('.article-card');
+      if (!card) return;
+      const idx = allCards.indexOf(card);
+      const after = allCards[idx + 1] || allCards[0];
+      sessionStorage.setItem('sliderScroll', after.offsetLeft);
+    }, true);
+  }
+
+  // Always init scroll nav (don't wait for article fetch)
+  if (window._initScrollNav) window._initScrollNav();
 </script>
 </body>
 </html>
