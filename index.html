@@ -2853,11 +2853,11 @@ quoteText.textContent = '“' + q.text + '”';
           requestAnimationFrame(render);
         }
 
-        // Wheel / trackpad scroll (desktop) — velocity-based for smooth inertia
+        // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          vx -= e.deltaX * 0.1;
-          vy -= e.deltaY * 0.1;
+          vx = (-e.deltaX * 3) * 0.6 + vx * 0.4;
+          vy = (-e.deltaY * 3) * 0.6 + vy * 0.4;
         }, { passive: false });
 
         // Drag (mobile/tablet only)

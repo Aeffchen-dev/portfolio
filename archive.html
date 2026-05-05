@@ -539,11 +539,11 @@
     });
     canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
 
-    // Wheel / trackpad — velocity-based for smooth inertia
+    // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      vx -= e.deltaX * 0.1;
-      vy -= e.deltaY * 0.1;
+      vx = (-e.deltaX * 3) * 0.6 + vx * 0.4;
+      vy = (-e.deltaY * 3) * 0.6 + vy * 0.4;
     }, { passive: false });
 
     render();
