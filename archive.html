@@ -408,7 +408,7 @@
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
     const COL_PAR  = [0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80, 1.0]; // vertical parallax
-    const COL_YOFF = [0, 0.45, 0.22, 0.68, 0.35, 0.12, 0.55, 0.28]; // initial vertical offset (fraction of tile+gap)
+    const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger so adjacent cols never share Y
 
     // Generate grid positions (store column index for parallax)
     const DEFS = [];

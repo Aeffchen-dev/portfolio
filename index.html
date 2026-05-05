@@ -2798,7 +2798,7 @@ quoteText.textContent = '“' + q.text + '”';
         const RY = ROWS * (TH + GAP);
 
         const COL_PAR  = [0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80];
-        const COL_YOFF = [0, 0.45, 0.22, 0.68, 0.35, 0.12, 0.55, 0.28, 0.72, 0.18];
+        const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger
 
         const DEFS = [];
         for (let r = 0; r < ROWS; r++) {
