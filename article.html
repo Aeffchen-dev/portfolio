@@ -256,27 +256,6 @@
       display:inline-flex; align-items:center; gap:5px;
       text-decoration:none; flex-shrink:0;
     }
-    .article-footer__back:hover { opacity:0.5; }
-    .article-footer__nav { display:flex; gap:24px; }
-    .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
-    .article-footer__nav a:hover { color:#111; }
-
-    /* SHARE BUTTON */
-    .share-btn {
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:500; color:#111;
-      letter-spacing:0.48px; text-transform:uppercase;
-      border:1px solid rgba(0,0,0,0.15); border-radius:999px;
-      padding:7px 14px; cursor:pointer; background:none;
-      transition:background .2s, border-color .2s;
-    }
-    .share-btn:hover { background:rgba(0,0,0,0.05); }
-    .share-btn.copied { color:#555; }
-    .share-btn__label-default { display:inline; }
-    .share-btn__label-copied  { display:none; }
-    .share-btn.copied .share-btn__label-default { display:none; }
-    .share-btn.copied .share-btn__label-copied  { display:inline; }
-
     /* === DESKTOP === */
     @media (min-width:640px) {
       .article-page-end .page-links__client { display:inline; }
@@ -825,10 +804,7 @@
     pageEnd.innerHTML =
       `<div class="page-links">` +
         `<span class="page-links__label">Next Up</span>` +
-        `<div style="display:flex;align-items:center;gap:12px">` +
-          `<button data-share style="font-size:11px;font-weight:500;letter-spacing:.48px;text-transform:uppercase;color:rgba(255,255,255,.5);cursor:pointer;border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:6px 12px;background:none;">Share</button>` +
-          `<a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
-        `</div>` +
+        `<a href="index.html#articles" class="page-links__all">All Articles ${ARROW_SVG}</a>` +
       `</div>` +
       `<div class="articles-slider-wrap"><div class="articles-slider">${cards.join('')}</div></div>`;
 
@@ -858,22 +834,6 @@
 
   // Always init scroll nav (don't wait for article fetch)
   if (window._initScrollNav) window._initScrollNav();
-
-  // === SHARE ===
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('[data-share]');
-    if (!btn) return;
-    const title = document.title;
-    const url   = location.href;
-    if (navigator.share) {
-      navigator.share({ title, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url).then(() => {
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Share', 2000);
-      }).catch(() => {});
-    }
-  });
 </script>
 </body>
 </html>
