@@ -2856,8 +2856,8 @@ quoteText.textContent = '“' + q.text + '”';
         // Wheel / trackpad scroll (desktop) — velocity-based for smooth inertia
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          vx -= e.deltaX * 0.2;
-          vy -= e.deltaY * 0.2;
+          vx -= e.deltaX * 0.1;
+          vy -= e.deltaY * 0.1;
         }, { passive: false });
 
         // Drag (mobile/tablet only)
@@ -2870,7 +2870,7 @@ quoteText.textContent = '“' + q.text + '”';
         mini.addEventListener('pointermove', e => {
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
+          const rawVx = dx / dt * 6, rawVy = dy / dt * 6;
           vx = vx * 0.3 + rawVx * 0.3; vy = vy * 0.3 + rawVy * 0.3;
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });

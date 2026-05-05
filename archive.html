@@ -522,7 +522,7 @@
       const dy = e.clientY - lastY;
       const dt = Math.max(performance.now() - lastT, 1);
       dragDist += Math.sqrt(dx * dx + dy * dy);
-      const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
+      const rawVx = dx / dt * 6, rawVy = dy / dt * 6;
       vx = vx * 0.3 + rawVx * 0.3;
       vy = vy * 0.3 + rawVy * 0.3;
       ox += dx; oy += dy;
@@ -542,8 +542,8 @@
     // Wheel / trackpad — velocity-based for smooth inertia
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      vx -= e.deltaX * 0.2;
-      vy -= e.deltaY * 0.2;
+      vx -= e.deltaX * 0.1;
+      vy -= e.deltaY * 0.1;
     }, { passive: false });
 
     render();
