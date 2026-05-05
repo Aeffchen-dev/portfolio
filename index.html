@@ -58,7 +58,7 @@
       z-index:100;
     }
     .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
-    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } .cv-card--archive { display:none !important; } }
+    @media (min-width:640px) and (max-width:1023px) { .cv-card--archive { display:none !important; } }
     .nav::before {
       content:'';
       position:absolute;
@@ -673,7 +673,7 @@
     .modal-proj-card:hover .modal-proj-card__view .arrow-icon { transform: translate(3px,-3px); color: #fff; }
     /* Tablet: 2-column grid, portrait images, transparent body grid */
     @media (min-width: 640px) {
-      .modal-more-projects__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+      .modal-more-projects__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; row-gap: 16px; }
       .modal-proj-card + .modal-proj-card .modal-proj-card__img { margin-top: 0; }
       .modal-proj-card__img { height: auto; aspect-ratio: 3/4; }
       .modal-proj-card__img img,
@@ -687,12 +687,14 @@
       .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
       .modal-proj-card__footer { grid-column: 1; grid-row: 3; margin-top: 0; }
       .modal-proj-card__view .view-text { display: none; }
+      /* first card: full-width landscape, same on tablet and desktop */
+      .modal-proj-card:first-child { grid-column: 1 / -1; }
+      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; }
     }
     /* Desktop overrides for modal cards — must come after the 640px block */
     @media (min-width:1024px) {
-      .modal-more-projects__grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .modal-proj-card:first-child { grid-column: 1 / -1; }
-      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; height: auto; }
+      .modal-more-projects__grid { gap: 8px; row-gap: 24px; }
+      .modal-proj-card__img { aspect-ratio: 4/5; }
       .modal-proj-card__body { column-gap: 80px; }
       .modal-proj-card__title { max-width: 280px; }
       .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
@@ -968,28 +970,42 @@
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
       .modal-backdrop.is-active { background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
-      .modal-close-bar { background:#000; backdrop-filter:none; -webkit-backdrop-filter:none; }
-      .modal-close-bar::after { content:''; position:absolute; top:100%; left:0; right:0; height:80px; background:linear-gradient(to bottom,#000,transparent); pointer-events:none; }
+      .modal-close-bar { background:linear-gradient(to bottom,#000 60%,transparent 100%); backdrop-filter:none; -webkit-backdrop-filter:none; }
+      .modal-close-bar::after { display:none; }
     }
 
     /* === LOADING SCREEN === */
     .loading-screen {
       position:fixed; inset:0; z-index:9999;
       background:#060606;
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none;
-      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
+      opacity:1; pointer-events:auto;
+      transition:opacity 0.75s cubic-bezier(.4,0,.2,1);
     }
-    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
-    .loading-label {
+    .loading-screen.is-out { opacity:0; pointer-events:none; }
+    .loading-phrase {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-family:'DM Sans', sans-serif;
+      font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.5;
+      color:#fff; text-align:center;
+      max-width:min(480px,80vw);
+      opacity:0; transition:opacity 0.6s ease;
+    }
+    .loading-phrase.is-in { opacity:1; }
+    .loading-counter {
+      position:absolute; display:flex; align-items:flex-start;
+      pointer-events:none;
+      transition:left 1s cubic-bezier(.25,.46,.45,.94), top 1s cubic-bezier(.25,.46,.45,.94), opacity 0.4s;
+    }
+    .loading-cur-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
       font-family:'HW Left Bold', sans-serif;
-      font-size:13px; font-weight:bold; letter-spacing:0.02em;
-      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
-      background-size:300% 100%;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      animation:shimmerText 1.6s linear infinite;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
     }
-    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
 
     /* === SWIPE HINT === */
     @keyframes swipeUpHint {
@@ -1024,18 +1040,75 @@
 
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
-    <span class="loading-label">Loading</span>
+    <div class="loading-phrase" id="loadingPhrase"></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
   </div>
   <script>
   (function() {
-    var screen = document.getElementById('loadingScreen');
-    screen.classList.add('is-visible');
-    function hide() {
-      screen.style.opacity = '0';
-      screen.style.pointerEvents = 'none';
-      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    var phrases = [
+      "Design isn't decoration—\nit serves a purpose.",
+      "I make complexity\nsimple to understand and use.",
+      "Consistency is key.",
+      "I reduce noise\nto what matters."
+    ];
+    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+    var overlay = document.getElementById('loadingScreen');
+    var phraseEl = document.getElementById('loadingPhrase');
+    var counterEl = document.getElementById('loadingCounter');
+    var countEl = document.getElementById('loadingCount');
+
+    // Render newlines
+    phraseEl.innerHTML = phrase.replace(/\n/g, '<br>');
+
+    // Phrase fades in
+    setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
+
+    // Moving counter
+    var margin = 56;
+    function moveCounter() {
+      var x = margin + Math.random() * (window.innerWidth - margin * 2 - 80);
+      var y = margin + Math.random() * (window.innerHeight - margin * 2 - 20);
+      counterEl.style.left = x + 'px';
+      counterEl.style.top  = y + 'px';
     }
-    window.__loaderDone = function() { setTimeout(hide, 300); };
+    // Place immediately (no transition on first placement)
+    counterEl.style.transition = 'none';
+    moveCounter();
+    requestAnimationFrame(function() {
+      counterEl.style.transition = '';
+      setInterval(moveCounter, 900);
+    });
+
+    // Increment counter 0→100 over ~1.8s
+    var start = performance.now();
+    var dur = 1800;
+    function tick(now) {
+      var pct = Math.min(100, Math.round(((now - start) / dur) * 100));
+      countEl.textContent = pct;
+      if (pct < 100) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Exit: phrase fades out first, then overlay
+    var minDone = false, apiFetched = false;
+    function tryExit() {
+      if (!minDone || !apiFetched) return;
+      // Fade out phrase + counter
+      phraseEl.style.transition = 'opacity 0.4s ease';
+      phraseEl.style.opacity = '0';
+      counterEl.style.opacity = '0';
+      // Then fade overlay to black reveal
+      setTimeout(function() {
+        overlay.classList.add('is-out');
+        setTimeout(function() {
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 800);
+      }, 450);
+    }
+    // Minimum display: 1.6s
+    setTimeout(function() { minDone = true; tryExit(); }, 1600);
+    window.__loaderDone = function() { apiFetched = true; tryExit(); };
   })();
   </script>
 
