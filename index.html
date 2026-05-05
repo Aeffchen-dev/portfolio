@@ -688,6 +688,10 @@
       .modal-proj-card__footer { grid-column: 1; grid-row: 3; margin-top: 0; }
       .modal-proj-card__view .view-text { display: none; }
     }
+    /* Desktop overrides for modal cards — must come after the 640px block */
+    @media (min-width:1024px) {
+      .modal-more-projects__grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
 
     .hero__title { display:none; }
     .modal-name {
