@@ -482,67 +482,48 @@
     .article-card__arrow { flex-shrink:0; display:flex; align-items:center; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     /* J — highest arc, exits left */
-    @keyframes jana-J {
+    @keyframes jana-exit-J {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(-3vw,-50px) rotate(-12deg); opacity:1; }
-      32%  { transform: translate(-22vw,-62px) rotate(-18deg); opacity:1; }
-      47%  { transform: translate(-68vw,-18px) rotate(-24deg); opacity:1; }
-      54%  { transform: translate(-116vw,10px) rotate(-26deg); opacity:0; }
-      55%  { transform: translate(116vw,10px) rotate(-26deg); opacity:0; }
-      74%  { transform: translate(50vw,-14px) rotate(-16deg); opacity:1; }
-      88%  { transform: translate(7vw,-28px) rotate(-7deg); opacity:1; }
-      96%  { transform: translate(0.5vw,-3px) rotate(-0.5deg); opacity:1; }
-      100% { transform: translate(0,0) rotate(0deg); opacity:1; }
+      30%  { transform: translate(-20vw,-55px) rotate(-18deg); opacity:1; }
+      60%  { transform: translate(-90vw, 8px) rotate(-26deg); opacity:0; }
+      100% { transform: translate(-130vw, 8px) rotate(-26deg); opacity:0; }
     }
-    /* A (1st) — mid arc, exits left */
-    @keyframes jana-A1 {
+    @keyframes jana-exit-A1 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(-2.5vw,-36px) rotate(-9deg); opacity:1; }
-      32%  { transform: translate(-18vw,-48px) rotate(-15deg); opacity:1; }
-      47%  { transform: translate(-64vw,-12px) rotate(-21deg); opacity:1; }
-      54%  { transform: translate(-118vw,8px) rotate(-23deg); opacity:0; }
-      55%  { transform: translate(118vw,8px) rotate(-23deg); opacity:0; }
-      74%  { transform: translate(47vw,-11px) rotate(-14deg); opacity:1; }
-      88%  { transform: translate(6vw,-22px) rotate(-6deg); opacity:1; }
-      96%  { transform: translate(0.4vw,-2px) rotate(-0.3deg); opacity:1; }
-      100% { transform: translate(0,0) rotate(0deg); opacity:1; }
+      30%  { transform: translate(-16vw,-44px) rotate(-15deg); opacity:1; }
+      60%  { transform: translate(-95vw, 6px) rotate(-23deg); opacity:0; }
+      100% { transform: translate(-130vw, 6px) rotate(-23deg); opacity:0; }
     }
-    /* N — shallower arc, exits left */
-    @keyframes jana-N {
+    @keyframes jana-exit-N {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      15%  { transform: translate(-2vw,-26px) rotate(-7deg); opacity:1; }
-      32%  { transform: translate(-15vw,-36px) rotate(-12deg); opacity:1; }
-      47%  { transform: translate(-61vw,-8px) rotate(-17deg); opacity:1; }
-      54%  { transform: translate(-120vw,6px) rotate(-20deg); opacity:0; }
-      55%  { transform: translate(120vw,6px) rotate(-20deg); opacity:0; }
-      74%  { transform: translate(44vw,-9px) rotate(-12deg); opacity:1; }
-      88%  { transform: translate(5vw,-17px) rotate(-5deg); opacity:1; }
-      96%  { transform: translate(0.3vw,-1.5px) rotate(-0.2deg); opacity:1; }
-      100% { transform: translate(0,0) rotate(0deg); opacity:1; }
+      30%  { transform: translate(-13vw,-34px) rotate(-12deg); opacity:1; }
+      60%  { transform: translate(-100vw, 5px) rotate(-20deg); opacity:0; }
+      100% { transform: translate(-130vw, 5px) rotate(-20deg); opacity:0; }
     }
-    /* A (2nd) — mirrors N arc, slightly shallower */
-    @keyframes jana-A2 {
+    @keyframes jana-exit-A2 {
       0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
-      12%  { transform: translate(-1.5vw,-22px) rotate(-6deg); opacity:1; }
-      30%  { transform: translate(-12vw,-32px) rotate(-11deg); opacity:1; }
-      46%  { transform: translate(-58vw,-6px) rotate(-16deg); opacity:1; }
-      54%  { transform: translate(-122vw,5px) rotate(-19deg); opacity:0; }
-      55%  { transform: translate(122vw,5px) rotate(-19deg); opacity:0; }
-      74%  { transform: translate(42vw,-8px) rotate(-11deg); opacity:1; }
-      88%  { transform: translate(4vw,-15px) rotate(-4deg); opacity:1; }
-      96%  { transform: translate(0.2vw,-1px) rotate(-0.1deg); opacity:1; }
+      30%  { transform: translate(-10vw,-26px) rotate(-10deg); opacity:1; }
+      60%  { transform: translate(-105vw, 4px) rotate(-17deg); opacity:0; }
+      100% { transform: translate(-130vw, 4px) rotate(-17deg); opacity:0; }
+    }
+    @keyframes jana-dot {
+      0%   { transform: translate(50vw, 0) rotate(10deg); opacity:0; }
+      35%  { transform: translate(-4vw,-16px) rotate(-4deg); opacity:1; }
+      55%  { transform: translate(2vw, 6px) rotate(2deg); opacity:1; }
+      72%  { transform: translate(-1vw,-3px) rotate(-1deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
     .footer-name span { display:inline-block; }
+    .footer-name span:nth-child(5) { opacity:0; }
     .footer-name.jana-animate span {
-      animation-duration: 3.6s;
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
     }
-    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-J;  animation-delay:   0ms; }
-    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-A1; animation-delay: 180ms; }
-    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-N;  animation-delay: 360ms; }
-    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-A2; animation-delay: 540ms; }
+    .footer-name.jana-animate span:nth-child(1) { animation-name: jana-exit-J;  animation-duration: 1.1s; animation-delay:   0ms; }
+    .footer-name.jana-animate span:nth-child(2) { animation-name: jana-exit-A1; animation-duration: 1.1s; animation-delay: 130ms; }
+    .footer-name.jana-animate span:nth-child(3) { animation-name: jana-exit-N;  animation-duration: 1.1s; animation-delay: 260ms; }
+    .footer-name.jana-animate span:nth-child(4) { animation-name: jana-exit-A2; animation-duration: 1.1s; animation-delay: 390ms; }
+    .footer-name.jana-animate span:nth-child(5) { animation-name: jana-dot; animation-duration: 1.0s; animation-delay: 700ms; animation-fill-mode: both; }
     .article-card--skeleton {
       pointer-events:none; cursor:default; height:76px;
       background:linear-gradient(90deg,#161616 25%,#222 50%,#161616 75%) !important;
@@ -1368,7 +1349,7 @@
         <p class="footer-vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude Code</span></span></p>
         <div class="footer-bottom">
           <img src="images/logo.svg" alt="Logo" class="footer-logo">
-          <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span></p>
+          <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span><span>.</span></p>
         </div>
         <div class="footer-legal">
           <a href="imprint.html">Imprint</a>
