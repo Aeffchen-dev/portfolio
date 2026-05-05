@@ -395,7 +395,7 @@
     const ROWS   = 5;
     const BASE_W = 120;
     const BASE_G = 12;
-    const mult   = CW < 640 ? 2.3 : CW < 1024 ? 1.3 : 1.1;
+    const mult   = CW < 640 ? 3.2 : CW < 1024 ? 1.8 : 1.1;
     const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
     const TILE_H = 253   * scale;
@@ -407,7 +407,7 @@
       .sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.87, 1.0, 1.13, 0.87, 1.0, 1.13, 0.87, 1.0]; // vertical parallax
+    const COL_PAR  = [0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80, 1.0]; // vertical parallax
     const COL_YOFF = [0, 0.45, 0.22, 0.68, 0.35, 0.12, 0.55, 0.28]; // initial vertical offset (fraction of tile+gap)
 
     // Generate grid positions (store column index for parallax)
@@ -489,7 +489,7 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.97; vy *= 0.97;
+        vx *= 0.93; vy *= 0.93;
         if (Math.abs(vx) < 0.01) vx = 0;
         if (Math.abs(vy) < 0.01) vy = 0;
       }
@@ -521,9 +521,9 @@
       const dy = e.clientY - lastY;
       const dt = Math.max(performance.now() - lastT, 1);
       dragDist += Math.sqrt(dx * dx + dy * dy);
-      const rawVx = dx / dt * 16, rawVy = dy / dt * 16;
-      vx = vx * 0.5 + rawVx * 0.5;
-      vy = vy * 0.5 + rawVy * 0.5;
+      const rawVx = dx / dt * 10, rawVy = dy / dt * 10;
+      vx = vx * 0.4 + rawVx * 0.4;
+      vy = vy * 0.4 + rawVy * 0.4;
       ox += dx; oy += dy;
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
     });
@@ -531,7 +531,7 @@
     canvas.addEventListener('pointerup', e => {
       dragging = false; canvas.classList.remove('is-dragging');
       if (dragDist < 6) {
-        const tileEl = e.target.closest ? e.target.closest('.tile') : null;
+        const tileEl = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
         const img = tileEl && tileEl.querySelector('img');
         if (img) openLightbox(img.src);
       }
@@ -541,8 +541,8 @@
     // Wheel / trackpad — velocity-based for smooth inertia
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      vx -= e.deltaX * 0.7;
-      vy -= e.deltaY * 0.7;
+      vx -= e.deltaX * 0.4;
+      vy -= e.deltaY * 0.4;
     }, { passive: false });
 
     render();

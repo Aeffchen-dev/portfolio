@@ -2792,12 +2792,12 @@ quoteText.textContent = '“' + q.text + '”';
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = (CW - GAP * 2.5) / 3.5; // 3.5 cols fill full width
+        const TW = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
 
-        const COL_PAR  = [0.87, 1.0, 1.13, 0.87, 1.0, 1.13, 0.87, 1.0, 1.13, 0.87];
+        const COL_PAR  = [0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80, 1.0, 1.20, 0.80];
         const COL_YOFF = [0, 0.45, 0.22, 0.68, 0.35, 0.12, 0.55, 0.28, 0.72, 0.18];
 
         const DEFS = [];
@@ -2828,7 +2828,7 @@ quoteText.textContent = '“' + q.text + '”';
           return Object.assign({}, def, { el });
         });
 
-        const AUTO_VX = 0.35, AUTO_VY = 0.18; // constant auto drift
+        const AUTO_VX = 0.22, AUTO_VY = 0.11; // constant auto drift
         let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
@@ -2870,8 +2870,8 @@ quoteText.textContent = '“' + q.text + '”';
         mini.addEventListener('pointermove', e => {
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 16, rawVy = dy / dt * 16;
-          vx = vx * 0.5 + rawVx * 0.5; vy = vy * 0.5 + rawVy * 0.5;
+          const rawVx = dx / dt * 10, rawVy = dy / dt * 10;
+          vx = vx * 0.4 + rawVx * 0.4; vy = vy * 0.4 + rawVy * 0.4;
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
         mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
