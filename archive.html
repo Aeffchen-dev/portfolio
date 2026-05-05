@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#171717">
   <title>Archive — Jana Gramlich</title>
+  <meta name="description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <link rel="canonical" href="https://portfolio.janagramlich.com/archive.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Archive — Jana Gramlich">
+  <meta property="og:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <meta property="og:url" content="https://portfolio.janagramlich.com/archive.html">
+  <meta property="og:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Archive — Jana Gramlich">
+  <meta name="twitter:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -67,7 +79,10 @@
       display:flex; flex-direction:row; align-items:center; gap:3px;
       width:15px; height:13px; flex-shrink:0; position:relative;
       margin-left:auto; overflow:visible;
+      transition:transform .2s cubic-bezier(.4,0,.2,1);
     }
+    .nav__menu:hover { transform:scale(1.15); }
+    .nav__menu:active { transform:scale(0.9); }
     .nav__menu > span:not(.nav__close-icon) {
       display:block; width:3px; height:3px; border-radius:50%;
       background:#fff; flex-shrink:0;
@@ -76,10 +91,11 @@
     .nav__close-icon {
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
-      opacity:0; transition:opacity .25s ease; color:#fff;
+      opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff;
+      transform:rotate(-45deg) scale(0.7);
     }
     .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
-    .nav.is-open .nav__close-icon { opacity:1; }
+    .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
@@ -134,6 +150,7 @@
       transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s;
     }
     .nav__link:hover { color:rgba(255,255,255,.5); }
+    .nav__link.is-current { color:rgba(255,255,255,.35); pointer-events:none; }
     .nav__divider {
       height:1px; background:rgba(255,255,255,0.12);
       margin:16px 0;
@@ -157,7 +174,9 @@
       border-radius:999px; padding:8px 10px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
       margin-top:40px;
+      transition:opacity .2s ease;
     }
+    .nav__linkedin:hover { opacity:0.8; }
 
     /* === CANVAS === */
     #canvas {
@@ -184,8 +203,11 @@
       overflow:hidden;
       will-change:transform;
       background:#2a2a2a;
+      cursor:pointer;
+      transition:opacity .15s ease;
     }
     .tile { cursor:pointer; }
+    .tile:active { opacity:0.85; }
     .tile img {
       width:100%; height:100%;
       object-fit:cover;
@@ -272,11 +294,12 @@
           <div class="nav__links">
             <a href="index.html#work" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
-            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="archive.html" class="nav__link is-current">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
           <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
+        <div class="nav__divider"></div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
@@ -322,63 +345,96 @@
 
     // Collapsed pill state — no page scroll on archive, always show pill
     (function() {
-      const navBar = nav.querySelector('.nav__bar');
+      const navBar  = nav.querySelector('.nav__bar');
       const navMenu = nav.querySelector('.nav__menu');
-      const dots = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
-      const logoEl = navBar.querySelector('.nav__logo');
+      const dots    = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
+      const logoEl  = navBar.querySelector('.nav__logo');
 
       function setPillState() {
         const targetW = logoEl.offsetWidth + 48;
-        nav.style.width = targetW + 'px';
-        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
-        nav.style.borderRadius = '24px';
-        nav.style.background = 'rgba(255,255,255,0.05)';
-        nav.style.setProperty('--nav-bg-opacity', '0.65');
-        nav.style.backdropFilter = 'blur(20px) saturate(180%)';
+        nav.style.width           = targetW + 'px';
+        nav.style.top             = window.innerWidth >= 640 ? '8px' : '4px';
+        nav.style.borderRadius    = '24px';
+        nav.style.background      = 'rgba(255,255,255,0.05)';
+        nav.style.setProperty('--nav-bg-opacity','0.65');
+        nav.style.backdropFilter       = 'blur(20px) saturate(180%)';
         nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
         nav.style.setProperty('--pill-w', targetW + 'px');
-        navBar.style.paddingLeft = '16px';
+        navBar.style.paddingLeft  = '16px';
         navBar.style.paddingRight = '16px';
-        navBar.style.paddingTop = '0';
-        navBar.style.paddingBottom = '0';
-        dots[0].style.opacity = '0';
-        dots[2].style.opacity = '0';
-        dots[0].style.transform = 'translateX(6px)';
-        dots[2].style.transform = 'translateX(-6px)';
-        dots[1].style.background = 'rgb(172,176,255)';
-        dots[1].style.width = '8px';
-        dots[1].style.height = '8px';
-        navMenu.style.width = '8px';
+        navBar.style.paddingTop   = '0';
+        navBar.style.paddingBottom= '0';
+        dots[0].style.opacity     = '0';
+        dots[2].style.opacity     = '0';
+        dots[0].style.transform   = 'translateX(6px)';
+        dots[2].style.transform   = 'translateX(-6px)';
+        dots[1].style.background  = 'rgb(172,176,255)';
+        dots[1].style.width       = '8px';
+        dots[1].style.height      = '8px';
+        navMenu.style.width       = '8px';
       }
 
-      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const EASE      = 'cubic-bezier(.4,0,.2,1)';
       const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
 
       new MutationObserver(() => {
         nav.style.transition = NAV_TRANS;
         void nav.offsetHeight;
         if (nav.classList.contains('is-open')) {
-          nav.style.width = '';
-          nav.style.top = '';
-          nav.style.borderRadius = '';
-          nav.style.background = '';
-          nav.style.backdropFilter = '';
-          nav.style.webkitBackdropFilter = '';
-          navBar.style.paddingLeft = '';
-          navBar.style.paddingRight = '';
-          navBar.style.paddingTop = '';
-          navBar.style.paddingBottom = '';
-          dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; d.style.background = ''; d.style.width = ''; d.style.height = ''; });
+          nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
+          nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
+          navBar.style.paddingLeft = ''; navBar.style.paddingRight = '';
+          navBar.style.paddingTop  = ''; navBar.style.paddingBottom = '';
+          dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
           navMenu.style.width = '8px';
         } else {
           setPillState();
         }
         setTimeout(() => { nav.style.transition = ''; }, 450);
-      }).observe(nav, { attributes: true, attributeFilter: ['class'] });
+      }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
       window.addEventListener('resize', setPillState);
       setPillState();
     })();
+
+    // === LIGHTBOX ===
+    const lightbox    = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('is-open');
+      // Prevent body scroll on iOS when lightbox is open
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      // Clear src after transition to avoid flash on next open
+      setTimeout(() => { if (!lightbox.classList.contains('is-open')) lightboxImg.src = ''; }, 350);
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxClose.addEventListener('touchend', e => { e.preventDefault(); closeLightbox(); });
+
+    // Close on backdrop tap (not on image itself)
+    lightbox.addEventListener('pointerup', e => {
+      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) closeLightbox();
+    });
+    // iOS Safari: also handle touchend on backdrop
+    lightbox.addEventListener('touchend', e => {
+      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) {
+        e.preventDefault();
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+    });
 
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
@@ -390,7 +446,6 @@
     canvas.style.height = CH + 'px';
 
     // Grid config — portrait tiles (9:19 ratio)
-    // Scale so 6 columns always fill exactly 100vw
     const COLS   = 8;
     const ROWS   = 5;
     const BASE_W = 120;
@@ -403,14 +458,19 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    const IMGS = Array.from({length:40}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`)
-      .sort(() => Math.random() - 0.5);
+    // Only images that exist in the repo
+    const AVAIL = [
+      'p01','p02','p03','p04','p05','p06','p07',
+      'p09','p10','p11','p12','p13','p14','p15','p16','p17','p18','p19',
+      'p22','p23','p24','p25','p26','p27','p28','p29','p30',
+      'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+    ];
+    const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07]; // unique speed per col, no stuck-at-1.0
-    const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger so adjacent cols never share Y
+    const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07];
+    const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5];
 
-    // Generate grid positions (store column index for parallax)
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
@@ -439,7 +499,7 @@
       }
     }
     const tiles = DEFS.map((def, i) => {
-      const el = document.createElement('div');
+      const el  = document.createElement('div');
       el.className = 'tile';
       el.style.width  = def.w + 'px';
       el.style.height = def.h + 'px';
@@ -454,25 +514,31 @@
     });
 
     // State
-    let ox = 0, oy = 0;       // world offset
-    let vx = 0, vy = 0;       // velocity
+    let ox = 0, oy = 0;
+    let vx = 0, vy = 0;
     let dragging = false;
     let lastX = 0, lastY = 0, lastT = 0;
 
-    // Compute screen position:
-    // - X moves uniformly (no horizontal parallax)
-    // - Y: vertical scroll at per-column speed + horizontal scroll bleeds into vertical drift
+    // Auto-drift: slow diagonal pan when idle
+    const DRIFT_VX = 0.18, DRIFT_VY = 0.10;
+    let isAutoDrifting = true;
+    let driftResumeTimer = null;
+    function pauseDrift() {
+      isAutoDrifting = false;
+      clearTimeout(driftResumeTimer);
+      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
+    }
+
     function tilePos(t) {
       const cx = CW / 2;
       const cy = CH / 2;
-      const p  = COL_PAR[t.c];                  // 0.78 | 1.0 | 1.22
+      const p  = COL_PAR[t.c];
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
-      const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
+      const poy = oy * p + ox * (p - 1.0) * 0.3;
       const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
-      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger }; // stagger in screen space → always preserved
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger };
     }
 
-    // Render loop
     function render() {
       let rox = 0, roy = 0;
       if (_revealStart !== null) {
@@ -493,6 +559,10 @@
         vx *= 0.95; vy *= 0.95;
         if (Math.abs(vx) < 0.01) vx = 0;
         if (Math.abs(vy) < 0.01) vy = 0;
+        if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+          ox += DRIFT_VX;
+          oy += DRIFT_VY;
+        }
       }
       requestAnimationFrame(render);
     }
@@ -511,11 +581,12 @@
     // Pointer events
     let dragDist = 0;
     canvas.addEventListener('pointerdown', e => {
+      if (lbOpen) return;
+      pauseDrift();
       dragging = true; dragDist = 0; _lastInteraction = performance.now();
       canvas.classList.add('is-dragging');
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = 0; vy = 0;
-      canvas.setPointerCapture(e.pointerId);
     });
 
     canvas.addEventListener('pointermove', e => {
