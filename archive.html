@@ -542,8 +542,8 @@
     // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      vx = (-e.deltaX * 3) * 0.6 + vx * 0.4;
-      vy = (-e.deltaY * 3) * 0.6 + vy * 0.4;
+      vx = -e.deltaX * 0.6 + vx * 0.4;
+      vy = -e.deltaY * 0.6 + vy * 0.4;
     }, { passive: false });
 
     render();
