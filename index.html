@@ -621,9 +621,9 @@
     @media (min-width:1024px) {
       .modal-page-end { margin: 72px -16px -24px; padding: 0 16px; }
       .modal-more-projects { margin: 8px 0 0; }
-      .modal-more-projects__grid { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
-      .modal-proj-card__body { grid-template-columns: auto 1fr auto; column-gap: 24px; padding: 8px 0 0; }
-      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; }
+      .modal-more-projects__grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+      .modal-proj-card__body { grid-template-columns: auto 1fr auto; column-gap: 80px; padding: 8px 0 0; }
+      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; max-width: 280px; }
       .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
       .modal-close-bar {
         z-index: 199;
@@ -690,7 +690,10 @@
     }
     /* Desktop overrides for modal cards — must come after the 640px block */
     @media (min-width:1024px) {
-      .modal-more-projects__grid { grid-template-columns: 1fr 1fr 1fr; }
+      .modal-more-projects__grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+      .modal-proj-card__body { column-gap: 80px; }
+      .modal-proj-card__title { max-width: 280px; }
+      .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
     }
 
     .hero__title { display:none; }
