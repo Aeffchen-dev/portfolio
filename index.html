@@ -1064,11 +1064,17 @@
     // Phrase fades in
     setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
 
-    // Moving counter
+    // Moving counter — avoids the center phrase area
     var margin = 56;
     function moveCounter() {
-      var x = margin + Math.random() * (window.innerWidth - margin * 2 - 80);
-      var y = margin + Math.random() * (window.innerHeight - margin * 2 - 20);
+      var cxMin = window.innerWidth  * 0.2, cxMax = window.innerWidth  * 0.8;
+      var cyMin = window.innerHeight * 0.3, cyMax = window.innerHeight * 0.7;
+      var x, y, tries = 0;
+      do {
+        x = margin + Math.random() * (window.innerWidth  - margin * 2 - 80);
+        y = margin + Math.random() * (window.innerHeight - margin * 2 - 20);
+        tries++;
+      } while (tries < 20 && x > cxMin && x < cxMax && y > cyMin && y < cyMax);
       counterEl.style.left = x + 'px';
       counterEl.style.top  = y + 'px';
     }
