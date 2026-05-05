@@ -414,8 +414,9 @@
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        const yo = COL_YOFF[c] * (TILE_H + GAP);
-        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP) + yo, w: TILE_W, h: TILE_H, c });
+        // stagger stored separately so it can be applied in screen space (unaffected by parallax)
+        const stagger = COL_YOFF[c] * (TILE_H + GAP);
+        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP), stagger, w: TILE_W, h: TILE_H, c });
       }
     }
 
@@ -468,7 +469,7 @@
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
       const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
       const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
-      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger }; // stagger in screen space → always preserved
     }
 
     // Render loop
@@ -521,9 +522,9 @@
       const dy = e.clientY - lastY;
       const dt = Math.max(performance.now() - lastT, 1);
       dragDist += Math.sqrt(dx * dx + dy * dy);
-      const rawVx = dx / dt * 10, rawVy = dy / dt * 10;
-      vx = vx * 0.4 + rawVx * 0.4;
-      vy = vy * 0.4 + rawVy * 0.4;
+      const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
+      vx = vx * 0.3 + rawVx * 0.3;
+      vy = vy * 0.3 + rawVy * 0.3;
       ox += dx; oy += dy;
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
     });
@@ -541,8 +542,8 @@
     // Wheel / trackpad — velocity-based for smooth inertia
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      vx -= e.deltaX * 0.4;
-      vy -= e.deltaY * 0.4;
+      vx -= e.deltaX * 0.2;
+      vy -= e.deltaY * 0.2;
     }, { passive: false });
 
     render();
