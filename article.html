@@ -737,7 +737,7 @@
         shareBtn.style.display = '';
         shareBtn.addEventListener('click', () => {
           if (navigator.share) {
-            navigator.share({ title, text: summaryText, url: location.href }).catch(() => {});
+            navigator.share({ title, text: excerpt, url: location.href }).catch(() => {});
           } else {
             navigator.clipboard.writeText(location.href).then(() => {
               const span = shareBtn.querySelector('span');
