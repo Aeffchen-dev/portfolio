@@ -435,7 +435,7 @@
     .footer-legal { display:flex; justify-content:space-between; gap:16px; padding:0; }
     .footer-legal a { font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out; }
     .footer-legal a:hover { opacity:.5; }
-    .footer-bottom { position:relative; margin-top:-100px; z-index:0; }
+    .footer-bottom { position:relative; margin-top:16px; z-index:0; }
     .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
     .footer-name {
       font-family:'DM Sans', sans-serif;
@@ -443,11 +443,7 @@
       letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
       white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
     }
-    .footer-vibe {
-      letter-spacing:0; margin-top:40px;
-      position:relative; height:60px;
-    }
-    .footer-vibe .nav__cursor { animation-play-state:running; }
+    .footer-vibe { display:none !important; }
     @media (min-width:640px) {
       .footer-name, .footer-logo, .footer-bottom, .footer-grid, .footer-vibe { display:none; }
       .home-footer { min-height:0; padding-top:0; padding-bottom:8px; padding-left:8px; padding-right:8px; }
@@ -515,8 +511,13 @@
       72%  { transform: translate(-1vw,-3px) rotate(-1deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    .footer-name span { display:inline-block; }
-    .footer-name span:nth-child(5) { opacity:0; }
+    .footer-name span { display:inline-block; opacity:0; transform:translateX(28px); transition:opacity 0.45s ease, transform 0.5s cubic-bezier(.25,.46,.45,.94); }
+    .footer-name span:nth-child(5) { opacity:0 !important; }
+    .footer-name.jana-in span:not(:nth-child(5)) { opacity:1; transform:translateX(0); }
+    .footer-name.jana-in span:nth-child(1) { transition-delay:0ms; }
+    .footer-name.jana-in span:nth-child(2) { transition-delay:80ms; }
+    .footer-name.jana-in span:nth-child(3) { transition-delay:160ms; }
+    .footer-name.jana-in span:nth-child(4) { transition-delay:240ms; }
     .footer-name.jana-animate span {
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
@@ -1041,54 +1042,32 @@
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
     <div class="loading-phrase" id="loadingPhrase"></div>
-    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
   </div>
   <script>
   (function() {
-    var phrases = [
-      "Design isn't decoration—\nit serves a purpose.",
-      "I make complexity\nsimple to understand and use.",
-      "Consistency is key.",
-      "I reduce noise\nto what matters."
-    ];
-    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
-
     var overlay = document.getElementById('loadingScreen');
-    var phraseEl = document.getElementById('loadingPhrase');
+    var letters = document.querySelectorAll('.loading-letter');
     var counterEl = document.getElementById('loadingCounter');
     var countEl = document.getElementById('loadingCount');
 
-    // Render newlines
-    phraseEl.innerHTML = phrase.replace(/\n/g, '<br>');
-
-    // Phrase fades in
-    setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
-
-    // Moving counter — avoids the center phrase area
-    var margin = 56;
-    function moveCounter() {
-      var cxMin = window.innerWidth  * 0.2, cxMax = window.innerWidth  * 0.8;
-      var cyMin = window.innerHeight * 0.3, cyMax = window.innerHeight * 0.7;
-      var x, y, tries = 0;
-      do {
-        x = margin + Math.random() * (window.innerWidth  - margin * 2 - 80);
-        y = margin + Math.random() * (window.innerHeight - margin * 2 - 20);
-        tries++;
-      } while (tries < 20 && x > cxMin && x < cxMax && y > cyMin && y < cyMax);
-      counterEl.style.left = x + 'px';
-      counterEl.style.top  = y + 'px';
-    }
-    // Place immediately (no transition on first placement)
-    counterEl.style.transition = 'none';
-    moveCounter();
-    requestAnimationFrame(function() {
-      counterEl.style.transition = '';
-      setInterval(moveCounter, 900);
+    // Animate letters in from the right, one by one
+    letters.forEach(function(l, i) {
+      setTimeout(function() { l.classList.add('is-in'); }, 60 + i * 90);
     });
 
-    // Increment counter 0→100 over ~1.8s
-    var start = performance.now();
-    var dur = 1800;
+    // Position counter at top-left of phrase text box
+    function placeCounter() {
+      var rect = phraseEl.getBoundingClientRect();
+      counterEl.style.left = rect.left + 'px';
+      counterEl.style.top  = (rect.top - 18) + 'px';
+    }
+    counterEl.style.transition = 'none';
+    placeCounter();
+    requestAnimationFrame(function() { counterEl.style.transition = ''; });
+
+    // Increment counter 0→100
+    var start = performance.now(), dur = 1800;
     function tick(now) {
       var pct = Math.min(100, Math.round(((now - start) / dur) * 100));
       countEl.textContent = pct;
@@ -1096,23 +1075,17 @@
     }
     requestAnimationFrame(tick);
 
-    // Exit: phrase fades out first, then overlay
+    // Exit: letters fade out, then overlay dissolves
     var minDone = false, apiFetched = false;
     function tryExit() {
       if (!minDone || !apiFetched) return;
-      // Fade out phrase + counter
-      phraseEl.style.transition = 'opacity 0.4s ease';
-      phraseEl.style.opacity = '0';
+      letters.forEach(function(l) { l.style.transition = 'opacity 0.3s ease, transform 0.3s ease'; l.style.opacity = '0'; l.style.transform = 'translateX(-16px)'; });
       counterEl.style.opacity = '0';
-      // Then fade overlay to black reveal
       setTimeout(function() {
         overlay.classList.add('is-out');
-        setTimeout(function() {
-          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        }, 800);
-      }, 450);
+        setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 800);
+      }, 380);
     }
-    // Minimum display: 1.6s
     setTimeout(function() { minDone = true; tryExit(); }, 1600);
     window.__loaderDone = function() { apiFetched = true; tryExit(); };
   })();
@@ -1135,7 +1108,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -1462,7 +1435,7 @@
             <a href="mailto:hello@janagramlich.com" class="footer-email">hello@janagramlich.com</a>
           </div>
         </div>
-        <p class="footer-vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude Code</span></span></p>
+        <p class="footer-vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude Code</span></span></p>
         <div class="footer-bottom">
           <img src="images/logo.svg" alt="Logo" class="footer-logo">
           <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span><span>.</span></p>
@@ -2689,11 +2662,16 @@ quoteText.textContent = '“' + q.text + '”';
       }).catch(() => { slider.innerHTML = ''; });
     })();
 
-    // === JANA LOGO CLICK ANIMATION ===
+    // === JANA FOOTER ANIMATION ===
     (() => {
       const logo = document.querySelector('.footer-logo');
       const jana = document.querySelector('.footer-name');
       if (!logo || !jana) return;
+      // Entrance: slide letters in from right when footer enters viewport
+      new IntersectionObserver((entries, obs) => {
+        if (entries[0].isIntersecting) { jana.classList.add('jana-in'); obs.disconnect(); }
+      }, { threshold: 0.1 }).observe(jana);
+      // Exit: click logo to fly letters out
       logo.addEventListener('click', () => {
         if (jana.classList.contains('jana-animate')) return;
         jana.classList.add('jana-animate');

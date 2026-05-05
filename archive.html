@@ -222,23 +222,12 @@
     @media (min-width:640px) { .nav { top:8px; } }
 
     /* === LOADING SCREEN === */
-    .loading-screen {
-      position:fixed; inset:0; z-index:9999;
-      background:#171717;
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none;
-      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
-    }
-    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
-    .loading-label {
-      font-family:'HW Left Bold', sans-serif;
-      font-size:13px; font-weight:bold; letter-spacing:0.02em;
-      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
-      background-size:300% 100%;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      animation:shimmerText 1.6s linear infinite;
-    }
-    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
+    .loading-screen { position:fixed; inset:0; z-index:9999; background:#060606; opacity:1; pointer-events:auto; transition:opacity 0.75s cubic-bezier(.4,0,.2,1); }
+    .loading-screen.is-out { opacity:0; pointer-events:none; }
+    .loading-phrase { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'DM Sans',sans-serif; font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.5; color:#fff; text-align:center; max-width:min(480px,80vw); opacity:0; transition:opacity 0.6s ease; }
+    .loading-phrase.is-in { opacity:1; }
+    .loading-counter { position:absolute; display:flex; align-items:flex-start; pointer-events:none; transition:left 1s cubic-bezier(.25,.46,.45,.94), top 1s cubic-bezier(.25,.46,.45,.94), opacity 0.4s; }
+    .loading-cur-tag { display:block; background:#acb0ff; color:#171717; font-family:'HW Left Bold',sans-serif; font-size:10px; font-weight:700; letter-spacing:0; padding:2px 6px; border-radius:0 4px 4px 4px; white-space:nowrap; line-height:1.5; margin-top:-1px; margin-left:2px; }
 
     /* === LIGHTBOX === */
   </style>
@@ -247,18 +236,26 @@
 
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
-    <span class="loading-label">Loading</span>
+    <div class="loading-phrase" id="loadingPhrase"></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
   </div>
   <script>
   (function() {
-    var screen = document.getElementById('loadingScreen');
-    screen.classList.add('is-visible');
-    function hide() {
-      screen.style.opacity = '0';
-      screen.style.pointerEvents = 'none';
-      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
-    }
-    window.__loaderDone = function() { setTimeout(hide, 300); };
+    var phrases = ["Design isn't decoration—\nit serves a purpose.","I make complexity\nsimple to understand and use.","Consistency is key.","I reduce noise\nto what matters."];
+    var overlay = document.getElementById('loadingScreen');
+    var phraseEl = document.getElementById('loadingPhrase');
+    var counterEl = document.getElementById('loadingCounter');
+    var countEl = document.getElementById('loadingCount');
+    phraseEl.innerHTML = phrases[Math.floor(Math.random()*phrases.length)].replace(/\n/g,'<br>');
+    setTimeout(function(){ phraseEl.classList.add('is-in'); }, 150);
+    var margin=56;
+    function placeCounter(){ var rect=phraseEl.getBoundingClientRect(); counterEl.style.left=rect.left+'px'; counterEl.style.top=(rect.top-18)+'px'; }
+    counterEl.style.transition='none'; placeCounter(); requestAnimationFrame(function(){ counterEl.style.transition=''; });
+    var s=performance.now(),d=1800; function tick(n){ var p=Math.min(100,Math.round((n-s)/d*100)); countEl.textContent=p; if(p<100)requestAnimationFrame(tick); } requestAnimationFrame(tick);
+    var minDone=false,apiFetched=false;
+    function tryExit(){ if(!minDone||!apiFetched)return; phraseEl.style.transition='opacity 0.4s ease'; phraseEl.style.opacity='0'; counterEl.style.opacity='0'; setTimeout(function(){ overlay.classList.add('is-out'); setTimeout(function(){ if(overlay.parentNode)overlay.parentNode.removeChild(overlay); },800); },450); }
+    setTimeout(function(){ minDone=true; tryExit(); },1600);
+    window.__loaderDone = function(){ apiFetched=true; tryExit(); };
   })();
   </script>
 
@@ -278,7 +275,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
