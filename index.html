@@ -593,32 +593,41 @@
     .modal-close-bar__icon svg { display:block; }
 
     /* === MODAL PAGE END === */
-    .modal-page-end { margin: 72px 0 0; }
+    .modal-page-end { margin: 72px -8px -24px; padding: 0 8px; background: #060606; }
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 0; gap: 8px;
     }
     .modal-page-end .page-links__label {
       font-size: 11px; font-weight: 500; letter-spacing: 0.48px;
-      text-transform: uppercase; color: #000;
+      text-transform: uppercase; color: #fff;
       display: inline-flex; align-items: center; gap: 5px;
       transition: opacity .15s; cursor: pointer;
     }
     .modal-page-end .page-links__all {
       font-family:'HW Left Bold', sans-serif;
       font-size: 11px; font-weight: bold; letter-spacing: 0.48px;
-      text-transform: uppercase; color: #000;
+      text-transform: uppercase; color: #fff;
       display: inline-flex; align-items: center; gap: 5px;
       transition: opacity .15s; cursor: pointer;
     }
     .modal-page-end .page-links__label:hover,
     .modal-page-end .page-links__all:hover { opacity: .7; }
-    .modal-page-end .page-links__client { display: inline; margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
+    .modal-page-end .page-links__client { display: inline; margin-left: 16px; font-weight: 400; color: #fff; text-transform: none; letter-spacing: 0; }
 
     /* === MODAL MORE PROJECTS === */
-    .modal-more-projects { margin: 16px -8px 0; }
-    .modal-more-projects__grid { display: flex; flex-direction: column; padding: 0 8px; }
-    @media (min-width:1024px) { .modal-more-projects { margin: 16px -16px 0; } .modal-more-projects__grid { padding: 0 16px; } }
+    .modal-more-projects { margin: 8px 0 0; }
+    .modal-more-projects__grid { display: flex; flex-direction: column; }
+    @media (min-width:1024px) {
+      .modal-page-end { margin: 72px -16px -24px; padding: 0 16px; }
+      .modal-more-projects { margin: 8px 0 0; }
+      .modal-more-projects__grid { padding: 0; }
+      .modal-proj-card__body {
+        grid-template-columns: auto 1fr auto; column-gap: 80px; padding: 8px 0 0;
+      }
+      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; }
+      .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
+    }
     .modal-proj-card {
       display: flex; flex-direction: column;
       cursor: pointer; color: inherit; text-decoration: none;
@@ -663,7 +672,7 @@
       .modal-proj-card__img img,
       .modal-proj-card__img video { height: 130%; }
       .modal-proj-card__body {
-        background: none; border-radius: 0; aspect-ratio: auto; margin-top: 8px;
+        background: none; border-radius: 0; aspect-ratio: auto; margin-top: 8px; padding: 8px 0 0;
         display: grid; grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 2px; align-items: start;
       }
       .modal-proj-card__year { grid-column: 1; grid-row: 2; }
@@ -942,8 +951,9 @@
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
-      .modal-backdrop.is-active { background:rgba(0,0,0,0.6); }
+      .modal-backdrop.is-active { background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
       .modal-close-bar { background:#000; backdrop-filter:none; -webkit-backdrop-filter:none; }
+      .modal-close-bar::after { content:''; position:absolute; top:100%; left:0; right:0; height:80px; background:linear-gradient(to bottom,#000,transparent); pointer-events:none; }
     }
 
     /* === LOADING SCREEN === */
@@ -2254,7 +2264,11 @@ quoteText.textContent = '“' + q.text + '”';
       (detailEl || linksEl || scrollEl.lastElementChild).insertAdjacentElement('afterend', pageEnd);
       pageEnd.querySelector('.page-links__all').addEventListener('click', () => closeModal());
       pageEnd.querySelectorAll('.modal-proj-card[data-key]').forEach(btn => {
-        btn.addEventListener('click', () => openModal(btn.dataset.key));
+        btn.addEventListener('click', () => {
+          const nextKey = btn.dataset.key;
+          closeModal();
+          setTimeout(() => openModal(nextKey), 500);
+        });
       });
 
       // Scroll-reveal animation for modal cards (same as homepage work-items)
