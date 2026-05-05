@@ -37,7 +37,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 32px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
     .nav::before {
       content:'';
       position:absolute;
@@ -497,6 +497,8 @@
       requestAnimationFrame(render);
     }
 
+    let _lastInteraction = 0;
+
     // Lightbox
     const lightbox  = document.getElementById('archLightbox');
     const lbImg     = document.getElementById('archLightboxImg');
@@ -509,7 +511,7 @@
     // Pointer events
     let dragDist = 0;
     canvas.addEventListener('pointerdown', e => {
-      dragging = true; dragDist = 0;
+      dragging = true; dragDist = 0; _lastInteraction = performance.now();
       canvas.classList.add('is-dragging');
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = 0; vy = 0;
@@ -542,6 +544,7 @@
     // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
+      _lastInteraction = performance.now();
       vx = -e.deltaX * 0.6 + vx * 0.4;
       vy = -e.deltaY * 0.6 + vy * 0.4;
     }, { passive: false });
