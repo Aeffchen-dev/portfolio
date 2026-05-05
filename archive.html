@@ -5,14 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#171717">
   <title>Archive — Jana Gramlich</title>
+  <meta name="description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <link rel="canonical" href="https://portfolio.janagramlich.com/archive.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Archive — Jana Gramlich">
+  <meta property="og:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <meta property="og:url" content="https://portfolio.janagramlich.com/archive.html">
+  <meta property="og:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Archive — Jana Gramlich">
+  <meta name="twitter:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
+  <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
-    body  { width:100%; min-height:100lvh; background:#171717; }
+    /* No overflow:hidden on html — breaks position:fixed on iOS Safari */
+    html  { width:100%; min-height:100lvh; background:#171717; }
+    body  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
     body { font-family:'DM Sans', sans-serif; font-optical-sizing:auto; color:#fff; }
     img { display:block; }
     a { text-decoration:none; color:inherit; }
@@ -30,6 +43,7 @@
       z-index:100;
     }
     .nav.is-open { width:min(calc(100vw - 32px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 32px); } }
     .nav::before {
       content:'';
       position:absolute;
@@ -58,7 +72,10 @@
       display:flex; flex-direction:row; align-items:center; gap:3px;
       width:15px; height:13px; flex-shrink:0; position:relative;
       margin-left:auto; overflow:visible;
+      transition:transform .2s cubic-bezier(.4,0,.2,1);
     }
+    .nav__menu:hover { transform:scale(1.15); }
+    .nav__menu:active { transform:scale(0.9); }
     .nav__menu > span:not(.nav__close-icon) {
       display:block; width:3px; height:3px; border-radius:50%;
       background:#fff; flex-shrink:0;
@@ -67,10 +84,11 @@
     .nav__close-icon {
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
-      opacity:0; transition:opacity .25s ease; color:#fff;
+      opacity:0; transition:opacity .25s ease, transform .25s cubic-bezier(.4,0,.2,1); color:#fff;
+      transform:rotate(-45deg) scale(0.7);
     }
     .nav.is-open .nav__menu > span:not(.nav__close-icon) { opacity:0; }
-    .nav.is-open .nav__close-icon { opacity:1; }
+    .nav.is-open .nav__close-icon { opacity:1; transform:rotate(0deg) scale(1); }
     .nav__expand {
       display:grid; grid-template-rows:0fr;
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
@@ -89,6 +107,7 @@
       transition:opacity .2s ease .22s, transform .25s ease .22s, color .15s;
     }
     .nav__link:hover { color:rgba(255,255,255,.5); }
+    .nav__link.is-current { color:rgba(255,255,255,.35); pointer-events:none; }
     .nav__divider {
       height:1px; background:rgba(255,255,255,0.12);
       margin:16px 0;
@@ -112,17 +131,14 @@
       border-radius:999px; padding:8px 10px;
       font-size:12px; font-weight:500; letter-spacing:0.48px; text-transform:uppercase;
       margin-top:40px;
+      transition:opacity .2s ease;
     }
+    .nav__linkedin:hover { opacity:0.8; }
 
     /* === CANVAS === */
     #canvas {
       position:fixed;
-      /* edge-to-edge: zero insets, extend under status bar + home indicator */
-      top:0; left:0; right:0; bottom:0;
-      width:100vw;
-      /* lvh = large viewport = full screen behind browser bars */
-      height:100dvh; /* fallback */
-      height:100lvh;
+      top:0; left:0;
       cursor:grab;
       user-select:none;
       -webkit-user-select:none;
@@ -138,7 +154,10 @@
       overflow:hidden;
       will-change:transform;
       background:#2a2a2a;
+      cursor:pointer;
+      transition:opacity .15s ease;
     }
+    .tile:active { opacity:0.85; }
     .tile img {
       width:100%; height:100%;
       object-fit:cover;
@@ -149,6 +168,50 @@
       -webkit-user-drag:none;
     }
     @media (min-width:640px) { .nav { top:8px; } }
+
+    /* === LIGHTBOX === */
+    .lightbox {
+      position:fixed; inset:0; z-index:200;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0);
+      pointer-events:none;
+      transition:background .3s ease;
+      /* Prevent iOS Safari scroll-through */
+      touch-action:none;
+      -webkit-touch-callout:none;
+    }
+    .lightbox.is-open {
+      background:rgba(0,0,0,0.92);
+      pointer-events:auto;
+    }
+    .lightbox__inner {
+      position:relative;
+      max-width:min(92vw, 560px);
+      max-height:90dvh;
+      display:flex; align-items:center; justify-content:center;
+      transform:scale(0.92) translateY(10px);
+      opacity:0;
+      transition:transform .35s cubic-bezier(0.32,0.72,0,1), opacity .3s ease;
+    }
+    .lightbox.is-open .lightbox__inner {
+      transform:scale(1) translateY(0);
+      opacity:1;
+    }
+    #lightboxImg {
+      max-width:100%; max-height:90dvh;
+      object-fit:contain;
+      border-radius:12px;
+      display:block;
+    }
+    .lightbox__close {
+      position:absolute; top:-40px; right:-4px;
+      width:32px; height:32px;
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,0.7);
+      cursor:pointer; border:none; background:none; padding:0;
+      transition:color .2s ease, transform .2s ease;
+    }
+    .lightbox__close:hover { color:#fff; transform:scale(1.1); }
   </style>
 </head>
 <body>
@@ -164,9 +227,10 @@
         <div class="nav__links">
           <a href="index.html#work" class="nav__link">Work</a>
           <a href="index.html#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link">Archive</a>
+          <a href="archive.html" class="nav__link is-current">Archive</a>
           <a href="articles.html" class="nav__link">Articles</a>
         </div>
+        <div class="nav__divider"></div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
@@ -178,6 +242,16 @@
 
   <!-- INFINITE CANVAS -->
   <div id="canvas"></div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div class="lightbox__inner">
+      <img id="lightboxImg" src="" alt="">
+      <button class="lightbox__close" id="lightboxClose" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/></svg>
+      </button>
+    </div>
+  </div>
 
   <script>
     // === NAV ===
@@ -209,75 +283,107 @@
 
     // Collapsed pill state — no page scroll on archive, always show pill
     (function() {
-      const navBar = nav.querySelector('.nav__bar');
+      const navBar  = nav.querySelector('.nav__bar');
       const navMenu = nav.querySelector('.nav__menu');
-      const dots = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
-      const logoEl = navBar.querySelector('.nav__logo');
+      const dots    = [...nav.querySelectorAll('.nav__menu span:not(.nav__close-icon)')];
+      const logoEl  = navBar.querySelector('.nav__logo');
 
       function setPillState() {
         const targetW = logoEl.offsetWidth + 48;
-        nav.style.width = targetW + 'px';
-        nav.style.top = window.innerWidth >= 640 ? '8px' : '4px';
-        nav.style.borderRadius = '24px';
-        nav.style.background = 'rgba(255,255,255,0.05)';
-        nav.style.setProperty('--nav-bg-opacity', '0.65');
-        nav.style.backdropFilter = 'blur(20px) saturate(180%)';
+        nav.style.width           = targetW + 'px';
+        nav.style.top             = window.innerWidth >= 640 ? '8px' : '4px';
+        nav.style.borderRadius    = '24px';
+        nav.style.background      = 'rgba(255,255,255,0.05)';
+        nav.style.setProperty('--nav-bg-opacity','0.65');
+        nav.style.backdropFilter       = 'blur(20px) saturate(180%)';
         nav.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
         nav.style.setProperty('--pill-w', targetW + 'px');
-        navBar.style.paddingLeft = '16px';
+        navBar.style.paddingLeft  = '16px';
         navBar.style.paddingRight = '16px';
-        navBar.style.paddingTop = '0';
-        navBar.style.paddingBottom = '0';
-        dots[0].style.opacity = '0';
-        dots[2].style.opacity = '0';
-        dots[0].style.transform = 'translateX(6px)';
-        dots[2].style.transform = 'translateX(-6px)';
-        dots[1].style.background = 'rgb(172,176,255)';
-        dots[1].style.width = '8px';
-        dots[1].style.height = '8px';
-        navMenu.style.width = '8px';
+        navBar.style.paddingTop   = '0';
+        navBar.style.paddingBottom= '0';
+        dots[0].style.opacity     = '0';
+        dots[2].style.opacity     = '0';
+        dots[0].style.transform   = 'translateX(6px)';
+        dots[2].style.transform   = 'translateX(-6px)';
+        dots[1].style.background  = 'rgb(172,176,255)';
+        dots[1].style.width       = '8px';
+        dots[1].style.height      = '8px';
+        navMenu.style.width       = '8px';
       }
 
-      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const EASE      = 'cubic-bezier(.4,0,.2,1)';
       const NAV_TRANS = `width .4s ${EASE}, top .4s ${EASE}, border-radius .4s ${EASE}, background .4s ${EASE}, backdrop-filter .4s ${EASE}, -webkit-backdrop-filter .4s ${EASE}`;
 
       new MutationObserver(() => {
         nav.style.transition = NAV_TRANS;
         void nav.offsetHeight;
         if (nav.classList.contains('is-open')) {
-          nav.style.width = '';
-          nav.style.top = '';
-          nav.style.borderRadius = '';
-          nav.style.background = '';
-          nav.style.backdropFilter = '';
-          nav.style.webkitBackdropFilter = '';
-          navBar.style.paddingLeft = '';
-          navBar.style.paddingRight = '';
-          navBar.style.paddingTop = '';
-          navBar.style.paddingBottom = '';
-          dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; d.style.background = ''; d.style.width = ''; d.style.height = ''; });
+          nav.style.width = ''; nav.style.top = ''; nav.style.borderRadius = '';
+          nav.style.background = ''; nav.style.backdropFilter = ''; nav.style.webkitBackdropFilter = '';
+          navBar.style.paddingLeft = ''; navBar.style.paddingRight = '';
+          navBar.style.paddingTop  = ''; navBar.style.paddingBottom = '';
+          dots.forEach(d => { d.style.opacity=''; d.style.transform=''; d.style.background=''; d.style.width=''; d.style.height=''; });
           navMenu.style.width = '8px';
         } else {
           setPillState();
         }
         setTimeout(() => { nav.style.transition = ''; }, 450);
-      }).observe(nav, { attributes: true, attributeFilter: ['class'] });
+      }).observe(nav, { attributes:true, attributeFilter:['class'] });
 
       window.addEventListener('resize', setPillState);
       setPillState();
     })();
 
+    // === LIGHTBOX ===
+    const lightbox    = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('is-open');
+      // Prevent body scroll on iOS when lightbox is open
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      // Clear src after transition to avoid flash on next open
+      setTimeout(() => { if (!lightbox.classList.contains('is-open')) lightboxImg.src = ''; }, 350);
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxClose.addEventListener('touchend', e => { e.preventDefault(); closeLightbox(); });
+
+    // Close on backdrop tap (not on image itself)
+    lightbox.addEventListener('pointerup', e => {
+      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) closeLightbox();
+    });
+    // iOS Safari: also handle touchend on backdrop
+    lightbox.addEventListener('touchend', e => {
+      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) {
+        e.preventDefault();
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+    });
+
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // CW/CH must cover the full physical screen including behind browser bars.
-    // canvas uses position:fixed top/left/right/bottom:0 so offsetWidth/Height
-    // reflect 100lvh — the true full-screen size. screen.height is the safe fallback.
-    const CW = canvas.offsetWidth  || window.innerWidth;
-    const CH = canvas.offsetHeight || screen.height;
+    // Use screen dimensions to cover full physical screen including behind browser bars (iOS)
+    const CW = screen.width  || window.innerWidth;
+    const CH = screen.height || window.innerHeight;
+    canvas.style.width  = CW + 'px';
+    canvas.style.height = CH + 'px';
 
     // Grid config — portrait tiles (9:19 ratio)
-    // Scale so 6 columns always fill exactly 100vw
     const COLS   = 6;
     const ROWS   = 5;
     const BASE_W = 120;
@@ -290,14 +396,18 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    const IMGS = Array.from({length:40}, (_,i) => `images/parallax/p${String(i+1).padStart(2,'0')}.png`)
-      .sort(() => Math.random() - 0.5);
+    // Only images that exist in the repo
+    const AVAIL = [
+      'p01','p02','p03','p04','p05','p06','p07',
+      'p09','p10','p11','p12','p13','p14','p15','p16','p17','p18','p19',
+      'p22','p23','p24','p25','p26','p27','p28','p29','p30',
+      'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+    ];
+    const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
 
-    // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18]; // subtle vertical parallax
-    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15]; // initial vertical offset (fraction of tile+gap)
+    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18];
+    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15];
 
-    // Generate grid positions (store column index for parallax)
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
@@ -306,9 +416,8 @@
       }
     }
 
-    // Create tile DOM elements
     const tiles = DEFS.map((def, i) => {
-      const el = document.createElement('div');
+      const el  = document.createElement('div');
       el.className = 'tile';
       el.style.width  = def.w + 'px';
       el.style.height = def.h + 'px';
@@ -322,25 +431,36 @@
     });
 
     // State
-    let ox = 0, oy = 0;       // world offset
-    let vx = 0, vy = 0;       // velocity
+    let ox = 0, oy = 0;
+    let vx = 0, vy = 0;
     let dragging = false;
+    let pointerDown = false;
+    let isDragConfirmed = false;
+    let tapStartX = 0, tapStartY = 0, tapStartT = 0;
     let lastX = 0, lastY = 0, lastT = 0;
+    const DRAG_THRESHOLD = 8;
+    const TAP_MAX_MS     = 300;
 
-    // Compute screen position:
-    // - X moves uniformly (no horizontal parallax)
-    // - Y: vertical scroll at per-column speed + horizontal scroll bleeds into vertical drift
+    // Auto-drift: slow diagonal pan when idle
+    const DRIFT_VX = 0.18, DRIFT_VY = 0.10;
+    let isAutoDrifting = true;
+    let driftResumeTimer = null;
+    function pauseDrift() {
+      isAutoDrifting = false;
+      clearTimeout(driftResumeTimer);
+      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
+    }
+
     function tilePos(t) {
-      const cx = CW / 2;
-      const cy = CH / 2;
-      const p  = COL_PAR[t.c];                  // 0.78 | 1.0 | 1.22
-      const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
-      const poy = oy * p + ox * (p - 1.0) * 0.3; // vertical parallax + reduced cross-axis drift
-      const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
+      const cx  = CW / 2;
+      const cy  = CH / 2;
+      const p   = COL_PAR[t.c];
+      const wx  = (((t.x + ox) % RX) + RX) % RX - RX / 2;
+      const poy = oy * p + ox * (p - 1.0) * 0.3;
+      const wy  = (((t.y + poy) % RY) + RY) % RY - RY / 2;
       return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
     }
 
-    // Render loop
     function render() {
       tiles.forEach(t => {
         const p = tilePos(t);
@@ -351,34 +471,89 @@
         vx *= 0.97; vy *= 0.97;
         if (Math.abs(vx) < 0.01) vx = 0;
         if (Math.abs(vy) < 0.01) vy = 0;
+        if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+          ox += DRIFT_VX;
+          oy += DRIFT_VY;
+        }
       }
       requestAnimationFrame(render);
     }
 
-    // Pointer events
+    // Pointer events — setPointerCapture only after drag confirmed (iOS Safari compat)
     canvas.addEventListener('pointerdown', e => {
-      dragging = true;
-      canvas.classList.add('is-dragging');
-      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      if (lightbox.classList.contains('is-open')) return;
+      pauseDrift();
+      pointerDown      = true;
+      isDragConfirmed  = false;
+      tapStartX = lastX = e.clientX;
+      tapStartY = lastY = e.clientY;
+      tapStartT = lastT = performance.now();
       vx = 0; vy = 0;
-      canvas.setPointerCapture(e.pointerId);
     });
 
     canvas.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
-      const dt = Math.max(performance.now() - lastT, 1);
-      vx = dx / dt * 16;
-      vy = dy / dt * 16;
-      ox += dx; oy += dy;
-      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      if (!pointerDown) return;
+      const dx = e.clientX - tapStartX;
+      const dy = e.clientY - tapStartY;
+      if (!isDragConfirmed && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
+        isDragConfirmed = true;
+        dragging = true;
+        canvas.classList.add('is-dragging');
+        // Capture only after drag confirmed — prevents iOS taps from being swallowed
+        try { canvas.setPointerCapture(e.pointerId); } catch(_) {}
+      }
+      if (isDragConfirmed) {
+        const pdx = e.clientX - lastX;
+        const pdy = e.clientY - lastY;
+        const dt  = Math.max(performance.now() - lastT, 1);
+        vx = pdx / dt * 16;
+        vy = pdy / dt * 16;
+        ox += pdx; oy += pdy;
+        lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      }
     });
 
-    canvas.addEventListener('pointerup',     () => { dragging = false; canvas.classList.remove('is-dragging'); });
-    canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
+    function endDrag(e) {
+      if (!pointerDown) return;
+      if (!isDragConfirmed) {
+        // Tap detected — open lightbox if within time threshold
+        const duration = performance.now() - tapStartT;
+        if (duration < TAP_MAX_MS) {
+          // Find the topmost tile element at the tap location
+          const clientX = (e && e.clientX != null) ? e.clientX : tapStartX;
+          const clientY = (e && e.clientY != null) ? e.clientY : tapStartY;
+          const hit = document.elementsFromPoint(clientX, clientY);
+          const tileEl = hit.find(el => el.classList.contains('tile'));
+          if (tileEl) {
+            const img = tileEl.querySelector('img');
+            if (img && img.src) openLightbox(img.src);
+          }
+        }
+      }
+      pointerDown     = false;
+      dragging        = false;
+      isDragConfirmed = false;
+      canvas.classList.remove('is-dragging');
+    }
 
-    // Wheel / trackpad scroll
+    canvas.addEventListener('pointerup',     endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+
+    // iOS Safari fallback: touchend fires reliably even without pointer capture
+    canvas.addEventListener('touchend', e => {
+      if (pointerDown && !isDragConfirmed) {
+        const t = e.changedTouches[0];
+        endDrag({ clientX: t.clientX, clientY: t.clientY });
+        e.preventDefault(); // prevent ghost click
+      }
+    }, { passive: false });
+
+    // Prevent iOS Safari page scroll/bounce on canvas
+    canvas.addEventListener('touchstart', e => {
+      if (!lightbox.classList.contains('is-open')) e.preventDefault();
+    }, { passive: false });
+
+    // Wheel / trackpad
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
       ox -= e.deltaX;

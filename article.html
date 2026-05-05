@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Article — Jana Gramlich</title>
   <meta name="description" content="">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Article — Jana Gramlich">
+  <meta property="og:description" content="Writing and editorial work by Jana Gramlich, product designer based in Berlin.">
+  <meta property="og:url" content="https://portfolio.janagramlich.com/article.html">
+  <meta property="og:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
   <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -247,6 +254,22 @@
     .article-footer__nav a { font-size:11px; font-weight:500; color:#999; letter-spacing:0.48px; text-transform:uppercase; transition:color .15s; }
     .article-footer__nav a:hover { color:#111; }
 
+    /* SHARE BUTTON */
+    .share-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:500; color:#111;
+      letter-spacing:0.48px; text-transform:uppercase;
+      border:1px solid rgba(0,0,0,0.15); border-radius:999px;
+      padding:7px 14px; cursor:pointer; background:none;
+      transition:background .2s, border-color .2s;
+    }
+    .share-btn:hover { background:rgba(0,0,0,0.05); }
+    .share-btn.copied { color:#555; }
+    .share-btn__label-default { display:inline; }
+    .share-btn__label-copied  { display:none; }
+    .share-btn.copied .share-btn__label-default { display:none; }
+    .share-btn.copied .share-btn__label-copied  { display:inline; }
+
     /* === DESKTOP === */
     @media (min-width:640px) {
       .article-header { padding-top:max(80px, 12dvh); }
@@ -319,10 +342,17 @@
         <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M7.696 2.306L2.611 7.391" stroke-linecap="square"/><path d="M7.696 7.853H2.149V2.306" stroke-linecap="square"/></svg>
         All Articles
       </a>
-      <nav class="article-footer__nav">
-        <a href="privacy-policy.html">Privacy</a>
-        <a href="imprint.html">Imprint</a>
-      </nav>
+      <div style="display:flex;align-items:center;gap:16px">
+        <button class="share-btn" id="shareBtn" type="button">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="9.5" cy="2.5" r="1.5"/><circle cx="2.5" cy="6" r="1.5"/><circle cx="9.5" cy="9.5" r="1.5"/><line x1="4" y1="5.1" x2="8" y2="3.4"/><line x1="4" y1="6.9" x2="8" y2="8.6"/></svg>
+          <span class="share-btn__label-default">Share</span>
+          <span class="share-btn__label-copied">Copied!</span>
+        </button>
+        <nav class="article-footer__nav">
+          <a href="privacy-policy.html">Privacy</a>
+          <a href="imprint.html">Imprint</a>
+        </nav>
+      </div>
     </footer>
 
   </div>
@@ -493,6 +523,21 @@
         showError('Could not load article — ' + (err.message || 'network error') + '.');
       });
   }
+
+  // === SHARE ===
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    const btn = document.getElementById('shareBtn');
+    const title = document.getElementById('articleTitle').textContent || document.title;
+    const url   = location.href;
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
+      }).catch(() => {});
+    }
+  });
 </script>
 </body>
 </html>
