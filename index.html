@@ -435,13 +435,13 @@
     .footer-legal { display:flex; justify-content:space-between; gap:16px; padding:0; }
     .footer-legal a { font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out; }
     .footer-legal a:hover { opacity:.5; }
-    .footer-bottom { position:relative; margin-top:16px; z-index:0; }
+    .footer-bottom { position:relative; margin-top:5px; z-index:0; }
     .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
     .footer-name {
       font-family:'DM Sans', sans-serif;
       font-size:100vw; font-weight:500; line-height:0.85;
       letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
-      white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
+      white-space:nowrap; display:block; margin-top:0; margin-bottom:7px; padding:0 0 0 8px;
     }
     .footer-vibe { display:none !important; }
     @media (min-width:640px) {
@@ -517,7 +517,7 @@
     .footer-name.jana-in span:nth-child(1) { transition-delay:0ms; }
     .footer-name.jana-in span:nth-child(2) { transition-delay:80ms; }
     .footer-name.jana-in span:nth-child(3) { transition-delay:160ms; }
-    .footer-name.jana-in span:nth-child(4) { transition-delay:240ms; }
+    .footer-name.jana-in span:nth-child(4) { transition-delay:320ms; }
     .footer-name.jana-animate span {
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
@@ -816,8 +816,8 @@
       .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
       .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
-      .footer-bottom      { position:relative; margin-top:100px; z-index:0; pointer-events:none; }
-      .footer-name        { margin-bottom:-79px; }
+      .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
+      .footer-name        { margin-bottom:-24px; }
       .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
       .footer-grid        { position:relative; z-index:1; }
       .footer-legal       { position:relative; z-index:1; margin-top:auto; }
@@ -947,8 +947,8 @@
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
       .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #060606); }
       .articles-section:not(.at-end)::after { opacity:1; }
-      .articles-section__label { padding-left:0; padding-right:0; }
-      .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:-8px; }
+      .articles-section__label { padding-left:0; padding-right:0; margin-bottom:16px; }
+      .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:0; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .cv-awards-grid { column-gap:16px; }
       .cv-card--archive { display:block; height:420px; aspect-ratio:unset; margin-top:8px; }
