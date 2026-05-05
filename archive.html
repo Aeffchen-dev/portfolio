@@ -504,10 +504,10 @@
       el.style.width  = def.w + 'px';
       el.style.height = def.h + 'px';
       const img = document.createElement('img');
-      img.src = IMGS[i % IMGS.length];
       img.alt = '';
       img.draggable = false;
       img.onload = img.onerror = _onTileLoad;
+      img.src = IMGS[i % IMGS.length];
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
