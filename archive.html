@@ -489,15 +489,22 @@
 
     // Create tile DOM elements
     let _loadedCount = 0;
+    let _revealed = false;
     const _totalTiles = DEFS.length;
+    function _reveal() {
+      if (_revealed) return;
+      _revealed = true;
+      canvas.classList.add('is-revealed');
+      _revealStart = performance.now();
+      window.__loaderDone?.();
+    }
     function _onTileLoad() {
       _loadedCount++;
-      if (_loadedCount >= _totalTiles) {
-        canvas.classList.add('is-revealed');
-        _revealStart = performance.now();
-        window.__loaderDone?.();
-      }
+      if (_loadedCount >= _totalTiles) _reveal();
     }
+    // Fallback: show canvas after 4s regardless of image load status
+    setTimeout(_reveal, 4000);
+
     const tiles = DEFS.map((def, i) => {
       const el  = document.createElement('div');
       el.className = 'tile';
@@ -508,6 +515,8 @@
       img.draggable = false;
       img.onload = img.onerror = _onTileLoad;
       img.src = IMGS[i % IMGS.length];
+      // Belt-and-suspenders for browsers that don't fire onload for cached images
+      if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
