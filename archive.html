@@ -445,10 +445,11 @@
       const img = document.createElement('img');
       img.alt = '';
       img.draggable = false;
-      img.onload = img.onerror = _onTileLoad;
+      img.onload = _onTileLoad;
+      img.onerror = () => { el.style.visibility = 'hidden'; _onTileLoad(); };
       img.src = IMGS[i % IMGS.length];
       // Belt-and-suspenders for browsers that don't fire onload for cached images
-      if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
+      if (img.complete) { img.onload = img.onerror = null; if (img.naturalWidth === 0) el.style.visibility = 'hidden'; _onTileLoad(); }
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
