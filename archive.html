@@ -390,14 +390,7 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    // Only images that exist in the repo
-    const AVAIL = [
-      'p01','p02','p03','p04','p05','p06','p07',
-      'p09','p10','p11','p12','p13','p14','p15','p16','p17','p18','p19',
-      'p22','p23','p24','p25','p26','p27','p28','p29','p30',
-      'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
-    ];
-    const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
+    const CANDIDATES = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png');
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
     const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07];
@@ -419,7 +412,7 @@
     const _REVEAL_DIST_X = 160;
     function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
-    // Create tile DOM elements
+    // Pre-probe all candidates; build tiles only from images that load successfully
     let _loadedCount = 0;
     let _revealed = false;
     const _totalTiles = DEFS.length;
@@ -434,25 +427,33 @@
       _loadedCount++;
       if (_loadedCount >= _totalTiles) _reveal();
     }
-    // Fallback: show canvas after 4s regardless of image load status
-    setTimeout(_reveal, 4000);
 
-    const tiles = DEFS.map((def, i) => {
-      const el  = document.createElement('div');
-      el.className = 'tile';
-      el.style.width  = def.w + 'px';
-      el.style.height = def.h + 'px';
-      const img = document.createElement('img');
-      img.alt = '';
-      img.draggable = false;
-      img.onload = _onTileLoad;
-      img.onerror = () => { el.style.visibility = 'hidden'; _onTileLoad(); };
-      img.src = IMGS[i % IMGS.length];
-      // Belt-and-suspenders for browsers that don't fire onload for cached images
-      if (img.complete) { img.onload = img.onerror = null; if (img.naturalWidth === 0) el.style.visibility = 'hidden'; _onTileLoad(); }
-      el.appendChild(img);
-      canvas.appendChild(el);
-      return Object.assign({}, def, { el });
+    let tiles = [];
+    Promise.all(CANDIDATES.map(src => new Promise(resolve => {
+      const img = new Image();
+      img.onload  = () => resolve(src);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    }))).then(results => {
+      const IMGS = results.filter(Boolean).sort(() => Math.random() - 0.5);
+      if (!IMGS.length) { _reveal(); return; }
+      // Fallback: show canvas after 4s regardless of image load status
+      setTimeout(_reveal, 4000);
+      tiles = DEFS.map((def, i) => {
+        const el  = document.createElement('div');
+        el.className = 'tile';
+        el.style.width  = def.w + 'px';
+        el.style.height = def.h + 'px';
+        const img = document.createElement('img');
+        img.alt = '';
+        img.draggable = false;
+        img.onload = img.onerror = _onTileLoad;
+        img.src = IMGS[i % IMGS.length];
+        if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
+        el.appendChild(img);
+        canvas.appendChild(el);
+        return Object.assign({}, def, { el });
+      });
     });
 
     // State

@@ -2954,16 +2954,16 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
-        .sort(() => Math.random() - 0.5);
+      const CANDIDATES = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png');
 
       const COLS = 10, ROWS = 10;
       const GAP  = 8;
 
-      function init() {
+      function init(IMGS) {
         const CW = mini.offsetWidth;
         const CH = mini.offsetHeight;
-        if (!CW || !CH) { requestAnimationFrame(init); return; }
+        if (!CW || !CH) { requestAnimationFrame(() => init(IMGS)); return; }
+        if (!IMGS.length) return;
 
         const TW = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
         const TH = TW * (253 / 120); // same portrait ratio as archive page
@@ -2996,8 +2996,6 @@ quoteText.textContent = '“' + q.text + '”';
           img.src = IMGS[i % IMGS.length];
           img.alt = '';
           img.loading = 'lazy';
-          img.onerror = () => { el.style.visibility = 'hidden'; };
-          if (img.complete && img.naturalWidth === 0) el.style.visibility = 'hidden';
           el.appendChild(img);
           wrap.appendChild(el);
           return Object.assign({}, def, { el });
@@ -3055,7 +3053,15 @@ quoteText.textContent = '“' + q.text + '”';
         render();
       }
 
-      requestAnimationFrame(init);
+      Promise.all(CANDIDATES.map(src => new Promise(resolve => {
+        const img = new Image();
+        img.onload  = () => resolve(src);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      }))).then(results => {
+        const IMGS = results.filter(Boolean).sort(() => Math.random() - 0.5);
+        requestAnimationFrame(() => init(IMGS));
+      });
     })();
 
   </script>
