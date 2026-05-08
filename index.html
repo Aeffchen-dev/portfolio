@@ -3001,9 +3001,9 @@ quoteText.textContent = '“' + q.text + '”';
           return Object.assign({}, def, { el });
         });
 
-        const AUTO_VX = 0.06, AUTO_VY = 0.22; // constant auto drift
-        const MINI_MAX_V = 18, MINI_FRICTION = 0.92, MINI_BLEND = 0.006;
-        let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
+        const DRIFT_VX = 0.12, DRIFT_VY = 0.22;
+        const MINI_MAX_V = 18, MINI_FRICTION = 0.95;
+        let ox = 0, oy = 0, vx = DRIFT_VX, vy = DRIFT_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
           const p  = COL_PAR[t.c];
@@ -3020,9 +3020,8 @@ quoteText.textContent = '“' + q.text + '”';
           });
           if (!dragging) {
             ox += vx; oy += vy;
-            vx *= MINI_FRICTION; vy *= MINI_FRICTION;
-            vx += (AUTO_VX - vx) * MINI_BLEND;
-            vy += (AUTO_VY - vy) * MINI_BLEND;
+            vx = DRIFT_VX + (vx - DRIFT_VX) * MINI_FRICTION;
+            vy = DRIFT_VY + (vy - DRIFT_VY) * MINI_FRICTION;
           }
           requestAnimationFrame(render);
         }
@@ -3034,6 +3033,7 @@ quoteText.textContent = '“' + q.text + '”';
           vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaX * scale + vx * 0.75));
           vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaY * scale + vy * 0.75));
         }, { passive: false });
+
 
         // Drag (mobile/tablet only)
         mini.addEventListener('pointerdown', e => {

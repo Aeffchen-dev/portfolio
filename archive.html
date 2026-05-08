@@ -462,19 +462,9 @@
     let dragging = false;
     let lastX = 0, lastY = 0, lastT = 0;
 
-    const MAX_V = 18; // velocity cap — prevents runaway flicks
-    const FRICTION = 0.92; // smoother deceleration curve
-    const DRIFT_BLEND = 0.006; // rate at which idle velocity fades into drift
-
-    // Auto-drift: slow vertical pan when idle
-    const DRIFT_VX = 0.06, DRIFT_VY = 0.22;
-    let isAutoDrifting = true;
-    let driftResumeTimer = null;
-    function pauseDrift() {
-      isAutoDrifting = false;
-      clearTimeout(driftResumeTimer);
-      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
-    }
+    const MAX_V = 18;    // velocity cap — prevents runaway flicks
+    const FRICTION = 0.95; // friction applied to excess above drift ("stop later")
+    const DRIFT_VX = 0.12, DRIFT_VY = 0.22; // idle drift — VX high enough all columns cycle
 
     function tilePos(t) {
       const cx = CW / 2;
@@ -503,13 +493,9 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= FRICTION; vy *= FRICTION;
-        // Gradually blend toward drift so stop feels continuous, not snapped
-        if (isAutoDrifting) {
-          vx += (DRIFT_VX - vx) * DRIFT_BLEND;
-          vy += (DRIFT_VY - vy) * DRIFT_BLEND;
-        } else if (Math.abs(vx) < 0.005) { vx = 0; }
-        if (!isAutoDrifting && Math.abs(vy) < 0.005) { vy = 0; }
+        // Friction on excess above drift — velocity always settles at drift speed, never zero
+        vx = DRIFT_VX + (vx - DRIFT_VX) * FRICTION;
+        vy = DRIFT_VY + (vy - DRIFT_VY) * FRICTION;
       }
       requestAnimationFrame(render);
     }
@@ -548,7 +534,6 @@
     // Wheel / trackpad — scale by deltaMode: LINE=mouse wheel (needs dampening), PIXEL=trackpad (precise)
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      pauseDrift();
       _lastInteraction = performance.now();
       const scale = e.deltaMode === 1 ? 0.25 : 0.10; // mouse wheel vs trackpad pixel deltas
       vx = Math.max(-MAX_V, Math.min(MAX_V, -e.deltaX * scale + vx * 0.75));
