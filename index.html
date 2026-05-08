@@ -2996,6 +2996,8 @@ quoteText.textContent = '“' + q.text + '”';
           img.src = IMGS[i % IMGS.length];
           img.alt = '';
           img.loading = 'lazy';
+          img.onerror = () => { el.style.visibility = 'hidden'; };
+          if (img.complete && img.naturalWidth === 0) el.style.visibility = 'hidden';
           el.appendChild(img);
           wrap.appendChild(el);
           return Object.assign({}, def, { el });
