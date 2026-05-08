@@ -2323,6 +2323,9 @@ quoteText.textContent = '“' + q.text + '”';
       const p = PROJECTS[nextKey]; if (!p) return;
       _isTransitioning = true;
 
+      // Hide original modal immediately so it doesn't peek above the sliding sheet
+      document.getElementById('projectModal').style.visibility = 'hidden';
+
       const bg = p.bg || '#f2f2f2';
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
