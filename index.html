@@ -306,8 +306,6 @@
       position:absolute; inset:0;
       overflow:hidden; border-radius:4px;
       cursor:pointer;
-      touch-action:none;
-      user-select:none; -webkit-user-select:none;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
@@ -2956,24 +2954,24 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      const CANDIDATES = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png');
+      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
+        .sort(() => Math.random() - 0.5);
 
       const COLS = 10, ROWS = 10;
       const GAP  = 8;
 
-      function init(IMGS) {
+      function init() {
         const CW = mini.offsetWidth;
         const CH = mini.offsetHeight;
-        if (!CW || !CH) { requestAnimationFrame(() => init(IMGS)); return; }
-        if (!IMGS.length) return;
+        if (!CW || !CH) { requestAnimationFrame(init); return; }
 
         const TW = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
         const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
 
-        const COL_PAR  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-        const COL_YOFF = [-0.75, 0.75, -0.75, 0.75, -0.75, 0.75, -0.75, 0.75, -0.75, 0.75];
+        const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07, 0.88, 1.12]; // unique speed per col
+        const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger
 
         const DEFS = [];
         for (let r = 0; r < ROWS; r++) {
@@ -3003,9 +3001,8 @@ quoteText.textContent = '“' + q.text + '”';
           return Object.assign({}, def, { el });
         });
 
-        const DRIFT_VX = 0.15, DRIFT_VY = 0.15;
-        const MINI_MAX_V = 35, MINI_FRICTION = 0.95;
-        let ox = 0, oy = 0, vx = DRIFT_VX, vy = DRIFT_VY, dragging = false, lx = 0, ly = 0, lt = 0;
+        const AUTO_VX = 0.22, AUTO_VY = 0.11; // constant auto drift
+        let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
           const p  = COL_PAR[t.c];
@@ -3022,65 +3019,41 @@ quoteText.textContent = '“' + q.text + '”';
           });
           if (!dragging) {
             ox += vx; oy += vy;
-            vx = DRIFT_VX + (vx - DRIFT_VX) * MINI_FRICTION;
-            vy = DRIFT_VY + (vy - DRIFT_VY) * MINI_FRICTION;
+            // ease velocity back towards auto-drift speed after manual interaction
+            vx += (AUTO_VX - vx) * 0.015;
+            vy += (AUTO_VY - vy) * 0.015;
           }
           requestAnimationFrame(render);
         }
 
-        // Wheel / trackpad — scale by deltaMode: LINE=mouse wheel, PIXEL=trackpad
+        // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          const scale = e.deltaMode === 1 ? 0.25 : 0.10;
-          vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaX * scale + vx * 0.75));
-          vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaY * scale + vy * 0.75));
+          vx = -e.deltaX * 0.6 + vx * 0.4;
+          vy = -e.deltaY * 0.6 + vy * 0.4;
         }, { passive: false });
 
-
-        // Drag — touch events for iOS (pointer events unreliable on canvas in iOS Safari)
-        function _miniMove(x, y) {
-          if (!dragging) return;
-          const dx = x - lx, dy = y - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
-          vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVx * 0.6 + vx * 0.4));
-          vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVy * 0.6 + vy * 0.4));
-          ox += dx; oy += dy; lx = x; ly = y; lt = performance.now();
-        }
-        function _miniEnd() { dragging = false; mini.classList.remove('is-dragging'); }
-
-        mini.addEventListener('touchstart', e => {
-          e.preventDefault();
-          dragging = true; mini.classList.add('is-dragging');
-          lx = e.touches[0].clientX; ly = e.touches[0].clientY; lt = performance.now();
-          vx = 0; vy = 0;
-        }, { passive: false });
-        mini.addEventListener('touchmove', e => {
-          e.preventDefault();
-          _miniMove(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: false });
-        mini.addEventListener('touchend', _miniEnd);
-        mini.addEventListener('touchcancel', _miniEnd);
-
-        mini.addEventListener('mousedown', e => {
+        // Drag (mobile/tablet only)
+        mini.addEventListener('pointerdown', e => {
+          if (window.innerWidth >= 1024) return;
           dragging = true; mini.classList.add('is-dragging');
           lx = e.clientX; ly = e.clientY; lt = performance.now();
-          vx = 0; vy = 0;
+          vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
         });
-        window.addEventListener('mousemove', e => { _miniMove(e.clientX, e.clientY); });
-        window.addEventListener('mouseup', _miniEnd);
+        mini.addEventListener('pointermove', e => {
+          if (!dragging) return;
+          const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
+          const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
+          vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
+          ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
+        });
+        mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
+        mini.addEventListener('pointercancel', () => { dragging = false; mini.classList.remove('is-dragging'); });
 
         render();
       }
 
-      Promise.all(CANDIDATES.map(src => new Promise(resolve => {
-        const img = new Image();
-        img.onload  = () => resolve(src);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      }))).then(results => {
-        const IMGS = results.filter(Boolean).sort(() => Math.random() - 0.5);
-        requestAnimationFrame(() => init(IMGS));
-      });
+      requestAnimationFrame(init);
     })();
 
   </script>

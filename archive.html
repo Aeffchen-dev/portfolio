@@ -390,11 +390,18 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    const CANDIDATES = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png');
+    // Only images that exist in the repo
+    const AVAIL = [
+      'p01','p02','p03','p04','p05','p06','p07',
+      'p09','p10','p11','p12','p13','p14','p15','p16','p17','p18','p19',
+      'p22','p23','p24','p25','p26','p27','p28','p29','p30',
+      'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+    ];
+    const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [1, 1, 1, 1, 1, 1, 1, 1];
-    const COL_YOFF = [-0.75, 0.75, -0.75, 0.75, -0.75, 0.75, -0.75, 0.75];
+    const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07];
+    const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5];
 
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
@@ -407,12 +414,12 @@
 
     // Reveal animation state
     let _revealStart = null;
-    const _REVEAL_DUR = 2400;
-    const _REVEAL_DIST_Y = 80;
-    const _REVEAL_DIST_X = 80;
+    const _REVEAL_DUR = 1600;
+    const _REVEAL_DIST_Y = 200;
+    const _REVEAL_DIST_X = 160;
     function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
-    // Pre-probe all candidates; build tiles only from images that load successfully
+    // Create tile DOM elements
     let _loadedCount = 0;
     let _revealed = false;
     const _totalTiles = DEFS.length;
@@ -427,33 +434,24 @@
       _loadedCount++;
       if (_loadedCount >= _totalTiles) _reveal();
     }
+    // Fallback: show canvas after 4s regardless of image load status
+    setTimeout(_reveal, 4000);
 
-    let tiles = [];
-    Promise.all(CANDIDATES.map(src => new Promise(resolve => {
-      const img = new Image();
-      img.onload  = () => resolve(src);
-      img.onerror = () => resolve(null);
-      img.src = src;
-    }))).then(results => {
-      const IMGS = results.filter(Boolean).sort(() => Math.random() - 0.5);
-      if (!IMGS.length) { _reveal(); return; }
-      // Fallback: show canvas after 4s regardless of image load status
-      setTimeout(_reveal, 4000);
-      tiles = DEFS.map((def, i) => {
-        const el  = document.createElement('div');
-        el.className = 'tile';
-        el.style.width  = def.w + 'px';
-        el.style.height = def.h + 'px';
-        const img = document.createElement('img');
-        img.alt = '';
-        img.draggable = false;
-        img.onload = img.onerror = _onTileLoad;
-        img.src = IMGS[i % IMGS.length];
-        if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
-        el.appendChild(img);
-        canvas.appendChild(el);
-        return Object.assign({}, def, { el });
-      });
+    const tiles = DEFS.map((def, i) => {
+      const el  = document.createElement('div');
+      el.className = 'tile';
+      el.style.width  = def.w + 'px';
+      el.style.height = def.h + 'px';
+      const img = document.createElement('img');
+      img.alt = '';
+      img.draggable = false;
+      img.onload = img.onerror = _onTileLoad;
+      img.src = IMGS[i % IMGS.length];
+      // Belt-and-suspenders for browsers that don't fire onload for cached images
+      if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
+      el.appendChild(img);
+      canvas.appendChild(el);
+      return Object.assign({}, def, { el });
     });
 
     // State
@@ -462,9 +460,15 @@
     let dragging = false;
     let lastX = 0, lastY = 0, lastT = 0;
 
-    const MAX_V = 35;
-    const FRICTION = 0.95;
-    const DRIFT_VX = 0.15, DRIFT_VY = 0.15;
+    // Auto-drift: slow diagonal pan when idle
+    const DRIFT_VX = 0.18, DRIFT_VY = 0.10;
+    let isAutoDrifting = true;
+    let driftResumeTimer = null;
+    function pauseDrift() {
+      isAutoDrifting = false;
+      clearTimeout(driftResumeTimer);
+      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
+    }
 
     function tilePos(t) {
       const cx = CW / 2;
@@ -493,9 +497,13 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        // Friction on excess above drift — velocity always settles at drift speed, never zero
-        vx = DRIFT_VX + (vx - DRIFT_VX) * FRICTION;
-        vy = DRIFT_VY + (vy - DRIFT_VY) * FRICTION;
+        vx *= 0.95; vy *= 0.95;
+        if (Math.abs(vx) < 0.01) vx = 0;
+        if (Math.abs(vy) < 0.01) vy = 0;
+        if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+          ox += DRIFT_VX;
+          oy += DRIFT_VY;
+        }
       }
       requestAnimationFrame(render);
     }
@@ -503,49 +511,40 @@
     let _lastInteraction = 0;
 
 
-    // Drag — touch events for iOS (pointer events unreliable on canvas in iOS Safari)
-    function _dragMove(x, y) {
-      if (!dragging) return;
-      const dx = x - lastX, dy = y - lastY;
-      const dt = Math.max(performance.now() - lastT, 1);
-      const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
-      vx = Math.max(-MAX_V, Math.min(MAX_V, rawVx * 0.6 + vx * 0.4));
-      vy = Math.max(-MAX_V, Math.min(MAX_V, rawVy * 0.6 + vy * 0.4));
-      ox += dx; oy += dy;
-      lastX = x; lastY = y; lastT = performance.now();
-    }
-    function _dragEnd() { dragging = false; canvas.classList.remove('is-dragging'); }
-
-    canvas.addEventListener('touchstart', e => {
-      e.preventDefault();
-      dragging = true; _lastInteraction = performance.now();
-      canvas.classList.add('is-dragging');
-      lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; lastT = performance.now();
-      vx = 0; vy = 0;
-    }, { passive: false });
-    canvas.addEventListener('touchmove', e => {
-      e.preventDefault();
-      _dragMove(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: false });
-    canvas.addEventListener('touchend', _dragEnd);
-    canvas.addEventListener('touchcancel', _dragEnd);
-
-    canvas.addEventListener('mousedown', e => {
-      dragging = true; _lastInteraction = performance.now();
+    // Pointer events
+    let dragDist = 0;
+    canvas.addEventListener('pointerdown', e => {
+      pauseDrift();
+      dragging = true; dragDist = 0; _lastInteraction = performance.now();
       canvas.classList.add('is-dragging');
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = 0; vy = 0;
     });
-    window.addEventListener('mousemove', e => { _dragMove(e.clientX, e.clientY); });
-    window.addEventListener('mouseup', _dragEnd);
 
-    // Wheel / trackpad — scale by deltaMode: LINE=mouse wheel (needs dampening), PIXEL=trackpad (precise)
+    canvas.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(performance.now() - lastT, 1);
+      dragDist += Math.sqrt(dx * dx + dy * dy);
+      const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
+      vx = rawVx * 0.6 + vx * 0.4;
+      vy = rawVy * 0.6 + vy * 0.4;
+      ox += dx; oy += dy;
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+    });
+
+    canvas.addEventListener('pointerup', e => {
+      dragging = false; canvas.classList.remove('is-dragging');
+    });
+    canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
+
+    // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
       _lastInteraction = performance.now();
-      const scale = e.deltaMode === 1 ? 0.25 : 0.10; // mouse wheel vs trackpad pixel deltas
-      vx = Math.max(-MAX_V, Math.min(MAX_V, -e.deltaX * scale + vx * 0.75));
-      vy = Math.max(-MAX_V, Math.min(MAX_V, -e.deltaY * scale + vy * 0.75));
+      vx = -e.deltaX * 0.6 + vx * 0.4;
+      vy = -e.deltaY * 0.6 + vy * 0.4;
     }, { passive: false });
 
     render();
