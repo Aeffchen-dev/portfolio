@@ -407,9 +407,9 @@
 
     // Reveal animation state
     let _revealStart = null;
-    const _REVEAL_DUR = 1600;
-    const _REVEAL_DIST_Y = 200;
-    const _REVEAL_DIST_X = 160;
+    const _REVEAL_DUR = 2400;
+    const _REVEAL_DIST_Y = 140;
+    const _REVEAL_DIST_X = 30;
     function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
     // Pre-probe all candidates; build tiles only from images that load successfully
@@ -463,7 +463,7 @@
     let lastX = 0, lastY = 0, lastT = 0;
 
     // Auto-drift: slow diagonal pan when idle
-    const DRIFT_VX = 0.18, DRIFT_VY = 0.10;
+    const DRIFT_VX = 0.06, DRIFT_VY = 0.20;
     let isAutoDrifting = true;
     let driftResumeTimer = null;
     function pauseDrift() {
