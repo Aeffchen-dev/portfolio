@@ -506,7 +506,6 @@
     // Pointer events
     let dragDist = 0;
     canvas.addEventListener('pointerdown', e => {
-      pauseDrift();
       dragging = true; dragDist = 0; _lastInteraction = performance.now();
       canvas.classList.add('is-dragging');
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
