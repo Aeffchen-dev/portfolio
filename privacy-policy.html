@@ -53,7 +53,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     .nav::before {
       content:'';
       position:absolute;
@@ -228,9 +228,38 @@
     #privacy-body strong { font-weight:500; }
     #privacy-body *, .imprint-content * { background: transparent !important; background-color: transparent !important; }
     @media (min-width:640px) { .nav { top:8px; } }
+    .loading-screen { position:fixed; inset:0; z-index:9999; background:#060606; opacity:1; pointer-events:auto; transition:opacity 0.75s cubic-bezier(.4,0,.2,1); }
+    .loading-screen.is-out { opacity:0; pointer-events:none; }
+    .loading-phrase { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'DM Sans',sans-serif; font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.5; color:#fff; text-align:center; max-width:min(480px,80vw); opacity:0; transition:opacity 0.6s ease; }
+    .loading-phrase.is-in { opacity:1; }
+    .loading-counter { position:absolute; display:flex; align-items:flex-start; pointer-events:none; transition:left 1.4s cubic-bezier(.16,1,.3,1), top 1.4s cubic-bezier(.16,1,.3,1), opacity 0.4s; }
+    .loading-cur-tag { display:block; background:#acb0ff; color:#171717; font-size:10px; font-weight:700; letter-spacing:0; padding:2px 6px; border-radius:0 4px 4px 4px; white-space:nowrap; line-height:1.5; margin-top:-1px; margin-left:2px; }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <div class="loading-phrase" id="loadingPhrase"></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
+  </div>
+  <script>
+  (function() {
+    var phrases=["Design isn't decoration—\nit serves a purpose.","I make complexity\neasy to understand.","Consistency is key.","I reduce noise\nto what matters."];
+    var overlay=document.getElementById('loadingScreen'),phraseEl=document.getElementById('loadingPhrase'),counterEl=document.getElementById('loadingCounter'),countEl=document.getElementById('loadingCount');
+    phraseEl.innerHTML=phrases[Math.floor(Math.random()*phrases.length)].replace(/\n/g,'<br>');
+    setTimeout(function(){ phraseEl.classList.add('is-in'); },150);
+    var moveTimer=null;
+    function moveCursor(){ var rect=phraseEl.getBoundingClientRect(); if(!rect.width){ moveTimer=setTimeout(moveCursor,100); return; } var pad=72,gap=36,side=Math.floor(Math.random()*4),x,y; if(side===0){ x=rect.left+Math.random()*rect.width; y=rect.top-gap-Math.random()*pad; } else if(side===1){ x=rect.right+gap+Math.random()*pad; y=rect.top+Math.random()*rect.height; } else if(side===2){ x=rect.left+Math.random()*rect.width; y=rect.bottom+gap+Math.random()*pad; } else{ x=rect.left-90-Math.random()*pad; y=rect.top+Math.random()*rect.height; } x=Math.max(4,Math.min(window.innerWidth-90,x)); y=Math.max(4,Math.min(window.innerHeight-20,y)); counterEl.style.left=x+'px'; counterEl.style.top=y+'px'; moveTimer=setTimeout(moveCursor,1200+Math.random()*800); }
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ moveCursor(); }); });
+    var s=performance.now(),d=1800; function tick(n){ var p=Math.min(100,Math.round((n-s)/d*100)); countEl.textContent=p; if(p<100)requestAnimationFrame(tick); } requestAnimationFrame(tick);
+    var minDone=false,apiFetched=false;
+    function tryExit(){ if(!minDone||!apiFetched)return; if(moveTimer)clearTimeout(moveTimer); phraseEl.style.transition='opacity 0.4s ease'; phraseEl.style.opacity='0'; counterEl.style.opacity='0'; setTimeout(function(){ overlay.classList.add('is-out'); setTimeout(function(){ if(overlay.parentNode)overlay.parentNode.removeChild(overlay); },800); },450); }
+    setTimeout(function(){ minDone=true; tryExit(); },1600);
+    window.__loaderDone = function(){ apiFetched=true; tryExit(); };
+    document.addEventListener('DOMContentLoaded',function(){ window.__loaderDone(); });
+  })();
+  </script>
 
   <!-- NAV -->
   <nav class="nav" id="mainNav">
@@ -242,12 +271,13 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
+            <a href="index.html" class="nav__link">Home</a>
             <a href="index.html#work" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>

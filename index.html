@@ -58,7 +58,7 @@
       z-index:100;
     }
     .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
-    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 16px); } .cv-card--archive { display:none !important; } }
+    @media (min-width:640px) and (max-width:1023px) { .cv-card--archive { display:none !important; } }
     .nav::before {
       content:'';
       position:absolute;
@@ -435,19 +435,15 @@
     .footer-legal { display:flex; justify-content:space-between; gap:16px; padding:0; }
     .footer-legal a { font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out; }
     .footer-legal a:hover { opacity:.5; }
-    .footer-bottom { position:relative; margin-top:-100px; z-index:0; }
+    .footer-bottom { position:relative; margin-top:5px; z-index:0; }
     .footer-logo { width:48px; height:48px; display:block; position:absolute; top:calc(20vw - 120px); left:0; }
     .footer-name {
       font-family:'DM Sans', sans-serif;
       font-size:100vw; font-weight:500; line-height:0.85;
       letter-spacing:-0.02em; color:#fff; text-transform:uppercase;
-      white-space:nowrap; display:block; margin-top:0; margin-bottom:24px; padding:0 0 0 8px;
+      white-space:nowrap; display:block; margin-top:0; margin-bottom:7px; padding:0 0 0 8px;
     }
-    .footer-vibe {
-      letter-spacing:0; margin-top:40px;
-      position:relative; height:60px;
-    }
-    .footer-vibe .nav__cursor { animation-play-state:running; }
+    .footer-vibe { display:none !important; }
     @media (min-width:640px) {
       .footer-name, .footer-logo, .footer-bottom, .footer-grid, .footer-vibe { display:none; }
       .home-footer { min-height:0; padding-top:0; padding-bottom:8px; padding-left:8px; padding-right:8px; }
@@ -515,8 +511,13 @@
       72%  { transform: translate(-1vw,-3px) rotate(-1deg); opacity:1; }
       100% { transform: translate(0,0) rotate(0deg); opacity:1; }
     }
-    .footer-name span { display:inline-block; }
-    .footer-name span:nth-child(5) { opacity:0; }
+    .footer-name span { display:inline-block; opacity:0; transform:translateX(28px); transition:opacity 0.45s ease, transform 0.5s cubic-bezier(.25,.46,.45,.94); }
+    .footer-name span:nth-child(5) { opacity:0 !important; }
+    .footer-name.jana-in span:not(:nth-child(5)) { opacity:1; transform:translateX(0); }
+    .footer-name.jana-in span:nth-child(1) { transition-delay:0ms; }
+    .footer-name.jana-in span:nth-child(2) { transition-delay:80ms; }
+    .footer-name.jana-in span:nth-child(3) { transition-delay:160ms; }
+    .footer-name.jana-in span:nth-child(4) { transition-delay:320ms; }
     .footer-name.jana-animate span {
       animation-timing-function: ease-in-out;
       animation-fill-mode: forwards;
@@ -588,32 +589,117 @@
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
-      flex-shrink:0;
+      height:1.5em; flex-shrink:0;
     }
     .modal-close-bar__icon svg { display:block; }
 
     /* === MODAL PAGE END === */
-    .modal-page-end { margin: 72px 0 0; }
+    .modal-page-end { margin: 72px -8px -24px; padding: 0 8px; background: #060606; }
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 0; gap: 8px;
     }
     .modal-page-end .page-links__label {
       font-size: 11px; font-weight: 500; letter-spacing: 0.48px;
-      text-transform: uppercase; color: #000;
+      text-transform: uppercase; color: #fff;
       display: inline-flex; align-items: center; gap: 5px;
       transition: opacity .15s; cursor: pointer;
     }
     .modal-page-end .page-links__all {
       font-family:'HW Left Bold', sans-serif;
       font-size: 11px; font-weight: bold; letter-spacing: 0.48px;
-      text-transform: uppercase; color: #000;
+      text-transform: uppercase; color: #fff;
       display: inline-flex; align-items: center; gap: 5px;
       transition: opacity .15s; cursor: pointer;
     }
     .modal-page-end .page-links__label:hover,
     .modal-page-end .page-links__all:hover { opacity: .7; }
-    .modal-page-end .page-links__client { display: inline; margin-left: 16px; font-weight: 400; color: #000; text-transform: none; letter-spacing: 0; }
+    .modal-page-end .page-links__client { display: inline; margin-left: 16px; font-weight: 400; color: #fff; text-transform: none; letter-spacing: 0; }
+
+    /* === MODAL MORE PROJECTS === */
+    .modal-more-projects { margin: 8px 0 0; padding-bottom: 16px; }
+    .modal-more-projects__grid { display: flex; flex-direction: column; }
+    @media (min-width:1024px) {
+      .modal-page-end { margin: 72px -16px -24px; padding: 0 16px; }
+      .modal-more-projects { margin: 8px 0 0; }
+      .modal-more-projects__grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .modal-proj-card__body { grid-template-columns: auto 1fr auto; column-gap: 80px; padding: 8px 0 0; }
+      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; max-width: 280px; }
+      .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
+      .modal-close-bar {
+        z-index: 199;
+        height: calc(5vh + 48px);
+        background: linear-gradient(to bottom, #000 5vh, transparent 100%);
+        backdrop-filter: none; -webkit-backdrop-filter: none;
+        align-items: center;
+        padding-bottom: 48px;
+      }
+      .modal-close-bar::after { display: none; }
+    }
+    .modal-proj-card {
+      display: flex; flex-direction: column;
+      cursor: pointer; color: inherit; text-decoration: none;
+      background: none; border: none; font-family: inherit; text-align: left;
+      position: relative; will-change: transform, opacity;
+    }
+    .modal-proj-card + .modal-proj-card .modal-proj-card__img { margin-top: 8px; }
+    .modal-proj-card__img {
+      width: 100%; height: 55vh;
+      border-radius: 4px; overflow: hidden;
+      background: #141414; position: relative; z-index: 2; will-change: transform, opacity;
+    }
+    .modal-proj-card__img img,
+    .modal-proj-card__img video {
+      width: 100%; height: 130%; object-fit: cover; display: block; will-change: transform;
+    }
+    .modal-proj-card__img video { display: none; }
+    .modal-proj-card__img video[src]:not([src=""]) { display: block; }
+    .modal-proj-card__body {
+      background: #141414; border-radius: 4px;
+      padding: 4px 8px; aspect-ratio: 4/3;
+      position: relative; z-index: 1; margin-top: 16px; will-change: transform, opacity;
+      display: flex; flex-direction: column;
+    }
+    .modal-proj-card__year { font-size: 11px; font-weight: 500; color: #989898; letter-spacing: 0.48px; text-transform: uppercase; }
+    .modal-proj-card__client { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.3; margin-top: auto; }
+    .modal-proj-card__title { font-size: 14px; font-weight: 400; color: #989898; margin-top: 4px; line-height: 1.3; }
+    .modal-proj-card__footer { display: flex; align-items: baseline; gap: 6px; margin-top: auto; }
+    .modal-proj-card__view {
+      font-family: 'HW Left Bold', sans-serif;
+      font-size: 11px; font-weight: bold; letter-spacing: 0.48px;
+      text-transform: uppercase; color: #989898;
+      display: flex; align-items: baseline; gap: 5px;
+    }
+    .modal-proj-card__view .arrow-icon { display: inline-flex; align-self: center; transition: transform .2s ease, color .2s ease; }
+    .modal-proj-card:hover .modal-proj-card__view .arrow-icon { transform: translate(3px,-3px); color: #fff; }
+    /* Tablet: 2-column grid, portrait images, transparent body grid */
+    @media (min-width: 640px) {
+      .modal-more-projects__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; row-gap: 16px; }
+      .modal-proj-card + .modal-proj-card .modal-proj-card__img { margin-top: 0; }
+      .modal-proj-card__img { height: auto; aspect-ratio: 3/4; }
+      .modal-proj-card__img img,
+      .modal-proj-card__img video { height: 130%; }
+      .modal-proj-card__body {
+        background: none; border-radius: 0; aspect-ratio: auto; margin-top: 8px; padding: 8px 0 0;
+        display: grid; grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 2px; align-items: start;
+      }
+      .modal-proj-card__year { grid-column: 1; grid-row: 2; }
+      .modal-proj-card__client { grid-column: 1; grid-row: 1; margin-top: 0; }
+      .modal-proj-card__title { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+      .modal-proj-card__footer { grid-column: 1; grid-row: 3; margin-top: 0; }
+      .modal-proj-card__view .view-text { display: none; }
+      /* first card: full-width landscape, same on tablet and desktop */
+      .modal-proj-card:first-child { grid-column: 1 / -1; }
+      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; }
+    }
+    /* Desktop overrides for modal cards — must come after the 640px block */
+    @media (min-width:1024px) {
+      .modal-more-projects__grid { gap: 16px; row-gap: 32px; }
+      .modal-proj-card__img { aspect-ratio: 3/4; }
+      .modal-proj-card__body { column-gap: 80px; }
+      .modal-proj-card__title { max-width: 280px; }
+      .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
+    }
 
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
@@ -759,12 +845,12 @@
       .cv-section         { min-height:calc(100dvh - 8px); }
       .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:8px; padding-right:8px; }
-      .cta-footer-box     { order:12; display:flex; flex-direction:column; min-height:100svh; }
+      .cta-footer-box     { order:12; display:flex; flex-direction:column; }
       .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
       .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
-      .footer-bottom      { position:relative; margin-top:100px; z-index:0; pointer-events:none; }
-      .footer-name        { margin-bottom:-79px; }
+      .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
+      .footer-name        { margin-bottom:-24px; }
       .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
       .footer-grid        { position:relative; z-index:1; }
       .footer-legal       { position:relative; z-index:1; margin-top:auto; }
@@ -894,8 +980,8 @@
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
       .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #060606); }
       .articles-section:not(.at-end)::after { opacity:1; }
-      .articles-section__label { padding-left:0; padding-right:0; }
-      .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:-8px; }
+      .articles-section__label { padding-left:0; padding-right:0; margin-bottom:16px; }
+      .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:0; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .cv-awards-grid { column-gap:16px; }
       .cv-card--archive { display:block; height:420px; aspect-ratio:unset; margin-top:8px; }
@@ -917,28 +1003,43 @@
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
-      .modal-backdrop.is-active { backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.4); }
-      .modal-close-bar { background:rgba(0,0,0,0.35); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+      .modal-backdrop.is-active { background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+      .modal-close-bar { background:linear-gradient(to bottom,#000 60%,transparent 100%); backdrop-filter:none; -webkit-backdrop-filter:none; }
+      .modal-close-bar::after { display:none; }
     }
 
     /* === LOADING SCREEN === */
     .loading-screen {
       position:fixed; inset:0; z-index:9999;
       background:#060606;
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none;
-      transition:opacity 0.5s cubic-bezier(.4,0,.2,1);
+      opacity:1; pointer-events:auto;
+      transition:opacity 0.75s cubic-bezier(.4,0,.2,1);
     }
-    .loading-screen.is-visible { opacity:1; pointer-events:auto; }
-    .loading-label {
+    .loading-screen.is-out { opacity:0; pointer-events:none; }
+    .loading-phrase {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-family:'DM Sans', sans-serif;
+      font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.5;
+      color:#fff; text-align:center;
+      max-width:min(480px,80vw);
+      opacity:0; transition:opacity 0.6s ease;
+    }
+    .loading-phrase.is-in { opacity:1; }
+    .loading-counter {
+      position:absolute; display:flex; align-items:flex-start;
+      pointer-events:none;
+      transition:left 1.4s cubic-bezier(.16,1,.3,1), top 1.4s cubic-bezier(.16,1,.3,1), opacity 0.4s;
+    }
+    .loading-cur-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
       font-family:'HW Left Bold', sans-serif;
-      font-size:13px; font-weight:bold; letter-spacing:0.02em;
-      background:linear-gradient(90deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.25) 35%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.25) 65%,rgba(255,255,255,0.25) 100%);
-      background-size:300% 100%;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      animation:shimmerText 1.6s linear infinite;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:2px;
     }
-    @keyframes shimmerText { 0%{background-position:150% 0} 100%{background-position:-150% 0} }
 
     /* === SWIPE HINT === */
     @keyframes swipeUpHint {
@@ -986,18 +1087,78 @@
 
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
-    <span class="loading-label">Loading</span>
+    <div class="loading-phrase" id="loadingPhrase"></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
   </div>
   <script>
   (function() {
-    var screen = document.getElementById('loadingScreen');
-    screen.classList.add('is-visible');
-    function hide() {
-      screen.style.opacity = '0';
-      screen.style.pointerEvents = 'none';
-      setTimeout(function() { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
+    var phrases = [
+      "Design isn\u2019t decoration\u2014\nit serves a purpose.",
+      "I make complexity\neasy to understand.",
+      "Consistency is key.",
+      "I reduce noise\nto what matters."
+    ];
+    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
+    var overlay = document.getElementById('loadingScreen');
+    var phraseEl = document.getElementById('loadingPhrase');
+    var counterEl = document.getElementById('loadingCounter');
+    var countEl = document.getElementById('loadingCount');
+
+    phraseEl.innerHTML = phrase.replace(/\n/g, '<br>');
+    setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
+
+    // Move cursor around the phrase text box
+    var moveTimer = null;
+    function moveCursor() {
+      var rect = phraseEl.getBoundingClientRect();
+      if (!rect.width) return;
+      var pad = 72, gap = 36, side = Math.floor(Math.random() * 4), x, y;
+      if (side === 0) { x = rect.left + Math.random() * rect.width; y = rect.top - gap - Math.random() * pad; }
+      else if (side === 1) { x = rect.right + gap + Math.random() * pad; y = rect.top + Math.random() * rect.height; }
+      else if (side === 2) { x = rect.left + Math.random() * rect.width; y = rect.bottom + gap + Math.random() * pad; }
+      else { x = rect.left - 90 - Math.random() * pad; y = rect.top + Math.random() * rect.height; }
+      x = Math.max(4, Math.min(window.innerWidth - 90, x));
+      y = Math.max(4, Math.min(window.innerHeight - 20, y));
+      counterEl.style.left = x + 'px';
+      counterEl.style.top  = y + 'px';
+      moveTimer = setTimeout(moveCursor, 1200 + Math.random() * 800);
     }
-    window.__loaderDone = function() { setTimeout(hide, 300); };
+    // Start at top-left of phrase, then begin wandering
+    counterEl.style.transition = 'none';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        var rect = phraseEl.getBoundingClientRect();
+        counterEl.style.left = rect.left + 'px';
+        counterEl.style.top  = (rect.top - 18) + 'px';
+        counterEl.style.transition = '';
+        setTimeout(moveCursor, 1000);
+      });
+    });
+
+    // Increment counter 0→100
+    var start = performance.now(), dur = 1800;
+    function tick(now) {
+      var pct = Math.min(100, Math.round(((now - start) / dur) * 100));
+      countEl.textContent = pct;
+      if (pct < 100) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Exit: phrase fades out, then overlay dissolves
+    var minDone = false, apiFetched = false;
+    function tryExit() {
+      if (!minDone || !apiFetched) return;
+      if (moveTimer) clearTimeout(moveTimer);
+      phraseEl.style.transition = 'opacity 0.4s ease';
+      phraseEl.style.opacity = '0';
+      counterEl.style.opacity = '0';
+      setTimeout(function() {
+        overlay.classList.add('is-out');
+        setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 800);
+      }, 450);
+    }
+    setTimeout(function() { minDone = true; tryExit(); }, 1600);
+    window.__loaderDone = function() { apiFetched = true; tryExit(); };
   })();
   </script>
 
@@ -1018,7 +1179,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -1345,7 +1506,7 @@
             <a href="mailto:hello@janagramlich.com" class="footer-email">hello@janagramlich.com</a>
           </div>
         </div>
-        <p class="footer-vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" stroke-linejoin="round"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude Code</span></span></p>
+        <p class="footer-vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is vibe coded<br>with Claude Code</span></span></p>
         <div class="footer-bottom">
           <img src="images/logo.svg" alt="Logo" class="footer-logo">
           <p class="footer-name"><span>J</span><span>a</span><span>n</span><span>a</span><span>.</span></p>
@@ -2174,7 +2335,7 @@ quoteText.textContent = '“' + q.text + '”';
       } else {
         heroImg.style.display = 'none'; heroVid.style.display = 'none';
       }
-      document.getElementById('modal-client').textContent = p.client;
+      document.getElementById('modal-client').textContent = p.name;
       document.getElementById('modal-year').textContent   = p.year || '';
       const arrowEl = document.getElementById('modal-header-arrow');
       if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
@@ -2209,11 +2370,32 @@ quoteText.textContent = '“' + q.text + '”';
       const nextKey = getNextProjectKey(key);
       const nextP   = nextKey ? PROJECTS[nextKey] : null;
 
+      // Build project cards for all projects except the current one
+      const otherKeys = Object.keys(WP_PROJECT_IDS).filter(k => k !== key);
+      const arrowSvg = `<svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+      const cardsHtml = otherKeys.map(k => {
+        const p2 = PROJECTS[k] || PROJECTS_FALLBACK[k]; if (!p2) return '';
+        const titleEl = document.querySelector(`.work-item[data-project="${k}"] .work-item__title`);
+        const title = titleEl ? titleEl.textContent : '';
+        const hasVid = p2.heroVideo ? `src="${p2.heroVideo}"` : '';
+        return `<button class="modal-proj-card" data-key="${k}">` +
+          `<div class="modal-proj-card__img">` +
+            `<img src="${p2.hero}" alt="${p2.client}" loading="lazy" style="${p2.heroVideo ? 'display:none' : ''}">` +
+            `<video autoplay muted loop playsinline ${hasVid} style="${p2.heroVideo ? '' : 'display:none'}"></video>` +
+          `</div>` +
+          `<div class="modal-proj-card__body">` +
+            `<span class="modal-proj-card__year">${p2.year}</span>` +
+            `<p class="modal-proj-card__client">${p2.client}</p>` +
+            `<p class="modal-proj-card__title">${title}</p>` +
+            `<div class="modal-proj-card__footer"><span class="modal-proj-card__view"><span class="view-text">View project </span><span class="arrow-icon">${arrowSvg}</span></span></div>` +
+          `</div></button>`;
+      }).join('');
+
       const pageEnd = document.createElement('div');
       pageEnd.className = 'modal-page-end';
       pageEnd.innerHTML =
         `<div class="page-links">` +
-          `<span class="page-links__label">Next Up${nextP ? `<span class="page-links__client">${nextP.client}</span>` : ''}</span>` +
+          `<span class="page-links__label">Next Up</span>` +
           `<button class="page-links__all">View All Projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>` +
         `</div>` +
         '';
@@ -2591,7 +2773,7 @@ quoteText.textContent = '“' + q.text + '”';
                 if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
                 if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
               }
-              if (clientEl && p.client) clientEl.textContent = p.client;
+              if (clientEl && p.name) clientEl.textContent = p.name;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
               // tile description kept as static HTML (curated summaries)
             }
@@ -2710,11 +2892,16 @@ quoteText.textContent = '“' + q.text + '”';
       }).catch(() => { slider.innerHTML = ''; });
     })();
 
-    // === JANA LOGO CLICK ANIMATION ===
+    // === JANA FOOTER ANIMATION ===
     (() => {
       const logo = document.querySelector('.footer-logo');
       const jana = document.querySelector('.footer-name');
       if (!logo || !jana) return;
+      // Entrance: slide letters in from right when footer enters viewport
+      new IntersectionObserver((entries, obs) => {
+        if (entries[0].isIntersecting) { jana.classList.add('jana-in'); obs.disconnect(); }
+      }, { threshold: 0.1 }).observe(jana);
+      // Exit: click logo to fly letters out
       logo.addEventListener('click', () => {
         if (jana.classList.contains('jana-animate')) return;
         jana.classList.add('jana-animate');
@@ -2743,6 +2930,24 @@ quoteText.textContent = '“' + q.text + '”';
     }
     window.addEventListener('scroll', updateTileParallax, { passive: true });
     updateTileParallax();
+
+    // Also run parallax when modal scrolls (modal cards use same image structure)
+    function updateModalParallax() {
+      const vh = window.innerHeight;
+      document.querySelectorAll('.modal-proj-card__img').forEach(container => {
+        const img = container.querySelector('video[src]:not([src=""])') || container.querySelector('img');
+        if (!img) return;
+        const rect = container.getBoundingClientRect();
+        const extra = rect.height * 0.30;
+        const center = -extra / 2;
+        const ratio  = (rect.top + rect.height / 2) / vh - 0.5;
+        const raw    = center + (window.innerWidth >= 640 ? -1 : 1) * ratio * extra * 0.8;
+        const shift  = Math.max(-extra, Math.min(0, raw));
+        img.style.transform = `translateY(${shift}px)`;
+      });
+    }
+    document.getElementById('projectModal')?.querySelector('.modal__scroll')
+      ?.addEventListener('scroll', updateModalParallax, { passive: true });
 
     // === ARCHIVE MINI CANVAS ===
     (function() {
