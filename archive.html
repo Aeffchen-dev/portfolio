@@ -393,7 +393,7 @@
     const CANDIDATES = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png');
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07];
+    const COL_PAR  = [1, 1, 1, 1, 1, 1, 1, 1];
     const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5];
 
     const DEFS = [];
@@ -462,9 +462,9 @@
     let dragging = false;
     let lastX = 0, lastY = 0, lastT = 0;
 
-    const MAX_V = 18;    // velocity cap — prevents runaway flicks
-    const FRICTION = 0.95; // friction applied to excess above drift ("stop later")
-    const DRIFT_VX = 0.12, DRIFT_VY = 0.22; // idle drift — VX high enough all columns cycle
+    const MAX_V = 35;
+    const FRICTION = 0.95;
+    const DRIFT_VX = 0.15, DRIFT_VY = 0.15;
 
     function tilePos(t) {
       const cx = CW / 2;
