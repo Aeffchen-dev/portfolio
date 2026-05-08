@@ -462,7 +462,11 @@
     let dragging = false;
     let lastX = 0, lastY = 0, lastT = 0;
 
-    // Auto-drift: slow diagonal pan when idle
+    const MAX_V = 18; // velocity cap — prevents runaway flicks
+    const FRICTION = 0.92; // smoother deceleration curve
+    const DRIFT_BLEND = 0.006; // rate at which idle velocity fades into drift
+
+    // Auto-drift: slow vertical pan when idle
     const DRIFT_VX = 0.06, DRIFT_VY = 0.22;
     let isAutoDrifting = true;
     let driftResumeTimer = null;
@@ -499,13 +503,13 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.88; vy *= 0.88;
-        if (Math.abs(vx) < 0.01) vx = 0;
-        if (Math.abs(vy) < 0.01) vy = 0;
-        if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
-          ox += DRIFT_VX;
-          oy += DRIFT_VY;
-        }
+        vx *= FRICTION; vy *= FRICTION;
+        // Gradually blend toward drift so stop feels continuous, not snapped
+        if (isAutoDrifting) {
+          vx += (DRIFT_VX - vx) * DRIFT_BLEND;
+          vy += (DRIFT_VY - vy) * DRIFT_BLEND;
+        } else if (Math.abs(vx) < 0.005) { vx = 0; }
+        if (!isAutoDrifting && Math.abs(vy) < 0.005) { vy = 0; }
       }
       requestAnimationFrame(render);
     }
@@ -530,8 +534,8 @@
       const dt = Math.max(performance.now() - lastT, 1);
       dragDist += Math.sqrt(dx * dx + dy * dy);
       const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
-      vx = rawVx * 0.6 + vx * 0.4;
-      vy = rawVy * 0.6 + vy * 0.4;
+      vx = Math.max(-MAX_V, Math.min(MAX_V, rawVx * 0.6 + vx * 0.4));
+      vy = Math.max(-MAX_V, Math.min(MAX_V, rawVy * 0.6 + vy * 0.4));
       ox += dx; oy += dy;
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
     });
@@ -541,12 +545,14 @@
     });
     canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
 
-    // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
+    // Wheel / trackpad — scale by deltaMode: LINE=mouse wheel (needs dampening), PIXEL=trackpad (precise)
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
+      pauseDrift();
       _lastInteraction = performance.now();
-      vx = -e.deltaX * 0.6 + vx * 0.4;
-      vy = -e.deltaY * 0.6 + vy * 0.4;
+      const scale = e.deltaMode === 1 ? 0.25 : 0.10; // mouse wheel vs trackpad pixel deltas
+      vx = Math.max(-MAX_V, Math.min(MAX_V, -e.deltaX * scale + vx * 0.75));
+      vy = Math.max(-MAX_V, Math.min(MAX_V, -e.deltaY * scale + vy * 0.75));
     }, { passive: false });
 
     render();

@@ -3002,6 +3002,7 @@ quoteText.textContent = '“' + q.text + '”';
         });
 
         const AUTO_VX = 0.06, AUTO_VY = 0.22; // constant auto drift
+        const MINI_MAX_V = 18, MINI_FRICTION = 0.92, MINI_BLEND = 0.006;
         let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
@@ -3019,18 +3020,19 @@ quoteText.textContent = '“' + q.text + '”';
           });
           if (!dragging) {
             ox += vx; oy += vy;
-            // ease velocity back towards auto-drift speed after manual interaction
-            vx += (AUTO_VX - vx) * 0.015;
-            vy += (AUTO_VY - vy) * 0.015;
+            vx *= MINI_FRICTION; vy *= MINI_FRICTION;
+            vx += (AUTO_VX - vx) * MINI_BLEND;
+            vy += (AUTO_VY - vy) * MINI_BLEND;
           }
           requestAnimationFrame(render);
         }
 
-        // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
+        // Wheel / trackpad — scale by deltaMode: LINE=mouse wheel, PIXEL=trackpad
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          vx = -e.deltaX * 0.6 + vx * 0.4;
-          vy = -e.deltaY * 0.6 + vy * 0.4;
+          const scale = e.deltaMode === 1 ? 0.25 : 0.10;
+          vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaX * scale + vx * 0.75));
+          vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, -e.deltaY * scale + vy * 0.75));
         }, { passive: false });
 
         // Drag (mobile/tablet only)
@@ -3044,7 +3046,8 @@ quoteText.textContent = '“' + q.text + '”';
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
           const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
-          vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
+          vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVx * 0.6 + vx * 0.4));
+          vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVy * 0.6 + vy * 0.4));
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
         mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
