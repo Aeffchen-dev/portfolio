@@ -499,7 +499,7 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.95; vy *= 0.95;
+        vx *= 0.88; vy *= 0.88;
         if (Math.abs(vx) < 0.01) vx = 0;
         if (Math.abs(vy) < 0.01) vy = 0;
         if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
