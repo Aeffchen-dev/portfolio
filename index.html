@@ -3001,7 +3001,7 @@ quoteText.textContent = '“' + q.text + '”';
           return Object.assign({}, def, { el });
         });
 
-        const AUTO_VX = 0.06, AUTO_VY = 0.20; // constant auto drift
+        const AUTO_VX = 0.18, AUTO_VY = 0.60; // constant auto drift
         let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
 
         function tilePos(t) {
