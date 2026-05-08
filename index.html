@@ -306,6 +306,8 @@
       position:absolute; inset:0;
       overflow:hidden; border-radius:4px;
       cursor:pointer;
+      touch-action:none;
+      user-select:none; -webkit-user-select:none;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
@@ -3035,23 +3037,37 @@ quoteText.textContent = '“' + q.text + '”';
         }, { passive: false });
 
 
-        // Drag (mobile/tablet only)
-        mini.addEventListener('pointerdown', e => {
-          if (window.innerWidth >= 1024) return;
-          dragging = true; mini.classList.add('is-dragging');
-          lx = e.clientX; ly = e.clientY; lt = performance.now();
-          vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
-        });
-        mini.addEventListener('pointermove', e => {
+        // Drag — touch events for iOS (pointer events unreliable on canvas in iOS Safari)
+        function _miniMove(x, y) {
           if (!dragging) return;
-          const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
+          const dx = x - lx, dy = y - ly, dt = Math.max(performance.now() - lt, 1);
           const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
           vx = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVx * 0.6 + vx * 0.4));
           vy = Math.max(-MINI_MAX_V, Math.min(MINI_MAX_V, rawVy * 0.6 + vy * 0.4));
-          ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
+          ox += dx; oy += dy; lx = x; ly = y; lt = performance.now();
+        }
+        function _miniEnd() { dragging = false; mini.classList.remove('is-dragging'); }
+
+        mini.addEventListener('touchstart', e => {
+          e.preventDefault();
+          dragging = true; mini.classList.add('is-dragging');
+          lx = e.touches[0].clientX; ly = e.touches[0].clientY; lt = performance.now();
+          vx = 0; vy = 0;
+        }, { passive: false });
+        mini.addEventListener('touchmove', e => {
+          e.preventDefault();
+          _miniMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        mini.addEventListener('touchend', _miniEnd);
+        mini.addEventListener('touchcancel', _miniEnd);
+
+        mini.addEventListener('mousedown', e => {
+          dragging = true; mini.classList.add('is-dragging');
+          lx = e.clientX; ly = e.clientY; lt = performance.now();
+          vx = 0; vy = 0;
         });
-        mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
-        mini.addEventListener('pointercancel', () => { dragging = false; mini.classList.remove('is-dragging'); });
+        window.addEventListener('mousemove', e => { _miniMove(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', _miniEnd);
 
         render();
       }
