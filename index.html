@@ -767,12 +767,12 @@
       display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
     }
     .block-stat__value {
-      display:block; font-size:11px; font-weight:400;
-      color:#111; line-height:1.3;
+      display:block; font-size:clamp(48px,12vw,80px); font-weight:400;
+      color:#111; line-height:1; letter-spacing:-0.02em;
     }
     .block-stat__label {
-      display:block; font-size:14px; font-weight:400;
-      color:#111; margin-top:2px;
+      display:block; font-size:11px; font-weight:400;
+      color:#111; margin-top:8px;
     }
 
     /* === PROJECT INFO & LINKS === */
