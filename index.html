@@ -197,6 +197,12 @@
     }
     .work-item__image img,
     .work-item__image video { width:100%; height:130%; object-fit:cover; will-change:transform; }
+    .work-item__image::before {
+      content:attr(data-client); position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-size:clamp(1.5rem,3vw,2.5rem); font-weight:500;
+      color:#1e1e1e; letter-spacing:-0.02em; pointer-events:none; white-space:nowrap;
+    }
     .work-item__body {
       background:#141414; border-radius:4px;
       padding:8px; aspect-ratio:4/3;
@@ -650,7 +656,7 @@
       </div>
     </div>
     <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
-      <div class="work-item__image">
+      <div class="work-item__image" data-client="Douglas">
         <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
         <video autoplay muted loop playsinline style="display:none"></video>
       </div>
@@ -665,7 +671,7 @@
     </article>
     <div class="work-list">
       <article class="work-item" data-project="about-you">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="About You">
           <img src="https://cms.janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -679,7 +685,7 @@
         </div>
       </article>
       <article class="work-item" data-project="dmexco">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="DMEXCO">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -693,7 +699,7 @@
         </div>
       </article>
       <article class="work-item" data-project="zalando">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="Zalando">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -707,7 +713,7 @@
         </div>
       </article>
       <article class="work-item" data-project="the-makery">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="The Makery">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -721,7 +727,7 @@
         </div>
       </article>
       <article class="work-item" data-project="douglas-hybrid">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="Douglas">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -1857,6 +1863,8 @@
               }
               if (clientEl && p.client) clientEl.textContent = p.client;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
+              const imgContainer = tile.querySelector('.work-item__image');
+              if (imgContainer && p.client) imgContainer.dataset.client = p.client;
               // tile description kept as static HTML (curated summaries)
             }
             if (key === 'about-you') {
@@ -1867,6 +1875,12 @@
         })
       );
     })();
+
+    // === WORK ITEM IMAGE ERROR HANDLING ===
+    document.querySelectorAll('.work-item__image img').forEach(img => {
+      img.onerror = () => { img.style.display = 'none'; };
+      if (img.complete && img.naturalHeight === 0 && img.src) img.style.display = 'none';
+    });
 
     // === TILE PARALLAX ===
     function updateTileParallax() {
