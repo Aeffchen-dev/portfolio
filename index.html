@@ -265,6 +265,12 @@
     }
     .work-item__image img,
     .work-item__image video { width:100%; height:130%; object-fit:cover; will-change:transform; }
+    .work-item__image::before {
+      content:attr(data-client); position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-size:clamp(1.5rem,3vw,2.5rem); font-weight:500;
+      color:#1e1e1e; letter-spacing:-0.02em; pointer-events:none; white-space:nowrap;
+    }
     .work-item__body {
       background:#141414; border-radius:4px;
       padding:8px; aspect-ratio:4/3;
@@ -757,6 +763,18 @@
     .block-video-mp4 video { width:100%; height:auto; display:block; }
     .block-figma { background:#e8e8e8; position:relative; overflow:hidden; }
     .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+    .block-stats {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      padding:8px 0; border-top:1px solid rgba(0,0,0,.08);
+    }
+    .block-stat__value {
+      display:block; font-size:14px; font-weight:500; color:#111; line-height:1.3;
+    }
+    .block-stat__label {
+      display:block; font-size:11px; font-weight:500;
+      letter-spacing:0.48px; text-transform:uppercase; color:rgba(0,0,0,.4);
+      margin-top:4px;
+    }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -1206,7 +1224,7 @@
       </div>
     </div>
     <article class="work-item work-item--hero-side" data-project="douglas-premium-relaunch">
-      <div class="work-item__image">
+      <div class="work-item__image" data-client="Douglas">
         <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header-1.jpg" alt="Douglas Premium Relaunch" loading="lazy">
         <video autoplay muted loop playsinline style="display:none"></video>
       </div>
@@ -1221,7 +1239,7 @@
     </article>
     <div class="work-list">
       <article class="work-item" data-project="about-you">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="About You">
           <img src="https://cms.janagramlich.com/wp-content/uploads/753805-men-streetwear-accessories-06-scaled.jpg" alt="About You Design System" loading="eager">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -1235,7 +1253,7 @@
         </div>
       </article>
       <article class="work-item" data-project="dmexco">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="DMEXCO">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header2.jpg" alt="DMEXCO" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -1249,7 +1267,7 @@
         </div>
       </article>
       <article class="work-item" data-project="zalando">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="Zalando">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Bildschirmfoto-2025-08-27-um-16.53.19.png" alt="Connected Retail by Zalando" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -1263,7 +1281,7 @@
         </div>
       </article>
       <article class="work-item" data-project="the-makery">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="The Makery">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Header-the-makery.jpg" alt="The Makery" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -1277,7 +1295,7 @@
         </div>
       </article>
       <article class="work-item" data-project="douglas-hybrid">
-        <div class="work-item__image">
+        <div class="work-item__image" data-client="Douglas">
           <img src="https://cms.janagramlich.com/wp-content/uploads/Dgls-hybrid-Header.jpg" alt="Douglas Hybrid App" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
@@ -2143,7 +2161,8 @@ quoteText.textContent = '“' + q.text + '”';
         links:[{t:'Visit the Website',u:'https://themakery.de'}],
       },
     };
-    // PROJECTS_FALLBACK kept for reference only — not seeded into PROJECTS
+    // Pre-seed with fallback so modal always opens; overwritten when CMS loads
+    Object.assign(PROJECTS, PROJECTS_FALLBACK);
 
     // === MODAL HELPERS ===
     // media[] items: string = image filename (prefixed with BASE)
@@ -2342,6 +2361,18 @@ quoteText.textContent = '“' + q.text + '”';
       else { arrowEl.style.display = 'none'; }
       document.getElementById('modal-desc').innerHTML   = p.text || '';
       document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
+      if (key === 'douglas-hybrid') {
+        const grid = document.getElementById('modal-blocks');
+        const statsHtml =
+          '<div class="block block-stats">' +
+            '<div><span class="block-stat__value">40%</span><span class="block-stat__label">Faster time to market</span></div>' +
+            '<div><span class="block-stat__value">+15%</span><span class="block-stat__label">App Share</span></div>' +
+            '<div><span class="block-stat__value">Mobile only</span></div>' +
+          '</div>';
+        const fifth = grid.children[4];
+        if (fifth) fifth.insertAdjacentHTML('afterend', statsHtml);
+        else grid.insertAdjacentHTML('beforeend', statsHtml);
+      }
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
@@ -2775,6 +2806,8 @@ quoteText.textContent = '“' + q.text + '”';
               }
               if (clientEl && p.name) clientEl.textContent = p.name;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
+              const imgContainer = tile.querySelector('.work-item__image');
+              if (imgContainer && p.client) imgContainer.dataset.client = p.client;
               // tile description kept as static HTML (curated summaries)
             }
             if (key === 'about-you') {
@@ -2909,6 +2942,12 @@ quoteText.textContent = '“' + q.text + '”';
         lastSpan.addEventListener('animationend', () => jana.classList.remove('jana-animate'), { once: true });
       });
     })();
+
+    // === WORK ITEM IMAGE ERROR HANDLING ===
+    document.querySelectorAll('.work-item__image img').forEach(img => {
+      img.onerror = () => { img.style.display = 'none'; };
+      if (img.complete && img.naturalHeight === 0 && img.src) img.style.display = 'none';
+    });
 
     // === TILE PARALLAX ===
     function updateTileParallax() {
