@@ -1558,7 +1558,8 @@
         links:[{t:'Visit the Website',u:'https://themakery.de'}],
       },
     };
-    // PROJECTS_FALLBACK kept for reference only — not seeded into PROJECTS
+    // Pre-seed with fallback so modal always opens; overwritten when CMS loads
+    Object.assign(PROJECTS, PROJECTS_FALLBACK);
 
     // === MODAL HELPERS ===
     // media[] items: string = image filename (prefixed with BASE)
