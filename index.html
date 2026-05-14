@@ -2438,10 +2438,6 @@ quoteText.textContent = '“' + q.text + '”';
       const bg = p.bg || '#f2f2f2';
       modal.querySelector('.modal__scroll').style.background = bg;
       modal.querySelector('.page-header').style.background   = bg;
-      if (window.innerWidth < 640) {
-        document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
-        document.body.style.backgroundColor = bg;
-      }
       modal.querySelector('.modal__scroll').scrollTop = 0;
       currentProjectKey = key;
       injectNextBtn(key);
@@ -2537,10 +2533,6 @@ quoteText.textContent = '“' + q.text + '”';
           const col = lerpHex(dragStartBg, nextBg, prog);
           scrollEl.style.background = col;
           scrollEl.closest('.modal').querySelector('.page-header').style.background = col;
-          if (window.innerWidth < 640) {
-            document.body.style.transition = 'none';
-            document.body.style.backgroundColor = col;
-          }
         }
       }
 
@@ -2597,10 +2589,6 @@ quoteText.textContent = '“' + q.text + '”';
       document.getElementById('projectModal').style.visibility = 'hidden';
 
       const bg = p.bg || '#f2f2f2';
-      if (window.innerWidth < 640) {
-        document.body.style.transition = 'background-color 0.5s cubic-bezier(.4,0,.2,1)';
-        document.body.style.backgroundColor = bg;
-      }
 
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
@@ -2706,12 +2694,6 @@ quoteText.textContent = '“' + q.text + '”';
       _openedByHover = false;
       _hoverAllowAfter = Date.now() + 800;
       closeNav();
-      if (window.innerWidth < 640) {
-        document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
-        document.body.style.backgroundColor = '#000';
-      } else {
-        document.body.style.backgroundColor = '';
-      }
       modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
       modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
       modal.addEventListener('transitionend', () => {
@@ -2754,12 +2736,6 @@ quoteText.textContent = '“' + q.text + '”';
         backdrop.style.transition = 'background 0.25s cubic-bezier(0,0,0.2,1)';
         closeBar.classList.remove('is-active');
         backdrop.classList.remove('is-active');
-        if (window.innerWidth < 640) {
-          document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
-          document.body.style.backgroundColor = '#000';
-        } else {
-          document.body.style.backgroundColor = '';
-        }
         modalEl.style.transition = 'transform .35s cubic-bezier(0,0,0.2,1)';
         modalEl.style.transform  = `${tx()}translateY(${window.innerHeight}px)`;
         modalEl.addEventListener('transitionend', () => {
