@@ -710,31 +710,35 @@
     .modal-next-reveal {
       position: relative; overflow: hidden; cursor: pointer;
       background: #1a1a1a; height: 55vh; min-height: 55vh;
-      margin: 0; border-radius: 4px;
+      margin: 0; border-radius: 12px 12px 4px 4px;
+    }
+    .modal-next-reveal::before {
+      content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 36px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.35); z-index: 2; pointer-events: none;
     }
     .modal-next-reveal__bg {
       position: absolute; inset: 0; opacity: 1;
     }
     .modal-next-reveal__bg img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
+      width: 100%; height: 110%; object-fit: cover; display: block; object-position: center top;
     }
     .modal-next-reveal__bg::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 100%);
+      background: linear-gradient(to top, rgba(0,0,0,.6) 0%, rgba(0,0,0,.05) 60%);
     }
     .modal-next-reveal__inner {
       position: relative; z-index: 1; height: 100%;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      padding: 20px; text-align: center;
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+      padding: 20px;
     }
     .modal-next-reveal__title {
-      font-size: 14px; font-weight: 400;
-      letter-spacing: 0; line-height: 1.3; color: #fff; display: none;
+      font-size: 22px; font-weight: 400;
+      letter-spacing: -0.02em; line-height: 1.2; color: #fff;
     }
     @media (min-width:640px) {
-      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 4px 4px 0 0; }
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 12px 12px 0 0; }
       .modal-next-reveal__bg { opacity: 1; }
-      .modal-next-reveal__inner { display: none; }
       .modal-next-reveal__bg::after { display: none; }
     }
 
@@ -1060,24 +1064,20 @@
       margin-top:-1px; margin-left:2px;
     }
 
-    /* === SWIPE HINT === */
-    @keyframes swipeUpHint {
-      0%,100% { transform:translateY(0); opacity:0.45; }
-      50% { transform:translateY(-5px); opacity:0.85; }
+    /* === NEXT PROJECT CURSOR === */
+    @keyframes nextCursor {
+      0%,100% { transform:translate(-50%,-50%) translateY(0); opacity:0.8; }
+      50%      { transform:translate(-50%,-50%) translateY(-14px); opacity:1; }
     }
-    .modal-next-reveal__hint {
-      display:flex; flex-direction:column; align-items:center; gap:6px;
-      margin-top:10px;
+    .modal-next-cursor {
+      position:absolute; left:50%; top:50%;
+      width:52px; height:52px; border-radius:50%;
+      background:rgba(255,255,255,0.88); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      display:flex; align-items:center; justify-content:center;
+      transform:translate(-50%,-50%);
+      animation:nextCursor 1.8s cubic-bezier(.4,0,.6,1) infinite;
+      pointer-events:none; z-index:2;
     }
-    .modal-next-reveal__hint-arrow {
-      display:block; color:#fff;
-      animation:swipeUpHint 2s ease-in-out infinite;
-    }
-    .modal-next-reveal__hint-label {
-      display:block; font-size:11px; font-weight:500;
-      color:#fff; letter-spacing:0.04em;
-    }
-    @media (min-width:640px) { .modal-next-reveal__hint { display:none; } }
 
     /* === TOUCH: NO HOVER EFFECTS === */
     @media (hover:none) {
@@ -2478,12 +2478,9 @@ quoteText.textContent = '“' + q.text + '”';
           `</div>` +
           `<div class="modal-next-reveal__inner">` +
             `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
-            `<span class="modal-next-reveal__hint" aria-hidden="true">` +
-              `<span class="modal-next-reveal__hint-arrow">` +
-                `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
-              `</span>` +
-              `<span class="modal-next-reveal__hint-label">Swipe up for next</span>` +
-            `</span>` +
+          `</div>` +
+          `<div class="modal-next-cursor" aria-hidden="true">` +
+            `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
           `</div>` +
         `</div>`
       );
