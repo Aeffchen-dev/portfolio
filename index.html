@@ -2340,6 +2340,23 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
+    function animateCountUp(container, durationMs) {
+      container.querySelectorAll('.block-stat__value').forEach(el => {
+        const raw    = el.textContent.trim();
+        const prefix = (raw.match(/^[^\d]*/) || [''])[0];
+        const suffix = (raw.match(/[^\d]*$/) || [''])[0];
+        const target = parseInt(raw.replace(/\D/g, ''), 10);
+        if (!target) return;
+        el.textContent = prefix + '0' + suffix;
+        const t0 = performance.now();
+        (function tick(now) {
+          const p    = Math.min((now - t0) / durationMs, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
+          el.textContent = prefix + Math.round(ease * target) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }
     function fillModalContent(key) {
       const p = PROJECTS[key]; if (!p) return;
       const modal   = document.getElementById('projectModal');
@@ -2371,6 +2388,8 @@ quoteText.textContent = '“' + q.text + '”';
         const fifth = grid.children[4];
         if (fifth) fifth.insertAdjacentHTML('afterend', statsHtml);
         else grid.insertAdjacentHTML('beforeend', statsHtml);
+        const statsEl = grid.querySelector('.block-stats');
+        if (statsEl) animateCountUp(statsEl, 1500);
       }
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
