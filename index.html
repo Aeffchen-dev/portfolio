@@ -733,8 +733,8 @@
       padding: 20px;
     }
     .modal-next-reveal__title {
-      font-size: 22px; font-weight: 400;
-      letter-spacing: -0.02em; line-height: 1.2; color: #fff;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.02em; line-height: 1.2; color: #fff; opacity: 0.75;
     }
     @media (min-width:640px) {
       .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 12px 12px 0 0; }
@@ -1065,18 +1065,24 @@
     }
 
     /* === NEXT PROJECT CURSOR === */
-    @keyframes nextCursor {
-      0%,100% { transform:translate(-50%,-50%) translateY(0); opacity:0.8; }
-      50%      { transform:translate(-50%,-50%) translateY(-14px); opacity:1; }
-    }
     .modal-next-cursor {
-      position:absolute; left:50%; top:50%;
-      width:52px; height:52px; border-radius:50%;
-      background:rgba(255,255,255,0.88); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      display:flex; align-items:center; justify-content:center;
-      transform:translate(-50%,-50%);
-      animation:nextCursor 1.8s cubic-bezier(.4,0,.6,1) infinite;
+      position:absolute; top:35%; left:32%;
       pointer-events:none; z-index:2;
+      animation:figmaCursor 5s ease-in-out infinite;
+    }
+    .modal-next-cursor__tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
+    .modal-next-cursor__mobile { display:block; }
+    .modal-next-cursor__desktop { display:none; }
+    @media (hover:hover) and (pointer:fine) {
+      .modal-next-cursor__mobile { display:none; }
+      .modal-next-cursor__desktop { display:block; }
     }
 
     /* === TOUCH: NO HOVER EFFECTS === */
@@ -2480,7 +2486,11 @@ quoteText.textContent = '“' + q.text + '”';
             `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
           `</div>` +
           `<div class="modal-next-cursor" aria-hidden="true">` +
-            `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
+            `<svg width="12" height="18" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff"/></svg>` +
+            `<span class="modal-next-cursor__tag">` +
+              `<span class="modal-next-cursor__mobile">swipe up for next project</span>` +
+              `<span class="modal-next-cursor__desktop">click for next project</span>` +
+            `</span>` +
           `</div>` +
         `</div>`
       );
