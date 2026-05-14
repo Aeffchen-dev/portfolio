@@ -816,19 +816,7 @@
     }
     .nav-blur.is-active { opacity:1; pointer-events:auto; }
 
-    /* === IMG NAV CURSOR === */
-    .img-cursor {
-      position:fixed; z-index:210; pointer-events:none;
-      width:60px; height:60px; border-radius:50%;
-      background:rgba(0,0,0,0.82); color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      transform:translate(-50%,-50%) scale(0);
-      transition:transform .18s cubic-bezier(.4,0,.2,1), opacity .18s;
-      opacity:0; will-change:transform,left,top;
-    }
-    .img-cursor.is-visible { transform:translate(-50%,-50%) scale(1); opacity:1; }
-    .modal .block-image,
-    .modal .modal__hero { cursor:none; }
+
 
     .modal-backdrop {      position:fixed; inset:0; z-index:199;
       background:transparent;
@@ -3197,58 +3185,5 @@ quoteText.textContent = '“' + q.text + '”';
 
   </script>
 
-  <!-- IMG NAV CURSOR -->
-  <div id="imgCursor" class="img-cursor">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 10H16M16 10L11 5M16 10L11 15"/>
-    </svg>
-  </div>
-
-  <script>
-    // === IMG CURSOR + SWIPE-TO-NEXT ===
-    (function() {
-      const cursor   = document.getElementById('imgCursor');
-      const modalEl  = document.getElementById('projectModal');
-      let cx = 0, cy = 0, rafId = null;
-
-      // Cursor: follow mouse, show only over images inside modal
-      modalEl.addEventListener('mousemove', e => {
-        cx = e.clientX; cy = e.clientY;
-        if (!rafId) rafId = requestAnimationFrame(() => {
-          cursor.style.left = cx + 'px';
-          cursor.style.top  = cy + 'px';
-          rafId = null;
-        });
-        const onImg = !!e.target.closest('.block-image, .modal__hero');
-        cursor.classList.toggle('is-visible', onImg);
-      });
-      modalEl.addEventListener('mouseleave', () => cursor.classList.remove('is-visible'));
-
-      // Click image → next project
-      modalEl.addEventListener('click', e => {
-        if (!e.target.closest('.block-image, .modal__hero')) return;
-        const nextKey = getNextProjectKey(currentProjectKey);
-        if (nextKey && !_isTransitioning) goToNextProject(nextKey);
-      });
-
-      // Touch swipe left on image → next project
-      let sx = 0, sy = 0, st = 0;
-      modalEl.addEventListener('touchstart', e => {
-        if (!e.target.closest('.block-image, .modal__hero')) return;
-        sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
-      }, { passive: true });
-      modalEl.addEventListener('touchend', e => {
-        if (!e.target.closest('.block-image, .modal__hero')) return;
-        const dx = e.changedTouches[0].clientX - sx;
-        const dy = e.changedTouches[0].clientY - sy;
-        if (Date.now() - st > 400 || Math.abs(dx) < 50) return;
-        if (Math.abs(dy) > Math.abs(dx)) return; // vertical — ignore
-        if (dx < 0) { // left swipe → next
-          const nextKey = getNextProjectKey(currentProjectKey);
-          if (nextKey && !_isTransitioning) goToNextProject(nextKey);
-        }
-      }, { passive: true });
-    })();
-  </script>
 </body>
 </html>
