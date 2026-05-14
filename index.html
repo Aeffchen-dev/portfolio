@@ -765,10 +765,10 @@
     .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
     .block-stats {
       display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
-      text-align:center;
+      text-align:center; container-type:inline-size;
     }
     .block-stat__value {
-      display:block; font-size:clamp(48px,12vw,80px); font-weight:400;
+      display:block; font-size:clamp(40px,22cqi,80px); font-weight:400;
       color:#111; line-height:1; letter-spacing:-0.02em;
     }
     .block-stat__label {
@@ -2391,8 +2391,8 @@ quoteText.textContent = '“' + q.text + '”';
       else { arrowEl.style.display = 'none'; }
       document.getElementById('modal-desc').innerHTML   = p.text || '';
       document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
+      const grid = document.getElementById('modal-blocks');
       if (key === 'douglas-hybrid') {
-        const grid = document.getElementById('modal-blocks');
         const statsHtml =
           '<div class="block block-stats">' +
             '<div><span class="block-stat__value" data-count="40" data-prefix="" data-suffix="%">0%</span><span class="block-stat__label">Faster time to market</span></div>' +
@@ -2401,9 +2401,8 @@ quoteText.textContent = '“' + q.text + '”';
         const fifth = grid.children[4];
         if (fifth) fifth.insertAdjacentHTML('afterend', statsHtml);
         else grid.insertAdjacentHTML('beforeend', statsHtml);
-        const statsEl = grid.querySelector('.block-stats');
-        if (statsEl) observeStats(statsEl);
       }
+      grid.querySelectorAll('.block-stats').forEach(s => observeStats(s));
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
@@ -2494,7 +2493,7 @@ quoteText.textContent = '“' + q.text + '”';
       if (revealVid) revealVid.play().catch(() => {});
       const modalEl  = document.getElementById('projectModal');
       const modalH   = scrollEl.clientHeight;
-      const THRESHOLD = modalH * 0.72;
+      const THRESHOLD = modalH * 0.8;
       const EASE     = 'cubic-bezier(.4,0,.2,1)';
       let dragging = false, dragStartY = 0, dragStartH = 0, naturalH = 0, navigating = false;
       let dragStartBg = '';
@@ -2786,63 +2785,6 @@ quoteText.textContent = '“' + q.text + '”';
     document.querySelectorAll('.work-item[data-project]').forEach(item => {
       item.addEventListener('click', () => openModal(item.dataset.project));
     });
-
-    // === SWIPE UP TO OPEN PROJECT ===
-    (function() {
-      document.querySelectorAll('.work-item[data-project]').forEach(item => {
-        let startY = 0, startX = 0, curDy = 0, gestureState = 'idle'; // idle | up | scroll
-
-        item.addEventListener('touchstart', e => {
-          startY = e.touches[0].clientY;
-          startX = e.touches[0].clientX;
-          curDy = 0;
-          gestureState = 'idle';
-          item.style.transition = 'none';
-        }, { passive: true });
-
-        item.addEventListener('touchmove', e => {
-          const dy = e.touches[0].clientY - startY;
-          const dx = e.touches[0].clientX - startX;
-          if (gestureState === 'scroll') return;
-          if (gestureState === 'idle' && (Math.abs(dy) > 8 || Math.abs(dx) > 8)) {
-            gestureState = (dy < 0 && Math.abs(dy) > Math.abs(dx)) ? 'up' : 'scroll';
-            if (gestureState === 'scroll') return;
-          }
-          if (gestureState === 'up') {
-            e.preventDefault();
-            curDy = Math.min(dy, 0);
-            item.style.transform = `translateY(${curDy}px)`;
-          }
-        }, { passive: false });
-
-        function snapBack() {
-          item.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-          item.style.transform  = 'translateY(0)';
-          item.addEventListener('transitionend', () => {
-            item.style.transition = '';
-            item.style.transform  = '';
-          }, { once: true });
-        }
-
-        item.addEventListener('touchend', () => {
-          if (gestureState !== 'up') { gestureState = 'idle'; return; }
-          if (Math.abs(curDy) >= item.offsetHeight * 0.8 && !_isTransitioning) {
-            const key = item.dataset.project;
-            item.style.transition = 'transform 0.2s cubic-bezier(.4,0,.2,1)';
-            item.style.transform  = `translateY(-${item.offsetHeight}px)`;
-            setTimeout(() => { item.style.transition = ''; item.style.transform = ''; openModal(key); }, 200);
-          } else {
-            snapBack();
-          }
-          gestureState = 'idle';
-        }, { passive: true });
-
-        item.addEventListener('touchcancel', () => {
-          if (gestureState === 'up') snapBack();
-          gestureState = 'idle';
-        }, { passive: true });
-      });
-    })();
 
     // === FETCH DYNAMIC DATA FROM BACKEND ===
     (async function() {
