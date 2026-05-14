@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#060606" id="themeColor">
+  <meta name="theme-color" content="#161616" id="themeColor">
   <title>Jana Gramlich – Product Designer based in Berlin</title>
   <meta name="description" content="Hi there! I am Jana, a product designer based in Berlin. I create data-driven digital experiences with a touch of motion and joy of use.">
   <link rel="canonical" href="https://portfolio.janagramlich.com/">
@@ -37,7 +37,7 @@
     body {
       font-family:'DM Sans', sans-serif;
       font-optical-sizing:auto;
-      background:#060606;
+      background:#161616;
       color:#fff;
       overflow-x:hidden;
     }
@@ -206,7 +206,7 @@
     }
 
     /* === PAGE WRAPPER === */
-    .page-wrapper { background:#060606; }
+    .page-wrapper { background:#161616; }
 
     /* === HOME CONTENT === */
     .home-content {
@@ -600,7 +600,7 @@
     .modal-close-bar__icon svg { display:block; }
 
     /* === MODAL PAGE END === */
-    .modal-page-end { margin: 72px -8px -24px; padding: 0 8px; background: #060606; }
+    .modal-page-end { margin: 72px -8px -24px; padding: 0 8px; background: #161616; }
     .modal-page-end .page-links {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 0; gap: 8px;
@@ -732,9 +732,13 @@
       display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
       padding: 20px;
     }
+    .modal-next-reveal__year {
+      display:block; font-size:11px; font-weight:500;
+      color:rgba(255,255,255,0.55); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px;
+    }
     .modal-next-reveal__title {
-      font-size: 22px; font-weight: 400;
-      letter-spacing: -0.02em; line-height: 1.2; color: #fff;
+      font-size:14px; font-weight:500;
+      letter-spacing:0; line-height:1.2; color:#fff;
     }
     @media (min-width:640px) {
       .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 12px 12px 0 0; }
@@ -771,6 +775,7 @@
       display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
       text-align:center; container-type:inline-size;
     }
+    .block-stats--single { grid-template-columns:1fr; }
     .block-stat__value {
       display:block; font-size:clamp(40px,22cqi,80px); font-weight:400;
       color:#111; line-height:1; letter-spacing:-0.02em;
@@ -778,6 +783,10 @@
     .block-stat__label {
       display:block; font-size:11px; font-weight:400;
       color:#111; margin-top:8px;
+    }
+    @media (min-width:640px) {
+      .block-stats { grid-template-columns:repeat(2,auto); justify-content:center; gap:0 80px; }
+      .block-stats--single { grid-template-columns:auto; }
     }
 
     /* === PROJECT INFO & LINKS === */
@@ -1001,7 +1010,7 @@
       .cv-card--about  { margin-top:8px; }
       .cv-card--quotes { margin-bottom:16px; height:auto; padding-bottom:8px; }
       .articles-section   { display:block; grid-column:1/7; margin-top:0; margin-bottom:32px; position:relative; }
-      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #060606); }
+      .articles-section::after { content:""; position:absolute; top:0; bottom:8px; width:32px; pointer-events:none; z-index:2; transition:opacity .2s ease; opacity:0; right:0; background:linear-gradient(to right, transparent, #161616); }
       .articles-section:not(.at-end)::after { opacity:1; }
       .articles-section__label { padding-left:0; padding-right:0; margin-bottom:16px; }
       .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:0; }
@@ -1034,7 +1043,7 @@
     /* === LOADING SCREEN === */
     .loading-screen {
       position:fixed; inset:0; z-index:9999;
-      background:#060606;
+      background:#161616;
       opacity:1; pointer-events:auto;
       transition:opacity 0.75s cubic-bezier(.4,0,.2,1);
     }
@@ -1065,18 +1074,24 @@
     }
 
     /* === NEXT PROJECT CURSOR === */
-    @keyframes nextCursor {
-      0%,100% { transform:translate(-50%,-50%) translateY(0); opacity:0.8; }
-      50%      { transform:translate(-50%,-50%) translateY(-14px); opacity:1; }
-    }
     .modal-next-cursor {
-      position:absolute; left:50%; top:50%;
-      width:52px; height:52px; border-radius:50%;
-      background:rgba(255,255,255,0.88); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      display:flex; align-items:center; justify-content:center;
-      transform:translate(-50%,-50%);
-      animation:nextCursor 1.8s cubic-bezier(.4,0,.6,1) infinite;
+      position:absolute; top:35%; left:32%;
       pointer-events:none; z-index:2;
+      animation:figmaCursor 5s ease-in-out infinite;
+    }
+    .modal-next-cursor__tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
+    .modal-next-cursor__mobile { display:block; }
+    .modal-next-cursor__desktop { display:none; }
+    @media (hover:hover) and (pointer:fine) {
+      .modal-next-cursor__mobile { display:none; }
+      .modal-next-cursor__desktop { display:block; }
     }
 
     /* === TOUCH: NO HOVER EFFECTS === */
@@ -2090,6 +2105,7 @@ quoteText.textContent = '“' + q.text + '”';
         myRole: acf.my_role || '',
         links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
         media,
+        kpis:   (acf['kpi_units'] || acf['kpi-units'] || []).map(k => ({ unit: k.unit || '', label: k.label || '' })).filter(k => k.unit),
       };
     }
 
@@ -2369,6 +2385,22 @@ quoteText.textContent = '“' + q.text + '”';
       obs.observe(statsEl);
     }
 
+    function parseKpiUnit(str) {
+      const s = String(str).trim();
+      const m = s.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
+      if (!m) return { count: 0, prefix: '', suffix: s };
+      return { count: Math.round(parseFloat(m[2])), prefix: m[1], suffix: m[3] };
+    }
+
+    function buildStatsHtml(kpis) {
+      const items = kpis.map(k => {
+        const { count, prefix, suffix } = parseKpiUnit(k.unit);
+        return `<div><span class="block-stat__value" data-count="${count}" data-prefix="${prefix}" data-suffix="${suffix}">${prefix}0${suffix}</span><span class="block-stat__label">${k.label}</span></div>`;
+      }).join('');
+      const cls = kpis.length === 1 ? ' block-stats--single' : '';
+      return `<div class="block block-stats${cls}">${items}</div>`;
+    }
+
     // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
     function fillModalContent(key) {
       const p = PROJECTS[key]; if (!p) return;
@@ -2392,15 +2424,8 @@ quoteText.textContent = '“' + q.text + '”';
       document.getElementById('modal-desc').innerHTML   = p.text || '';
       document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
       const grid = document.getElementById('modal-blocks');
-      if (key === 'douglas-hybrid') {
-        const statsHtml =
-          '<div class="block block-stats">' +
-            '<div><span class="block-stat__value" data-count="40" data-prefix="" data-suffix="%">0%</span><span class="block-stat__label">Faster time to market</span></div>' +
-            '<div><span class="block-stat__value" data-count="15" data-prefix="+" data-suffix="%">+0%</span><span class="block-stat__label">App Share</span></div>' +
-          '</div>';
-        const fifth = grid.children[4];
-        if (fifth) fifth.insertAdjacentHTML('afterend', statsHtml);
-        else grid.insertAdjacentHTML('beforeend', statsHtml);
+      if (p.kpis && p.kpis.length) {
+        grid.insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
       }
       grid.querySelectorAll('.block-stats').forEach(s => observeStats(s));
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
@@ -2477,10 +2502,15 @@ quoteText.textContent = '“' + q.text + '”';
              nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
           `</div>` +
           `<div class="modal-next-reveal__inner">` +
+            (nextP.year ? `<span class="modal-next-reveal__year">${nextP.year}</span>` : '') +
             `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
           `</div>` +
           `<div class="modal-next-cursor" aria-hidden="true">` +
-            `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
+            `<svg width="12" height="18" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff"/></svg>` +
+            `<span class="modal-next-cursor__tag">` +
+              `<span class="modal-next-cursor__mobile">swipe up for next project</span>` +
+              `<span class="modal-next-cursor__desktop">click for next project</span>` +
+            `</span>` +
           `</div>` +
         `</div>`
       );
@@ -2678,7 +2708,7 @@ quoteText.textContent = '“' + q.text + '”';
       closeNav();
       if (window.innerWidth < 640) {
         document.body.style.transition = 'background-color 0.45s cubic-bezier(0,0,0.2,1)';
-        document.body.style.backgroundColor = '#060606';
+        document.body.style.backgroundColor = '#161616';
       } else {
         document.body.style.backgroundColor = '';
       }
@@ -2726,7 +2756,7 @@ quoteText.textContent = '“' + q.text + '”';
         backdrop.classList.remove('is-active');
         if (window.innerWidth < 640) {
           document.body.style.transition = 'background-color 0.35s cubic-bezier(0,0,0.2,1)';
-          document.body.style.backgroundColor = '#060606';
+          document.body.style.backgroundColor = '#161616';
         } else {
           document.body.style.backgroundColor = '';
         }
