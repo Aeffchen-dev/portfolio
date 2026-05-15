@@ -2538,6 +2538,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       _nextRevealAbort = new AbortController();
       const sig = { passive: true, signal: _nextRevealAbort.signal };
+      let dragStartT = 0;
 
       revealEl.addEventListener('touchstart', e => {
         if (navigating) return;
@@ -2545,6 +2546,7 @@ quoteText.textContent = '“' + q.text + '”';
         dragStartY = e.touches[0].clientY;
         dragStartH = revealEl.getBoundingClientRect().height;
         dragStartBg = (PROJECTS[currentProjectKey] && PROJECTS[currentProjectKey].bg) || '#f2f2f2';
+        dragStartT = e.timeStamp;
         dragging = true;
         revealEl.style.transition = 'none';
       }, sig);
@@ -2552,6 +2554,12 @@ quoteText.textContent = '“' + q.text + '”';
       revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
         const dy = dragStartY - e.touches[0].clientY;
+        // Cancel if initial velocity is high — overscroll flick, not intentional drag
+        if (dragStartT) {
+          const vel = Math.abs(dy) / Math.max(e.timeStamp - dragStartT, 1);
+          if (vel > 0.6) { dragging = false; revealEl.style.height = ''; return; }
+          dragStartT = 0;
+        }
         const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
         revealEl.style.height = Math.round(newH) + 'px';
         applyProgress(newH);
@@ -3026,9 +3034,9 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
+      const IMGS = [1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
+        .map(n => 'images/parallax/p' + String(n).padStart(2,'0') + '.png')
         .sort(() => Math.random() - 0.5);
-      if (!IMGS.length) return;
 
       const COLS = 10, ROWS = 10;
       const GAP  = 8;
