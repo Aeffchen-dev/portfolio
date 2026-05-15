@@ -869,18 +869,20 @@
       .home-hero          { order:1; padding-left:8px; padding-right:8px; padding-top:120px; padding-bottom:120px; min-height:0; justify-content:flex-start; }
       .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
-      .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
-      .cv-card--archive   { display:block; height:420px; aspect-ratio:unset; margin-top:8px; }
-      .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
+      .exp-quotes-row     { display:contents; }
+      .cv-section-wrap    { order:10; padding-left:8px; padding-right:8px; }
+      .about-quotes-row   { order:11; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
       .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
+      .articles-section   { order:12; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:8px; padding-right:8px; }
-      .cta-footer-box     { order:12; display:flex; flex-direction:column; }
-      .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
+      .cta-footer-box     { display:contents; }
+      .cta-section        { order:13; padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
-      .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
+      /* archive card peeks 8px above footer */
+      .cv-card--archive   { order:14; display:block; height:420px; aspect-ratio:unset; margin-top:0; margin-left:8px; margin-right:8px; margin-bottom:calc(-420px + 8px); border-radius:8px 8px 0 0; }
+      .home-footer        { order:15; flex:none; z-index:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
       .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
       .footer-name        { margin-bottom:-24px; }
       .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
