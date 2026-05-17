@@ -400,8 +400,8 @@
     const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
-    const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07];
-    const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5];
+    const COL_PAR  = [0.78, 1.22, 0.83, 1.17, 0.80, 1.20, 0.85, 1.15];
+    const COL_YOFF = [0, 0.7, 0, 0.7, 0, 0.7, 0, 0.7];
 
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
@@ -467,7 +467,7 @@
     function pauseDrift() {
       isAutoDrifting = false;
       clearTimeout(driftResumeTimer);
-      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
+      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 4000);
     }
 
     function tilePos(t) {
@@ -497,9 +497,9 @@
       ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.95; vy *= 0.95;
-        if (Math.abs(vx) < 0.01) vx = 0;
-        if (Math.abs(vy) < 0.01) vy = 0;
+        vx *= 0.978; vy *= 0.978;
+        if (Math.abs(vx) < 0.004) vx = 0;
+        if (Math.abs(vy) < 0.004) vy = 0;
         if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
           ox += DRIFT_VX;
           oy += DRIFT_VY;
