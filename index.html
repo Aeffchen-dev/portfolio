@@ -750,7 +750,7 @@
     .hero__desc p { font-size:14px; font-weight:400; line-height:1.3; color:#111; }
 
     /* === BLOCKS GRID === */
-    .blocks { padding:24px 0 16px; }
+    .blocks { padding:12px 0; }
     .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:24px; }
     .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
     .block-image { background:#e8e8e8; }
@@ -789,12 +789,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:8px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.10); border-radius:8px;
       backdrop-filter:blur(20px) saturate(1.8); -webkit-backdrop-filter:blur(20px) saturate(1.8);
-      box-shadow:0 0 2px 2px rgba(0,0,0,0.05);
+      box-shadow:0 1px 3px rgba(0,0,0,0.08);
       text-decoration:none; color:inherit; transition:background .3s ease-in-out, box-shadow .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.08); box-shadow:0 1px 2px 2px rgba(0,0,0,0.07); }
+    .modal-link-card:hover { background:rgba(0,0,0,0.15); box-shadow:0 1px 4px rgba(0,0,0,0.10); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
