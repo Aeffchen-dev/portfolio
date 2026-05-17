@@ -788,7 +788,7 @@
       display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
       text-align:center; container-type:inline-size;
     }
-    .block-stats--single { grid-template-columns:1fr; }
+    .block-stats--single { grid-template-columns:auto; justify-content:center; }
     .block-stat__value {
       display:block; font-size:clamp(48px, 8vw, 88px); font-weight:400;
       color:inherit; line-height:1; letter-spacing:-0.03em;
@@ -2107,7 +2107,14 @@ quoteText.textContent = '“' + q.text + '”';
         myRole: acf.my_role || '',
         links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
         media,
-        kpis:   (acf['kpi_units'] || acf['kpi-units'] || []).map(k => ({ unit: k.unit || '', label: k.label || '' })).filter(k => k.unit),
+        kpis: (() => {
+          const raw = acf['kpi_units'] || acf['kpi-units'] || acf['kpis'] || acf['statistics'] || acf['stats'] || acf['numbers'] || acf['key_numbers'] || acf['key-numbers'] || [];
+          console.log('[KPI]', data.id, 'keys:', Object.keys(acf), 'raw:', JSON.stringify(raw));
+          return (Array.isArray(raw) ? raw : []).map(k => ({
+            unit:  k.unit  || k.value || k.number || k.stat || k.text || '',
+            label: k.label || k.description || k.title || '',
+          })).filter(k => k.unit);
+        })(),
       };
     }
 
