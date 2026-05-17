@@ -2101,20 +2101,36 @@ quoteText.textContent = '“' + q.text + '”';
         if (s.acf_fc_layout === 'image') {
           return (s.image || []).map(i => i.image?.url).filter(Boolean);
         }
-        if (['numbers','stats','kpis','key_numbers','key-numbers','statistics',
-             'highlights','metrics','results','impact','figures','key_figures',
-             'key_facts','achievements','numbers_block','stats_block','kpi_block',
-             'stat_row','stats_row','number_stats'].includes(s.acf_fc_layout)) {
-          const raw = s.items || s.numbers || s.stats || s.kpi_units || s.values
-                   || s.units || s.metrics || s.highlights || s.figures || s.rows || s.list || [];
-          const items = (Array.isArray(raw) ? raw : []).map(k => {
+        {
+          const NUMBERS_LAYOUTS = new Set(['numbers','stats','kpis','key_numbers','key-numbers',
+            'statistics','highlights','metrics','results','impact','figures','key_figures',
+            'key_facts','achievements','numbers_block','stats_block','kpi_block',
+            'stat_row','stats_row','number_stats']);
+          const parseItems = arr => (Array.isArray(arr) ? arr : []).map(k => {
             const num  = k.value || k.number || k.stat || k.count || '';
             const unit = k.unit  || k.suffix || '';
-            const display = (k.unit && /\d/.test(k.unit)) ? k.unit
-                          : num ? (num + unit) : '';
+            const display = (k.unit && /\d/.test(String(k.unit))) ? k.unit : num ? (num + unit) : '';
             return { unit: display, label: k.label || k.description || k.title || k.text || '' };
           }).filter(k => k.unit);
-          return items.length ? [{ __type: 'numbers', items }] : [];
+          // Named layout match
+          if (NUMBERS_LAYOUTS.has(s.acf_fc_layout)) {
+            const raw = s.items || s.numbers || s.stats || s.kpi_units || s.values
+                     || s.units || s.metrics || s.highlights || s.figures || s.rows || s.list
+                     // fallback: first array property whose items have unit/label
+                     || Object.values(s).find(v => Array.isArray(v) && v[0]?.unit !== undefined)
+                     || [];
+            const items = parseItems(raw);
+            return items.length ? [{ __type: 'numbers', items }] : [];
+          }
+          // Auto-detect: any unrecognised layout whose sub-fields look like stats
+          const autoArr = Object.values(s).find(v =>
+            Array.isArray(v) && v.length && v[0] != null &&
+            (v[0].unit !== undefined || v[0].label !== undefined) &&
+            (v[0].unit !== undefined || v[0].value !== undefined || v[0].number !== undefined));
+          if (autoArr) {
+            const items = parseItems(autoArr);
+            if (items.length) return [{ __type: 'numbers', items }];
+          }
         }
         console.log('[SECTION BLOCK unhandled]', s.acf_fc_layout, JSON.stringify(s));
         return [];
