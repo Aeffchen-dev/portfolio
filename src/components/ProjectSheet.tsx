@@ -93,7 +93,7 @@ export function ProjectSheet({ project, onClose }: Props) {
             overflowY: "auto",
             overscrollBehavior: "contain",
             borderRadius: "16px 16px 0 0",
-            background: "#0d0d0d",
+            background: "#1a1a1a",
             paddingLeft: 8,
             paddingRight: 8,
             paddingBottom: 80,
