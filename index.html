@@ -2490,24 +2490,28 @@ quoteText.textContent = '“' + q.text + '”';
         completing = true;
         _nextRevealAbort.abort(); // cleans up shield + spacer; skip-flag prevents it touching peekModal
         completing = false;
-        peekModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = 'translateY(0)';
-        activeModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = 'translateY(8%)';
-        setTimeout(() => {
-          activeModal.classList.remove('is-open');
-          activeModal.style.visibility = 'hidden';
-          activeModal.style.transition = '';
-          activeModal.style.transform  = '';
-          activeModal.querySelector('.modal__scroll').innerHTML = '';
-          peekModal.classList.remove('is-peek');
-          peekModal.classList.add('is-open');
-          peekModal.style.transition = '';
-          peekModal.style.transform  = '';
-          [activeModal, peekModal] = [peekModal, activeModal];
-          currentProjectKey = nextKey;
-          setupPeek(nextKey);
-        }, 400);
+        // Capture refs before any async so module-level vars can't change under us
+        const pm = peekModal, am = activeModal, nk = nextKey;
+        // RAF ensures browser commits the dragged position before we start the opening transition,
+        // otherwise batching transition:none→transition:0.4s in the same task can animate from 100%
+        requestAnimationFrame(() => {
+          pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+          pm.style.transform  = 'translateY(0)';
+          setTimeout(() => {
+            am.classList.remove('is-open');
+            am.style.visibility = 'hidden';
+            am.style.transition = '';
+            am.style.transform  = '';
+            am.querySelector('.modal__scroll').innerHTML = '';
+            pm.classList.remove('is-peek');
+            pm.classList.add('is-open');
+            pm.style.transition = '';
+            pm.style.transform  = '';
+            activeModal = pm; peekModal = am;
+            currentProjectKey = nk;
+            setupPeek(nk);
+          }, 420);
+        });
       }
 
       peekModal.addEventListener('touchstart', e => {
