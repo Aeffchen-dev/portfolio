@@ -2596,50 +2596,60 @@ quoteText.textContent = '“' + q.text + '”';
       const modalEl  = document.getElementById('projectModal');
       const scrollEl = modalEl.querySelector('.modal__scroll');
       const mr       = modalEl.getBoundingClientRect();
-      const fr       = fromRect || { left: mr.left, top: mr.top + mr.height * 0.45, width: mr.width, height: mr.height * 0.55 };
+      const EASE     = 'cubic-bezier(.4,0,.2,1)';
+      const nextBg   = p.bg || '#f2f2f2';
 
-      // Overlay: starts at reveal tile's viewport rect, hero image of next project inside
-      const overlay = document.createElement('div');
-      overlay.style.cssText =
-        `position:fixed;left:${fr.left}px;top:${fr.top}px;width:${fr.width}px;height:${fr.height}px;` +
-        `overflow:hidden;border-radius:12px 12px 4px 4px;background:${p.bg || '#f2f2f2'};` +
-        `z-index:9999;pointer-events:none;`;
+      // F5: ambient color bleed
+      scrollEl.style.transition = 'background 0.55s ease';
+      scrollEl.style.background = nextBg;
+      const hdr = scrollEl.querySelector('.page-header');
+      if (hdr) { hdr.style.transition = 'background 0.55s ease'; hdr.style.background = nextBg; }
 
-      if (p.hero) {
-        const img = document.createElement('img');
-        img.src = p.hero;
-        img.style.cssText = 'position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center top;display:block;';
-        overlay.appendChild(img);
-      } else if (p.heroVideo) {
-        const vid = document.createElement('video');
-        vid.src = p.heroVideo; vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
-        vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;';
-        overlay.appendChild(vid);
-        vid.play().catch(() => {});
+      // Reuse the reveal tile's image — clone it (same src = cached, no new fetch) and fly it to hero position
+      const revealMedia = document.querySelector('#projectModal .modal-next-reveal__bg img') ||
+                          document.querySelector('#projectModal .modal-next-reveal__bg video');
+      const heroContainer = scrollEl.querySelector('.modal__hero');
+      const DUR = 460;
+      let imgOverlay = null;
+
+      if (revealMedia && (p.hero || p.heroVideo)) {
+        const fr  = fromRect || revealMedia.closest('.modal-next-reveal').getBoundingClientRect();
+        const toH = heroContainer && heroContainer.getBoundingClientRect().height > 0
+                    ? heroContainer.getBoundingClientRect().height
+                    : mr.width / 2;
+        const toR = { left: mr.left, top: mr.top, width: mr.width, height: toH };
+
+        imgOverlay = document.createElement('div');
+        imgOverlay.style.cssText =
+          `position:fixed;left:${fr.left}px;top:${fr.top}px;width:${fr.width}px;height:${fr.height}px;` +
+          `overflow:hidden;z-index:9999;pointer-events:none;`;
+
+        const m = revealMedia.cloneNode();
+        m.style.cssText = 'position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center top;display:block;';
+        imgOverlay.appendChild(m);
+        document.body.appendChild(imgOverlay);
+        if (m.tagName === 'VIDEO') m.play().catch(() => {});
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          imgOverlay.style.transition = `left ${DUR}ms ${EASE},top ${DUR}ms ${EASE},width ${DUR}ms ${EASE},height ${DUR}ms ${EASE}`;
+          imgOverlay.style.left   = toR.left   + 'px';
+          imgOverlay.style.top    = toR.top    + 'px';
+          imgOverlay.style.width  = toR.width  + 'px';
+          imgOverlay.style.height = toR.height + 'px';
+        }));
       }
 
-      document.body.appendChild(overlay);
-
-      const EASE = 'cubic-bezier(.4,0,.2,1)';
-      const DUR  = 460;
-
-      // Expand overlay to cover full modal
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        overlay.style.transition = `left ${DUR}ms ${EASE},top ${DUR}ms ${EASE},width ${DUR}ms ${EASE},height ${DUR}ms ${EASE},border-radius ${DUR}ms ${EASE}`;
-        overlay.style.left        = mr.left + 'px';
-        overlay.style.top         = mr.top  + 'px';
-        overlay.style.width       = mr.width + 'px';
-        overlay.style.height      = mr.height + 'px';
-        overlay.style.borderRadius = '16px 16px 0 0';
-      }));
-
-      // Swap content while covered, then fade overlay out
+      // Swap content at end of image flight, then dissolve overlay
       setTimeout(() => {
         scrollEl.scrollTop = 0;
         fillModalContent(nextKey);
-        overlay.style.transition = 'opacity 0.35s ease';
-        overlay.style.opacity    = '0';
-        setTimeout(() => { overlay.remove(); _isTransitioning = false; }, 350);
+        if (imgOverlay) {
+          imgOverlay.style.transition = 'opacity 0.25s ease';
+          imgOverlay.style.opacity    = '0';
+          setTimeout(() => { imgOverlay.remove(); _isTransitioning = false; }, 250);
+        } else {
+          _isTransitioning = false;
+        }
       }, DUR + 20);
     }
 
