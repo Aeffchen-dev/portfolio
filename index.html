@@ -708,23 +708,6 @@
     }
 
     .js-next-panel { z-index: 205 !important; }
-    .next-panel-peek {
-      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
-      padding: 14px 16px 10px;
-      display: flex; align-items: center; justify-content: space-between;
-      pointer-events: auto;
-      transition: opacity 0.25s ease;
-    }
-    .js-next-panel.is-open .next-panel-peek { opacity: 0; pointer-events: none; }
-    .next-panel-peek::before {
-      content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-      width: 36px; height: 4px; border-radius: 2px;
-      background: rgba(255,255,255,0.35); pointer-events: none;
-    }
-    .next-panel-peek__meta { display: flex; flex-direction: column; gap: 1px; }
-    .next-panel-peek__hint { font-family:'HW Left Bold',sans-serif; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.5); letter-spacing: 0.48px; text-transform: uppercase; }
-    .next-panel-peek__year { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
-    .next-panel-peek__title { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.2; }
 
     .modal.js-stacked-sheet { z-index: 202; }
 
@@ -2489,16 +2472,6 @@ quoteText.textContent = '“' + q.text + '”';
       const sheet = document.createElement('div');
       sheet.className = 'modal js-stacked-sheet js-next-panel';
 
-      // Peek bar — visible at 25%, fades when sheet fully opens
-      sheet.innerHTML =
-        `<div class="next-panel-peek">` +
-          `<div class="next-panel-peek__meta">` +
-            (nextP.year ? `<span class="next-panel-peek__year">${nextP.year}</span>` : '') +
-            `<span class="next-panel-peek__title">${nextP.client}</span>` +
-          `</div>` +
-          `<span class="next-panel-peek__hint">Next up</span>` +
-        `</div>`;
-
       const nextScrollDiv = document.createElement('div');
       nextScrollDiv.className = 'modal__scroll';
       nextScrollDiv.style.background = nextBg;
@@ -2559,7 +2532,7 @@ quoteText.textContent = '“' + q.text + '”';
       const observer = new IntersectionObserver(entries => {
         if (navigating) return;
         if (entries[0].isIntersecting) {
-          requestAnimationFrame(() => { sheet.style.transform = 'translateY(75%)'; });
+          requestAnimationFrame(() => { sheet.style.transform = 'translateY(60%)'; });
         } else {
           if (!dragging) sheet.style.transform = 'translateY(100%)';
         }
@@ -2567,27 +2540,26 @@ quoteText.textContent = '“' + q.text + '”';
       observer.observe(pageEnd);
 
       // Drag peek bar up to open
-      const peekEl = sheet.querySelector('.next-panel-peek');
-      peekEl.addEventListener('touchstart', e => {
-        if (navigating) return;
+      sheet.addEventListener('touchstart', e => {
+        if (navigating || sheet.classList.contains('is-open')) return;
         dragStartY = e.touches[0].clientY; dragging = true;
         sheet.style.transition = 'none';
       }, { passive: true });
-      peekEl.addEventListener('touchmove', e => {
+      sheet.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
         const dy = dragStartY - e.touches[0].clientY;
-        const pct = Math.max(0, 75 - (dy / (window.innerHeight * 0.95) * 100));
+        const pct = Math.max(0, 60 - (dy / (window.innerHeight * 0.95) * 100));
         sheet.style.transform = `translateY(${pct}%)`;
       }, { passive: true });
-      peekEl.addEventListener('touchend', e => {
+      sheet.addEventListener('touchend', e => {
         if (!dragging) return;
         dragging = false;
         sheet.style.transition = '';
         const dy = dragStartY - e.changedTouches[0].clientY;
-        if (75 - (dy / (window.innerHeight * 0.95) * 100) < 40) { openNext(); }
-        else { sheet.style.transform = 'translateY(75%)'; }
+        if (60 - (dy / (window.innerHeight * 0.95) * 100) < 30) { openNext(); }
+        else { sheet.style.transform = 'translateY(60%)'; }
       }, { passive: true });
-      peekEl.addEventListener('click', () => { if (!navigating) openNext(); });
+      sheet.addEventListener('click', () => { if (!navigating && !sheet.classList.contains('is-open')) openNext(); });
 
       _nextRevealAbort.signal.addEventListener('abort', () => {
         observer.disconnect();
