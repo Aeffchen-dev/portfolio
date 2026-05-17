@@ -831,7 +831,7 @@
       outline:1px solid rgba(0,0,0,0.12); opacity:0.95;
       text-decoration:none; color:inherit; transition:background .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(255,255,255,0.1); }
+    @media (hover:hover) { .modal-link-card:hover { background:rgba(0,0,0,0.10); } }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       overflow:hidden;
@@ -1142,7 +1142,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:#1a1a1a; }
+
     }
   </style>
 </head>
