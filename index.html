@@ -2093,6 +2093,7 @@ quoteText.textContent = '“' + q.text + '”';
       const client = facts.find(f => f.l === 'Brand')?.v || '';
       const year   = facts.find(f => f.l === 'Year')?.v  || '';
 
+      console.log('[ACF section layouts]', data.id, (acf.section||[]).map(s=>s.acf_fc_layout));
       const media = (acf.section || []).flatMap(s => {
         if (s.acf_fc_layout === 'video') {
           const url = s._video_file_desktop?.url || s._video_file_mobile?.url || '';
@@ -2788,7 +2789,7 @@ quoteText.textContent = '“' + q.text + '”';
         Object.entries(WP_PROJECT_IDS).map(async ([key, id]) => {
           try {
             const data = await fetch(
-              `${API}/projects/${id}?_fields=id,title,acf`,
+              `${API}/projects/${id}?_fields=id,title,acf&acf_format=standard`,
               { cache: 'no-store' }
             ).then(r => r.json());
             const p = mapACFProject(data);
