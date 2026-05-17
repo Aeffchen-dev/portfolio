@@ -49,7 +49,7 @@ export function ProjectSheet({ project, onClose }: Props) {
           top: 0, left: 0, right: 0,
           height: "5vh",
           minHeight: 40,
-          background: "#000",
+          background: "#1a1a1a",
           color: "#fff",
           display: "flex",
           alignItems: "center",
