@@ -578,7 +578,7 @@
     .modal.is-peek { z-index:201; pointer-events:auto; }
 .modal__peek-bar {
       display:none; position:relative; z-index:2;
-      background:#000; padding:10px 16px 16px;
+      background:#000; padding:12px 16px;
     }
     .modal__peek-bar__row {
       display:flex; align-items:center; justify-content:space-between;
@@ -596,7 +596,8 @@
     }
     @media (hover:hover) { .modal__peek-bar__link:hover { color:#fff; } }
     .modal.is-peek .modal__peek-bar { display:block; }
-    .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
+    .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; padding:8px; }
+    .modal.is-peek .modal__hero { margin:0; border-radius:8px; overflow:hidden; }
 
     /* === PAGE HEADER (modal) === */
     .page-header { }
