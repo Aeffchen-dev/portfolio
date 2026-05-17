@@ -2511,32 +2511,10 @@ quoteText.textContent = '“' + q.text + '”';
       let navigating = false;
 
       scrollEl.addEventListener('scroll', () => {
-        const atEnd = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 80;
-        panel.style.transform = atEnd ? 'translateY(0)' : 'translateY(100%)';
-      }, sig);
-
-      let _pDragY = 0, _pDragging = false;
-      panel.addEventListener('touchstart', e => {
         if (navigating) return;
-        _pDragY = e.touches[0].clientY; _pDragging = true;
-        panel.style.transition = 'none';
-      }, { passive: true, signal: _nextRevealAbort.signal });
-      panel.addEventListener('touchmove', e => {
-        if (!_pDragging || navigating) return;
-        const dy = _pDragY - e.touches[0].clientY;
-        if (dy > 50) {
-          _pDragging = false; navigating = true;
-          panel.remove(); goToNextProject(nextKey);
-        }
-      }, { passive: true, signal: _nextRevealAbort.signal });
-      panel.addEventListener('touchend', () => {
-        _pDragging = false;
-        panel.style.transition = '';
-      }, { passive: true, signal: _nextRevealAbort.signal });
-
-      panel.addEventListener('click', () => {
-        if (!navigating) { navigating = true; panel.remove(); goToNextProject(nextKey); }
-      });
+        const atEnd = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 80;
+        if (atEnd) { navigating = true; panel.remove(); goToNextProject(nextKey); }
+      }, sig);
     }
 
     function goToNextProject(nextKey) {
