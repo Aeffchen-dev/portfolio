@@ -2557,6 +2557,9 @@ quoteText.textContent = '“' + q.text + '”';
         // RAF ensures browser commits the dragged position before the opening transition starts
         requestAnimationFrame(() => {
           pm.classList.remove('modal--hero-inset'); // fire hero expand in sync with slide
+          // Re-enable scroll immediately as the transition starts
+          const pmScroll = pm.querySelector('.modal__scroll');
+          if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = ''; }
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = 'translateY(0)';
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
@@ -2571,6 +2574,7 @@ quoteText.textContent = '“' + q.text + '”';
             pm.classList.add('is-open');
             pm.style.transition = '';
             pm.style.transform  = '';
+            if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
             activeModal = pm; peekModal = am;
             currentProjectKey = nk;
             setupPeek(nk);
