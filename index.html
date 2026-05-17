@@ -555,7 +555,7 @@
     .modal {
       position:fixed;
       bottom:0; left:0;
-      width:100vw; max-height:95dvh;
+      width:100vw; max-height:100dvh;
       z-index:200;
       overflow:hidden; background:#000; border-radius:16px 16px 0 0;
       transform:translateY(100%);
@@ -567,8 +567,8 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      padding:24px 8px;
+      max-height:100dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+      padding:24px 8px; padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
       scrollbar-width:none;
       color:#111;
     }
@@ -883,9 +883,9 @@
       .home-intro { text-align:left; font-size:clamp(21px, 2.5vw, 32px); }
       .desktop-br { display:block; }
       .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
-      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
+      .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:100dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { max-height:95dvh; padding:24px 8px; }
+      .modal__scroll { max-height:100dvh; padding:24px 8px; padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)); }
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:center; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
