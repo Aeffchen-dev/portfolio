@@ -2511,6 +2511,8 @@ quoteText.textContent = '“' + q.text + '”';
         curPct = 100 - progress * 35; // 100% hidden → 65% peeked
         peekModal.style.transition = 'none';
         peekModal.style.transform  = `translateY(${curPct}%)`;
+        activeModal.style.transition = 'none';
+        activeModal.style.transform  = `translateY(${-progress * 8}%)`;
         peeking = progress >= 1;
       }
       activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
