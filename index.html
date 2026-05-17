@@ -599,7 +599,7 @@
       background:none; border:none; padding:0;
     }
     .modal.is-peek .modal__peek-bar { display:block; }
-    .modal.is-peek .modal__scroll { margin-top:16px; }
+    .modal.is-peek .modal__scroll { margin-top:16px; overflow:hidden; touch-action:none; }
 
     /* === PAGE HEADER (modal) === */
     .page-header { }
@@ -2488,7 +2488,7 @@ quoteText.textContent = '“' + q.text + '”';
         peekSpacer.style.height = peekH + 'px';
         peekSpacer.setAttribute('aria-hidden', 'true');
         activeScroll.appendChild(peekSpacer);
-        activeScroll.scrollBy({ top: peekH, behavior: 'smooth' });
+        requestAnimationFrame(() => activeScroll.scrollBy({ top: peekH, behavior: 'smooth' }));
       }, { root: activeScroll, threshold: 0.05 });
       if (sentinel) sentinelObs.observe(sentinel);
 
@@ -2526,10 +2526,11 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchmove', e => {
         if (!dragging) return;
+        e.preventDefault();
         const dy = startY - e.touches[0].clientY;
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         peekModal.style.transform = `translateY(${curPct}%)`;
-      }, { passive: true, signal });
+      }, { passive: false, signal });
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
