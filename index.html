@@ -834,7 +834,9 @@
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; background:#000; }
     .modal__hero img,
-    .modal__hero video { width:100%; display:block; aspect-ratio:8/5; object-fit:cover; }
+    .modal__hero video { width:calc(100% - 16px); display:block; margin:0 auto; aspect-ratio:8/5; object-fit:cover; border-radius:8px; transition:width .4s ease,border-radius .4s ease,margin .4s ease; }
+    .modal__scroll--at-top .modal__hero img,
+    .modal__scroll--at-top .modal__hero video { width:100%; margin:0; border-radius:0; }
 
     /* === MODAL BACKDROP === */
     .nav-blur {
@@ -2448,6 +2450,7 @@ quoteText.textContent = '“' + q.text + '”';
       scrollEl.style.background = bg;
       scrollEl.style.setProperty('--modal-bg', bg);
       scrollEl.scrollTop = 0;
+      scrollEl.classList.add('modal__scroll--at-top');
       scrollEl.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
@@ -2924,9 +2927,12 @@ quoteText.textContent = '“' + q.text + '”';
         img.style.transform = `translateY(${shift}px)`;
       });
     }
-    [document.getElementById('modalA'), document.getElementById('modalB')].forEach(m =>
-      m.querySelector('.modal__scroll')?.addEventListener('scroll', updateModalParallax, { passive: true })
-    );
+    [document.getElementById('modalA'), document.getElementById('modalB')].forEach(m => {
+      const s = m.querySelector('.modal__scroll');
+      if (!s) return;
+      s.addEventListener('scroll', updateModalParallax, { passive: true });
+      s.addEventListener('scroll', () => s.classList.toggle('modal__scroll--at-top', s.scrollTop < 8), { passive: true });
+    });
 
     // === ARCHIVE MINI CANVAS ===
     (function() {
