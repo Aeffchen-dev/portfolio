@@ -721,7 +721,7 @@
       .modal-proj-card__view .view-text { display: none; }
       /* first card: full-width landscape, same on tablet and desktop */
       .modal-proj-card:first-child { grid-column: 1 / -1; }
-      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; }
+      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; width: calc(100% - 16px); margin: 0 auto; }
     }
     /* Desktop overrides for modal cards — must come after the 640px block */
     @media (min-width:1024px) {
