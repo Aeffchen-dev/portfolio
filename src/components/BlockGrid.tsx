@@ -38,7 +38,7 @@ export function BlockGrid({ blocks }: BlockGridProps) {
   return (
     <div
       className="flex flex-col"
-      style={{ gap: 16, padding: 8, backgroundColor: "#1a1a1a" }}
+      style={{ gap: 16, backgroundColor: "#1a1a1a" }}
     >
       {rows.map((row, rowIndex) => (
         <div
