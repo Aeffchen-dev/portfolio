@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; }
+    .modal.is-peek { z-index:201; pointer-events:auto; }
     .modal.is-peek::before {
       content:''; position:absolute; top:10px; left:50%; transform:translateX(-50%);
       width:36px; height:4px; border-radius:2px;
@@ -2490,7 +2490,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
-        if (curPct < 30) { completePeek(); return; }
+        if (curPct < 50) { completePeek(); return; }
         const snapTo = peeking ? 65 : 100;
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = `translateY(${snapTo}%)`;
