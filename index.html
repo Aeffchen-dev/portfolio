@@ -708,6 +708,23 @@
     }
 
     .js-next-panel { z-index: 205 !important; }
+    .next-panel-peek {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      padding: 14px 16px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .next-panel-peek::before {
+      content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 36px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.35); pointer-events: none;
+    }
+    .js-next-panel.is-open .next-panel-peek { opacity: 0; }
+    .next-panel-peek__meta { display: flex; flex-direction: column; gap: 1px; }
+    .next-panel-peek__hint { font-family:'HW Left Bold',sans-serif; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.5); letter-spacing: 0.48px; text-transform: uppercase; }
+    .next-panel-peek__year { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
+    .next-panel-peek__title { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.2; }
 
     .modal.js-stacked-sheet { z-index: 202; }
 
@@ -2471,12 +2488,19 @@ quoteText.textContent = '“' + q.text + '”';
 
       const sheet = document.createElement('div');
       sheet.className = 'modal js-stacked-sheet js-next-panel';
+      sheet.innerHTML =
+        `<div class="next-panel-peek">` +
+          `<div class="next-panel-peek__meta">` +
+            (nextP.year ? `<span class="next-panel-peek__year">${nextP.year}</span>` : '') +
+            `<span class="next-panel-peek__title">${nextP.client}</span>` +
+          `</div>` +
+          `<span class="next-panel-peek__hint">Next up</span>` +
+        `</div>`;
 
       const nextScrollDiv = document.createElement('div');
       nextScrollDiv.className = 'modal__scroll';
       nextScrollDiv.style.background = nextBg;
       nextScrollDiv.innerHTML =
-        nextHeroHTML +
         `<header class="page-header" style="background:${nextBg}">` +
           `<div class="modal-header-left">` +
             `<span class="eyebrow-client">${nextP.client}</span>` +
