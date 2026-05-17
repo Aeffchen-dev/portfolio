@@ -253,7 +253,7 @@
     .section-label { display:flex; align-items:baseline; gap:32px; margin-top:clamp(16px, 3dvh, 40px); margin-bottom:8px; padding-bottom:8px; }
     .section-label__prefix { font-size:14px; font-weight:500; color:#fff; letter-spacing:0.48px; text-transform:uppercase; white-space:nowrap; }
     .section-label__links { display:flex; gap:24px; flex-wrap:nowrap; }
-    .section-label__link { font-family:'HW Left Bold', sans-serif; font-size:14px; font-weight:bold; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
+    .section-label__link { font-family:'HW Left Bold', sans-serif; font-size:12px; font-weight:bold; color:#989898; letter-spacing:0.48px; text-transform:uppercase; text-decoration:none; transition:color .3s ease-in-out; display:inline-flex; align-items:center; gap:3px; }
     @media (hover:hover) { .section-label__link:hover { color:#fff; } }
     .section-label__link[href="mailto:hello@janagramlich.com"] { display:none; }
     .work-list { display:flex; flex-direction:column; gap:0; margin-left:-8px; margin-right:-8px; }
@@ -277,7 +277,7 @@
       position:relative; z-index:1; margin-top:16px; will-change:transform,opacity;
       display:flex; flex-direction:column;
     }
-    .work-item__year { font-size:14px; font-weight:500; color:#989898; letter-spacing:0.48px; text-transform:uppercase; }
+    .work-item__year { display:none; }
     .work-item__client { font-size:14px; font-weight:500; color:#fff; line-height:1.3; margin-top:auto; }
     .work-item__title { font-size:14px; font-weight:400; color:#989898; margin-top:4px; line-height:1.3; }
     .work-item__footer { display:flex; align-items:baseline; gap:6px; margin-top:auto; }
@@ -345,7 +345,6 @@
         display:grid; grid-template-columns:auto 1fr auto; column-gap:80px; row-gap:2px; align-items:start;
       }
       .work-item__client { grid-column:1; grid-row:1; margin-top:0; }
-      .work-item__year { grid-column:1; grid-row:2; }
       .work-item__footer { grid-column:3; grid-row:1; justify-content:flex-end; margin-top:0; }
       .work-item__title { grid-column:2; grid-row:1 / span 3; align-self:start; max-width:280px; }
       .view-text { display:none; }
@@ -394,7 +393,7 @@
     }
     .cv-card__logo img { width:32px; height:32px; object-fit:contain; }
     .cv-card__body { flex:1; min-width:0; display:flex; flex-direction:column; height:60px; }
-    .cv-card__company { font-size:16px; font-weight:500; color:#fff; line-height:1.3; }
+    .cv-card__company { font-size:14px; font-weight:500; color:#fff; line-height:1.3; }
     .cv-card__role { font-size:12px; font-weight:400; color:#989898; margin-top:1px; }
     .cv-card__date {
       font-size:10px; font-weight:500; color:#989898;
@@ -875,13 +874,12 @@
       .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .articles-section   { order:12; margin-top:0; margin-bottom:48px; }
+      .cv-card--archive   { order:12; display:block; height:420px; aspect-ratio:unset; margin-top:0; margin-left:8px; margin-right:8px; margin-bottom:0; }
+      .articles-section   { order:13; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:8px; padding-right:8px; }
       .cta-footer-box     { display:contents; }
-      .cta-section        { order:13; padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
+      .cta-section        { order:14; padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
-      /* archive card sits 8px above footer */
-      .cv-card--archive   { order:14; display:block; height:420px; aspect-ratio:unset; margin-top:0; margin-left:8px; margin-right:8px; margin-bottom:8px; }
       .home-footer        { order:15; flex:none; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
       .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
       .footer-name        { margin-bottom:-24px; }
