@@ -2093,7 +2093,6 @@ quoteText.textContent = '“' + q.text + '”';
       const client = facts.find(f => f.l === 'Brand')?.v || '';
       const year   = facts.find(f => f.l === 'Year')?.v  || '';
 
-      console.log('[ACF section layouts]', data.id, (acf.section||[]).map(s=>s.acf_fc_layout));
       const media = (acf.section || []).flatMap(s => {
         if (s.acf_fc_layout === 'video') {
           const url = s._video_file_desktop?.url || s._video_file_mobile?.url || '';
@@ -2101,6 +2100,21 @@ quoteText.textContent = '“' + q.text + '”';
         }
         if (s.acf_fc_layout === 'image') {
           return (s.image || []).map(i => i.image?.url).filter(Boolean);
+        }
+        // kpi-numbers: flat left/right fields
+        if (s.acf_fc_layout === 'kpi-numbers') {
+          const items = [
+            { unit: s['unit-left'],  label: (s['label-left']  || '').trim() },
+            { unit: s['unit-right'], label: (s['label-right'] || '').trim() },
+          ].filter(k => k.unit);
+          return items.length ? [{ __type: 'numbers', items }] : [];
+        }
+        // prototype: extract first Figma embed URL from HTML
+        if (s.acf_fc_layout === 'prototype') {
+          const html = s.prototype || '';
+          const m = html.match(/src=["']([^"']*figma\.com[^"']*)["']/);
+          if (m) return [{ v: m[1] }];
+          return [];
         }
         {
           const NUMBERS_LAYOUTS = new Set(['numbers','stats','kpis','key_numbers','key-numbers',
@@ -2113,17 +2127,14 @@ quoteText.textContent = '“' + q.text + '”';
             const display = (k.unit && /\d/.test(String(k.unit))) ? k.unit : num ? (num + unit) : '';
             return { unit: display, label: k.label || k.description || k.title || k.text || '' };
           }).filter(k => k.unit);
-          // Named layout match
           if (NUMBERS_LAYOUTS.has(s.acf_fc_layout)) {
             const raw = s.items || s.numbers || s.stats || s.kpi_units || s.values
                      || s.units || s.metrics || s.highlights || s.figures || s.rows || s.list
-                     // fallback: first array property whose items have unit/label
                      || Object.values(s).find(v => Array.isArray(v) && v[0]?.unit !== undefined)
                      || [];
             const items = parseItems(raw);
             return items.length ? [{ __type: 'numbers', items }] : [];
           }
-          // Auto-detect: any unrecognised layout whose sub-fields look like stats
           const autoArr = Object.values(s).find(v =>
             Array.isArray(v) && v.length && v[0] != null &&
             (v[0].unit !== undefined || v[0].label !== undefined) &&
@@ -2133,7 +2144,6 @@ quoteText.textContent = '“' + q.text + '”';
             if (items.length) return [{ __type: 'numbers', items }];
           }
         }
-        console.log('[SECTION BLOCK unhandled]', s.acf_fc_layout, JSON.stringify(s));
         return [];
       });
 
