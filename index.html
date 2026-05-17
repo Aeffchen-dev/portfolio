@@ -2636,14 +2636,41 @@ quoteText.textContent = '“' + q.text + '”';
         }));
       }
 
-      // Swap content at end of image flight, then dissolve overlay
+      // Swap content at end of image flight, slide new content in as image dissolves
       setTimeout(() => {
         scrollEl.scrollTop = 0;
+
+        // Pre-hide content containers for slide-in
+        const slideEls = [
+          scrollEl.querySelector('.page-header'),
+          scrollEl.querySelector('.blocks'),
+          scrollEl.querySelector('.project-detail'),
+        ].filter(Boolean);
+        slideEls.forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(12px)'; });
+
         fillModalContent(nextKey);
+
+        // Also catch .modal-page-end injected by fillModalContent
+        const pageEnd = scrollEl.querySelector('.modal-page-end');
+        if (pageEnd) { pageEnd.style.opacity = '0'; pageEnd.style.transform = 'translateY(12px)'; }
+
+        // Slide in with stagger as image overlay dissolves
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          [...slideEls, pageEnd].filter(Boolean).forEach((el, i) => {
+            el.style.transition = `opacity 0.35s ease ${i * 30}ms, transform 0.35s ease ${i * 30}ms`;
+            el.style.opacity    = '1';
+            el.style.transform  = 'translateY(0)';
+          });
+        }));
+
         if (imgOverlay) {
           imgOverlay.style.transition = 'opacity 0.25s ease';
           imgOverlay.style.opacity    = '0';
-          setTimeout(() => { imgOverlay.remove(); _isTransitioning = false; }, 250);
+          setTimeout(() => {
+            imgOverlay.remove();
+            slideEls.forEach(el => { el.style.transition = ''; el.style.transform = ''; });
+            _isTransitioning = false;
+          }, 350);
         } else {
           _isTransitioning = false;
         }
