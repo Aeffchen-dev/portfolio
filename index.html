@@ -576,6 +576,16 @@
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
     .modal.is-peek { z-index:201; pointer-events:auto; }
+    .peek-cursor {
+      position:fixed; z-index:400; pointer-events:none;
+      transform:translate(-50%,-50%);
+      background:rgba(0,0,0,0.75); color:#fff; border-radius:999px;
+      padding:10px 20px; font-size:11px; font-weight:500;
+      letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap;
+      opacity:0; transition:opacity .25s ease;
+    }
+    .peek-cursor.is-visible { opacity:1; }
+    .modal.is-peek .modal__hero { cursor:none; }
 .modal__peek-bar {
       display:none; position:relative; z-index:2;
       background:#000; padding:10px 16px 16px;
@@ -2433,6 +2443,26 @@ quoteText.textContent = '“' + q.text + '”';
     let activeModal = document.getElementById('modalA');
     let peekModal   = document.getElementById('modalB');
 
+    // Peek cursor — follows mouse over the peek hero area
+    const peekCursor = document.createElement('div');
+    peekCursor.className = 'peek-cursor';
+    peekCursor.textContent = 'Swipe for next project';
+    document.body.appendChild(peekCursor);
+
+    document.addEventListener('mousemove', e => {
+      peekCursor.style.left = e.clientX + 'px';
+      peekCursor.style.top  = e.clientY + 'px';
+      if (!peekModal.classList.contains('is-peek')) {
+        peekCursor.classList.remove('is-visible'); return;
+      }
+      const hero = peekModal.querySelector('.modal__hero');
+      if (!hero) { peekCursor.classList.remove('is-visible'); return; }
+      const r = hero.getBoundingClientRect();
+      const over = e.clientX >= r.left && e.clientX <= r.right &&
+                   e.clientY >= r.top  && e.clientY <= r.bottom;
+      peekCursor.classList.toggle('is-visible', over);
+    }, { passive: true });
+
     function fillModal(modalEl, key) {
       const p = PROJECTS[key]; if (!p) return;
       const clientEl = modalEl.querySelector('.modal__peek-bar__client');
@@ -2519,6 +2549,7 @@ quoteText.textContent = '“' + q.text + '”';
       activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
 
       function completePeek() {
+        peekCursor.classList.remove('is-visible');
         completing = true;
         _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
         completing = false;
