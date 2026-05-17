@@ -2507,62 +2507,51 @@ quoteText.textContent = '“' + q.text + '”';
       if (panelVid) panelVid.play().catch(() => {});
 
       _nextRevealAbort = new AbortController();
-      const sig = { passive: true, signal: _nextRevealAbort.signal };
       let navigating = false;
-      let panelShown = false;
-      let dragging = false, dragStartY = 0, dragCurrentY = 75;
+      let dragging = false, dragStartY = 0;
 
-      function showPanel() {
-        if (panelShown || navigating) return;
-        panelShown = true;
-        dragCurrentY = 75;
-        panel.style.transition = '';
-        panel.style.transform = 'translateY(75%)';
-      }
-      function hidePanel() {
-        if (!panelShown || dragging) return;
-        panelShown = false;
-        panel.style.transform = 'translateY(100%)';
-      }
-
-      scrollEl.addEventListener('scroll', () => {
+      function openNext() {
         if (navigating) return;
-        const atEnd = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 80;
-        atEnd ? showPanel() : hidePanel();
-      }, sig);
+        navigating = true; panel.remove(); observer.disconnect(); goToNextProject(nextKey);
+      }
 
+      // Show/hide panel as pageEnd enters/leaves the scroll viewport
+      const observer = new IntersectionObserver(entries => {
+        if (navigating) return;
+        if (entries[0].isIntersecting) {
+          requestAnimationFrame(() => { panel.style.transform = 'translateY(75%)'; });
+        } else {
+          if (!dragging) panel.style.transform = 'translateY(100%)';
+        }
+      }, { root: scrollEl, threshold: 0.05 });
+      observer.observe(pageEnd);
+
+      // Drag panel up to open
       panel.addEventListener('touchstart', e => {
         if (navigating) return;
-        dragStartY = e.touches[0].clientY;
-        dragging = true;
+        dragStartY = e.touches[0].clientY; dragging = true;
         panel.style.transition = 'none';
-      }, { passive: true, signal: _nextRevealAbort.signal });
-
+      }, { passive: true });
       panel.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
-        const panelH = window.innerHeight * 0.95;
-        const dy = dragStartY - e.touches[0].clientY;
-        const newY = Math.max(0, Math.min(100, dragCurrentY - (dy / panelH * 100)));
-        panel.style.transform = `translateY(${newY}%)`;
-      }, { passive: true, signal: _nextRevealAbort.signal });
-
+        const dy = dragStartY - e.touches[0].clientY; // positive = up
+        const pct = Math.max(0, 75 - (dy / (window.innerHeight * 0.95) * 100));
+        panel.style.transform = `translateY(${pct}%)`;
+      }, { passive: true });
       panel.addEventListener('touchend', e => {
         if (!dragging) return;
         dragging = false;
-        const panelH = window.innerHeight * 0.95;
-        const dy = dragStartY - e.changedTouches[0].clientY;
-        const endY = Math.max(0, Math.min(100, dragCurrentY - (dy / panelH * 100)));
         panel.style.transition = '';
-        if (endY < 40) {
-          navigating = true; panel.remove(); goToNextProject(nextKey);
-        } else {
-          dragCurrentY = 75;
-          panel.style.transform = 'translateY(75%)';
-        }
-      }, { passive: true, signal: _nextRevealAbort.signal });
+        const dy = dragStartY - e.changedTouches[0].clientY;
+        const pct = 75 - (dy / (window.innerHeight * 0.95) * 100);
+        if (pct < 40) { openNext(); } else { panel.style.transform = 'translateY(75%)'; }
+      }, { passive: true });
 
-      panel.addEventListener('click', () => {
-        if (!navigating) { navigating = true; panel.remove(); goToNextProject(nextKey); }
+      panel.addEventListener('click', openNext);
+
+      _nextRevealAbort.signal.addEventListener('abort', () => {
+        observer.disconnect();
+        panel.remove();
       });
     }
 
