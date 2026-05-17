@@ -38,7 +38,7 @@ export function BlockGrid({ blocks }: BlockGridProps) {
   return (
     <div
       className="flex flex-col"
-      style={{ gap: 16, paddingTop: 8, paddingBottom: 8 }}
+      style={{ gap: 16, padding: 8, backgroundColor: "#1a1a1a" }}
     >
       {rows.map((row, rowIndex) => (
         <div
@@ -47,7 +47,6 @@ export function BlockGrid({ blocks }: BlockGridProps) {
           style={{
             gridTemplateColumns: "repeat(4, 1fr)",
             gap: 8,
-            ...(rowIndex === 0 ? { padding: 8 } : {}),
           }}
         >
           {row.map((block, blockIndex) => (
