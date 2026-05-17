@@ -721,7 +721,7 @@
       .modal-proj-card__view .view-text { display: none; }
       /* first card: full-width landscape, same on tablet and desktop */
       .modal-proj-card:first-child { grid-column: 1 / -1; }
-      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; width: calc(100% - 16px); margin: 0 auto; }
+      .modal-proj-card:first-child .modal-proj-card__img { aspect-ratio: 16/9; width: calc(100% - 48px); margin: 0 auto; }
     }
     /* Desktop overrides for modal cards — must come after the 640px block */
     @media (min-width:1024px) {
@@ -832,9 +832,7 @@
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; }
     .modal__hero img,
-    .modal__hero video { width:calc(100% - 16px); display:block; margin:0 auto; aspect-ratio:8/5; object-fit:cover; }
-    .modal.is-peek .modal__hero img,
-    .modal.is-peek .modal__hero video { width:100%; margin:0; }
+    .modal__hero video { width:100%; display:block; margin:0; aspect-ratio:8/5; object-fit:cover; }
 
     /* === MODAL BACKDROP === */
     .nav-blur {
