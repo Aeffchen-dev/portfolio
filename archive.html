@@ -204,7 +204,7 @@
       border-radius:12px;
       overflow:hidden;
       will-change:transform;
-      background:#2a2a2a;
+      background:transparent;
       cursor:pointer;
       transition:opacity .15s ease;
     }
@@ -381,7 +381,7 @@
     const COLS   = 8;
     const ROWS   = 5;
     const BASE_W = 120;
-    const BASE_G = 12;
+    const BASE_G = 4;
     const mult   = CW < 640 ? 3.2 : CW < 1024 ? 1.8 : 1.1;
     const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
@@ -445,7 +445,8 @@
       const img = document.createElement('img');
       img.alt = '';
       img.draggable = false;
-      img.onload = img.onerror = _onTileLoad;
+      img.onload = _onTileLoad;
+      img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; _onTileLoad(); };
       img.src = IMGS[i % IMGS.length];
       // Belt-and-suspenders for browsers that don't fire onload for cached images
       if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
