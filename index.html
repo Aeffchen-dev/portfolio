@@ -576,6 +576,8 @@
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
     .modal.is-peek { z-index:201; pointer-events:auto; }
+    #peekShield { display:none; position:fixed; inset:0; z-index:200; }
+    #peekShield.is-active { display:block; }
     .modal.is-peek::before {
       content:''; position:absolute; top:10px; left:50%; transform:translateX(-50%);
       width:36px; height:4px; border-radius:2px;
@@ -1567,6 +1569,7 @@
   </div>
   <div class="modal is-hidden" id="modalA"><div class="modal__scroll"></div></div>
   <div class="modal is-hidden" id="modalB"><div class="modal__scroll"></div></div>
+  <div id="peekShield"></div>
 
   <script>
     // === NAV ===
@@ -2437,13 +2440,16 @@ quoteText.textContent = '“' + q.text + '”';
 
       const sentinelObs = new IntersectionObserver(entries => {
         const visible = entries[0].isIntersecting;
+        const shield = document.getElementById('peekShield');
         if (visible && !peeking && !dragging) {
           peeking = true;
+          shield.classList.add('is-active');
           peekModal.style.transition = 'transform 0.38s cubic-bezier(.4,0,.2,1)';
           peekModal.style.transform  = 'translateY(65%)';
           curPct = 65;
         } else if (!visible && peeking && !dragging) {
           peeking = false;
+          shield.classList.remove('is-active');
           peekModal.style.transition = 'transform 0.38s cubic-bezier(.4,0,.2,1)';
           peekModal.style.transform  = 'translateY(100%)';
           curPct = 100;
@@ -2456,6 +2462,7 @@ quoteText.textContent = '“' + q.text + '”';
         peekModal.style.transform  = 'translateY(0)';
         activeModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
         activeModal.style.transform  = 'translateY(8%)';
+        document.getElementById('peekShield').classList.remove('is-active');
         _nextRevealAbort.abort();
         setTimeout(() => {
           activeModal.classList.remove('is-open');
@@ -2501,6 +2508,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       signal.addEventListener('abort', () => {
         sentinelObs.disconnect();
+        document.getElementById('peekShield').classList.remove('is-active');
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = 'translateY(100%)';
         setTimeout(() => {
