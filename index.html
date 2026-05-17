@@ -2702,7 +2702,20 @@ quoteText.textContent = '“' + q.text + '”';
               if (clientEl && p.name) clientEl.textContent = p.name;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
               if (imgContainer && p.client) imgContainer.dataset.client = p.client;
-              // images kept as local parallax fallbacks — not overridden from CMS
+              const imgEl   = imgContainer ? imgContainer.querySelector('img')   : null;
+              const videoEl = imgContainer ? imgContainer.querySelector('video') : null;
+              if (p.heroVideo) {
+                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
+                if (imgEl)   { imgEl.style.display = 'none'; }
+              } else if (p.hero) {
+                if (imgEl) {
+                  const fallbackSrc = imgEl.getAttribute('src');
+                  imgEl.onerror = () => { imgEl.src = fallbackSrc; imgEl.onerror = null; };
+                  imgEl.src = p.hero;
+                  imgEl.style.display = '';
+                }
+                if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
+              }
             }
             if (key === 'about-you') {
               const og = document.getElementById('ogImage');
@@ -2795,19 +2808,26 @@ quoteText.textContent = '“' + q.text + '”';
         const shown = posts.slice(0, 8);
         const label = document.getElementById('articlesLabel');
         if (label) label.textContent = `Articles (${shown.length})`;
-        const cards = await Promise.all(shown.map(async post => {
+        const ARTICLE_FALLBACKS = [
+          'images/parallax/p07.png','images/parallax/p09.png','images/parallax/p10.png',
+          'images/parallax/p11.png','images/parallax/p12.png','images/parallax/p13.png',
+          'images/parallax/p14.png','images/parallax/p15.png',
+        ];
+        const cards = await Promise.all(shown.map(async (post, idx) => {
           const title = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent : 'Untitled';
           const slug = post.slug || '';
           const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || '';
           const acf = post.acf || {};
           const imgRow = (Array.isArray(acf.content) ? acf.content : []).find(s => s.acf_fc_layout === 'image');
           const cmsImg = await resolveArticleImg(imgRow?.img || imgRow?.image) || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-          const img = ARTICLE_COVERS[slug] || cmsImg || '';
+          const fallbackImg = ARTICLE_FALLBACKS[idx % ARTICLE_FALLBACKS.length];
+          const img = ARTICLE_COVERS[slug] || cmsImg || fallbackImg;
           const ARROW = `<svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg>`;
+          const onerr = `onerror="this.src='${fallbackImg}';this.onerror=null"`;
           return `<a class="article-card" href="article.html?slug=${encodeURIComponent(slug)}">
-            <div class="article-card__thumb">${img ? `<img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">` : ''}</div>
+            <div class="article-card__thumb"><img src="${img.replace(/"/g,'&quot;')}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy" ${onerr}></div>
             <div class="article-card__body">
-              ${img ? `<div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>` : ''}
+              <div class="article-card__bg" style="background-image:url(${JSON.stringify(img)})"></div>
               <p class="article-card__title">${title}</p>
               <span class="article-card__label">Deep Dive</span>
             </div>
