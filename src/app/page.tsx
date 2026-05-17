@@ -1,7 +1,15 @@
+"use client";
+
+import React, { useState, useCallback } from "react";
 import Link from "next/link";
 import { projects } from "@/data/projects";
+import type { Project } from "@/types/blocks";
+import { ProjectSheet } from "@/components/ProjectSheet";
 
 export default function Home() {
+  const [openProject, setOpenProject] = useState<Project | null>(null);
+  const handleClose = useCallback(() => setOpenProject(null), []);
+
   return (
     <main
       style={{
@@ -60,6 +68,7 @@ export default function Home() {
           <Link
             key={project.slug}
             href={`/projects/${project.slug}`}
+            onClick={(e: React.MouseEvent) => { e.preventDefault(); setOpenProject(project); }}
             style={{ gridColumn: "span 2", textDecoration: "none", backgroundColor: "#1a1a1a" }}
             className="group"
           >
@@ -127,6 +136,8 @@ export default function Home() {
           </Link>
         ))}
       </div>
+
+      <ProjectSheet project={openProject} onClose={handleClose} />
     </main>
   );
 }
