@@ -60,7 +60,7 @@ export default function Home() {
           <Link
             key={project.slug}
             href={`/projects/${project.slug}`}
-            style={{ gridColumn: "span 2", textDecoration: "none" }}
+            style={{ gridColumn: "span 2", textDecoration: "none", backgroundColor: "#1a1a1a" }}
             className="group"
           >
             <div
