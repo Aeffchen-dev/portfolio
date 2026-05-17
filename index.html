@@ -273,7 +273,7 @@
     }
     .work-item__body {
       background:#141414; border-radius:4px;
-      padding:8px; aspect-ratio:4/3;
+      padding:16px; aspect-ratio:4/3;
       position:relative; z-index:1; margin-top:16px; will-change:transform,opacity;
       display:flex; flex-direction:column;
     }
@@ -576,15 +576,9 @@
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
     .modal.is-peek { z-index:201; pointer-events:auto; }
-    #peekShield { display:none; position:fixed; inset:0; z-index:200; }
-    #peekShield.is-active { display:block; }
-    .modal__peek-bar {
+.modal__peek-bar {
       display:none; position:relative; z-index:2;
       background:#000; padding:10px 16px 16px;
-    }
-    .modal__peek-bar::before {
-      content:''; display:block; width:36px; height:4px; border-radius:2px;
-      background:rgba(255,255,255,0.35); margin:0 auto 12px;
     }
     .modal__peek-bar__row {
       display:flex; align-items:center; justify-content:space-between;
@@ -593,13 +587,16 @@
       font-size:14px; font-weight:500; color:#fff; line-height:1.2;
     }
     .modal__peek-bar__link {
-      display:flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase;
-      color:rgba(255,255,255,0.5); text-decoration:none; cursor:pointer;
+      display:inline-flex; align-items:center; gap:3px;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
+      color:#989898; text-decoration:none; cursor:pointer;
       background:none; border:none; padding:0;
+      transition:color .3s ease-in-out;
     }
+    @media (hover:hover) { .modal__peek-bar__link:hover { color:#fff; } }
     .modal.is-peek .modal__peek-bar { display:block; }
-    .modal.is-peek .modal__scroll { margin-top:16px; }
+    .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
 
     /* === PAGE HEADER (modal) === */
     .page-header { }
@@ -815,12 +812,10 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.10); border-radius:8px;
-      backdrop-filter:blur(20px) saturate(1.8); -webkit-backdrop-filter:blur(20px) saturate(1.8);
-      box-shadow:0 1px 3px rgba(0,0,0,0.08);
-      text-decoration:none; color:inherit; transition:background .3s ease-in-out, box-shadow .3s ease-in-out;
+      padding:8px 16px 8px 8px; background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 99%, black); border-radius:4px;
+      text-decoration:none; color:inherit; transition:background .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.15); box-shadow:0 1px 4px rgba(0,0,0,0.10); }
+    .modal-link-card:hover { background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 97%, black); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -922,7 +917,7 @@
       .nav__contact { padding-left:0; padding-right:0; }
       .work-item { display:flex; flex-direction:column; gap:8px; will-change:transform,opacity; margin-left:8px; margin-right:8px; }
       .work-item__image { padding:0; margin:0; margin-top:0 !important; }
-      .work-item__body { margin:0; padding:8px; }
+      .work-item__body { margin:0; padding:16px; }
       /* 8px gap between every consecutive pair of work-items (visual order via order:) */
       .work-item--hero-side,
       .work-list .work-item:nth-child(5),
@@ -1129,7 +1124,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(0,0,0,0.08); }
+      .modal-link-card:hover { background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 97%, black); }
     }
   </style>
 </head>
@@ -1588,7 +1583,7 @@
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
-        <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3 7.7L7.7 2.3" stroke-linecap="square"/><path d="M2.3 2.3H7.7V7.7" stroke-linecap="square"/></svg></button>
+        <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
       </div>
     </div>
     <div class="modal__scroll"></div>
@@ -1597,12 +1592,12 @@
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
-        <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3 7.7L7.7 2.3" stroke-linecap="square"/><path d="M2.3 2.3H7.7V7.7" stroke-linecap="square"/></svg></button>
+        <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
       </div>
     </div>
     <div class="modal__scroll"></div>
   </div>
-  <div id="peekShield"></div>
+
 
   <script>
     // === NAV ===
@@ -2414,7 +2409,7 @@ quoteText.textContent = '“' + q.text + '”';
     function fillModal(modalEl, key) {
       const p = PROJECTS[key]; if (!p) return;
       const clientEl = modalEl.querySelector('.modal__peek-bar__client');
-      if (clientEl) clientEl.textContent = p.name || p.client;
+      if (clientEl) clientEl.textContent = p.client || p.name;
       const bg = p.bg || '#f2f2f2';
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
@@ -2426,6 +2421,7 @@ quoteText.textContent = '“' + q.text + '”';
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       const scrollEl = modalEl.querySelector('.modal__scroll');
       scrollEl.style.background = bg;
+      scrollEl.style.setProperty('--modal-bg', bg);
       scrollEl.scrollTop = 0;
       scrollEl.innerHTML =
         heroHTML +
@@ -2462,58 +2458,62 @@ quoteText.textContent = '“' + q.text + '”';
       fillModal(peekModal, nextKey);
       peekModal.classList.add('is-peek');
       peekModal.style.visibility = 'visible';
-      peekModal.style.transition = '';
+      peekModal.style.transition = 'none';
       peekModal.style.transform  = 'translateY(100%)';
 
       const activeScroll = activeModal.querySelector('.modal__scroll');
-      const sentinel = activeScroll.querySelector('.modal__end-sentinel');
+
+      // Spacer at bottom of active scroll — scrolling through it drives the peek position
+      const peekH = Math.round(window.innerHeight * 0.35);
+      const peekSpacer = document.createElement('div');
+      peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
+      peekSpacer.setAttribute('aria-hidden', 'true');
+      activeScroll.appendChild(peekSpacer);
 
       _nextRevealAbort = new AbortController();
       const { signal } = _nextRevealAbort;
 
       let peeking = false, dragging = false, completing = false;
-      let startY = 0, startPct = 100, curPct = 100, peekSpacer = null;
+      let startY = 0, startPct = 100, curPct = 100;
 
-      const sentinelObs = new IntersectionObserver(entries => {
-        if (!entries[0].isIntersecting || peeking || dragging) return;
-        peeking = true;
-        sentinelObs.disconnect();
-        document.getElementById('peekShield').classList.add('is-active');
-        peekModal.style.transition = 'transform 0.38s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = 'translateY(65%)';
-        curPct = 65;
-        // Scroll active content up so nothing sits behind the peek sheet
-        const peekH = Math.round(window.innerHeight * 0.35);
-        peekSpacer = document.createElement('div');
-        peekSpacer.style.height = peekH + 'px';
-        peekSpacer.setAttribute('aria-hidden', 'true');
-        activeScroll.appendChild(peekSpacer);
-        activeScroll.scrollBy({ top: peekH, behavior: 'smooth' });
-      }, { root: activeScroll, threshold: 0.05 });
-      if (sentinel) sentinelObs.observe(sentinel);
+      // Scroll-driven: peek rises from 100%→65% as user scrolls through the spacer
+      function onScroll() {
+        if (dragging) return;
+        const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
+        const progress  = Math.max(0, Math.min(1, (peekH - remaining) / peekH));
+        curPct = 100 - progress * 35; // 100% hidden → 65% peeked
+        peekModal.style.transition = 'none';
+        peekModal.style.transform  = `translateY(${curPct}%)`;
+        peeking = progress >= 1;
+      }
+      activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
 
       function completePeek() {
         completing = true;
-        _nextRevealAbort.abort(); // cleans up shield + spacer; skip-flag prevents it touching peekModal
+        _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
         completing = false;
-        peekModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = 'translateY(0)';
-        activeModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = 'translateY(8%)';
-        setTimeout(() => {
-          activeModal.classList.remove('is-open');
-          activeModal.style.visibility = 'hidden';
-          activeModal.style.transition = '';
-          activeModal.style.transform  = '';
-          activeModal.querySelector('.modal__scroll').innerHTML = '';
-          peekModal.classList.remove('is-peek');
-          peekModal.classList.add('is-open');
-          peekModal.style.transition = '';
-          peekModal.style.transform  = '';
-          [activeModal, peekModal] = [peekModal, activeModal];
-          currentProjectKey = nextKey;
-          setupPeek(nextKey);
-        }, 400);
+        const pm = peekModal, am = activeModal, nk = nextKey;
+        // RAF ensures browser commits the dragged position before the opening transition starts
+        requestAnimationFrame(() => {
+          pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+          pm.style.transform  = 'translateY(0)';
+          am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+          am.style.transform  = 'translateY(-8%)';
+          setTimeout(() => {
+            am.classList.remove('is-open');
+            am.style.visibility = 'hidden';
+            am.style.transition = '';
+            am.style.transform  = '';
+            am.querySelector('.modal__scroll').innerHTML = '';
+            pm.classList.remove('is-peek');
+            pm.classList.add('is-open');
+            pm.style.transition = '';
+            pm.style.transform  = '';
+            activeModal = pm; peekModal = am;
+            currentProjectKey = nk;
+            setupPeek(nk);
+          }, 420);
+        });
       }
 
       peekModal.addEventListener('touchstart', e => {
@@ -2526,27 +2526,35 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchmove', e => {
         if (!dragging) return;
+        e.preventDefault();
         const dy = startY - e.touches[0].clientY;
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         peekModal.style.transform = `translateY(${curPct}%)`;
-      }, { passive: true, signal });
+        // Both sheets move: active slides up proportionally as peek rises
+        const prog = Math.max(0, (65 - curPct) / 65);
+        activeModal.style.transition = 'none';
+        activeModal.style.transform  = `translateY(${-prog * 8}%)`;
+        // At top: complete immediately so content becomes scrollable
+        if (curPct <= 0) { dragging = false; completePeek(); }
+      }, { passive: false, signal });
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
         if (curPct < 50) { completePeek(); return; }
-        const snapTo = peeking ? 65 : 100;
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = `translateY(${snapTo}%)`;
-        curPct = snapTo;
+        peekModal.style.transform  = 'translateY(65%)';
+        curPct = 65;
+        activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        activeModal.style.transform  = '';
       }, { signal });
 
       peekModal.addEventListener('click', () => { if (peeking) completePeek(); }, { signal });
 
       signal.addEventListener('abort', () => {
-        sentinelObs.disconnect();
-        document.getElementById('peekShield').classList.remove('is-active');
-        if (peekSpacer) { peekSpacer.remove(); peekSpacer = null; }
-        if (completing) return; // completePeek handles peekModal itself
+        peekSpacer.remove();
+        if (completing) return;
+        activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        activeModal.style.transform  = '';
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = 'translateY(100%)';
         setTimeout(() => {
