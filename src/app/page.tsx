@@ -84,7 +84,7 @@ export default function Home() {
               <div
                 style={{
                   aspectRatio: "16/9",
-                  backgroundColor: "#222222",
+                  backgroundColor: "#1a1a1a",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

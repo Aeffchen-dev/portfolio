@@ -146,6 +146,7 @@ export function ProjectSheet({ project, onClose }: Props) {
                     color: "#666666",
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
+                    marginTop: 2,
                   }}
                 >
                   {project.client}
@@ -159,6 +160,7 @@ export function ProjectSheet({ project, onClose }: Props) {
                     letterSpacing: "-0.03em",
                     lineHeight: 1.05,
                     maxWidth: "16ch",
+                    marginTop: 2,
                   }}
                 >
                   {project.title}
