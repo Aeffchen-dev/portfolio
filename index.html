@@ -2509,12 +2509,61 @@ quoteText.textContent = '“' + q.text + '”';
       _nextRevealAbort = new AbortController();
       const sig = { passive: true, signal: _nextRevealAbort.signal };
       let navigating = false;
+      let panelShown = false;
+      let dragging = false, dragStartY = 0, dragCurrentY = 75;
+
+      function showPanel() {
+        if (panelShown || navigating) return;
+        panelShown = true;
+        dragCurrentY = 75;
+        panel.style.transition = '';
+        panel.style.transform = 'translateY(75%)';
+      }
+      function hidePanel() {
+        if (!panelShown || dragging) return;
+        panelShown = false;
+        panel.style.transform = 'translateY(100%)';
+      }
 
       scrollEl.addEventListener('scroll', () => {
         if (navigating) return;
         const atEnd = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 80;
-        if (atEnd) { navigating = true; panel.remove(); goToNextProject(nextKey); }
+        atEnd ? showPanel() : hidePanel();
       }, sig);
+
+      panel.addEventListener('touchstart', e => {
+        if (navigating) return;
+        dragStartY = e.touches[0].clientY;
+        dragging = true;
+        panel.style.transition = 'none';
+      }, { passive: true, signal: _nextRevealAbort.signal });
+
+      panel.addEventListener('touchmove', e => {
+        if (!dragging || navigating) return;
+        const panelH = window.innerHeight * 0.95;
+        const dy = dragStartY - e.touches[0].clientY;
+        const newY = Math.max(0, Math.min(100, dragCurrentY - (dy / panelH * 100)));
+        panel.style.transform = `translateY(${newY}%)`;
+      }, { passive: true, signal: _nextRevealAbort.signal });
+
+      panel.addEventListener('touchend', e => {
+        if (!dragging) return;
+        dragging = false;
+        const panelH = window.innerHeight * 0.95;
+        const dy = dragStartY - e.changedTouches[0].clientY;
+        const endY = Math.max(0, Math.min(100, dragCurrentY - (dy / panelH * 100)));
+        panel.style.transition = '';
+        if (endY < 40) {
+          navigating = true; panel.remove(); goToNextProject(nextKey);
+        } else {
+          dragCurrentY = 75;
+          panel.style.transform = 'translateY(75%)';
+        }
+      }, { passive: true, signal: _nextRevealAbort.signal });
+
+      panel.addEventListener('click', () => {
+        if (!navigating) { navigating = true; panel.remove(); goToNextProject(nextKey); }
+      });
     }
 
     function goToNextProject(nextKey) {
