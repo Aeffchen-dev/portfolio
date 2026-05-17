@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; }
+    .modal.is-peek { z-index:201; pointer-events:auto; border-radius:0; }
 .modal__peek-bar {
       display:none; position:relative; z-index:2;
       background:#000; padding:10px 16px 16px;
@@ -2491,7 +2491,7 @@ quoteText.textContent = '“' + q.text + '”';
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
       // Spacer at bottom of active scroll — scrolling through it drives the peek position
-      const peekH = Math.round(window.innerHeight * 0.70);
+      const peekH = Math.round(window.innerHeight * 0.35) + 16;
       const peekSpacer = document.createElement('div');
       peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
       peekSpacer.setAttribute('aria-hidden', 'true');
