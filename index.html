@@ -834,9 +834,9 @@
     /* === MODAL HERO === */
     .modal__hero { margin:-24px -8px 8px; overflow:hidden; background:#000; }
     .modal__hero img,
-    .modal__hero video { width:calc(100% - 16px); display:block; margin:0 auto; aspect-ratio:8/5; object-fit:cover; border-radius:8px; transition:width .4s ease,border-radius .4s ease,margin .4s ease; }
-    .modal__scroll--at-top .modal__hero img,
-    .modal__scroll--at-top .modal__hero video { width:100%; margin:0; border-radius:0; }
+    .modal__hero video { width:100%; display:block; margin:0; aspect-ratio:8/5; object-fit:cover; border-radius:0; transition:width .4s cubic-bezier(.4,0,.2,1),border-radius .4s cubic-bezier(.4,0,.2,1),margin .4s cubic-bezier(.4,0,.2,1); }
+    .modal--hero-inset .modal__hero img,
+    .modal--hero-inset .modal__hero video { width:calc(100% - 16px); margin:0 auto; border-radius:8px; }
 
     /* === MODAL BACKDROP === */
     .nav-blur {
@@ -915,7 +915,7 @@
       .cv-section-heading br { display:none; }
       .cv-section-heading { margin-bottom:16px; }
       /* modal header: client + title inline */
-      .modal-header-left { flex-direction:row; align-items:baseline; gap:16px; }
+      .modal-header-left { flex-direction:row; align-items:baseline; gap:8px; }
       .modal-year { margin-top:0; }
       /* nav bar starts at 8px so JS doesn't cause a flash on load */
       .nav__bar { padding-left:8px; padding-right:8px; }
@@ -2450,7 +2450,6 @@ quoteText.textContent = '“' + q.text + '”';
       scrollEl.style.background = bg;
       scrollEl.style.setProperty('--modal-bg', bg);
       scrollEl.scrollTop = 0;
-      scrollEl.classList.add('modal__scroll--at-top');
       scrollEl.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
@@ -2484,7 +2483,7 @@ quoteText.textContent = '“' + q.text + '”';
       if (!nextKey) return;
 
       fillModal(peekModal, nextKey);
-      peekModal.classList.add('is-peek');
+      peekModal.classList.add('is-peek', 'modal--hero-inset');
       peekModal.style.visibility = 'visible';
       peekModal.style.transition = 'none';
       peekModal.style.transform  = 'translateY(100%)';
@@ -2523,6 +2522,7 @@ quoteText.textContent = '“' + q.text + '”';
         const pm = peekModal, am = activeModal, nk = nextKey;
         // RAF ensures browser commits the dragged position before the opening transition starts
         requestAnimationFrame(() => {
+          pm.classList.remove('modal--hero-inset'); // fire hero expand in sync with slide
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = 'translateY(0)';
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
@@ -2586,7 +2586,7 @@ quoteText.textContent = '“' + q.text + '”';
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = 'translateY(100%)';
         setTimeout(() => {
-          peekModal.classList.remove('is-peek');
+          peekModal.classList.remove('is-peek', 'modal--hero-inset');
           peekModal.style.visibility = 'hidden';
         }, 350);
       });
@@ -2598,7 +2598,7 @@ quoteText.textContent = '“' + q.text + '”';
       activeModal = document.getElementById('modalA');
       peekModal   = document.getElementById('modalB');
       [activeModal, peekModal].forEach(m => {
-        m.classList.remove('is-open', 'is-peek');
+        m.classList.remove('is-open', 'is-peek', 'modal--hero-inset');
         m.style.transform = ''; m.style.transition = '';
         m.style.visibility = 'hidden';
         const s = m.querySelector('.modal__scroll');
@@ -2637,7 +2637,7 @@ quoteText.textContent = '“' + q.text + '”';
         m.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
         m.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
         m.addEventListener('transitionend', () => {
-          m.classList.remove('is-open', 'is-peek');
+          m.classList.remove('is-open', 'is-peek', 'modal--hero-inset');
           m.style.visibility = 'hidden';
           m.style.transition = ''; m.style.transform = '';
           const s = m.querySelector('.modal__scroll');
