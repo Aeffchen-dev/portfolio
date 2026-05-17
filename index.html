@@ -2534,6 +2534,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       let peeking = false, dragging = false, completing = false;
       let startY = 0, startPct = 100, curPct = 100;
+      let peekIntroduced = false;
 
       // Scroll-driven: peek rises from 100%→65% as user scrolls through the spacer
       function onScroll() {
@@ -2541,9 +2542,15 @@ quoteText.textContent = '“' + q.text + '”';
         const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
         const progress  = Math.max(0, Math.min(1, (peekH - remaining) / peekH));
         curPct = 100 - progress * 35; // 100% hidden → 65% peeked
-        peekModal.style.transition = 'transform 0.25s ease-out';
+        if (!peekIntroduced && progress > 0) {
+          peekIntroduced = true;
+          peekModal.style.transition  = 'transform 0.6s 0.15s cubic-bezier(0,0,0.2,1)';
+          activeModal.style.transition = 'transform 0.6s 0.15s cubic-bezier(0,0,0.2,1)';
+        } else {
+          peekModal.style.transition  = 'transform 0.25s ease-out';
+          activeModal.style.transition = 'transform 0.25s ease-out';
+        }
         peekModal.style.transform  = `translateY(${curPct}%)`;
-        activeModal.style.transition = 'transform 0.25s ease-out';
         activeModal.style.transform  = `translateY(${-progress * 8}%)`;
         peeking = progress >= 1;
       }
