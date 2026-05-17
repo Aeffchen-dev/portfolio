@@ -557,7 +557,7 @@
       bottom:0; left:0;
       width:100vw; max-height:95dvh;
       z-index:200;
-      overflow:hidden; background:#000;
+      overflow:hidden; background:#000; border-radius:16px 16px 0 0;
       transform:translateY(100%);
       transition:transform .5s cubic-bezier(.4,0,.2,1);
       pointer-events:none;
@@ -570,7 +570,7 @@
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
       padding:24px 8px;
       scrollbar-width:none;
-      color:#111; border-radius:16px 16px 0 0;
+      color:#111;
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
