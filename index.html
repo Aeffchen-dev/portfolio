@@ -780,7 +780,7 @@
     .blocks { padding:64px 0; }
     .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:64px; }
     .blocks__grid > :first-child { margin-top:-16px; }
-    .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
+    .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); border-radius:4px; }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
     .block-video-embed { background:#000; aspect-ratio:16/9; position:relative; overflow:hidden; }
@@ -2448,6 +2448,7 @@ quoteText.textContent = '“' + q.text + '”';
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       const scrollEl = modalEl.querySelector('.modal__scroll');
       scrollEl.style.background = bg;
+      scrollEl.style.color = p.textColor || '';
       scrollEl.style.setProperty('--modal-bg', bg);
       scrollEl.scrollTop = 0;
       scrollEl.innerHTML =
