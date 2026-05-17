@@ -707,24 +707,44 @@
       .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
     }
 
-    .js-next-panel { z-index: 205 !important; }
-    .next-panel-peek {
-      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
-      padding: 14px 16px 10px;
-      display: flex; align-items: center; justify-content: space-between;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
+    .modal-next-reveal {
+      position: relative; overflow: hidden; cursor: pointer;
+      background: #1a1a1a; height: 55vh; min-height: 55vh;
+      margin: 0; border-radius: 12px 12px 4px 4px;
     }
-    .next-panel-peek::before {
+    .modal-next-reveal::before {
       content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
       width: 36px; height: 4px; border-radius: 2px;
-      background: rgba(255,255,255,0.35); pointer-events: none;
+      background: rgba(255,255,255,0.35); z-index: 2; pointer-events: none;
     }
-    .js-next-panel.is-open .next-panel-peek { opacity: 0; }
-    .next-panel-peek__meta { display: flex; flex-direction: column; gap: 1px; }
-    .next-panel-peek__hint { font-family:'HW Left Bold',sans-serif; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.5); letter-spacing: 0.48px; text-transform: uppercase; }
-    .next-panel-peek__year { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
-    .next-panel-peek__title { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.2; }
+    .modal-next-reveal__bg {
+      position: absolute; inset: 0; opacity: 1;
+    }
+    .modal-next-reveal__bg img {
+      width: 100%; height: 110%; object-fit: cover; display: block; object-position: center top;
+    }
+    .modal-next-reveal__bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.6) 0%, rgba(0,0,0,.05) 60%);
+    }
+    .modal-next-reveal__inner {
+      position: relative; z-index: 1; height: 100%;
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+      padding: 20px;
+    }
+    .modal-next-reveal__year {
+      display:block; font-size:11px; font-weight:500;
+      color:rgba(255,255,255,0.55); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px;
+    }
+    .modal-next-reveal__title {
+      font-size:14px; font-weight:500;
+      letter-spacing:0; line-height:1.2; color:#fff;
+    }
+    @media (min-width:640px) {
+      .modal-next-reveal { aspect-ratio: unset; height: 500px; min-height: 500px; border-radius: 12px 12px 0 0; }
+      .modal-next-reveal__bg { opacity: 1; }
+      .modal-next-reveal__bg::after { display: none; }
+    }
 
     .modal.js-stacked-sheet { z-index: 202; }
 
@@ -740,8 +760,8 @@
     .hero__desc p { font-size:14px; font-weight:400; line-height:1.3; color:#111; }
 
     /* === BLOCKS GRID === */
-    .blocks { padding:12px 0; }
-    .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:24px; }
+    .blocks { padding:64px 0; }
+    .blocks__grid { display:grid; grid-template-columns:1fr; row-gap:64px; }
     .block { overflow:hidden; transform:translateZ(0); -webkit-transform:translateZ(0); }
     .block-image { background:#e8e8e8; }
     .block-image img { width:100%; height:auto; display:block; }
@@ -779,12 +799,12 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.10); border-radius:8px;
+      padding:8px 16px 8px 8px; background:rgba(255,255,255,0.38); border-radius:16px;
       backdrop-filter:blur(20px) saturate(1.8); -webkit-backdrop-filter:blur(20px) saturate(1.8);
-      box-shadow:0 1px 3px rgba(0,0,0,0.08);
+      box-shadow:0 0 2px 2px rgba(0,0,0,0.05);
       text-decoration:none; color:inherit; transition:background .3s ease-in-out, box-shadow .3s ease-in-out;
     }
-    .modal-link-card:hover { background:rgba(0,0,0,0.15); box-shadow:0 1px 4px rgba(0,0,0,0.10); }
+    .modal-link-card:hover { background:rgba(255,255,255,0.58); box-shadow:0 1px 2px 2px rgba(0,0,0,0.07); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -849,20 +869,18 @@
       .home-hero          { order:1; padding-left:8px; padding-right:8px; padding-top:120px; padding-bottom:120px; min-height:0; justify-content:flex-start; }
       .section-label      { order:2; padding-left:8px; padding-right:8px; margin-top:0; }
       .work-list          { display:contents; }
-      .exp-quotes-row     { display:contents; }
-      .cv-section-wrap    { order:10; padding-left:8px; padding-right:8px; }
-      .about-quotes-row   { order:11; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
+      .exp-quotes-row     { order:10; display:flex; flex-direction:column; padding-left:8px; padding-right:8px; }
+      .cv-card--archive   { display:block; height:420px; aspect-ratio:unset; margin-top:8px; }
+      .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
       .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
       .cv-section         { min-height:calc(100dvh - 8px); }
-      .articles-section   { order:12; margin-top:0; margin-bottom:48px; }
+      .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:8px; padding-right:8px; }
-      .cta-footer-box     { display:contents; }
-      .cta-section        { order:13; padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
+      .cta-footer-box     { order:12; display:flex; flex-direction:column; }
+      .cta-section        { padding-left:8px; padding-right:8px; margin-top:32px; padding-top:0; padding-bottom:32px; }
       .cta-section__texts { margin-bottom:32px; }
-      /* archive card sits 8px above footer */
-      .cv-card--archive   { order:14; display:block; height:420px; aspect-ratio:unset; margin-top:0; margin-left:8px; margin-right:8px; margin-bottom:8px; }
-      .home-footer        { order:15; flex:none; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
+      .home-footer        { flex:1; padding:8px; margin-left:8px; margin-right:8px; margin-bottom:8px; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
       .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
       .footer-name        { margin-bottom:-24px; }
       .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
@@ -1095,7 +1113,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:rgba(0,0,0,0.08); }
+      .modal-link-card:hover { background:rgba(255,255,255,0.38); }
     }
   </style>
 </head>
@@ -2473,121 +2491,92 @@ quoteText.textContent = '“' + q.text + '”';
 
       const nextBg = nextP.bg || '#f2f2f2';
 
-      // Remove any stale peek sheet
-      document.querySelectorAll('.js-next-panel').forEach(el => el.remove());
-
-      // Pre-render the full next-project sheet so it's ready when peeking
-      const nextHeroHTML = nextP.hero
-        ? `<div class="modal__hero"><img src="${nextP.hero}" alt="" loading="eager"></div>`
-        : nextP.heroVideo
-        ? `<div class="modal__hero"><video src="${nextP.heroVideo}" autoplay muted loop playsinline></video></div>`
-        : '';
-      const nextFactsHTML = (nextP.facts||[]).map(f =>
-        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const nextExtLinks = (nextP.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
-
-      const sheet = document.createElement('div');
-      sheet.className = 'modal js-stacked-sheet js-next-panel';
-      sheet.innerHTML =
-        `<div class="next-panel-peek">` +
-          `<div class="next-panel-peek__meta">` +
-            (nextP.year ? `<span class="next-panel-peek__year">${nextP.year}</span>` : '') +
-            `<span class="next-panel-peek__title">${nextP.client}</span>` +
+      pageEnd.insertAdjacentHTML('beforeend',
+        `<div class="modal-next-reveal" style="background:${nextBg}">` +
+          `<div class="modal-next-reveal__bg">` +
+            (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
+             nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
           `</div>` +
-          `<span class="next-panel-peek__hint">Next up</span>` +
-        `</div>`;
-
-      const nextScrollDiv = document.createElement('div');
-      nextScrollDiv.className = 'modal__scroll';
-      nextScrollDiv.style.background = nextBg;
-      nextScrollDiv.innerHTML =
-        `<header class="page-header" style="background:${nextBg}">` +
-          `<div class="modal-header-left">` +
-            `<span class="eyebrow-client">${nextP.client}</span>` +
-            `<span class="modal-year">${nextP.year||''}</span>` +
+          `<div class="modal-next-reveal__inner">` +
+            (nextP.year ? `<span class="modal-next-reveal__year">${nextP.year}</span>` : '') +
+            `<h2 class="modal-next-reveal__title">${nextP.client}</h2>` +
           `</div>` +
-          `<div class="hero__desc">${nextP.text||''}</div>` +
-        `</header>` +
-        `<main class="blocks"><div class="blocks__grid">${buildMedia(nextP.media||[])}</div></main>` +
-        `<div class="project-detail">` +
-          `<section class="project-info">` +
-            `<div class="info-meta">${nextFactsHTML}</div>` +
-            `<p class="info-desc">${nextP.myRole||''}</p>` +
-          `</section>` +
-          `<nav class="project-links">${buildLinkCards(nextExtLinks)}</nav>` +
-        `</div>`;
-      sheet.appendChild(nextScrollDiv);
-      document.body.appendChild(sheet);
+          `<div class="modal-next-cursor" aria-hidden="true">` +
+            `<svg width="12" height="18" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff"/></svg>` +
+            `<span class="modal-next-cursor__tag">` +
+              `<span class="modal-next-cursor__mobile">swipe up for next project</span>` +
+              `<span class="modal-next-cursor__desktop">click for next project</span>` +
+            `</span>` +
+          `</div>` +
+        `</div>`
+      );
 
-      if (nextExtLinks.length) hydrateLinkThumbs(nextScrollDiv.querySelector('.project-links'), nextExtLinks, PROJECT_LINK_ICONS[nextKey] || null);
+      const revealEl  = pageEnd.querySelector('.modal-next-reveal');
+      const revealVid = revealEl.querySelector('video');
+      if (revealVid) revealVid.play().catch(() => {});
+      const modalEl  = document.getElementById('projectModal');
+      const modalH   = scrollEl.clientHeight;
+      const THRESHOLD = modalH * 0.8;
+      const EASE     = 'cubic-bezier(.4,0,.2,1)';
+      let dragging = false, dragStartY = 0, dragStartH = 0, naturalH = 0, navigating = false;
+      let dragStartBg = '';
 
-      // Swipe-down from top of next sheet closes all
-      let _nsy = 0, _nsActive = false;
-      nextScrollDiv.addEventListener('touchstart', e => {
-        if (nextScrollDiv.scrollTop > 0) return;
-        _nsy = e.touches[0].clientY; _nsActive = true;
-      }, { passive: true });
-      nextScrollDiv.addEventListener('touchmove', e => {
-        if (!_nsActive) return;
-        if (e.touches[0].clientY - _nsy > 60) { _nsActive = false; closeModal(); }
-      }, { passive: true });
-      nextScrollDiv.addEventListener('touchend', () => { _nsActive = false; }, { passive: true });
-
-      _nextRevealAbort = new AbortController();
-      let navigating = false, dragging = false, dragStartY = 0;
-
-      function openNext() {
-        if (navigating || _isTransitioning) return;
-        navigating = true; _isTransitioning = true;
-        observer.disconnect();
-        sheet.style.transition = '';
-        sheet.style.transform = 'translateY(0)';
-        sheet.classList.add('is-open');
-        setTimeout(() => {
-          document.getElementById('projectModal').style.visibility = 'hidden';
-          _sheetStack.push(sheet);
-          currentProjectKey = nextKey;
-          injectNextBtn(nextKey, nextScrollDiv);
-          _isTransitioning = false;
-        }, 500);
+      function lerpHex(a, b, t) {
+        const pr = s => [parseInt(s.slice(1,3),16), parseInt(s.slice(3,5),16), parseInt(s.slice(5,7),16)];
+        const [r1,g1,b1] = pr(a), [r2,g2,b2] = pr(b);
+        return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
       }
 
-      // Reveal sheet as pageEnd enters scroll viewport
-      const observer = new IntersectionObserver(entries => {
-        if (navigating) return;
-        if (entries[0].isIntersecting) {
-          requestAnimationFrame(() => { sheet.style.transform = 'translateY(60%)'; });
-        } else {
-          if (!dragging) sheet.style.transform = 'translateY(100%)';
+      function applyProgress(h) {
+        const prog = Math.max(0, Math.min(1, (h - naturalH) / (THRESHOLD - naturalH)));
+        if (dragStartBg) {
+          const col = lerpHex(dragStartBg, nextBg, prog);
+          scrollEl.style.background = col;
+          scrollEl.closest('.modal').querySelector('.page-header').style.background = col;
         }
-      }, { root: scrollEl, threshold: 0.05 });
-      observer.observe(pageEnd);
+      }
 
-      // Drag peek bar up to open
-      sheet.addEventListener('touchstart', e => {
-        if (navigating || sheet.classList.contains('is-open')) return;
-        dragStartY = e.touches[0].clientY; dragging = true;
-        sheet.style.transition = 'none';
-      }, { passive: true });
-      sheet.addEventListener('touchmove', e => {
+      _nextRevealAbort = new AbortController();
+      const sig = { passive: true, signal: _nextRevealAbort.signal };
+
+      revealEl.addEventListener('touchstart', e => {
+        if (navigating) return;
+        if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
+        dragStartY = e.touches[0].clientY;
+        dragStartH = revealEl.getBoundingClientRect().height;
+        dragStartBg = (PROJECTS[currentProjectKey] && PROJECTS[currentProjectKey].bg) || '#f2f2f2';
+        dragging = true;
+        revealEl.style.transition = 'none';
+      }, sig);
+
+      revealEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
         const dy = dragStartY - e.touches[0].clientY;
-        const pct = Math.max(0, 60 - (dy / (window.innerHeight * 0.95) * 100));
-        sheet.style.transform = `translateY(${pct}%)`;
-      }, { passive: true });
-      sheet.addEventListener('touchend', e => {
+        const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
+        revealEl.style.height = Math.round(newH) + 'px';
+        applyProgress(newH);
+      }, sig);
+
+      revealEl.addEventListener('touchend', () => {
         if (!dragging) return;
         dragging = false;
-        sheet.style.transition = '';
-        const dy = dragStartY - e.changedTouches[0].clientY;
-        if (60 - (dy / (window.innerHeight * 0.95) * 100) < 30) { openNext(); }
-        else { sheet.style.transform = 'translateY(60%)'; }
-      }, { passive: true });
-      sheet.addEventListener('click', () => { if (!navigating && !sheet.classList.contains('is-open')) openNext(); });
+        const h = revealEl.getBoundingClientRect().height;
+        if (h >= THRESHOLD && !navigating) {
+          navigating = true;
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = modalH + 'px';
+          applyProgress(modalH);
+          setTimeout(() => goToNextProject(nextKey), 420);
+        } else {
+          revealEl.style.transition = `height 0.42s ${EASE}`;
+          revealEl.style.height = naturalH + 'px';
+          applyProgress(naturalH);
+          setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
+        }
+      }, sig);
 
-      _nextRevealAbort.signal.addEventListener('abort', () => {
-        observer.disconnect();
-        document.querySelectorAll('.js-next-panel').forEach(el => el.remove());
+      revealEl.addEventListener('click', () => {
+        if (!navigating) { navigating = true; goToNextProject(nextKey); }
       });
     }
 
@@ -2687,7 +2676,6 @@ quoteText.textContent = '“' + q.text + '”';
     // === CLOSE MODAL ===
     function closeModal() {
       document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
-      document.querySelectorAll('.js-next-panel').forEach(p => p.remove());
       _sheetStack.forEach(s => { s.classList.remove('is-open'); setTimeout(() => s.remove(), 500); });
       _sheetStack = [];
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
@@ -3038,8 +3026,7 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      const IMGS = [1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
-        .map(n => 'images/parallax/p' + String(n).padStart(2,'0') + '.png')
+      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
         .sort(() => Math.random() - 0.5);
 
       const COLS = 10, ROWS = 10;
@@ -3055,7 +3042,7 @@ quoteText.textContent = '“' + q.text + '”';
         const RX = COLS * (TW + GAP);
         const RY = ROWS * (TH + GAP);
 
-        const COL_PAR  = [0.70, 1.30, 0.78, 1.22, 0.72, 1.28, 0.80, 1.20, 0.68, 1.32]; // unique speed per col
+        const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07, 0.88, 1.12]; // unique speed per col
         const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger
 
         const DEFS = [];
@@ -3081,7 +3068,6 @@ quoteText.textContent = '“' + q.text + '”';
           img.src = IMGS[i % IMGS.length];
           img.alt = '';
           img.loading = 'lazy';
-          img.onerror = () => { el.style.visibility = 'hidden'; };
           el.appendChild(img);
           wrap.appendChild(el);
           return Object.assign({}, def, { el });
@@ -3106,8 +3092,8 @@ quoteText.textContent = '“' + q.text + '”';
           if (!dragging) {
             ox += vx; oy += vy;
             // ease velocity back towards auto-drift speed after manual interaction
-            vx += (AUTO_VX - vx) * 0.06;
-            vy += (AUTO_VY - vy) * 0.06;
+            vx += (AUTO_VX - vx) * 0.015;
+            vy += (AUTO_VY - vy) * 0.015;
           }
           requestAnimationFrame(render);
         }
@@ -3115,8 +3101,8 @@ quoteText.textContent = '“' + q.text + '”';
         // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
         mini.addEventListener('wheel', e => {
           e.preventDefault();
-          vx = -e.deltaX * 0.25 + vx * 0.75;
-          vy = -e.deltaY * 0.25 + vy * 0.75;
+          vx = -e.deltaX * 0.6 + vx * 0.4;
+          vy = -e.deltaY * 0.6 + vy * 0.4;
         }, { passive: false });
 
         // Drag (mobile/tablet only)
@@ -3129,7 +3115,7 @@ quoteText.textContent = '“' + q.text + '”';
         mini.addEventListener('pointermove', e => {
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
+          const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
           vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
