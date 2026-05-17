@@ -2628,6 +2628,7 @@ quoteText.textContent = '“' + q.text + '”';
         m.style.cssText = 'position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center top;display:block;';
         imgOverlay.appendChild(m);
         document.body.appendChild(imgOverlay);
+        revealMedia.style.visibility = 'hidden'; // hide source so only the flying clone is visible
         if (m.tagName === 'VIDEO') m.play().catch(() => {});
 
         requestAnimationFrame(() => requestAnimationFrame(() => {
