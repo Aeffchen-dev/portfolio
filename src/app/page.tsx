@@ -94,7 +94,7 @@ export default function Home() {
                   style={{
                     fontSize: "clamp(2rem, 4vw, 3rem)",
                     fontWeight: 600,
-                    color: "#2a2a2a",
+                    color: "#444444",
                     letterSpacing: "-0.04em",
                   }}
                 >
