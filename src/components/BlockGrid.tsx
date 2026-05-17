@@ -47,6 +47,7 @@ export function BlockGrid({ blocks }: BlockGridProps) {
           style={{
             gridTemplateColumns: "repeat(4, 1fr)",
             gap: 8,
+            ...(rowIndex === 0 ? { marginLeft: -8, marginRight: -8 } : {}),
           }}
         >
           {row.map((block, blockIndex) => (
