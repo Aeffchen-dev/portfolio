@@ -429,7 +429,7 @@
     }
     .footer-col { display:flex; flex-direction:column; gap:4px; }
     .footer-col a, .footer-col span {
-      font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898;
+      font-size:14px; font-weight:500; letter-spacing:0.48px; color:#fff;
       text-transform:uppercase; text-decoration:none;
     }
     .footer-col a { transition:opacity .4s ease-in-out; }
@@ -569,14 +569,18 @@
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-      padding:0;
+      padding:24px 8px;
       scrollbar-width:none;
-      background:#000;
       color:#111;
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
-    .modal__chapter { padding:24px 8px; }
-    .modal__chapter-sentinel { height:1px; }
+    .modal__end-sentinel { height:1px; }
+    .modal.is-peek { z-index:201; }
+    .modal.is-peek::before {
+      content:''; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+      width:36px; height:4px; border-radius:2px;
+      background:rgba(255,255,255,0.35); z-index:2; pointer-events:none;
+    }
 
     /* === PAGE HEADER (modal) === */
     .page-header { }
@@ -849,8 +853,7 @@
       .work-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:start; margin-left:0; margin-right:0; }
       .modal { left:50%; transform:translateX(-50%) translateY(100%); max-width:1100px; max-height:95dvh; }
       .modal.is-open { transform:translateX(-50%) translateY(0); }
-      .modal__scroll { max-height:95dvh; }
-      .modal__chapter { padding:24px 8px; }
+      .modal__scroll { max-height:95dvh; padding:24px 8px; }
       .modal__hero { margin:-24px -8px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; }
@@ -1025,7 +1028,7 @@
       .project-links { margin-top:0; grid-column:1/-1; }
       .modal__hero img,
       .modal__hero video { aspect-ratio:16/7; }
-      .modal__chapter { padding:24px 16px; }
+      .modal__scroll { padding:24px 16px; }
       .modal__hero { margin:-24px -16px 8px; }
       .page-header { display:grid; grid-template-columns:auto minmax(0,530px); column-gap:80px; align-items:baseline; justify-content:center; }
       .hero__desc { margin-top:0; margin-left:0; margin-right:0; columns:2; column-gap:80px; }
@@ -1562,9 +1565,8 @@
       </svg>
     </span>
   </div>
-  <div class="modal is-hidden" id="projectModal">
-    <div class="modal__scroll"></div>
-  </div>
+  <div class="modal is-hidden" id="modalA"><div class="modal__scroll"></div></div>
+  <div class="modal is-hidden" id="modalB"><div class="modal__scroll"></div></div>
 
   <script>
     // === NAV ===
@@ -2369,8 +2371,12 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     // === BUILD CHAPTER ===
-    function buildChapter(key) {
-      const p = PROJECTS[key]; if (!p) return null;
+    // === TWO-MODAL PING-PONG ===
+    let activeModal = document.getElementById('modalA');
+    let peekModal   = document.getElementById('modalB');
+
+    function fillModal(modalEl, key) {
+      const p = PROJECTS[key]; if (!p) return;
       const bg = p.bg || '#f2f2f2';
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
@@ -2380,13 +2386,10 @@ quoteText.textContent = '“' + q.text + '”';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
-      let mediaHTML = `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>`;
-
-      const chapter = document.createElement('div');
-      chapter.className = 'modal__chapter';
-      chapter.dataset.key = key;
-      chapter.style.background = bg;
-      chapter.innerHTML =
+      const scrollEl = modalEl.querySelector('.modal__scroll');
+      scrollEl.style.background = bg;
+      scrollEl.scrollTop = 0;
+      scrollEl.innerHTML =
         heroHTML +
         `<header class="page-header" style="background:${bg}">` +
           `<div class="modal-header-left">` +
@@ -2395,7 +2398,7 @@ quoteText.textContent = '“' + q.text + '”';
           `</div>` +
           `<div class="hero__desc">${p.text||''}</div>` +
         `</header>` +
-        mediaHTML +
+        `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
         `<div class="project-detail">` +
           `<section class="project-info">` +
             `<div class="info-meta">${factsHTML}</div>` +
@@ -2403,93 +2406,140 @@ quoteText.textContent = '“' + q.text + '”';
           `</section>` +
           `<nav class="project-links">${buildLinkCards(externalLinks)}</nav>` +
         `</div>` +
-        `<div class="modal__chapter-sentinel" aria-hidden="true"></div>`;
-
+        `<div class="modal__end-sentinel" aria-hidden="true"></div>`;
       if (p.kpis && p.kpis.length) {
-        chapter.querySelector('.blocks__grid').insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
+        scrollEl.querySelector('.blocks__grid').insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
       }
-      chapter.querySelectorAll('.block-stats').forEach(s => observeStats(s));
+      scrollEl.querySelectorAll('.block-stats').forEach(s => observeStats(s));
       if (externalLinks.length) {
-        hydrateLinkThumbs(chapter.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[key] || null);
+        hydrateLinkThumbs(scrollEl.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[key] || null);
       }
-      return chapter;
     }
 
-    // === SCROLL CONTINUATION OBSERVERS ===
-    function setupScrollContinuation(scrollEl) {
+    function setupPeek(key) {
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
+      const nextKey = getNextProjectKey(key);
+      if (!nextKey) return;
+
+      fillModal(peekModal, nextKey);
+      peekModal.classList.add('is-peek');
+      peekModal.style.visibility = 'visible';
+      peekModal.style.transition = '';
+      peekModal.style.transform  = 'translateY(100%)';
+
+      const activeScroll = activeModal.querySelector('.modal__scroll');
+      const sentinel = activeScroll.querySelector('.modal__end-sentinel');
+
       _nextRevealAbort = new AbortController();
       const { signal } = _nextRevealAbort;
 
-      const headerObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            const key = e.target.closest('.modal__chapter')?.dataset.key;
-            if (key) currentProjectKey = key;
-          }
-        });
-      }, { root: scrollEl, threshold: 0.15 });
+      let peeking = false, dragging = false, startY = 0, startPct = 100, curPct = 100;
 
-      const sentinelObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (!e.isIntersecting) return;
-          sentinelObserver.unobserve(e.target);
-          const chapterKey = e.target.closest('.modal__chapter')?.dataset.key;
-          if (!chapterKey) return;
-          const nextKey = getNextProjectKey(chapterKey);
-          if (!nextKey || scrollEl.querySelector(`.modal__chapter[data-key="${nextKey}"]`)) return;
-          const next = buildChapter(nextKey);
-          if (!next) return;
-          scrollEl.appendChild(next);
-          const hdr = next.querySelector('.page-header');
-          if (hdr) headerObserver.observe(hdr);
-          const sentinel = next.querySelector('.modal__chapter-sentinel');
-          if (sentinel) sentinelObserver.observe(sentinel);
-        });
-      }, { root: scrollEl, rootMargin: '0px 0px 300px 0px', threshold: 0 });
+      const sentinelObs = new IntersectionObserver(entries => {
+        const visible = entries[0].isIntersecting;
+        if (visible && !peeking && !dragging) {
+          peeking = true;
+          peekModal.style.transition = 'transform 0.38s cubic-bezier(.4,0,.2,1)';
+          peekModal.style.transform  = 'translateY(65%)';
+          curPct = 65;
+        } else if (!visible && peeking && !dragging) {
+          peeking = false;
+          peekModal.style.transition = 'transform 0.38s cubic-bezier(.4,0,.2,1)';
+          peekModal.style.transform  = 'translateY(100%)';
+          curPct = 100;
+        }
+      }, { root: activeScroll, threshold: 0.05 });
+      if (sentinel) sentinelObs.observe(sentinel);
 
-      scrollEl.querySelectorAll('.modal__chapter').forEach(ch => {
-        const hdr = ch.querySelector('.page-header');
-        if (hdr) headerObserver.observe(hdr);
-        const sentinel = ch.querySelector('.modal__chapter-sentinel');
-        if (sentinel) sentinelObserver.observe(sentinel);
-      });
+      function completePeek() {
+        peekModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+        peekModal.style.transform  = 'translateY(0)';
+        activeModal.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+        activeModal.style.transform  = 'translateY(8%)';
+        _nextRevealAbort.abort();
+        setTimeout(() => {
+          activeModal.classList.remove('is-open');
+          activeModal.style.visibility = 'hidden';
+          activeModal.style.transition = '';
+          activeModal.style.transform  = '';
+          activeModal.querySelector('.modal__scroll').innerHTML = '';
+          peekModal.classList.remove('is-peek');
+          peekModal.classList.add('is-open');
+          peekModal.style.transition = '';
+          peekModal.style.transform  = '';
+          [activeModal, peekModal] = [peekModal, activeModal];
+          currentProjectKey = nextKey;
+          setupPeek(nextKey);
+        }, 400);
+      }
+
+      peekModal.addEventListener('touchstart', e => {
+        if (!peeking) return;
+        dragging = true;
+        startY   = e.touches[0].clientY;
+        startPct = curPct;
+        peekModal.style.transition = 'none';
+      }, { passive: true, signal });
+
+      peekModal.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        const dy = startY - e.touches[0].clientY;
+        curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
+        peekModal.style.transform = `translateY(${curPct}%)`;
+      }, { passive: true, signal });
+
+      peekModal.addEventListener('touchend', () => {
+        if (!dragging) return; dragging = false;
+        if (curPct < 30) { completePeek(); return; }
+        const snapTo = peeking ? 65 : 100;
+        peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        peekModal.style.transform  = `translateY(${snapTo}%)`;
+        curPct = snapTo;
+      }, { signal });
+
+      peekModal.addEventListener('click', () => { if (peeking) completePeek(); }, { signal });
 
       signal.addEventListener('abort', () => {
-        headerObserver.disconnect();
-        sentinelObserver.disconnect();
+        sentinelObs.disconnect();
+        peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        peekModal.style.transform  = 'translateY(100%)';
+        setTimeout(() => {
+          peekModal.classList.remove('is-peek');
+          peekModal.style.visibility = 'hidden';
+        }, 350);
       });
     }
 
     // === OPEN MODAL ===
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
-      const modal    = document.getElementById('projectModal');
-      const scrollEl = modal.querySelector('.modal__scroll');
-      const closeBar = document.getElementById('modalCloseBar');
-      scrollEl.innerHTML = '';
-      scrollEl.scrollTop = 0;
+      activeModal = document.getElementById('modalA');
+      peekModal   = document.getElementById('modalB');
+      [activeModal, peekModal].forEach(m => {
+        m.classList.remove('is-open', 'is-peek');
+        m.style.transform = ''; m.style.transition = '';
+        m.style.visibility = 'hidden';
+        const s = m.querySelector('.modal__scroll');
+        s.innerHTML = ''; s.style.background = '';
+      });
+      fillModal(activeModal, key);
       currentProjectKey = key;
-      const chapter = buildChapter(key);
-      if (chapter) scrollEl.appendChild(chapter);
-      setupScrollContinuation(scrollEl);
-      modal.style.visibility = 'visible';
-      modal.classList.add('is-open');
+      activeModal.style.visibility = 'visible';
+      activeModal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
+      const closeBar = document.getElementById('modalCloseBar');
       closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
-      setTimeout(() => closeBar.classList.add('is-active'), 460);
+      setTimeout(() => { closeBar.classList.add('is-active'); setupPeek(key); }, 460);
     }
 
     // === CLOSE MODAL ===
     function closeModal() {
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
-      const modal    = document.getElementById('projectModal');
-      const scrollEl = modal.querySelector('.modal__scroll');
       const closeBar = document.getElementById('modalCloseBar');
       const backdrop = document.getElementById('modalBackdrop');
-      const txC      = window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
+      const txC = window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
       closeBar.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.2,1)';
       backdrop.style.transition = 'background 0.35s cubic-bezier(0,0,0.2,1)';
       backdrop.classList.remove('is-active');
@@ -2500,65 +2550,56 @@ quoteText.textContent = '“' + q.text + '”';
       _openedByHover = false;
       _hoverAllowAfter = Date.now() + 800;
       closeNav();
-      modal.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
-      modal.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
-      modal.addEventListener('transitionend', () => {
-        modal.style.visibility = 'hidden';
-        modal.style.transition = '';
-        modal.style.transform  = '';
-        scrollEl.innerHTML = '';
+      [activeModal, peekModal].forEach(m => {
+        if (m.style.visibility === 'hidden') return;
+        m.style.transition = 'transform .45s cubic-bezier(0,0,0.2,1)';
+        m.style.transform  = `${txC}translateY(${window.innerHeight}px)`;
+        m.addEventListener('transitionend', () => {
+          m.classList.remove('is-open', 'is-peek');
+          m.style.visibility = 'hidden';
+          m.style.transition = ''; m.style.transform = '';
+          const s = m.querySelector('.modal__scroll');
+          s.innerHTML = ''; s.style.background = '';
+        }, { once: true });
+      });
+      setTimeout(() => {
         closeBar.style.transition = '';
         backdrop.style.transition = '';
-        modal.classList.remove('is-open');
-      }, { once: true });
+      }, 450);
     }
     document.getElementById('modalCloseBar').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
 
-    // === SWIPE DOWN TO CLOSE ===
-    (function() {
-      const modalEl  = document.getElementById('projectModal');
-      const scrollEl = modalEl.querySelector('.modal__scroll');
+    // === SWIPE DOWN TO CLOSE (both modals) ===
+    [document.getElementById('modalA'), document.getElementById('modalB')].forEach(modalEl => {
       const closeBar = document.getElementById('modalCloseBar');
       const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
-      let sy = 0, dy = 0, vy = 0, pt = 0, active = false, baseCloseH = 0;
-
+      let sy = 0, dy = 0, vy = 0, pt = 0, active = false;
       function snapBack() {
-        modalEl.style.transition = '';
-        modalEl.style.transform  = '';
-        closeBar.style.height    = '';
+        modalEl.style.transition = ''; modalEl.style.transform = ''; closeBar.style.height = '';
       }
-
-      function doClose() { closeModal(); }
-
-      // Use touch events (not pointer) so touchmove can be non-passive and call preventDefault
       modalEl.addEventListener('touchstart', e => {
+        if (modalEl !== activeModal) return;
         if (modalEl.querySelector('.modal__scroll')?.scrollTop > 0) return;
-        baseCloseH = closeBar.getBoundingClientRect().height;
-        const t = e.touches[0];
-        sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
+        const t = e.touches[0]; sy = t.clientY; dy = 0; vy = 0; pt = e.timeStamp; active = true;
       }, { passive: true });
-
       modalEl.addEventListener('touchmove', e => {
-        if (!active) return;
-        const t = e.touches[0];
-        const d = t.clientY - sy;
+        if (!active || modalEl !== activeModal) return;
+        const d = e.touches[0].clientY - sy;
         if (d <= 0) { active = false; return; }
-        e.preventDefault(); // block scroll — requires non-passive
+        e.preventDefault();
         vy = (d - dy) / Math.max(e.timeStamp - pt, 1) * 16;
         dy = d; pt = e.timeStamp;
         modalEl.style.transition = 'none';
         modalEl.style.transform  = `${tx()}translateY(${dy}px)`;
         closeBar.style.height    = Math.max(0, modalEl.getBoundingClientRect().top) + 'px';
       }, { passive: false });
-
       modalEl.addEventListener('touchend', () => {
         if (!active) return; active = false;
-        if (dy > 100 || vy > 8) doClose(); else snapBack();
+        if (dy > 100 || vy > 8) closeModal(); else snapBack();
       });
-
       modalEl.addEventListener('touchcancel', () => { active = false; snapBack(); });
-    })();
+    });
 
     // === WORK ITEM CLICKS ===
     document.querySelectorAll('.work-item[data-project]').forEach(item => {
@@ -2794,8 +2835,9 @@ quoteText.textContent = '“' + q.text + '”';
         img.style.transform = `translateY(${shift}px)`;
       });
     }
-    document.getElementById('projectModal')?.querySelector('.modal__scroll')
-      ?.addEventListener('scroll', updateModalParallax, { passive: true });
+    [document.getElementById('modalA'), document.getElementById('modalB')].forEach(m =>
+      m.querySelector('.modal__scroll')?.addEventListener('scroll', updateModalParallax, { passive: true })
+    );
 
     // === ARCHIVE MINI CANVAS ===
     (function() {
