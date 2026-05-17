@@ -557,7 +557,7 @@
       bottom:0; left:0;
       width:100vw; max-height:95dvh;
       z-index:200;
-      overflow:hidden; background:#000;
+      overflow:hidden; background:#000; border-radius:16px 16px 0 0;
       transform:translateY(100%);
       transition:transform .5s cubic-bezier(.4,0,.2,1);
       pointer-events:none;
@@ -574,7 +574,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 40px rgba(0,0,0,0.16); }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -8px 60px rgba(0,0,0,0.32); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
