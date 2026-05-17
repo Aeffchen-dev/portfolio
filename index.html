@@ -567,7 +567,7 @@
       pointer-events:auto;
     }
     .modal__scroll {
-      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+      max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
       padding:24px 8px;
       scrollbar-width:none;
       color:#111;
@@ -3115,6 +3115,7 @@ quoteText.textContent = '“' + q.text + '”';
 
         // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
         mini.addEventListener('wheel', e => {
+          if (window.innerWidth >= 1024 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) return;
           e.preventDefault();
           vx = -e.deltaX * 0.6 + vx * 0.4;
           vy = -e.deltaY * 0.6 + vy * 0.4;
