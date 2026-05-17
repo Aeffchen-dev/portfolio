@@ -2605,7 +2605,7 @@ quoteText.textContent = '“' + q.text + '”';
       const hdr = scrollEl.querySelector('.page-header');
       if (hdr) { hdr.style.transition = 'background 0.55s ease'; hdr.style.background = nextBg; }
 
-      // Reuse the reveal tile's image — clone it (same src = cached, no new fetch) and fly it to hero position
+      // Move the original reveal image — no clone, no scale, translateY only
       const revealMedia = document.querySelector('#projectModal .modal-next-reveal__bg img') ||
                           document.querySelector('#projectModal .modal-next-reveal__bg video');
       const heroContainer = scrollEl.querySelector('.modal__hero');
@@ -2617,32 +2617,22 @@ quoteText.textContent = '“' + q.text + '”';
         const toH = heroContainer && heroContainer.getBoundingClientRect().height > 0
                     ? heroContainer.getBoundingClientRect().height
                     : mr.width / 2;
-        const toR = { left: mr.left, top: mr.top, width: mr.width, height: toH };
+        const dy  = fr.top - mr.top; // vertical distance from hero top to tile top
 
-        // Compute initial transform so overlay appears at tile position/size
-        const dx = fr.left - toR.left;
-        const dy = fr.top  - toR.top;
-        const sx = fr.width  / toR.width;
-        const sy = fr.height / toR.height;
-
-        imgOverlay = document.createElement('div');
-        imgOverlay.style.cssText =
-          `position:fixed;left:${toR.left}px;top:${toR.top}px;width:${toR.width}px;height:${toR.height}px;` +
-          `overflow:hidden;z-index:9999;pointer-events:none;will-change:transform;` +
-          `transform-origin:top left;border-radius:12px 12px 4px 4px;` +
-          `transform:translate(${dx}px,${dy}px) scale(${sx},${sy});`;
-
-        const m = revealMedia.cloneNode();
-        m.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
-        imgOverlay.appendChild(m);
-        document.body.appendChild(imgOverlay);
-        revealMedia.style.visibility = 'hidden';
-        if (m.tagName === 'VIDEO') m.play().catch(() => {});
+        // Detach original, place at hero position offset downward to tile's visual position
+        revealMedia.style.cssText =
+          `position:fixed;left:${mr.left}px;top:${mr.top}px;` +
+          `width:${mr.width}px;height:${toH}px;` +
+          `object-fit:cover;object-position:center top;display:block;` +
+          `z-index:9999;pointer-events:none;will-change:transform;` +
+          `transform:translateY(${dy}px);`;
+        document.body.appendChild(revealMedia);
+        imgOverlay = revealMedia;
+        if (revealMedia.tagName === 'VIDEO') revealMedia.play().catch(() => {});
 
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          imgOverlay.style.transition = `transform ${DUR}ms ease-out, border-radius ${DUR}ms ease-out`;
-          imgOverlay.style.transform     = 'translate(0,0) scale(1,1)';
-          imgOverlay.style.borderRadius  = '0';
+          revealMedia.style.transition = `transform ${DUR}ms ease-out`;
+          revealMedia.style.transform  = 'translateY(0)';
         }));
       }
 
