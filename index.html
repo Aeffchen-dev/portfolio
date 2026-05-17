@@ -2573,10 +2573,8 @@ quoteText.textContent = '“' + q.text + '”';
         const h = revealEl.getBoundingClientRect().height;
         if (h >= THRESHOLD && !navigating) {
           navigating = true;
-          revealEl.style.transition = `height 0.42s ${EASE}`;
-          revealEl.style.height = modalH + 'px';
           applyProgress(modalH);
-          setTimeout(() => goToNextProject(nextKey), 420);
+          goToNextProject(nextKey, revealEl.getBoundingClientRect());
         } else {
           revealEl.style.transition = `height 0.42s ${EASE}`;
           revealEl.style.height = naturalH + 'px';
@@ -2586,84 +2584,63 @@ quoteText.textContent = '“' + q.text + '”';
       }, sig);
 
       revealEl.addEventListener('click', () => {
-        if (!navigating) { navigating = true; goToNextProject(nextKey); }
+        if (!navigating) { navigating = true; goToNextProject(nextKey, revealEl.getBoundingClientRect()); }
       });
     }
 
-    function goToNextProject(nextKey) {
+    function goToNextProject(nextKey, fromRect) {
       if (_isTransitioning) return;
       const p = PROJECTS[nextKey]; if (!p) return;
       _isTransitioning = true;
 
-      // Hide original modal immediately so it doesn't peek above the sliding sheet
-      document.getElementById('projectModal').style.visibility = 'hidden';
+      const modalEl  = document.getElementById('projectModal');
+      const scrollEl = modalEl.querySelector('.modal__scroll');
+      const mr       = modalEl.getBoundingClientRect();
+      const fr       = fromRect || { left: mr.left, top: mr.top + mr.height * 0.45, width: mr.width, height: mr.height * 0.55 };
 
-      const bg = p.bg || '#f2f2f2';
+      // Overlay: starts at reveal tile's viewport rect, hero image of next project inside
+      const overlay = document.createElement('div');
+      overlay.style.cssText =
+        `position:fixed;left:${fr.left}px;top:${fr.top}px;width:${fr.width}px;height:${fr.height}px;` +
+        `overflow:hidden;border-radius:12px 12px 4px 4px;background:${p.bg || '#f2f2f2'};` +
+        `z-index:9999;pointer-events:none;`;
 
-      const heroHTML = p.hero
-        ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
-        : p.heroVideo
-        ? `<div class="modal__hero"><video src="${p.heroVideo}" autoplay muted loop playsinline></video></div>`
-        : '';
-      const factsHTML = (p.facts||[]).map(f =>
-        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
-      const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
-      const linksHTML = buildLinkCards(externalLinks);
-
-      const sheet = document.createElement('div');
-      sheet.className = 'modal js-stacked-sheet';
-
-      const scrollDiv = document.createElement('div');
-      scrollDiv.className = 'modal__scroll';
-      scrollDiv.style.background = bg;
-      scrollDiv.innerHTML =
-        heroHTML +
-        `<header class="page-header" style="background:${bg}">` +
-          `<div class="modal-header-left">` +
-            `<span class="eyebrow-client">${p.client}</span>` +
-            `<span class="modal-year">${p.year||''}</span>` +
-          `</div>` +
-          `<div class="hero__desc">${p.text||''}</div>` +
-        `</header>` +
-        `<main class="blocks"><div class="blocks__grid">${buildMedia(p.media||[])}</div></main>` +
-        `<div class="project-detail">` +
-          `<section class="project-info">` +
-            `<div class="info-meta">${factsHTML}</div>` +
-            `<p class="info-desc">${p.myRole||''}</p>` +
-          `</section>` +
-          `<nav class="project-links">${linksHTML}</nav>` +
-        `</div>`;
-
-      sheet.appendChild(scrollDiv);
-      document.body.appendChild(sheet);
-
-      if (externalLinks.length) {
-        hydrateLinkThumbs(scrollDiv.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[nextKey] || null);
+      if (p.hero) {
+        const img = document.createElement('img');
+        img.src = p.hero;
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center top;display:block;';
+        overlay.appendChild(img);
+      } else if (p.heroVideo) {
+        const vid = document.createElement('video');
+        vid.src = p.heroVideo; vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
+        vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;';
+        overlay.appendChild(vid);
+        vid.play().catch(() => {});
       }
 
-      // Swipe-down on stacked sheet closes all sheets
-      let _ssy = 0, _sActive = false;
-      scrollDiv.addEventListener('touchstart', e => {
-        if (scrollDiv.scrollTop > 0) return;
-        _ssy = e.touches[0].clientY; _sActive = true;
-      }, { passive: true });
-      scrollDiv.addEventListener('touchmove', e => {
-        if (!_sActive) return;
-        if (e.touches[0].clientY - _ssy > 60) { _sActive = false; closeModal(); }
-      }, { passive: true });
-      scrollDiv.addEventListener('touchend', () => { _sActive = false; }, { passive: true });
+      document.body.appendChild(overlay);
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          sheet.classList.add('is-open');
-          setTimeout(() => {
-            _sheetStack.push(sheet);
-            currentProjectKey = nextKey;
-            injectNextBtn(nextKey, scrollDiv);
-            _isTransitioning = false;
-          }, 520);
-        });
-      });
+      const EASE = 'cubic-bezier(.4,0,.2,1)';
+      const DUR  = 460;
+
+      // Expand overlay to cover full modal
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        overlay.style.transition = `left ${DUR}ms ${EASE},top ${DUR}ms ${EASE},width ${DUR}ms ${EASE},height ${DUR}ms ${EASE},border-radius ${DUR}ms ${EASE}`;
+        overlay.style.left        = mr.left + 'px';
+        overlay.style.top         = mr.top  + 'px';
+        overlay.style.width       = mr.width + 'px';
+        overlay.style.height      = mr.height + 'px';
+        overlay.style.borderRadius = '16px 16px 0 0';
+      }));
+
+      // Swap content while covered, then fade overlay out
+      setTimeout(() => {
+        scrollEl.scrollTop = 0;
+        fillModalContent(nextKey);
+        overlay.style.transition = 'opacity 0.35s ease';
+        overlay.style.opacity    = '0';
+        setTimeout(() => { overlay.remove(); _isTransitioning = false; }, 350);
+      }, DUR + 20);
     }
 
 
