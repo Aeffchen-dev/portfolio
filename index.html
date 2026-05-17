@@ -2640,7 +2640,7 @@ quoteText.textContent = '“' + q.text + '”';
         if (m.tagName === 'VIDEO') m.play().catch(() => {});
 
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          imgOverlay.style.transition = `transform ${DUR}ms cubic-bezier(.2,1,.4,1), border-radius ${DUR}ms cubic-bezier(.4,0,.2,1)`;
+          imgOverlay.style.transition = `transform ${DUR}ms ease-out, border-radius ${DUR}ms ease-out`;
           imgOverlay.style.transform     = 'translate(0,0) scale(1,1)';
           imgOverlay.style.borderRadius  = '0';
         }));
