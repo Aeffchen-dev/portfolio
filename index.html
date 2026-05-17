@@ -812,10 +812,10 @@
     .project-links { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:#141414; border-radius:4px;
+      padding:8px 16px 8px 8px; background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 99%, black); border-radius:4px;
       text-decoration:none; color:inherit; transition:background .3s ease-in-out;
     }
-    .modal-link-card:hover { background:#1e1e1e; }
+    .modal-link-card:hover { background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 97%, black); }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:8px; overflow:hidden;
@@ -1124,7 +1124,7 @@
       .modal__scroll button:hover .arrow-icon { color:#000; }
       .modal-page-end .page-links__label:hover,
       .modal-page-end .page-links__all:hover { opacity:1; }
-      .modal-link-card:hover { background:#1e1e1e; }
+      .modal-link-card:hover { background:color-mix(in srgb, var(--modal-bg, #f2f2f2) 97%, black); }
     }
   </style>
 </head>
@@ -2421,6 +2421,7 @@ quoteText.textContent = '“' + q.text + '”';
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       const scrollEl = modalEl.querySelector('.modal__scroll');
       scrollEl.style.background = bg;
+      scrollEl.style.setProperty('--modal-bg', bg);
       scrollEl.scrollTop = 0;
       scrollEl.innerHTML =
         heroHTML +
@@ -2533,6 +2534,8 @@ quoteText.textContent = '“' + q.text + '”';
         const prog = Math.max(0, (65 - curPct) / 65);
         activeModal.style.transition = 'none';
         activeModal.style.transform  = `translateY(${-prog * 8}%)`;
+        // At top: complete immediately so content becomes scrollable
+        if (curPct <= 0) { dragging = false; completePeek(); }
       }, { passive: false, signal });
 
       peekModal.addEventListener('touchend', () => {
