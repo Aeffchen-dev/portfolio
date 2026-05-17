@@ -3010,16 +3010,32 @@ quoteText.textContent = '“' + q.text + '”';
         wrap.style.height = CH + 'px';
         mini.appendChild(wrap);
 
+        const workingImgs = [];
+        const pendingImgs = [];
+
         const tiles = DEFS.map((def, i) => {
           const el = document.createElement('div');
           el.className = 'archive-mini-tile';
           el.style.width  = def.w + 'px';
           el.style.height = def.h + 'px';
           const img = document.createElement('img');
-          img.src = IMGS[i % IMGS.length];
+          const src = IMGS[i % IMGS.length];
           img.alt = '';
-          img.loading = 'lazy';
-          img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; };
+          img.onload = () => {
+            if (!workingImgs.includes(src)) workingImgs.push(src);
+            for (const p of pendingImgs.splice(0)) {
+              p.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
+            }
+          };
+          img.onerror = () => {
+            if (workingImgs.length) {
+              img.onerror = null;
+              img.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
+            } else {
+              pendingImgs.push(img);
+            }
+          };
+          img.src = src;
           el.appendChild(img);
           wrap.appendChild(el);
           return Object.assign({}, def, { el });
