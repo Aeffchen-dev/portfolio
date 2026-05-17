@@ -2087,6 +2087,16 @@ quoteText.textContent = '“' + q.text + '”';
         if (s.acf_fc_layout === 'image') {
           return (s.image || []).map(i => i.image?.url).filter(Boolean);
         }
+        if (['numbers','stats','kpis','key_numbers','key-numbers','statistics'].includes(s.acf_fc_layout)) {
+          const raw = s.items || s.stats || s.kpi_units || s.values || s.units || [];
+          console.log('[NUMBERS BLOCK]', s.acf_fc_layout, JSON.stringify(s));
+          const items = (Array.isArray(raw) ? raw : []).map(k => ({
+            unit:  k.unit  || k.value || k.number || k.stat || '',
+            label: k.label || k.description || k.title || '',
+          })).filter(k => k.unit);
+          return items.length ? [{ __type: 'numbers', items }] : [];
+        }
+        console.log('[SECTION BLOCK unhandled]', s.acf_fc_layout, Object.keys(s));
         return [];
       });
 
@@ -2200,6 +2210,9 @@ quoteText.textContent = '“' + q.text + '”';
     //   {v:'url', ar:'w/h'} = override aspect-ratio (e.g. for Figma: '9/19' for portrait app)
     function buildMedia(media) {
       return (media || []).map(item => {
+        if (typeof item === 'object' && item.__type === 'numbers') {
+          return buildStatsHtml(item.items);
+        }
         if (typeof item === 'object' && item.v) {
           const url = item.v;
           if (url.includes('figma.com')) {
