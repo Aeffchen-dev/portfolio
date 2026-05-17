@@ -2492,7 +2492,7 @@ quoteText.textContent = '“' + q.text + '”';
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
       // Spacer at bottom of active scroll — scrolling through it drives the peek position
-      const peekH = Math.round(window.innerHeight * 0.35) + 16;
+      const peekH = Math.round(window.innerHeight * 0.175) + 8;
       const peekSpacer = document.createElement('div');
       peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
       peekSpacer.setAttribute('aria-hidden', 'true');
