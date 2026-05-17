@@ -2696,23 +2696,13 @@ quoteText.textContent = '“' + q.text + '”';
             // Update work tile with live data
             const tile = document.querySelector(`.work-item[data-project="${key}"]`);
             if (tile) {
-              const imgEl    = tile.querySelector('.work-item__image img');
               const clientEl = tile.querySelector('.work-item__client');
               const yearEl   = tile.querySelector('.work-item__year');
-              const titleEl  = tile.querySelector('.work-item__title');
-              const videoEl = tile.querySelector('.work-item__image video');
-              if (p.heroVideo) {
-                if (videoEl) { videoEl.src = p.heroVideo; videoEl.style.display = ''; }
-                if (imgEl)   { imgEl.style.display = 'none'; }
-              } else if (p.hero) {
-                if (imgEl)   { imgEl.src = p.hero; imgEl.style.display = ''; }
-                if (videoEl) { videoEl.style.display = 'none'; videoEl.src = ''; }
-              }
+              const imgContainer = tile.querySelector('.work-item__image');
               if (clientEl && p.name) clientEl.textContent = p.name;
               if (yearEl   && p.year)   yearEl.textContent   = p.year;
-              const imgContainer = tile.querySelector('.work-item__image');
               if (imgContainer && p.client) imgContainer.dataset.client = p.client;
-              // tile description kept as static HTML (curated summaries)
+              // images kept as local parallax fallbacks — not overridden from CMS
             }
             if (key === 'about-you') {
               const og = document.getElementById('ogImage');
