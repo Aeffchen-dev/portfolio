@@ -2619,24 +2619,30 @@ quoteText.textContent = '“' + q.text + '”';
                     : mr.width / 2;
         const toR = { left: mr.left, top: mr.top, width: mr.width, height: toH };
 
+        // Compute initial transform so overlay appears at tile position/size
+        const dx = fr.left - toR.left;
+        const dy = fr.top  - toR.top;
+        const sx = fr.width  / toR.width;
+        const sy = fr.height / toR.height;
+
         imgOverlay = document.createElement('div');
         imgOverlay.style.cssText =
-          `position:fixed;left:${fr.left}px;top:${fr.top}px;width:${fr.width}px;height:${fr.height}px;` +
-          `overflow:hidden;z-index:9999;pointer-events:none;`;
+          `position:fixed;left:${toR.left}px;top:${toR.top}px;width:${toR.width}px;height:${toR.height}px;` +
+          `overflow:hidden;z-index:9999;pointer-events:none;will-change:transform;` +
+          `transform-origin:top left;border-radius:12px 12px 4px 4px;` +
+          `transform:translate(${dx}px,${dy}px) scale(${sx},${sy});`;
 
         const m = revealMedia.cloneNode();
-        m.style.cssText = 'position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center top;display:block;';
+        m.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
         imgOverlay.appendChild(m);
         document.body.appendChild(imgOverlay);
-        revealMedia.style.visibility = 'hidden'; // hide source so only the flying clone is visible
+        revealMedia.style.visibility = 'hidden';
         if (m.tagName === 'VIDEO') m.play().catch(() => {});
 
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          imgOverlay.style.transition = `left ${DUR}ms ${EASE},top ${DUR}ms ${EASE},width ${DUR}ms ${EASE},height ${DUR}ms ${EASE}`;
-          imgOverlay.style.left   = toR.left   + 'px';
-          imgOverlay.style.top    = toR.top    + 'px';
-          imgOverlay.style.width  = toR.width  + 'px';
-          imgOverlay.style.height = toR.height + 'px';
+          imgOverlay.style.transition = `transform ${DUR}ms cubic-bezier(.2,1,.4,1), border-radius ${DUR}ms cubic-bezier(.4,0,.2,1)`;
+          imgOverlay.style.transform     = 'translate(0,0) scale(1,1)';
+          imgOverlay.style.borderRadius  = '0';
         }));
       }
 
