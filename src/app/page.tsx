@@ -69,7 +69,7 @@ export default function Home() {
             key={project.slug}
             href={`/projects/${project.slug}`}
             onClick={(e: React.MouseEvent) => { e.preventDefault(); setOpenProject(project); }}
-            style={{ gridColumn: "span 2", textDecoration: "none", backgroundColor: "#1a1a1a" }}
+            style={{ gridColumn: "span 2", textDecoration: "none" }}
             className="group"
           >
             <div
