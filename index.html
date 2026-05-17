@@ -2101,16 +2101,22 @@ quoteText.textContent = '“' + q.text + '”';
         if (s.acf_fc_layout === 'image') {
           return (s.image || []).map(i => i.image?.url).filter(Boolean);
         }
-        if (['numbers','stats','kpis','key_numbers','key-numbers','statistics'].includes(s.acf_fc_layout)) {
-          const raw = s.items || s.stats || s.kpi_units || s.values || s.units || [];
-          console.log('[NUMBERS BLOCK]', s.acf_fc_layout, JSON.stringify(s));
-          const items = (Array.isArray(raw) ? raw : []).map(k => ({
-            unit:  k.unit  || k.value || k.number || k.stat || '',
-            label: k.label || k.description || k.title || '',
-          })).filter(k => k.unit);
+        if (['numbers','stats','kpis','key_numbers','key-numbers','statistics',
+             'highlights','metrics','results','impact','figures','key_figures',
+             'key_facts','achievements','numbers_block','stats_block','kpi_block',
+             'stat_row','stats_row','number_stats'].includes(s.acf_fc_layout)) {
+          const raw = s.items || s.numbers || s.stats || s.kpi_units || s.values
+                   || s.units || s.metrics || s.highlights || s.figures || s.rows || s.list || [];
+          const items = (Array.isArray(raw) ? raw : []).map(k => {
+            const num  = k.value || k.number || k.stat || k.count || '';
+            const unit = k.unit  || k.suffix || '';
+            const display = (k.unit && /\d/.test(k.unit)) ? k.unit
+                          : num ? (num + unit) : '';
+            return { unit: display, label: k.label || k.description || k.title || k.text || '' };
+          }).filter(k => k.unit);
           return items.length ? [{ __type: 'numbers', items }] : [];
         }
-        console.log('[SECTION BLOCK unhandled]', s.acf_fc_layout, Object.keys(s));
+        console.log('[SECTION BLOCK unhandled]', s.acf_fc_layout, JSON.stringify(s));
         return [];
       });
 
@@ -2136,12 +2142,16 @@ quoteText.textContent = '“' + q.text + '”';
         links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
         media,
         kpis: (() => {
-          const raw = acf['kpi_units'] || acf['kpi-units'] || acf['kpis'] || acf['statistics'] || acf['stats'] || acf['numbers'] || acf['key_numbers'] || acf['key-numbers'] || [];
-          console.log('[KPI]', data.id, 'keys:', Object.keys(acf), 'raw:', JSON.stringify(raw));
-          return (Array.isArray(raw) ? raw : []).map(k => ({
-            unit:  k.unit  || k.value || k.number || k.stat || k.text || '',
-            label: k.label || k.description || k.title || '',
-          })).filter(k => k.unit);
+          const raw = acf['kpi_units'] || acf['kpi-units'] || acf['kpis'] || acf['statistics']
+                   || acf['stats'] || acf['numbers'] || acf['key_numbers'] || acf['key-numbers']
+                   || acf['highlights'] || acf['metrics'] || acf['results'] || acf['figures']
+                   || acf['key_figures'] || acf['key_facts'] || [];
+          return (Array.isArray(raw) ? raw : []).map(k => {
+            const num  = k.value || k.number || k.stat || k.count || '';
+            const unit = k.unit  || k.suffix || '';
+            const display = (k.unit && /\d/.test(k.unit)) ? k.unit : num ? (num + unit) : (k.text || '');
+            return { unit: display, label: k.label || k.description || k.title || '' };
+          }).filter(k => k.unit);
         })(),
       };
     }
