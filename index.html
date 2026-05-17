@@ -707,34 +707,24 @@
       .modal-proj-card__footer { grid-column: 3; grid-row: 1; justify-content: flex-end; margin-top: 0; }
     }
 
-    .modal-next-panel {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 95dvh; z-index: 205;
-      border-radius: 16px 16px 0 0; overflow: hidden;
-      cursor: pointer;
-      transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(.2,0,.2,1);
+    .js-next-panel { z-index: 205 !important; }
+    .next-panel-peek {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      padding: 14px 16px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      pointer-events: auto;
+      transition: opacity 0.25s ease;
     }
-    .modal-next-panel::before {
+    .js-next-panel.is-open .next-panel-peek { opacity: 0; pointer-events: none; }
+    .next-panel-peek::before {
       content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
       width: 36px; height: 4px; border-radius: 2px;
-      background: rgba(255,255,255,0.35); z-index: 3; pointer-events: none;
+      background: rgba(255,255,255,0.35); pointer-events: none;
     }
-    .modal-next-panel__bg { position: absolute; inset: 0; }
-    .modal-next-panel__bg img { width: 100%; height: 110%; object-fit: cover; display: block; object-position: center top; }
-    .modal-next-panel__bg::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.6) 0%, rgba(0,0,0,.05) 60%);
-    }
-    .modal-next-panel__bar {
-      position: relative; z-index: 2;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 22px 16px 8px;
-    }
-    .modal-next-panel__meta { display: flex; flex-direction: column; gap: 2px; }
-    .modal-next-panel__year { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
-    .modal-next-panel__title { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.2; }
-    .modal-next-panel__hint { font-family:'HW Left Bold',sans-serif; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.5); letter-spacing: 0.48px; text-transform: uppercase; }
+    .next-panel-peek__meta { display: flex; flex-direction: column; gap: 1px; }
+    .next-panel-peek__hint { font-family:'HW Left Bold',sans-serif; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.5); letter-spacing: 0.48px; text-transform: uppercase; }
+    .next-panel-peek__year { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
+    .next-panel-peek__title { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.2; }
 
     .modal.js-stacked-sheet { z-index: 202; }
 
@@ -2483,75 +2473,125 @@ quoteText.textContent = '“' + q.text + '”';
 
       const nextBg = nextP.bg || '#f2f2f2';
 
-      // Remove any existing panel from a previous project
-      document.querySelectorAll('.modal-next-panel').forEach(el => el.remove());
+      // Remove any stale peek sheet
+      document.querySelectorAll('.js-next-panel').forEach(el => el.remove());
 
-      const panel = document.createElement('div');
-      panel.className = 'modal-next-panel';
-      panel.style.background = nextBg;
-      panel.innerHTML =
-        `<div class="modal-next-panel__bg">` +
-          (nextP.hero      ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
-           nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>` : '') +
-        `</div>` +
-        `<div class="modal-next-panel__bar">` +
-          `<div class="modal-next-panel__meta">` +
-            (nextP.year ? `<span class="modal-next-panel__year">${nextP.year}</span>` : '') +
-            `<span class="modal-next-panel__title">${nextP.client}</span>` +
+      // Pre-render the full next-project sheet so it's ready when peeking
+      const nextHeroHTML = nextP.hero
+        ? `<div class="modal__hero"><img src="${nextP.hero}" alt="" loading="eager"></div>`
+        : nextP.heroVideo
+        ? `<div class="modal__hero"><video src="${nextP.heroVideo}" autoplay muted loop playsinline></video></div>`
+        : '';
+      const nextFactsHTML = (nextP.facts||[]).map(f =>
+        `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
+      const nextExtLinks = (nextP.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
+
+      const sheet = document.createElement('div');
+      sheet.className = 'modal js-stacked-sheet js-next-panel';
+
+      // Peek bar — visible at 25%, fades when sheet fully opens
+      sheet.innerHTML =
+        `<div class="next-panel-peek">` +
+          `<div class="next-panel-peek__meta">` +
+            (nextP.year ? `<span class="next-panel-peek__year">${nextP.year}</span>` : '') +
+            `<span class="next-panel-peek__title">${nextP.client}</span>` +
           `</div>` +
-          `<span class="modal-next-panel__hint">Next up</span>` +
+          `<span class="next-panel-peek__hint">Next up</span>` +
         `</div>`;
-      document.body.appendChild(panel);
 
-      const panelVid = panel.querySelector('video');
-      if (panelVid) panelVid.play().catch(() => {});
+      const nextScrollDiv = document.createElement('div');
+      nextScrollDiv.className = 'modal__scroll';
+      nextScrollDiv.style.background = nextBg;
+      nextScrollDiv.innerHTML =
+        nextHeroHTML +
+        `<header class="page-header" style="background:${nextBg}">` +
+          `<div class="modal-header-left">` +
+            `<span class="eyebrow-client">${nextP.client}</span>` +
+            `<span class="modal-year">${nextP.year||''}</span>` +
+          `</div>` +
+          `<div class="hero__desc">${nextP.text||''}</div>` +
+        `</header>` +
+        `<main class="blocks"><div class="blocks__grid">${buildMedia(nextP.media||[])}</div></main>` +
+        `<div class="project-detail">` +
+          `<section class="project-info">` +
+            `<div class="info-meta">${nextFactsHTML}</div>` +
+            `<p class="info-desc">${nextP.myRole||''}</p>` +
+          `</section>` +
+          `<nav class="project-links">${buildLinkCards(nextExtLinks)}</nav>` +
+        `</div>`;
+      sheet.appendChild(nextScrollDiv);
+      document.body.appendChild(sheet);
+
+      if (nextExtLinks.length) hydrateLinkThumbs(nextScrollDiv.querySelector('.project-links'), nextExtLinks, PROJECT_LINK_ICONS[nextKey] || null);
+
+      // Swipe-down from top of next sheet closes all
+      let _nsy = 0, _nsActive = false;
+      nextScrollDiv.addEventListener('touchstart', e => {
+        if (nextScrollDiv.scrollTop > 0) return;
+        _nsy = e.touches[0].clientY; _nsActive = true;
+      }, { passive: true });
+      nextScrollDiv.addEventListener('touchmove', e => {
+        if (!_nsActive) return;
+        if (e.touches[0].clientY - _nsy > 60) { _nsActive = false; closeModal(); }
+      }, { passive: true });
+      nextScrollDiv.addEventListener('touchend', () => { _nsActive = false; }, { passive: true });
 
       _nextRevealAbort = new AbortController();
-      let navigating = false;
-      let dragging = false, dragStartY = 0;
+      let navigating = false, dragging = false, dragStartY = 0;
 
       function openNext() {
-        if (navigating) return;
-        navigating = true; panel.remove(); observer.disconnect(); goToNextProject(nextKey);
+        if (navigating || _isTransitioning) return;
+        navigating = true; _isTransitioning = true;
+        observer.disconnect();
+        sheet.style.transition = '';
+        sheet.style.transform = 'translateY(0)';
+        sheet.classList.add('is-open');
+        setTimeout(() => {
+          document.getElementById('projectModal').style.visibility = 'hidden';
+          _sheetStack.push(sheet);
+          currentProjectKey = nextKey;
+          injectNextBtn(nextKey, nextScrollDiv);
+          _isTransitioning = false;
+        }, 500);
       }
 
-      // Show/hide panel as pageEnd enters/leaves the scroll viewport
+      // Reveal sheet as pageEnd enters scroll viewport
       const observer = new IntersectionObserver(entries => {
         if (navigating) return;
         if (entries[0].isIntersecting) {
-          requestAnimationFrame(() => { panel.style.transform = 'translateY(75%)'; });
+          requestAnimationFrame(() => { sheet.style.transform = 'translateY(75%)'; });
         } else {
-          if (!dragging) panel.style.transform = 'translateY(100%)';
+          if (!dragging) sheet.style.transform = 'translateY(100%)';
         }
       }, { root: scrollEl, threshold: 0.05 });
       observer.observe(pageEnd);
 
-      // Drag panel up to open
-      panel.addEventListener('touchstart', e => {
+      // Drag peek bar up to open
+      const peekEl = sheet.querySelector('.next-panel-peek');
+      peekEl.addEventListener('touchstart', e => {
         if (navigating) return;
         dragStartY = e.touches[0].clientY; dragging = true;
-        panel.style.transition = 'none';
+        sheet.style.transition = 'none';
       }, { passive: true });
-      panel.addEventListener('touchmove', e => {
+      peekEl.addEventListener('touchmove', e => {
         if (!dragging || navigating) return;
-        const dy = dragStartY - e.touches[0].clientY; // positive = up
+        const dy = dragStartY - e.touches[0].clientY;
         const pct = Math.max(0, 75 - (dy / (window.innerHeight * 0.95) * 100));
-        panel.style.transform = `translateY(${pct}%)`;
+        sheet.style.transform = `translateY(${pct}%)`;
       }, { passive: true });
-      panel.addEventListener('touchend', e => {
+      peekEl.addEventListener('touchend', e => {
         if (!dragging) return;
         dragging = false;
-        panel.style.transition = '';
+        sheet.style.transition = '';
         const dy = dragStartY - e.changedTouches[0].clientY;
-        const pct = 75 - (dy / (window.innerHeight * 0.95) * 100);
-        if (pct < 40) { openNext(); } else { panel.style.transform = 'translateY(75%)'; }
+        if (75 - (dy / (window.innerHeight * 0.95) * 100) < 40) { openNext(); }
+        else { sheet.style.transform = 'translateY(75%)'; }
       }, { passive: true });
-
-      panel.addEventListener('click', openNext);
+      peekEl.addEventListener('click', () => { if (!navigating) openNext(); });
 
       _nextRevealAbort.signal.addEventListener('abort', () => {
         observer.disconnect();
-        panel.remove();
+        document.querySelectorAll('.js-next-panel').forEach(el => el.remove());
       });
     }
 
@@ -2651,7 +2691,7 @@ quoteText.textContent = '“' + q.text + '”';
     // === CLOSE MODAL ===
     function closeModal() {
       document.querySelectorAll('.js-nav-panel').forEach(p => p.remove());
-      document.querySelectorAll('.modal-next-panel').forEach(p => p.remove());
+      document.querySelectorAll('.js-next-panel').forEach(p => p.remove());
       _sheetStack.forEach(s => { s.classList.remove('is-open'); setTimeout(() => s.remove(), 500); });
       _sheetStack = [];
       if (_nextRevealAbort) { _nextRevealAbort.abort(); _nextRevealAbort = null; }
