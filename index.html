@@ -629,14 +629,12 @@
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
     }
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
-    .modal-close-bar.is-active::before {
-      content:''; position:absolute; bottom:16px; left:50%;
+    .modal.is-open::before, .modal.is-peek::before {
+      content:''; position:absolute; top:8px; left:50%;
       transform:translateX(-50%);
       width:36px; height:1px; border-radius:0;
-      background:#fff; pointer-events:none;
-      opacity:1; transition:opacity .2s;
+      background:#000; z-index:10; pointer-events:none;
     }
-    body:has(.modal__scroll--at-top) .modal-close-bar.is-active::before { opacity:0; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       height:1.5em; flex-shrink:0;
