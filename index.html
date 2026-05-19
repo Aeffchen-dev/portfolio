@@ -2325,6 +2325,9 @@ quoteText.textContent = '“' + q.text + '”';
 
     // === NEXT PROJECT SETUP ===
     const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
+    const PROJECT_OVERRIDES = {
+      'the-makery': { textColor: '#000000' },
+    };
     let currentProjectKey  = null;
     let _nextRevealAbort   = null;
 
@@ -2844,6 +2847,7 @@ quoteText.textContent = '“' + q.text + '”';
             ).then(r => r.json());
             const p = mapACFProject(data);
             if (!p.links.length && PROJECT_DEFAULT_LINKS[key]) p.links = PROJECT_DEFAULT_LINKS[key];
+            if (PROJECT_OVERRIDES[key]) Object.assign(p, PROJECT_OVERRIDES[key]);
             PROJECTS[key] = p;
 
             // Update work tile with live data
