@@ -2185,9 +2185,10 @@ quoteText.textContent = '“' + q.text + '”';
       const getVidUrl = v => !v ? '' : (typeof v === 'string' ? v : (v.url || ''));
       const heroVideo = getVidUrl(acf._video_file_desktop) || getVidUrl(acf._video_file_mobile) || '';
 
+      const normColor = v => (typeof v === 'string' && v.trim()) ? v.trim() : (v?.value || v?.hex || '');
       return {
-        bg:        acf.background_color || '#F2F2F2',
-        textColor: acf['text-color']    || '#000000',
+        bg:        normColor(acf.background_color) || '#F2F2F2',
+        textColor: normColor(acf['text-color'])    || '#000000',
         hero:      acf.hero_image?.url  || '',
         heroVideo,
         client, year,
@@ -2271,7 +2272,7 @@ quoteText.textContent = '“' + q.text + '”';
         links:[{t:'Visit the Website',u:'https://www.dmexco.com'}],
       },
       'the-makery': {
-        bg:'#DCD8D3',
+        bg:'#DCD8D3', textColor:'#000000',
         hero: BASE+'Header-the-makery.jpg', client:'The Makery', year:'2018–2019',
         name:'Website Relaunch',
         title:'Website relaunch for a local arts and crafts workshop platform',
