@@ -593,8 +593,13 @@
     .modal__peek-bar__row {
       display:flex; align-items:center; justify-content:space-between;
     }
+    .modal__peek-bar__next-up {
+      font-family:'HW Left Bold', sans-serif;
+      font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
+      color:inherit; opacity:0.5; display:block; margin-bottom:16px;
+    }
     .modal__peek-bar__client {
-      font-size:14px; font-weight:500; color:inherit; line-height:1.2;
+      font-size:14px; font-weight:400; color:inherit; line-height:1.2;
     }
     .modal__peek-bar__link {
       display:inline-flex; align-items:center; gap:3px;
@@ -1610,6 +1615,7 @@
   <div class="modal is-hidden" id="modalA">
     <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
+      <span class="modal__peek-bar__next-up">Next up</span>
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
         <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
@@ -1620,6 +1626,7 @@
   <div class="modal is-hidden" id="modalB">
     <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
+      <span class="modal__peek-bar__next-up">Next up</span>
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
         <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
