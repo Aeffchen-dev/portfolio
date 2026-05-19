@@ -273,7 +273,7 @@
     }
     .work-item__body {
       background:#141414; border-radius:4px;
-      padding:16px; aspect-ratio:4/3;
+      padding:8px; aspect-ratio:4/3;
       position:relative; z-index:1; margin-top:16px; will-change:transform,opacity;
       display:flex; flex-direction:column;
     }
@@ -565,6 +565,7 @@
     .modal.is-open {
       transform:translateY(0);
       pointer-events:auto;
+      box-shadow:0 -2px 4px rgba(0,0,0,0.16);
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
@@ -587,7 +588,7 @@
     .modal.is-peek .modal__hero { cursor:none; }
 .modal__peek-bar {
       display:none; position:relative; z-index:2;
-      background:#000; padding:18px 16px 16px;
+      background:#000; padding:16px 16px 16px;
     }
     .modal__peek-bar__row {
       display:flex; align-items:center; justify-content:space-between;
@@ -599,11 +600,13 @@
       display:inline-flex; align-items:center; gap:3px;
       font-family:'HW Left Bold', sans-serif;
       font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
-      color:#989898; text-decoration:none; cursor:pointer;
+      color:#000; text-decoration:none; cursor:pointer;
       background:none; border:none; padding:0;
       transition:color .3s ease-in-out;
     }
-    @media (hover:hover) { .modal__peek-bar__link:hover { color:#fff; } }
+    @media (hover:hover) { .modal__peek-bar__link:hover { color:#555; } }
+    @media (hover:hover) { .modal__peek-bar__link:hover .arrow-icon { transform:translate(1px,-1px); } }
+    .modal__peek-bar__link .arrow-icon { transition:transform .2s ease; }
     .modal.is-peek .modal__peek-bar { display:block; }
     .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
 
@@ -615,7 +618,8 @@
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
       position:fixed; top:0; left:0; right:0; height:5dvh;
-      background:#000; color:#fff;
+      background:#000; color:#111;
+      transition:background .4s ease, color .4s ease;
       backdrop-filter:none; -webkit-backdrop-filter:none;
       display:flex; align-items:center; justify-content:center; gap:16px;
       font-family:'HW Left Bold', sans-serif;
@@ -626,6 +630,12 @@
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
     }
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
+    .modal-close-bar.is-active::before {
+      content:''; position:absolute; bottom:16px; left:50%;
+      transform:translateX(-50%);
+      width:36px; height:4px; border-radius:8px;
+      background:rgba(0,0,0,0.15); pointer-events:none;
+    }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       height:1.5em; flex-shrink:0;
@@ -827,14 +837,14 @@
     .project-links { margin-top:16px; margin-bottom:-16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:12px;
+      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:8px;
       outline:1px solid rgba(0,0,0,0.12); opacity:0.95;
       text-decoration:none; color:inherit; transition:background .3s ease-in-out;
     }
-    @media (hover:hover) { .modal-link-card:hover { background:rgba(0,0,0,0.10); } }
+    @media (hover:hover) { .modal-link-card:hover { background:rgba(0,0,0,0.01); } }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
-      overflow:hidden;
+      border-radius:2px; overflow:hidden;
       display:flex; align-items:center; justify-content:center;
     }
     .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:0; }
@@ -935,7 +945,7 @@
       .nav__contact { padding-left:0; padding-right:0; }
       .work-item { display:flex; flex-direction:column; gap:8px; will-change:transform,opacity; margin-left:0; margin-right:0; }
       .work-item__image { padding:0; margin:0; margin-top:0 !important; }
-      .work-item__body { margin:0; padding:16px; }
+      .work-item__body { margin:0; padding:8px; }
       /* 8px gap between every consecutive pair of work-items (visual order via order:) */
       .work-item--hero-side,
       .work-list .work-item:nth-child(5),
@@ -1592,8 +1602,8 @@
     <span>Close</span>
     <span class="modal-close-bar__icon">
       <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0.5" y1="0.5" x2="6.5" y2="6.5" stroke="white" stroke-width="1" stroke-linecap="round"/>
-        <line x1="6.5" y1="0.5" x2="0.5" y2="6.5" stroke="white" stroke-width="1" stroke-linecap="round"/>
+        <line x1="0.5" y1="0.5" x2="6.5" y2="6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+        <line x1="6.5" y1="0.5" x2="0.5" y2="6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
       </svg>
     </span>
   </div>
@@ -2595,17 +2605,28 @@ quoteText.textContent = '“' + q.text + '”';
 
       function completePeek() {
         peekCursor.classList.remove('is-visible');
+        // Enable scroll synchronously so first touch after swipe is already scrollable
+        const pmScroll = peekModal.querySelector('.modal__scroll');
+        if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; }
         completing = true;
         _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
         completing = false;
         const pm = peekModal, am = activeModal, nk = nextKey;
-        // RAF ensures browser commits the dragged position before the opening transition starts
         requestAnimationFrame(() => {
-          pm.classList.remove('modal--hero-inset'); // fire hero expand in sync with slide
+          pm.classList.remove('modal--hero-inset');
           pm.style.pointerEvents = 'auto';
-          // Re-enable scroll immediately as the transition starts
-          const pmScroll = pm.querySelector('.modal__scroll');
-          if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; }
+          // Melt peek bar into close bar: transition colors together
+          const newBg   = PROJECTS[nk]?.bg || '#f2f2f2';
+          const newText = PROJECTS[nk]?.textColor || '#000';
+          const cbEl = document.getElementById('modalCloseBar');
+          cbEl.style.background = newBg;
+          cbEl.style.color = newText;
+          const peekBarEl = pm.querySelector('.modal__peek-bar');
+          if (peekBarEl) {
+            peekBarEl.style.transition = 'background 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
+            peekBarEl.style.background = newBg;
+            peekBarEl.style.opacity = '0';
+          }
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = 'translateY(0)';
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
@@ -2622,6 +2643,7 @@ quoteText.textContent = '“' + q.text + '”';
             pm.style.transform  = '';
             pm.style.pointerEvents = '';
             if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
+            if (peekBarEl) { peekBarEl.style.transition = ''; peekBarEl.style.opacity = ''; peekBarEl.style.background = ''; }
             activeModal = pm; peekModal = am;
             currentProjectKey = nk;
             setupPeek(nk);
@@ -2697,6 +2719,10 @@ quoteText.textContent = '“' + q.text + '”';
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
       const closeBar = document.getElementById('modalCloseBar');
+      const projBg = PROJECTS[key]?.bg || '#f2f2f2';
+      const projText = PROJECTS[key]?.textColor || '#000';
+      closeBar.style.background = projBg;
+      closeBar.style.color = projText;
       closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
       setTimeout(() => { closeBar.classList.add('is-active'); setupPeek(key); }, 460);
     }
@@ -2712,6 +2738,8 @@ quoteText.textContent = '“' + q.text + '”';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
+      closeBar.style.background = '';
+      closeBar.style.color = '';
       document.body.style.overflow = '';
       document.body.classList.remove('modal-open');
       _openedByHover = false;
