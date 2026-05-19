@@ -565,7 +565,7 @@
     .modal.is-open {
       transform:translateY(0);
       pointer-events:auto;
-      box-shadow:0 -2px 4px rgba(0,0,0,0.16);
+      box-shadow:0 -8px 32px rgba(0,0,0,0.28);
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -2px 4px rgba(0,0,0,0.16); }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -8px 32px rgba(0,0,0,0.28); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
@@ -633,7 +633,7 @@
       content:''; position:absolute; bottom:16px; left:50%;
       transform:translateX(-50%);
       width:36px; height:1px; border-radius:0;
-      background:currentColor; pointer-events:none;
+      background:#fff; pointer-events:none;
       opacity:1; transition:opacity .2s;
     }
     body:has(.modal__scroll--at-top) .modal-close-bar.is-active::before { opacity:0; }
