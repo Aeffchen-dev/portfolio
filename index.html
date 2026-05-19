@@ -635,6 +635,7 @@
       width:18px; height:1px; background:#000;
       z-index:10; pointer-events:none;
     }
+    .modal--no-grabber .modal__grabber { display:none; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       height:1.5em; flex-shrink:0;
@@ -2629,7 +2630,7 @@ quoteText.textContent = '“' + q.text + '”';
             am.style.transform  = '';
             am.querySelector('.modal__scroll').innerHTML = '';
             pm.classList.remove('is-peek');
-            pm.classList.add('is-open');
+            pm.classList.add('is-open', 'modal--no-grabber');
             pm.style.transition = '';
             pm.style.transform  = '';
             pm.style.pointerEvents = '';
@@ -2703,6 +2704,7 @@ quoteText.textContent = '“' + q.text + '”';
       });
       fillModal(activeModal, key);
       currentProjectKey = key;
+      activeModal.classList.remove('modal--no-grabber');
       activeModal.style.visibility = 'visible';
       activeModal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');
