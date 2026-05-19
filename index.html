@@ -565,7 +565,7 @@
     .modal.is-open {
       transform:translateY(0);
       pointer-events:auto;
-      box-shadow:0 -4px 12px rgba(0,0,0,0.4);
+      box-shadow:0 -4px 12px rgba(0,0,0,0.24);
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.4); }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.24); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
@@ -2673,16 +2673,16 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchmove', e => {
         if (!dragging) return;
-        e.preventDefault();
         const dy = startY - e.touches[0].clientY;
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
+        // Complete before preventDefault so the current touch sequence can scroll new content
+        if (curPct <= 0) { dragging = false; completePeek(); return; }
+        e.preventDefault();
         peekModal.style.transform = `translateY(${curPct}%)`;
         // Both sheets move: active slides up proportionally as peek rises
         const prog = Math.max(0, (peekTargetPct - curPct) / peekTargetPct);
         activeModal.style.transition = 'none';
         activeModal.style.transform  = `translateY(${-prog * 8}%)`;
-        // At top: complete immediately so content becomes scrollable
-        if (curPct <= 0) { dragging = false; completePeek(); }
       }, { passive: false, signal });
 
       peekModal.addEventListener('touchend', () => {
