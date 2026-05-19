@@ -565,7 +565,7 @@
     .modal.is-open {
       transform:translateY(0);
       pointer-events:auto;
-      box-shadow:0 -4px 12px rgba(0,0,0,0.18);
+      box-shadow:0 -4px 12px rgba(0,0,0,0.4);
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.18); }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.4); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
@@ -2574,9 +2574,13 @@ quoteText.textContent = '“' + q.text + '”';
 
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
+      // Peek resting position: show peek bar height + 24px
+      const peekBarEl = peekModal.querySelector('.modal__peek-bar');
+      const peekVisiblePx = (peekBarEl ? peekBarEl.offsetHeight : 80) + 24;
+      const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
+
       // Spacer at bottom of active scroll — scrolling through it drives the peek position
       const peekH = 24;
-      const peekTargetPct = Math.max(0, 65 - 24 * 100 / window.innerHeight);
       const peekSpacer = document.createElement('div');
       peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
       peekSpacer.setAttribute('aria-hidden', 'true');
