@@ -629,11 +629,11 @@
       transition:opacity .5s cubic-bezier(.4,0,.2,1);
     }
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
-    .modal.is-open::before, .modal.is-peek::before {
-      content:''; position:absolute; top:8px; left:50%;
-      transform:translateX(-50%);
-      width:36px; height:1px; border-radius:0;
-      background:#000; z-index:10; pointer-events:none;
+    .modal.is-open::before, .modal.is-peek::before { content:none; }
+    .modal__grabber {
+      position:absolute; top:16px; left:50%; transform:translateX(-50%);
+      width:18px; height:1px; background:#000;
+      z-index:10; pointer-events:none;
     }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
@@ -1607,6 +1607,7 @@
     </span>
   </div>
   <div class="modal is-hidden" id="modalA">
+    <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
@@ -1616,6 +1617,7 @@
     <div class="modal__scroll"></div>
   </div>
   <div class="modal is-hidden" id="modalB">
+    <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <span class="modal__peek-bar__client"></span>
