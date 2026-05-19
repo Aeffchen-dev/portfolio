@@ -594,9 +594,11 @@
       display:flex; align-items:center; justify-content:space-between;
     }
     .modal__peek-bar__next-up {
-      font-family:'HW Left Bold', sans-serif;
-      font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
-      color:inherit; opacity:0.5; display:block; margin-bottom:16px;
+      font-size:14px; font-weight:400; color:inherit; opacity:0.5;
+      text-transform:uppercase; flex-shrink:0;
+    }
+    .modal__peek-bar__left {
+      display:flex; align-items:center; gap:16px; min-width:0;
     }
     .modal__peek-bar__client {
       font-size:14px; font-weight:400; color:inherit; line-height:1.2;
@@ -1615,9 +1617,11 @@
   <div class="modal is-hidden" id="modalA">
     <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
-      <span class="modal__peek-bar__next-up">Next up</span>
       <div class="modal__peek-bar__row">
-        <span class="modal__peek-bar__client"></span>
+        <div class="modal__peek-bar__left">
+          <span class="modal__peek-bar__next-up">Next up</span>
+          <span class="modal__peek-bar__client"></span>
+        </div>
         <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
       </div>
     </div>
@@ -1626,9 +1630,11 @@
   <div class="modal is-hidden" id="modalB">
     <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
-      <span class="modal__peek-bar__next-up">Next up</span>
       <div class="modal__peek-bar__row">
-        <span class="modal__peek-bar__client"></span>
+        <div class="modal__peek-bar__left">
+          <span class="modal__peek-bar__next-up">Next up</span>
+          <span class="modal__peek-bar__client"></span>
+        </div>
         <button class="modal__peek-bar__link" onclick="closeModal()">All projects <svg class="arrow-icon" width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></button>
       </div>
     </div>
@@ -2581,13 +2587,15 @@ quoteText.textContent = '“' + q.text + '”';
 
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
-      // Peek resting position: show peek bar height + 24px
+      // Peek resting position: show peek bar + enough to reveal hero image entering viewport
       const peekBarEl = peekModal.querySelector('.modal__peek-bar');
-      const peekVisiblePx = (peekBarEl ? peekBarEl.offsetHeight : 80) + 24;
+      const peekBarH = peekBarEl ? peekBarEl.offsetHeight : 80;
+      const heroExtraH = Math.round(window.innerWidth * 5 / 8 * 0.3); // ~30% of hero height
+      const peekVisiblePx = peekBarH + heroExtraH;
       const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
 
-      // Spacer at bottom of active scroll — scrolling through it drives the peek position
-      const peekH = 24;
+      // Spacer = heroExtraH so scrolling exactly that amount drives the reveal; no extra dead space
+      const peekH = heroExtraH;
       const peekSpacer = document.createElement('div');
       peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
       peekSpacer.setAttribute('aria-hidden', 'true');
