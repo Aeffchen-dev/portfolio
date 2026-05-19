@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -2px 4px rgba(0,0,0,0.16); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
@@ -594,17 +594,17 @@
       display:flex; align-items:center; justify-content:space-between;
     }
     .modal__peek-bar__client {
-      font-size:14px; font-weight:500; color:#fff; line-height:1.2;
+      font-size:14px; font-weight:500; color:inherit; line-height:1.2;
     }
     .modal__peek-bar__link {
       display:inline-flex; align-items:center; gap:3px;
       font-family:'HW Left Bold', sans-serif;
       font-size:11px; font-weight:bold; letter-spacing:0.48px; text-transform:uppercase;
-      color:#000; text-decoration:none; cursor:pointer;
+      color:inherit; text-decoration:none; cursor:pointer;
       background:none; border:none; padding:0;
-      transition:color .3s ease-in-out;
+      transition:opacity .3s ease-in-out;
     }
-    @media (hover:hover) { .modal__peek-bar__link:hover { color:#555; } }
+    @media (hover:hover) { .modal__peek-bar__link:hover { opacity:0.6; } }
     @media (hover:hover) { .modal__peek-bar__link:hover .arrow-icon { transform:translate(1px,-1px); } }
     .modal__peek-bar__link .arrow-icon { transition:transform .2s ease; }
     .modal.is-peek .modal__peek-bar { display:block; }
@@ -618,8 +618,7 @@
     .modal-header-arrow { display:none !important; }
     .modal-close-bar {
       position:fixed; top:0; left:0; right:0; height:5dvh;
-      background:#000; color:#111;
-      transition:background .4s ease, color .4s ease;
+      background:#000; color:#fff;
       backdrop-filter:none; -webkit-backdrop-filter:none;
       display:flex; align-items:center; justify-content:center; gap:16px;
       font-family:'HW Left Bold', sans-serif;
@@ -633,9 +632,11 @@
     .modal-close-bar.is-active::before {
       content:''; position:absolute; bottom:16px; left:50%;
       transform:translateX(-50%);
-      width:36px; height:4px; border-radius:8px;
-      background:rgba(0,0,0,0.15); pointer-events:none;
+      width:36px; height:1px; border-radius:0;
+      background:currentColor; pointer-events:none;
+      opacity:1; transition:opacity .2s;
     }
+    body:has(.modal__scroll--at-top) .modal-close-bar.is-active::before { opacity:0; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       height:1.5em; flex-shrink:0;
@@ -837,14 +838,14 @@
     .project-links { margin-top:16px; margin-bottom:-16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.05); border-radius:8px;
+      padding:8px 16px 8px 8px; background:transparent; border-radius:8px;
       outline:1px solid rgba(0,0,0,0.12); opacity:0.95;
       text-decoration:none; color:inherit; transition:background .3s ease-in-out;
     }
     @media (hover:hover) { .modal-link-card:hover { background:rgba(0,0,0,0.01); } }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
-      border-radius:2px; overflow:hidden;
+      border-radius:4px; overflow:hidden;
       display:flex; align-items:center; justify-content:center;
     }
     .modal-link-card__thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:0; }
@@ -2516,6 +2517,8 @@ quoteText.textContent = '“' + q.text + '”';
       const clientEl = modalEl.querySelector('.modal__peek-bar__client');
       if (clientEl) clientEl.textContent = p.client || p.name;
       const bg = p.bg || '#f2f2f2';
+      const peekBarEl = modalEl.querySelector('.modal__peek-bar');
+      if (peekBarEl) { peekBarEl.style.background = bg; peekBarEl.style.color = p.textColor || '#000'; }
       const heroHTML = p.hero
         ? `<div class="modal__hero"><img src="${p.hero}" alt="" loading="eager"></div>`
         : p.heroVideo
@@ -2615,18 +2618,6 @@ quoteText.textContent = '“' + q.text + '”';
         requestAnimationFrame(() => {
           pm.classList.remove('modal--hero-inset');
           pm.style.pointerEvents = 'auto';
-          // Melt peek bar into close bar: transition colors together
-          const newBg   = PROJECTS[nk]?.bg || '#f2f2f2';
-          const newText = PROJECTS[nk]?.textColor || '#000';
-          const cbEl = document.getElementById('modalCloseBar');
-          cbEl.style.background = newBg;
-          cbEl.style.color = newText;
-          const peekBarEl = pm.querySelector('.modal__peek-bar');
-          if (peekBarEl) {
-            peekBarEl.style.transition = 'background 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
-            peekBarEl.style.background = newBg;
-            peekBarEl.style.opacity = '0';
-          }
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = 'translateY(0)';
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
@@ -2643,7 +2634,6 @@ quoteText.textContent = '“' + q.text + '”';
             pm.style.transform  = '';
             pm.style.pointerEvents = '';
             if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
-            if (peekBarEl) { peekBarEl.style.transition = ''; peekBarEl.style.opacity = ''; peekBarEl.style.background = ''; }
             activeModal = pm; peekModal = am;
             currentProjectKey = nk;
             setupPeek(nk);
@@ -2719,10 +2709,6 @@ quoteText.textContent = '“' + q.text + '”';
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
       const closeBar = document.getElementById('modalCloseBar');
-      const projBg = PROJECTS[key]?.bg || '#f2f2f2';
-      const projText = PROJECTS[key]?.textColor || '#000';
-      closeBar.style.background = projBg;
-      closeBar.style.color = projText;
       closeBar.style.transition = 'opacity 0.2s cubic-bezier(0,0,0.2,1)';
       setTimeout(() => { closeBar.classList.add('is-active'); setupPeek(key); }, 460);
     }
@@ -2738,8 +2724,6 @@ quoteText.textContent = '“' + q.text + '”';
       backdrop.classList.remove('is-active');
       closeBar.classList.remove('is-active');
       closeBar.style.height = '';
-      closeBar.style.background = '';
-      closeBar.style.color = '';
       document.body.style.overflow = '';
       document.body.classList.remove('modal-open');
       _openedByHover = false;
