@@ -565,7 +565,7 @@
     .modal.is-open {
       transform:translateY(0);
       pointer-events:auto;
-      box-shadow:0 -4px 12px rgba(0,0,0,0.12);
+      box-shadow:0 -4px 12px rgba(0,0,0,0.18);
     }
     .modal__scroll {
       max-height:95dvh; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; touch-action:pan-y;
@@ -575,7 +575,7 @@
     }
     .modal__scroll::-webkit-scrollbar { display:none; }
     .modal__end-sentinel { height:1px; }
-    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.12); }
+    .modal.is-peek { z-index:201; pointer-events:auto; box-shadow:0 -4px 12px rgba(0,0,0,0.18); }
     .peek-cursor {
       position:fixed; z-index:400; pointer-events:none;
       transform:translate(-50%,-50%);
@@ -2576,6 +2576,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       // Spacer at bottom of active scroll — scrolling through it drives the peek position
       const peekH = 24;
+      const peekTargetPct = Math.max(0, 65 - 24 * 100 / window.innerHeight);
       const peekSpacer = document.createElement('div');
       peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
       peekSpacer.setAttribute('aria-hidden', 'true');
@@ -2593,7 +2594,7 @@ quoteText.textContent = '“' + q.text + '”';
         if (dragging) return;
         const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
         const progress  = Math.max(0, Math.min(1, (peekH - remaining) / peekH));
-        curPct = 100 - progress * 35; // 100% hidden → 65% peeked
+        curPct = 100 - progress * (100 - peekTargetPct);
         if (!peekIntroduced && progress > 0) {
           peekIntroduced = true;
           peekModal.style.transition  = 'transform 0.6s 0.35s cubic-bezier(0,0,0.2,1)';
@@ -2658,7 +2659,7 @@ quoteText.textContent = '“' + q.text + '”';
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         peekModal.style.transform = `translateY(${curPct}%)`;
         // Both sheets move: active slides up proportionally as peek rises
-        const prog = Math.max(0, (65 - curPct) / 65);
+        const prog = Math.max(0, (peekTargetPct - curPct) / peekTargetPct);
         activeModal.style.transition = 'none';
         activeModal.style.transform  = `translateY(${-prog * 8}%)`;
         // At top: complete immediately so content becomes scrollable
@@ -2669,8 +2670,8 @@ quoteText.textContent = '“' + q.text + '”';
         if (!dragging) return; dragging = false;
         if (curPct < 50) { completePeek(); return; }
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = 'translateY(65%)';
-        curPct = 65;
+        peekModal.style.transform  = `translateY(${peekTargetPct}%)`;
+        curPct = peekTargetPct;
         activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         activeModal.style.transform  = '';
       }, { signal });
