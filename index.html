@@ -598,7 +598,7 @@
       text-transform:uppercase; flex-shrink:0;
     }
     .modal__peek-bar__left {
-      display:flex; align-items:center; gap:16px; min-width:0;
+      display:flex; align-items:center; gap:8px; min-width:0;
     }
     .modal__peek-bar__client {
       font-size:14px; font-weight:400; color:inherit; line-height:1.2;
@@ -2590,7 +2590,7 @@ quoteText.textContent = '“' + q.text + '”';
       // Peek resting position: show peek bar + enough to reveal hero image entering viewport
       const peekBarEl = peekModal.querySelector('.modal__peek-bar');
       const peekBarH = peekBarEl ? peekBarEl.offsetHeight : 80;
-      const heroExtraH = Math.round(window.innerWidth * 5 / 8 * 0.3); // ~30% of hero height
+      const heroExtraH = Math.round(window.innerWidth * 5 / 8); // 100% of hero height
       const peekVisiblePx = peekBarH + heroExtraH;
       const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
 
