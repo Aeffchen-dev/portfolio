@@ -827,12 +827,12 @@
     }
     .block-stats--single { grid-template-columns:auto; justify-content:center; }
     .block-stat__value {
-      display:block; font-size:clamp(48px, 8vw, 88px); font-weight:400;
-      color:inherit; line-height:1; letter-spacing:-0.03em;
+      display:block; font-family:'HW Left Bold', sans-serif; font-size:clamp(48px, 8vw, 88px); font-weight:400;
+      color:inherit; line-height:1; letter-spacing:-0.03em; margin-top:2px;
     }
     .block-stat__label {
       display:block; font-size:14px; font-weight:400;
-      color:inherit; margin-top:8px;
+      color:inherit;
     }
     @media (min-width:640px) {
       .block-stats { grid-template-columns:repeat(2,auto); justify-content:center; gap:0 80px; }
@@ -2504,7 +2504,7 @@ quoteText.textContent = '“' + q.text + '”';
     function buildStatsHtml(kpis) {
       const items = kpis.map(k => {
         const { count, prefix, suffix } = parseKpiUnit(k.unit);
-        return `<div><span class="block-stat__value" data-count="${count}" data-prefix="${prefix}" data-suffix="${suffix}">${prefix}0${suffix}</span><span class="block-stat__label">${k.label}</span></div>`;
+        return `<div><span class="block-stat__label">${k.label}</span><span class="block-stat__value" data-count="${count}" data-prefix="${prefix}" data-suffix="${suffix}">${prefix}0${suffix}</span></div>`;
       }).join('');
       const cls = kpis.length === 1 ? ' block-stats--single' : '';
       return `<div class="block block-stats${cls}">${items}</div>`;
