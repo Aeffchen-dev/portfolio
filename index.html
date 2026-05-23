@@ -823,9 +823,10 @@
     .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
     .block-stats {
       display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
-      text-align:center; container-type:inline-size;
+      container-type:inline-size;
     }
     .block-stats--single { grid-template-columns:auto; justify-content:center; }
+    .block-stats > div { display:flex; flex-direction:column; align-items:center; }
     .block-stat__value {
       display:block; font-family:'HW Left Bold', sans-serif; font-size:clamp(48px, 8vw, 88px); font-weight:400;
       color:inherit; line-height:1; letter-spacing:-0.03em; margin-top:2px;
