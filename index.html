@@ -3153,8 +3153,8 @@ quoteText.textContent = '“' + q.text + '”';
           if (!dragging) {
             ox += vx; oy += vy;
             // ease velocity back towards auto-drift speed after manual interaction
-            vx += (AUTO_VX - vx) * 0.015;
-            vy += (AUTO_VY - vy) * 0.015;
+            vx += (AUTO_VX - vx) * 0.07;
+            vy += (AUTO_VY - vy) * 0.07;
           }
           requestAnimationFrame(render);
         }
