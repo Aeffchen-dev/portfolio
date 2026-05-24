@@ -3177,7 +3177,7 @@ quoteText.textContent = '“' + q.text + '”';
         mini.addEventListener('pointermove', e => {
           if (!dragging) return;
           const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
+          const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
           vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
           ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
         });
