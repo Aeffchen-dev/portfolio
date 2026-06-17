@@ -29,3 +29,23 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.project-card {
+  transition: background-color 0.2s ease;
+}
+
+.project-card-link:hover .project-card {
+  background-color: #222222;
+}
+
+.project-card-image-wrapper {
+  overflow: hidden;
+}
+
+.project-card-image-wrapper img {
+  transition: transform 0.5s ease;
+}
+
+.project-card-link:hover .project-card-image-wrapper img {
+  transform: scale(1.04);
+}
