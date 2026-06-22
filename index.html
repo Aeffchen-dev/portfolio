@@ -2711,7 +2711,7 @@ quoteText.textContent = '“' + q.text + '”';
         activeModal.style.transform  = `${tx()}translateY(0)`;
       }, { signal });
 
-      peekModal.addEventListener('click', () => { if (peeking && window.innerWidth >= 640) completePeek(); }, { signal });
+      peekModal.addEventListener('click', () => { if (peekModal.classList.contains('is-peek') && window.innerWidth >= 640) completePeek(); }, { signal });
 
       // Swipe up on the active modal while peeking also triggers transition
       let _peekSwipeStartY = 0;
