@@ -2644,9 +2644,9 @@ quoteText.textContent = '“' + q.text + '”';
 
       function completePeek() {
         peekCursor.classList.remove('is-visible');
-        // Enable scroll synchronously so first touch after swipe is already scrollable
+        // Enable scroll and reset position immediately so content is scrollable during animation
         const pmScroll = peekModal.querySelector('.modal__scroll');
-        if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; }
+        if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; pmScroll.scrollTop = 0; }
         completing = true;
         _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
         completing = false;
@@ -2681,10 +2681,11 @@ quoteText.textContent = '“' + q.text + '”';
         });
       }
 
+      let touchMoved = false;
       peekModal.addEventListener('touchstart', e => {
         if (!peeking) return;
         e.preventDefault(); // lock scroll for this gesture; listener removed on completePeek
-        dragging = true;
+        dragging = true; touchMoved = false;
         startY   = e.touches[0].clientY;
         startPct = curPct;
         peekModal.style.transition = 'none';
@@ -2692,6 +2693,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchmove', e => {
         if (!dragging) return;
+        touchMoved = true;
         const dy = startY - e.touches[0].clientY;
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         if (curPct <= 0) { dragging = false; completePeek(); return; }
@@ -2703,7 +2705,7 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
-        if (curPct < 50) { completePeek(); return; }
+        if (!touchMoved || curPct < 50) { completePeek(); return; }
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
         curPct = peekTargetPct;
