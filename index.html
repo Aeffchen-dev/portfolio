@@ -2521,7 +2521,7 @@ quoteText.textContent = '“' + q.text + '”';
     // Peek cursor — follows mouse over the peek hero area
     const peekCursor = document.createElement('div');
     peekCursor.className = 'peek-cursor';
-    peekCursor.textContent = 'Swipe for next project';
+    peekCursor.textContent = window.innerWidth >= 640 ? 'Click for next project' : 'Swipe for next project';
     document.body.appendChild(peekCursor);
 
     document.addEventListener('mousemove', e => {
@@ -2669,7 +2669,11 @@ quoteText.textContent = '“' + q.text + '”';
             pm.style.transition = '';
             pm.style.transform  = '';
             pm.style.pointerEvents = '';
-            if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
+            if (pmScroll) {
+              pmScroll.style.overflowY = 'auto';
+              pmScroll.style.touchAction = 'pan-y';
+              pmScroll.scrollTop = 0;
+            }
             activeModal = pm; peekModal = am;
             currentProjectKey = nk;
             setupPeek(nk);
@@ -3205,29 +3209,44 @@ quoteText.textContent = '“' + q.text + '”';
     })();
 
     // === DESKTOP LINKED COLUMN SCROLL ===
-    // When the main page is scrolled to the bottom, redirect wheel events to the sidebar.
-    // When the sidebar is scrolled to the top, redirect upward wheel events back to the page.
+    // State machine: once the user scrolls past the bottom of the main content,
+    // all subsequent wheel events route to the sidebar (up and down).
+    // Scrolling up past the sidebar's top exits sidebar mode and resumes page scroll.
     (function() {
       const sidebar = document.querySelector('.exp-quotes-row');
       if (!sidebar) return;
 
+      let inSidebar = false;
+
       document.addEventListener('wheel', e => {
         if (window.innerWidth < 1024) return;
         if (document.body.classList.contains('modal-open')) return;
-        const pageAtBottom = window.scrollY + window.innerHeight >= document.scrollingElement.scrollHeight - 4;
-        if (!pageAtBottom) return;
-        if (e.deltaY <= 0) return;
-        e.preventDefault();
-        sidebar.scrollTop += e.deltaY;
-      }, { passive: false });
 
-      sidebar.addEventListener('wheel', e => {
-        if (window.innerWidth < 1024) return;
-        if (sidebar.scrollTop === 0 && e.deltaY < 0) {
+        if (inSidebar) {
+          if (e.deltaY < 0 && sidebar.scrollTop <= 0) {
+            // Scrolled back to top of sidebar — hand control back to page
+            inSidebar = false;
+            return;
+          }
           e.preventDefault();
-          window.scrollBy(0, e.deltaY);
+          sidebar.scrollTop += e.deltaY;
+          return;
+        }
+
+        const pageAtBottom = window.scrollY + window.innerHeight >= document.scrollingElement.scrollHeight - 4;
+        if (pageAtBottom && e.deltaY > 0) {
+          inSidebar = true;
+          e.preventDefault();
+          sidebar.scrollTop += e.deltaY;
         }
       }, { passive: false });
+
+      // Reset if user manually scrolls the page back up
+      window.addEventListener('scroll', () => {
+        if (window.innerWidth < 1024) return;
+        const pageAtBottom = window.scrollY + window.innerHeight >= document.scrollingElement.scrollHeight - 4;
+        if (!pageAtBottom) inSidebar = false;
+      }, { passive: true });
     })();
 
   </script>
