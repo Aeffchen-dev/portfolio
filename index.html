@@ -2644,16 +2644,22 @@ quoteText.textContent = '“' + q.text + '”';
 
       function completePeek() {
         peekCursor.classList.remove('is-visible');
-        // Enable scroll and reset position immediately so content is scrollable during animation
         const pmScroll = peekModal.querySelector('.modal__scroll');
-        if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; pmScroll.scrollTop = 0; }
         completing = true;
         _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
         completing = false;
         const pm = peekModal, am = activeModal, nk = nextKey;
         requestAnimationFrame(() => {
-          pm.classList.remove('modal--hero-inset');
+          // Remove is-peek immediately so its CSS rules (touch-action:none, overflow:hidden)
+          // never compete with the scroll container during the animation
+          pm.classList.remove('is-peek', 'modal--hero-inset');
+          pm.classList.add('is-open', 'modal--no-grabber');
           pm.style.pointerEvents = 'auto';
+          if (pmScroll) {
+            pmScroll.style.overflowY = 'auto';
+            pmScroll.style.touchAction = 'pan-y';
+            pmScroll.scrollTop = 0;
+          }
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = `${tx()}translateY(0)`;
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
@@ -2664,16 +2670,10 @@ quoteText.textContent = '“' + q.text + '”';
             am.style.transition = '';
             am.style.transform  = '';
             am.querySelector('.modal__scroll').innerHTML = '';
-            pm.classList.remove('is-peek');
-            pm.classList.add('is-open', 'modal--no-grabber');
             pm.style.transition = '';
             pm.style.transform  = '';
             pm.style.pointerEvents = '';
-            if (pmScroll) {
-              pmScroll.style.overflowY = 'auto';
-              pmScroll.style.touchAction = 'pan-y';
-              pmScroll.scrollTop = 0;
-            }
+            if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
             activeModal = pm; peekModal = am;
             currentProjectKey = nk;
             setupPeek(nk);
