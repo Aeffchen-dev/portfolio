@@ -1053,7 +1053,8 @@
       /* 50px bottom margin between project rows */
       .work-item { margin-bottom:50px; }
       /* CV sidebar — exp-quotes-row is the sticky scroll container */
-      .exp-quotes-row     { grid-column:7; grid-row:1/span 999; align-self:start; min-height:0; position:sticky; top:8px; height:calc(100dvh - 8px); overflow-y:visible; display:flex; flex-direction:column; justify-content:flex-start; padding:16px 0 16px; }
+      .exp-quotes-row     { grid-column:7; grid-row:1/span 999; align-self:start; min-height:0; position:sticky; top:8px; height:calc(100dvh - 8px); overflow-y:auto; scrollbar-width:none; display:flex; flex-direction:column; justify-content:flex-start; padding:16px 0 16px; }
+      .exp-quotes-row::-webkit-scrollbar { display:none; }
       .cv-section         { position:static; height:auto; overflow-y:visible; padding:0; margin-top:0; max-width:none; width:100%; display:flex; flex-direction:column; justify-content:flex-start; }
       .about-quotes-row   { display:flex; flex-direction:column; }
       .cv-section-heading { font-size:16px; text-align:left; padding-left:0; padding-right:0; line-height:1.5; margin-top:0; margin-bottom:16px; }
@@ -2590,11 +2591,13 @@ quoteText.textContent = '“' + q.text + '”';
       const nextKey = getNextProjectKey(key);
       if (!nextKey) return;
 
+      const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
+
       fillModal(peekModal, nextKey);
       peekModal.classList.add('is-peek', 'modal--hero-inset');
       peekModal.style.visibility = 'visible';
       peekModal.style.transition = 'none';
-      peekModal.style.transform  = 'translateY(100%)';
+      peekModal.style.transform  = `${tx()}translateY(100%)`;
 
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
@@ -2633,8 +2636,8 @@ quoteText.textContent = '“' + q.text + '”';
           peekModal.style.transition  = 'transform 0.25s ease-out';
           activeModal.style.transition = 'transform 0.25s ease-out';
         }
-        peekModal.style.transform  = `translateY(${curPct}%)`;
-        activeModal.style.transform  = `translateY(${-progress * 8}%)`;
+        peekModal.style.transform  = `${tx()}translateY(${curPct}%)`;
+        activeModal.style.transform  = `${tx()}translateY(${-progress * 8}%)`;
         peeking = progress >= 1;
       }
       activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
@@ -2652,9 +2655,9 @@ quoteText.textContent = '“' + q.text + '”';
           pm.classList.remove('modal--hero-inset');
           pm.style.pointerEvents = 'auto';
           pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-          pm.style.transform  = 'translateY(0)';
+          pm.style.transform  = `${tx()}translateY(0)`;
           am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
-          am.style.transform  = 'translateY(-8%)';
+          am.style.transform  = `${tx()}translateY(-8%)`;
           setTimeout(() => {
             am.classList.remove('is-open');
             am.style.visibility = 'hidden';
@@ -2688,31 +2691,42 @@ quoteText.textContent = '“' + q.text + '”';
         const dy = startY - e.touches[0].clientY;
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         if (curPct <= 0) { dragging = false; completePeek(); return; }
-        peekModal.style.transform = `translateY(${curPct}%)`;
+        peekModal.style.transform = `${tx()}translateY(${curPct}%)`;
         const prog = Math.max(0, (peekTargetPct - curPct) / peekTargetPct);
         activeModal.style.transition = 'none';
-        activeModal.style.transform  = `translateY(${-prog * 8}%)`;
+        activeModal.style.transform  = `${tx()}translateY(${-prog * 8}%)`;
       }, { passive: true, signal });
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
         if (curPct < 50) { completePeek(); return; }
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = `translateY(${peekTargetPct}%)`;
+        peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
         curPct = peekTargetPct;
         activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = '';
+        activeModal.style.transform  = `${tx()}translateY(0)`;
       }, { signal });
 
       peekModal.addEventListener('click', () => { if (peeking) completePeek(); }, { signal });
+
+      // Swipe up on the active modal while peeking also triggers transition
+      let _peekSwipeStartY = 0;
+      activeScroll.addEventListener('touchstart', e => {
+        _peekSwipeStartY = e.touches[0].clientY;
+      }, { signal, passive: true });
+      activeScroll.addEventListener('touchend', e => {
+        if (!peeking) return;
+        const dy = _peekSwipeStartY - e.changedTouches[0].clientY;
+        if (dy > 40) completePeek();
+      }, { signal, passive: true });
 
       signal.addEventListener('abort', () => {
         peekSpacer.remove();
         if (completing) return;
         activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = '';
+        activeModal.style.transform  = `${tx()}translateY(0)`;
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = 'translateY(100%)';
+        peekModal.style.transform  = `${tx()}translateY(100%)`;
         setTimeout(() => {
           peekModal.classList.remove('is-peek', 'modal--hero-inset');
           peekModal.style.visibility = 'hidden';
@@ -3188,6 +3202,32 @@ quoteText.textContent = '“' + q.text + '”';
       }
 
       requestAnimationFrame(init);
+    })();
+
+    // === DESKTOP LINKED COLUMN SCROLL ===
+    // When the main page is scrolled to the bottom, redirect wheel events to the sidebar.
+    // When the sidebar is scrolled to the top, redirect upward wheel events back to the page.
+    (function() {
+      const sidebar = document.querySelector('.exp-quotes-row');
+      if (!sidebar) return;
+
+      document.addEventListener('wheel', e => {
+        if (window.innerWidth < 1024) return;
+        if (document.body.classList.contains('modal-open')) return;
+        const pageAtBottom = window.scrollY + window.innerHeight >= document.scrollingElement.scrollHeight - 4;
+        if (!pageAtBottom) return;
+        if (e.deltaY <= 0) return;
+        e.preventDefault();
+        sidebar.scrollTop += e.deltaY;
+      }, { passive: false });
+
+      sidebar.addEventListener('wheel', e => {
+        if (window.innerWidth < 1024) return;
+        if (sidebar.scrollTop === 0 && e.deltaY < 0) {
+          e.preventDefault();
+          window.scrollBy(0, e.deltaY);
+        }
+      }, { passive: false });
     })();
 
   </script>
