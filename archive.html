@@ -16,16 +16,25 @@
   <meta name="twitter:title" content="Archive — Jana Gramlich">
   <meta name="twitter:description" content="A visual archive of work, experiments and inspiration by Jana Gramlich, product designer based in Berlin.">
   <meta name="twitter:image" content="https://cms.janagramlich.com/wp-content/uploads/2019/11/Social-Share.png">
-  <link rel="icon" href="https://cms.janagramlich.com/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg">
+  <link rel="alternate icon" href="images/logo.svg">
+  <link rel="apple-touch-icon" href="images/logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
   <style>
+    @view-transition { navigation: auto; }
+    @font-face {
+      font-family: 'HW Left Bold';
+      src: url('images/HW Left Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    /* No overflow:hidden on html — breaks position:fixed on iOS Safari */
     html  { width:100%; min-height:100lvh; background:#171717; }
-    body  { width:100%; min-height:100lvh; background:#171717; overflow:hidden; }
+    body  { width:100%; min-height:100lvh; background:#171717; }
     body { font-family:'DM Sans', sans-serif; font-optical-sizing:auto; color:#fff; }
     img { display:block; }
     a { text-decoration:none; color:inherit; }
@@ -42,8 +51,7 @@
       overflow:hidden;
       z-index:100;
     }
-    .nav.is-open { width:min(calc(100vw - 32px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
-    @media (min-width:640px) and (max-width:1023px) { .nav.is-open { width:calc(100vw - 32px); } }
+    .nav.is-open { width:min(calc(100vw - 16px), 400px); border-radius:24px; backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); box-shadow:0 8px 32px rgba(0,0,0,0.45); }
     .nav::before {
       content:'';
       position:absolute;
@@ -65,7 +73,8 @@
       padding-right:calc((100% - var(--pill-w, 168px)) / 2 + 16px);
     }
     .nav__logo {
-      font-size:12px; font-weight:500; line-height:1; color:#fff;
+      font-family:'HW Left Bold', sans-serif;
+      font-size:12px; font-weight:bold; line-height:1; color:#fff;
       letter-spacing:0.56px; text-transform:uppercase; white-space:nowrap;
     }
     .nav__menu {
@@ -94,8 +103,44 @@
       transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
     }
     .nav.is-open .nav__expand { padding-top:33px; grid-template-rows:1fr; }
-    .nav__expand-inner { overflow:hidden; }
-    .nav__links { padding:32px 16px 0; display:flex; flex-direction:column; }
+    .nav__expand-inner { overflow:hidden; padding:0 16px; }
+    .nav__links { padding:16px 0 16px; display:flex; flex-direction:column; width:50%; flex-shrink:0; }
+    .nav__top-row { display:flex; align-items:flex-start; }
+    @keyframes figmaCursor {
+      0%   { transform:translate(4px, 2px); }
+      15%  { transform:translate(22px, 18px); }
+      30%  { transform:translate(38px, 8px); }
+      45%  { transform:translate(28px, 34px); }
+      60%  { transform:translate(8px, 44px); }
+      75%  { transform:translate(44px, 30px); }
+      90%  { transform:translate(16px, 12px); }
+      100% { transform:translate(4px, 2px); }
+    }
+    .nav__vibe {
+      padding:16px 0 16px; width:50%; flex-shrink:0; font-size:14px; font-weight:500;
+      color:rgba(255,255,255,0.35); letter-spacing:0; line-height:1.5;
+      text-align:left; position:relative;
+      opacity:0; transform:translateY(8px);
+      transition:opacity .2s ease, transform .25s ease;
+    }
+    .nav.is-open .nav__vibe {
+      opacity:1; transform:translateY(0);
+      transition:opacity .2s ease .22s, transform .25s ease .22s;
+    }
+    .nav__cursor {
+      position:absolute; top:16px; left:0;
+      pointer-events:none;
+      animation:figmaCursor 5s ease-in-out infinite paused;
+    }
+    .nav.is-open .nav__cursor { animation-play-state:running; }
+    .nav__cursor-tag {
+      display:block;
+      background:#acb0ff; color:#171717;
+      font-size:10px; font-weight:700; letter-spacing:0;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
+      white-space:nowrap; line-height:1.5;
+      margin-top:-1px; margin-left:9px;
+    }
     .nav__link {
       display:block;
       font-size:32px; font-weight:400; color:#fff; line-height:1.4;
@@ -139,11 +184,17 @@
     #canvas {
       position:fixed;
       top:0; left:0;
+      width:100vw;
+      height:100dvh;
+      overflow:visible;
       cursor:grab;
       user-select:none;
       -webkit-user-select:none;
       touch-action:none;
+      opacity:0;
+      transition:opacity 0.8s cubic-bezier(.4,0,.2,1);
     }
+    #canvas.is-revealed { opacity:1; }
     #canvas.is-dragging { cursor:grabbing; }
 
     /* === TILES === */
@@ -153,10 +204,11 @@
       border-radius:12px;
       overflow:hidden;
       will-change:transform;
-      background:#2a2a2a;
+      background:transparent;
       cursor:pointer;
       transition:opacity .15s ease;
     }
+    .tile { cursor:pointer; }
     .tile:active { opacity:0.85; }
     .tile img {
       width:100%; height:100%;
@@ -169,52 +221,40 @@
     }
     @media (min-width:640px) { .nav { top:8px; } }
 
+    /* === LOADING SCREEN === */
+    .loading-screen { position:fixed; inset:0; z-index:9999; background:#060606; opacity:1; pointer-events:auto; transition:opacity 0.75s cubic-bezier(.4,0,.2,1); }
+    .loading-screen.is-out { opacity:0; pointer-events:none; }
+    .loading-phrase { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'DM Sans',sans-serif; font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.5; color:#fff; text-align:center; max-width:min(480px,80vw); opacity:0; transition:opacity 0.6s ease; }
+    .loading-phrase.is-in { opacity:1; }
+    .loading-counter { position:absolute; display:flex; align-items:flex-start; pointer-events:none; transition:left 1.4s cubic-bezier(.16,1,.3,1), top 1.4s cubic-bezier(.16,1,.3,1), opacity 0.4s; }
+    .loading-cur-tag { display:block; background:#acb0ff; color:#171717; font-size:10px; font-weight:700; letter-spacing:0; padding:2px 6px; border-radius:0 4px 4px 4px; white-space:nowrap; line-height:1.5; margin-top:-1px; margin-left:2px; }
+
     /* === LIGHTBOX === */
-    .lightbox {
-      position:fixed; inset:0; z-index:200;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(0,0,0,0);
-      pointer-events:none;
-      transition:background .3s ease;
-      /* Prevent iOS Safari scroll-through */
-      touch-action:none;
-      -webkit-touch-callout:none;
-    }
-    .lightbox.is-open {
-      background:rgba(0,0,0,0.92);
-      pointer-events:auto;
-    }
-    .lightbox__inner {
-      position:relative;
-      max-width:min(92vw, 560px);
-      max-height:90dvh;
-      display:flex; align-items:center; justify-content:center;
-      transform:scale(0.92) translateY(10px);
-      opacity:0;
-      transition:transform .35s cubic-bezier(0.32,0.72,0,1), opacity .3s ease;
-    }
-    .lightbox.is-open .lightbox__inner {
-      transform:scale(1) translateY(0);
-      opacity:1;
-    }
-    #lightboxImg {
-      max-width:100%; max-height:90dvh;
-      object-fit:contain;
-      border-radius:12px;
-      display:block;
-    }
-    .lightbox__close {
-      position:absolute; top:-40px; right:-4px;
-      width:32px; height:32px;
-      display:flex; align-items:center; justify-content:center;
-      color:rgba(255,255,255,0.7);
-      cursor:pointer; border:none; background:none; padding:0;
-      transition:color .2s ease, transform .2s ease;
-    }
-    .lightbox__close:hover { color:#fff; transform:scale(1.1); }
   </style>
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="loading-screen" aria-hidden="true">
+    <div class="loading-phrase" id="loadingPhrase"></div>
+    <div class="loading-counter" id="loadingCounter"><svg width="10" height="15" viewBox="0 0 10 15" fill="none" aria-hidden="true"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="loading-cur-tag">Loading <span id="loadingCount">0</span>%</span></div>
+  </div>
+  <script>
+  (function() {
+    var phrases=["Design isn't decoration—\nit serves a purpose.","I make complexity\neasy to understand.","Consistency is key.","I reduce noise\nto what matters."];
+    var overlay=document.getElementById('loadingScreen'),phraseEl=document.getElementById('loadingPhrase'),counterEl=document.getElementById('loadingCounter'),countEl=document.getElementById('loadingCount');
+    phraseEl.innerHTML=phrases[Math.floor(Math.random()*phrases.length)].replace(/\n/g,'<br>');
+    setTimeout(function(){ phraseEl.classList.add('is-in'); },150);
+    var moveTimer=null;
+    function moveCursor(){ var rect=phraseEl.getBoundingClientRect(); if(!rect.width){ moveTimer=setTimeout(moveCursor,100); return; } var pad=72,gap=36,side=Math.floor(Math.random()*4),x,y; if(side===0){ x=rect.left+Math.random()*rect.width; y=rect.top-gap-Math.random()*pad; } else if(side===1){ x=rect.right+gap+Math.random()*pad; y=rect.top+Math.random()*rect.height; } else if(side===2){ x=rect.left+Math.random()*rect.width; y=rect.bottom+gap+Math.random()*pad; } else{ x=rect.left-90-Math.random()*pad; y=rect.top+Math.random()*rect.height; } x=Math.max(4,Math.min(window.innerWidth-90,x)); y=Math.max(4,Math.min(window.innerHeight-20,y)); counterEl.style.left=x+'px'; counterEl.style.top=y+'px'; moveTimer=setTimeout(moveCursor,1200+Math.random()*800); }
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ moveCursor(); }); });
+    var s=performance.now(),d=1800; function tick(n){ var p=Math.min(100,Math.round((n-s)/d*100)); countEl.textContent=p; if(p<100)requestAnimationFrame(tick); } requestAnimationFrame(tick);
+    var minDone=false,apiFetched=false;
+    function tryExit(){ if(!minDone||!apiFetched)return; if(moveTimer)clearTimeout(moveTimer); phraseEl.style.transition='opacity 0.4s ease'; phraseEl.style.opacity='0'; counterEl.style.opacity='0'; setTimeout(function(){ overlay.classList.add('is-out'); setTimeout(function(){ if(overlay.parentNode)overlay.parentNode.removeChild(overlay); },800); },450); }
+    setTimeout(function(){ minDone=true; tryExit(); },1600);
+    window.__loaderDone = function(){ apiFetched=true; tryExit(); };
+  })();
+  </script>
 
   <!-- NAV -->
   <nav class="nav" id="mainNav">
@@ -224,13 +264,16 @@
     </div>
     <div class="nav__expand">
       <div class="nav__expand-inner">
-        <div class="nav__links">
-          <a href="index.html#work" class="nav__link">Work</a>
-          <a href="index.html#about" class="nav__link">About</a>
-          <a href="archive.html" class="nav__link is-current">Archive</a>
-          <a href="articles.html" class="nav__link">Articles</a>
+        <div class="nav__top-row">
+          <div class="nav__links">
+            <a href="index.html" class="nav__link">Home</a>
+            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html#about" class="nav__link">About</a>
+            <a href="archive.html" class="nav__link">Archive</a>
+            <a href="index.html#articles" class="nav__link">Articles</a>
+          </div>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
         </div>
-        <div class="nav__divider"></div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
           <a href="mailto:hello@janagramlich.com" class="nav__contact-email">hello@janagramlich.com</a>
@@ -242,16 +285,6 @@
 
   <!-- INFINITE CANVAS -->
   <div id="canvas"></div>
-
-  <!-- LIGHTBOX -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
-    <div class="lightbox__inner">
-      <img id="lightboxImg" src="" alt="">
-      <button class="lightbox__close" id="lightboxClose" aria-label="Close">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/></svg>
-      </button>
-    </div>
-  </div>
 
   <script>
     // === NAV ===
@@ -335,60 +368,21 @@
       setPillState();
     })();
 
-    // === LIGHTBOX ===
-    const lightbox    = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxClose = document.getElementById('lightboxClose');
-
-    function openLightbox(src) {
-      lightboxImg.src = src;
-      lightbox.classList.add('is-open');
-      // Prevent body scroll on iOS when lightbox is open
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    }
-    function closeLightbox() {
-      lightbox.classList.remove('is-open');
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      // Clear src after transition to avoid flash on next open
-      setTimeout(() => { if (!lightbox.classList.contains('is-open')) lightboxImg.src = ''; }, 350);
-    }
-
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxClose.addEventListener('touchend', e => { e.preventDefault(); closeLightbox(); });
-
-    // Close on backdrop tap (not on image itself)
-    lightbox.addEventListener('pointerup', e => {
-      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) closeLightbox();
-    });
-    // iOS Safari: also handle touchend on backdrop
-    lightbox.addEventListener('touchend', e => {
-      if (e.target === lightbox || e.target === lightbox.querySelector('.lightbox__inner')) {
-        e.preventDefault();
-        closeLightbox();
-      }
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
-    });
-
     // === CANVAS ===
     const canvas = document.getElementById('canvas');
 
-    // Use screen dimensions to cover full physical screen including behind browser bars (iOS)
+    // Force canvas to full physical screen height so tiles render behind browser bar.
     const CW = screen.width  || window.innerWidth;
     const CH = screen.height || window.innerHeight;
     canvas.style.width  = CW + 'px';
     canvas.style.height = CH + 'px';
 
     // Grid config — portrait tiles (9:19 ratio)
-    const COLS   = 6;
+    const COLS   = 8;
     const ROWS   = 5;
     const BASE_W = 120;
-    const BASE_G = 12;
-    const mult   = CW < 640 ? 2.3 : 1.3;
+    const BASE_G = 4;
+    const mult   = CW < 640 ? 3.2 : CW < 1024 ? 1.8 : 1.1;
     const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
     const TILE_H = 253   * scale;
@@ -405,16 +399,43 @@
     ];
     const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
 
-    const COL_PAR  = [0.82, 1.0, 1.18, 0.82, 1.0, 1.18];
-    const COL_YOFF = [0, 0.5, 0.25, 0.75, 0.4, 0.15];
+    // Parallax: 3 speed tiers — columns scroll vertically at different speeds
+    const COL_PAR  = [0.78, 1.22, 0.83, 1.17, 0.80, 1.20, 0.85, 1.15];
+    const COL_YOFF = [0, 0.7, 0, 0.7, 0, 0.7, 0, 0.7];
 
     const DEFS = [];
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        const yo = COL_YOFF[c] * (TILE_H + GAP);
-        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP) + yo, w: TILE_W, h: TILE_H, c });
+        // stagger stored separately so it can be applied in screen space (unaffected by parallax)
+        const stagger = COL_YOFF[c] * (TILE_H + GAP);
+        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP), stagger, w: TILE_W, h: TILE_H, c });
       }
     }
+
+    // Reveal animation state
+    let _revealStart = null;
+    const _REVEAL_DUR = 1600;
+    const _REVEAL_DIST_Y = 200;
+    const _REVEAL_DIST_X = 160;
+    function _easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+    // Create tile DOM elements
+    let _loadedCount = 0;
+    let _revealed = false;
+    const _totalTiles = DEFS.length;
+    function _reveal() {
+      if (_revealed) return;
+      _revealed = true;
+      canvas.classList.add('is-revealed');
+      _revealStart = performance.now();
+      window.__loaderDone?.();
+    }
+    function _onTileLoad() {
+      _loadedCount++;
+      if (_loadedCount >= _totalTiles) _reveal();
+    }
+    // Fallback: show canvas after 4s regardless of image load status
+    setTimeout(_reveal, 4000);
 
     const tiles = DEFS.map((def, i) => {
       const el  = document.createElement('div');
@@ -422,9 +443,13 @@
       el.style.width  = def.w + 'px';
       el.style.height = def.h + 'px';
       const img = document.createElement('img');
-      img.src = IMGS[i % IMGS.length];
       img.alt = '';
       img.draggable = false;
+      img.onload = _onTileLoad;
+      img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; _onTileLoad(); };
+      img.src = IMGS[i % IMGS.length];
+      // Belt-and-suspenders for browsers that don't fire onload for cached images
+      if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
       el.appendChild(img);
       canvas.appendChild(el);
       return Object.assign({}, def, { el });
@@ -434,12 +459,7 @@
     let ox = 0, oy = 0;
     let vx = 0, vy = 0;
     let dragging = false;
-    let pointerDown = false;
-    let isDragConfirmed = false;
-    let tapStartX = 0, tapStartY = 0, tapStartT = 0;
     let lastX = 0, lastY = 0, lastT = 0;
-    const DRAG_THRESHOLD = 8;
-    const TAP_MAX_MS     = 300;
 
     // Auto-drift: slow diagonal pan when idle
     const DRIFT_VX = 0.18, DRIFT_VY = 0.10;
@@ -448,29 +468,39 @@
     function pauseDrift() {
       isAutoDrifting = false;
       clearTimeout(driftResumeTimer);
-      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 2500);
+      driftResumeTimer = setTimeout(() => { isAutoDrifting = true; }, 4000);
     }
 
     function tilePos(t) {
-      const cx  = CW / 2;
-      const cy  = CH / 2;
-      const p   = COL_PAR[t.c];
-      const wx  = (((t.x + ox) % RX) + RX) % RX - RX / 2;
+      const cx = CW / 2;
+      const cy = CH / 2;
+      const p  = COL_PAR[t.c];
+      const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
       const poy = oy * p + ox * (p - 1.0) * 0.3;
-      const wy  = (((t.y + poy) % RY) + RY) % RY - RY / 2;
-      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
+      const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger };
     }
 
     function render() {
+      let rox = 0, roy = 0;
+      if (_revealStart !== null) {
+        const elapsed = Math.min((performance.now() - _revealStart) / _REVEAL_DUR, 1);
+        const f = 1 - _easeOutCubic(elapsed);
+        rox = f * _REVEAL_DIST_X;
+        roy = f * _REVEAL_DIST_Y;
+      }
+      // Feed reveal offset into ox/oy so tilePos applies identical parallax as scroll
+      ox += rox; oy += roy;
       tiles.forEach(t => {
         const p = tilePos(t);
         t.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
       });
+      ox -= rox; oy -= roy;
       if (!dragging) {
         ox += vx; oy += vy;
-        vx *= 0.97; vy *= 0.97;
-        if (Math.abs(vx) < 0.01) vx = 0;
-        if (Math.abs(vy) < 0.01) vy = 0;
+        vx *= 0.978; vy *= 0.978;
+        if (Math.abs(vx) < 0.004) vx = 0;
+        if (Math.abs(vy) < 0.004) vy = 0;
         if (isAutoDrifting && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
           ox += DRIFT_VX;
           oy += DRIFT_VY;
@@ -479,86 +509,43 @@
       requestAnimationFrame(render);
     }
 
-    // Pointer events — setPointerCapture only after drag confirmed (iOS Safari compat)
+    let _lastInteraction = 0;
+
+
+    // Pointer events
+    let dragDist = 0;
     canvas.addEventListener('pointerdown', e => {
-      if (lightbox.classList.contains('is-open')) return;
       pauseDrift();
-      pointerDown      = true;
-      isDragConfirmed  = false;
-      tapStartX = lastX = e.clientX;
-      tapStartY = lastY = e.clientY;
-      tapStartT = lastT = performance.now();
+      dragging = true; dragDist = 0; _lastInteraction = performance.now();
+      canvas.classList.add('is-dragging');
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = 0; vy = 0;
     });
 
     canvas.addEventListener('pointermove', e => {
-      if (!pointerDown) return;
-      const dx = e.clientX - tapStartX;
-      const dy = e.clientY - tapStartY;
-      if (!isDragConfirmed && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
-        isDragConfirmed = true;
-        dragging = true;
-        canvas.classList.add('is-dragging');
-        // Capture only after drag confirmed — prevents iOS taps from being swallowed
-        try { canvas.setPointerCapture(e.pointerId); } catch(_) {}
-      }
-      if (isDragConfirmed) {
-        const pdx = e.clientX - lastX;
-        const pdy = e.clientY - lastY;
-        const dt  = Math.max(performance.now() - lastT, 1);
-        vx = pdx / dt * 16;
-        vy = pdy / dt * 16;
-        ox += pdx; oy += pdy;
-        lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
-      }
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(performance.now() - lastT, 1);
+      dragDist += Math.sqrt(dx * dx + dy * dy);
+      const rawVx = dx / dt * 12, rawVy = dy / dt * 12;
+      vx = rawVx * 0.6 + vx * 0.4;
+      vy = rawVy * 0.6 + vy * 0.4;
+      ox += dx; oy += dy;
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
     });
 
-    function endDrag(e) {
-      if (!pointerDown) return;
-      if (!isDragConfirmed) {
-        // Tap detected — open lightbox if within time threshold
-        const duration = performance.now() - tapStartT;
-        if (duration < TAP_MAX_MS) {
-          // Find the topmost tile element at the tap location
-          const clientX = (e && e.clientX != null) ? e.clientX : tapStartX;
-          const clientY = (e && e.clientY != null) ? e.clientY : tapStartY;
-          const hit = document.elementsFromPoint(clientX, clientY);
-          const tileEl = hit.find(el => el.classList.contains('tile'));
-          if (tileEl) {
-            const img = tileEl.querySelector('img');
-            if (img && img.src) openLightbox(img.src);
-          }
-        }
-      }
-      pointerDown     = false;
-      dragging        = false;
-      isDragConfirmed = false;
-      canvas.classList.remove('is-dragging');
-    }
+    canvas.addEventListener('pointerup', e => {
+      dragging = false; canvas.classList.remove('is-dragging');
+    });
+    canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('is-dragging'); });
 
-    canvas.addEventListener('pointerup',     endDrag);
-    canvas.addEventListener('pointercancel', endDrag);
-
-    // iOS Safari fallback: touchend fires reliably even without pointer capture
-    canvas.addEventListener('touchend', e => {
-      if (pointerDown && !isDragConfirmed) {
-        const t = e.changedTouches[0];
-        endDrag({ clientX: t.clientX, clientY: t.clientY });
-        e.preventDefault(); // prevent ghost click
-      }
-    }, { passive: false });
-
-    // Prevent iOS Safari page scroll/bounce on canvas
-    canvas.addEventListener('touchstart', e => {
-      if (!lightbox.classList.contains('is-open')) e.preventDefault();
-    }, { passive: false });
-
-    // Wheel / trackpad
+    // Wheel / trackpad — same EMA as drag so carry-over momentum feels identical
     canvas.addEventListener('wheel', e => {
       e.preventDefault();
-      ox -= e.deltaX;
-      oy -= e.deltaY;
-      vx = 0; vy = 0;
+      _lastInteraction = performance.now();
+      vx = -e.deltaX * 0.6 + vx * 0.4;
+      vy = -e.deltaY * 0.6 + vy * 0.4;
     }, { passive: false });
 
     render();
