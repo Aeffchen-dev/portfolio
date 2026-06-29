@@ -1181,6 +1181,7 @@
   <script>
   (function() {
     var phrases = [
+      "I design digital products that lift conversion,\nelevate brand, and scale across the business.",
       "Design isn\u2019t decoration\u2014\nit serves a purpose.",
       "I make complexity\neasy to understand.",
       "Consistency is key.",
@@ -2488,7 +2489,11 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     function observeStats(statsEl) {
-      const root = document.querySelector('.modal__scroll');
+      // Use the scroll container that actually holds this stats block. The
+      // modals ping-pong (modalA/modalB), so a plain document.querySelector
+      // would always return modalA's scroll — wrong once the next project is
+      // rendered into modalB, leaving its observer unable to ever fire.
+      const root = statsEl.closest('.modal__scroll') || document.querySelector('.modal__scroll');
       const obs  = new IntersectionObserver(entries => {
         if (!entries[0].isIntersecting) return;
         obs.disconnect();
