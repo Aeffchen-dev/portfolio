@@ -450,6 +450,24 @@
     .block-video-mp4 video { width:100%; height:auto; display:block; }
     .block-figma { background:#e8e8e8; position:relative; overflow:hidden; }
     .block-figma iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
+    .block-stats {
+      display:grid; grid-template-columns:repeat(2,1fr); gap:0 16px;
+      justify-items:center; container-type:inline-size;
+    }
+    .block-stats--single { grid-template-columns:auto; justify-content:center; }
+    .block-stats > div { display:flex; flex-direction:column; align-items:flex-start; }
+    .block-stat__value {
+      display:block; font-size:clamp(48px, 8vw, 88px); font-weight:500;
+      color:inherit; line-height:1; letter-spacing:-0.03em; margin-top:2px;
+    }
+    .block-stat__label {
+      display:block; font-size:12px; font-weight:400;
+      color:inherit;
+    }
+    @media (min-width:640px) {
+      .block-stats { grid-template-columns:repeat(2,1fr); gap:0 80px; }
+      .block-stats--single { grid-template-columns:auto; }
+    }
 
     /* === PROJECT INFO & LINKS === */
     .project-info { color:#111; padding:0; }
@@ -1553,6 +1571,18 @@
         myRole: acf.my_role || '',
         links:  (acf.call_to_action || []).map(l => ({ t: l['link-text'], u: l['link-url'] })),
         media,
+        kpis: (() => {
+          const raw = acf['kpi_units'] || acf['kpi-units'] || acf['kpis'] || acf['statistics']
+                   || acf['stats'] || acf['numbers'] || acf['key_numbers'] || acf['key-numbers']
+                   || acf['highlights'] || acf['metrics'] || acf['results'] || acf['figures']
+                   || acf['key_figures'] || acf['key_facts'] || [];
+          return (Array.isArray(raw) ? raw : []).map(k => {
+            const num  = k.value || k.number || k.stat || k.count || '';
+            const unit = k.unit  || k.suffix || '';
+            const display = (k.unit && /\d/.test(k.unit)) ? k.unit : num ? (num + unit) : (k.text || '');
+            return { unit: display, label: k.label || k.description || k.title || '' };
+          }).filter(k => k.unit);
+        })(),
       };
     }
 
@@ -1671,6 +1701,53 @@
       return idx >= 0 ? PROJECT_ORDER[(idx + 1) % PROJECT_ORDER.length] : null;
     }
 
+    // === STAT COUNT-UP ANIMATION ===
+    const STAT_ANIM_MS = 1500; // count-up duration (ms)
+
+    function animateCountUp(container) {
+      container.querySelectorAll('.block-stat__value[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count, 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        el.textContent = prefix + '0' + suffix;
+        const t0 = performance.now();
+        (function tick(now) {
+          const p    = Math.min((now - t0) / STAT_ANIM_MS, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
+          el.textContent = prefix + Math.round(ease * target) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }
+
+    // Re-run on every fill (initial open AND after a next-project transition),
+    // so the numbers count up whenever a fresh stats block scrolls into view.
+    function observeStats(statsEl) {
+      const root = document.querySelector('.modal__scroll');
+      const obs  = new IntersectionObserver(entries => {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        animateCountUp(statsEl);
+      }, { root, threshold: 0.25 });
+      obs.observe(statsEl);
+    }
+
+    function parseKpiUnit(str) {
+      const s = String(str).trim();
+      const m = s.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
+      if (!m) return { count: 0, prefix: '', suffix: s };
+      return { count: Math.round(parseFloat(m[2])), prefix: m[1], suffix: m[3] };
+    }
+
+    function buildStatsHtml(kpis) {
+      const items = kpis.map(k => {
+        const { count, prefix, suffix } = parseKpiUnit(k.unit);
+        return `<div><span class="block-stat__label">(${k.label})</span><span class="block-stat__value" data-count="${count}" data-prefix="${prefix}" data-suffix="${suffix}">${prefix}0${suffix}</span></div>`;
+      }).join('');
+      const cls = kpis.length === 1 ? ' block-stats--single' : '';
+      return `<div class="block block-stats${cls}">${items}</div>`;
+    }
+
     // === FILL MODAL CONTENT (shared by openModal + goToNextProject) ===
     function fillModalContent(key) {
       const p = PROJECTS[key]; if (!p) return;
@@ -1692,7 +1769,13 @@
       if (p.links && p.links.length) { arrowEl.href = p.links[0].u; arrowEl.style.display = ''; }
       else { arrowEl.style.display = 'none'; }
       document.getElementById('modal-desc').innerHTML   = p.text || '';
-      document.getElementById('modal-blocks').innerHTML = buildMedia(p.media);
+      const blocksEl = document.getElementById('modal-blocks');
+      blocksEl.innerHTML = buildMedia(p.media);
+      // KPI stats block — appended after the media, counts up on scroll into view.
+      if (p.kpis && p.kpis.length) {
+        blocksEl.insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
+      }
+      blocksEl.querySelectorAll('.block-stats').forEach(s => observeStats(s));
       document.getElementById('modal-facts').innerHTML  = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       document.getElementById('modal-role').textContent = p.myRole || '';
