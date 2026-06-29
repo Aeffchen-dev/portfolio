@@ -35,6 +35,32 @@
     button { cursor:pointer; border:none; background:none; font-family:inherit; }
     a { text-decoration:none; color:inherit; }
 
+    /* === LOADER === */
+    .loader {
+      position:fixed; inset:0; z-index:1000;
+      background:#060606;
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      transition:opacity .8s cubic-bezier(.4,0,.2,1);
+    }
+    .loader.is-hidden { opacity:0; pointer-events:none; }
+    .loader__text {
+      max-width:580px; width:100%;
+      font-size:21px; font-weight:400; line-height:1.4;
+      color:#fff; text-align:left;
+    }
+    .loader__caret {
+      display:inline-block;
+      width:0.55ch; height:1.05em;
+      vertical-align:-0.16em;
+      background:#fff; margin-left:2px;
+      animation:loaderBlink 1s steps(1) infinite;
+    }
+    @keyframes loaderBlink { 50% { opacity:0; } }
+    @media (min-width:640px) {
+      .loader__text { font-size:clamp(21px, 2.5vw, 32px); }
+    }
+
     /* === NAV === */
     .nav {
       position:fixed; top:8px;
@@ -609,6 +635,11 @@
 </head>
 <body>
 
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <p class="loader__text"><span id="loaderType"></span><span class="loader__caret" aria-hidden="true"></span></p>
+  </div>
+
   <div class="page-wrapper">
 
   <!-- NAV -->
@@ -969,6 +1000,40 @@
   </div>
 
   <script>
+    // === LOADER (typewriter) ===
+    (function () {
+      const loader = document.getElementById('loader');
+      const typeEl = document.getElementById('loaderType');
+      if (!loader || !typeEl) return;
+      const text = 'I design digital products that lift conversion, elevate brand, and scale across the business.';
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.body.style.overflow = 'hidden';
+
+      function hide() {
+        loader.classList.add('is-hidden');
+        document.body.style.overflow = '';
+        loader.addEventListener('transitionend', () => loader.remove(), { once: true });
+      }
+
+      if (reduce) {
+        typeEl.textContent = text;
+        setTimeout(hide, 900);
+        return;
+      }
+
+      let i = 0;
+      (function type() {
+        if (i <= text.length) {
+          typeEl.textContent = text.slice(0, i);
+          i++;
+          setTimeout(type, 28);
+        } else {
+          setTimeout(hide, 650);
+        }
+      })();
+    })();
+
     // === NAV ===
     const nav = document.getElementById('mainNav');
     // Hover opens/closes on tablet+desktop; click-opened nav ignores mouseleave
