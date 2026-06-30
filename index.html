@@ -2606,90 +2606,90 @@ quoteText.textContent = '“' + q.text + '”';
 
       const activeScroll = activeModal.querySelector('.modal__scroll');
 
-      // Peek resting position: show peek bar + enough to reveal hero image entering viewport
+      // Peek resting position: show peek bar + a sliver of the hero image.
       const peekBarEl = peekModal.querySelector('.modal__peek-bar');
       const peekBarH = peekBarEl ? peekBarEl.offsetHeight : 80;
-      const heroExtraH = Math.round(window.innerWidth * 5 / 8); // 100% of hero height
+      const heroExtraH = Math.round(window.innerWidth * 5 / 8);
       const peekVisiblePx = peekBarH + heroExtraH;
       const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
-
-      // Spacer = heroExtraH so scrolling exactly that amount drives the reveal; no extra dead space
-      const peekH = heroExtraH;
-      const peekSpacer = document.createElement('div');
-      peekSpacer.style.cssText = `height:${peekH}px;flex-shrink:0`;
-      peekSpacer.setAttribute('aria-hidden', 'true');
-      activeScroll.appendChild(peekSpacer);
 
       _nextRevealAbort = new AbortController();
       const { signal } = _nextRevealAbort;
 
-      let peeking = false, dragging = false, completing = false;
+      let dragging = false, completing = false, peekShown = false;
+      let peeking = false;
       let startY = 0, startPct = 100, curPct = 100;
-      let peekIntroduced = false;
 
-      // Scroll-driven: peek rises from 100%→65% as user scrolls through the spacer
+      // The next project is NOT dragged along by scrolling. Reaching the bottom
+      // of the content snaps the peek affordance (bar + hero sliver) into view;
+      // scrolling back up dismisses it. Committing to the next project is always
+      // an intentional gesture (swipe up / tap / click) — never a side effect of
+      // scrolling through the content.
+      const SHOW_AT = 8, HIDE_AT = 120;
+      function showPeek() {
+        if (peekShown) return;
+        peekShown = true; peeking = true; curPct = peekTargetPct;
+        peekModal.style.transition = 'transform 0.5s cubic-bezier(.16,1,.3,1)';
+        peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
+      }
+      function hidePeek() {
+        if (!peekShown) return;
+        peekShown = false; peeking = false; curPct = 100;
+        peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        peekModal.style.transform  = `${tx()}translateY(100%)`;
+        activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+        activeModal.style.transform  = `${tx()}translateY(0)`;
+      }
       function onScroll() {
-        if (dragging) return;
+        if (dragging || completing) return;
         const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
-        const progress  = Math.max(0, Math.min(1, (peekH - remaining) / peekH));
-        curPct = 100 - progress * (100 - peekTargetPct);
-        if (!peekIntroduced && progress > 0) {
-          peekIntroduced = true;
-          peekModal.style.transition  = 'transform 0.6s 0.35s cubic-bezier(0,0,0.2,1)';
-          activeModal.style.transition = 'transform 0.6s 0.35s cubic-bezier(0,0,0.2,1)';
-        } else {
-          peekModal.style.transition  = 'transform 0.25s ease-out';
-          activeModal.style.transition = 'transform 0.25s ease-out';
-        }
-        peekModal.style.transform  = `${tx()}translateY(${curPct}%)`;
-        activeModal.style.transform  = `${tx()}translateY(${-progress * 8}%)`;
-        peeking = progress >= 1;
+        if (remaining <= SHOW_AT) showPeek();
+        else if (remaining > HIDE_AT) hidePeek();
       }
       activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
+      // Content may already be shorter than the viewport (so we're at the bottom).
+      requestAnimationFrame(onScroll);
 
       function completePeek() {
+        if (completing) return;
         peekCursor.classList.remove('is-visible');
-        const pmScroll = peekModal.querySelector('.modal__scroll');
-        completing = true;
-        _nextRevealAbort.abort(); // removes spacer; completing flag skips peek modal reset
-        completing = false;
         const pm = peekModal, am = activeModal, nk = nextKey;
+        const pmScroll = pm.querySelector('.modal__scroll');
+
+        completing = true;
+        _nextRevealAbort.abort(); // tear down this peek's listeners; abort handler skips reset via `completing`
+        completing = false;
+
+        // Promote the incoming modal to active IMMEDIATELY so it is scrollable
+        // and responsive the instant it lands — no post-transition dead zone.
+        pm.classList.remove('is-peek', 'modal--hero-inset');
+        pm.classList.add('is-open', 'modal--no-grabber');
+        pm.style.pointerEvents = 'auto';
+        if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; pmScroll.scrollTop = 0; }
+        activeModal = pm; peekModal = am; currentProjectKey = nk;
+
         requestAnimationFrame(() => {
-          // Remove is-peek immediately so its CSS rules (touch-action:none, overflow:hidden)
-          // never compete with the scroll container during the animation
-          pm.classList.remove('is-peek', 'modal--hero-inset');
-          pm.classList.add('is-open', 'modal--no-grabber');
-          pm.style.pointerEvents = 'auto';
-          if (pmScroll) {
-            pmScroll.style.overflowY = 'auto';
-            pmScroll.style.touchAction = 'pan-y';
-            pmScroll.scrollTop = 0;
-          }
-          pm.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+          pm.style.transition = 'transform 0.34s cubic-bezier(.4,0,.2,1)';
           pm.style.transform  = `${tx()}translateY(0)`;
-          am.style.transition = 'transform 0.4s cubic-bezier(.4,0,.2,1)';
+          am.style.transition = 'transform 0.34s cubic-bezier(.4,0,.2,1)';
           am.style.transform  = `${tx()}translateY(-8%)`;
-          setTimeout(() => {
-            am.classList.remove('is-open');
-            am.style.visibility = 'hidden';
-            am.style.transition = '';
-            am.style.transform  = '';
-            am.querySelector('.modal__scroll').innerHTML = '';
-            pm.style.transition = '';
-            pm.style.transform  = '';
-            pm.style.pointerEvents = '';
-            if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
-            activeModal = pm; peekModal = am;
-            currentProjectKey = nk;
-            setupPeek(nk);
-          }, 420);
         });
+        setTimeout(() => {
+          am.classList.remove('is-open', 'is-peek', 'modal--hero-inset');
+          am.style.visibility = 'hidden';
+          am.style.transition = ''; am.style.transform = ''; am.style.pointerEvents = '';
+          am.querySelector('.modal__scroll').innerHTML = '';
+          pm.style.transition = ''; pm.style.transform = ''; pm.style.pointerEvents = '';
+          if (pmScroll) { pmScroll.style.overflowY = ''; pmScroll.style.touchAction = ''; }
+          // Arm the next peek now that the old modal is free to be reused.
+          setupPeek(nk);
+        }, 340);
       }
 
       let touchMoved = false;
       peekModal.addEventListener('touchstart', e => {
         if (!peeking) return;
-        e.preventDefault(); // lock scroll for this gesture; listener removed on completePeek
+        e.preventDefault(); // own this gesture; listener removed when the peek is torn down
         dragging = true; touchMoved = false;
         startY   = e.touches[0].clientY;
         startPct = curPct;
@@ -2703,14 +2703,15 @@ quoteText.textContent = '“' + q.text + '”';
         curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
         if (curPct <= 0) { dragging = false; completePeek(); return; }
         peekModal.style.transform = `${tx()}translateY(${curPct}%)`;
-        const prog = Math.max(0, (peekTargetPct - curPct) / peekTargetPct);
+        const prog = peekTargetPct > 0 ? Math.max(0, (peekTargetPct - curPct) / peekTargetPct) : 1;
         activeModal.style.transition = 'none';
         activeModal.style.transform  = `${tx()}translateY(${-prog * 8}%)`;
       }, { passive: true, signal });
 
       peekModal.addEventListener('touchend', () => {
         if (!dragging) return; dragging = false;
-        if (!touchMoved || curPct < 50) { completePeek(); return; }
+        // A tap, or a drag past the halfway point, commits; otherwise snap back to rest.
+        if (!touchMoved || curPct < peekTargetPct * 0.5) { completePeek(); return; }
         peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
         curPct = peekTargetPct;
@@ -2720,19 +2721,20 @@ quoteText.textContent = '“' + q.text + '”';
 
       peekModal.addEventListener('click', () => { if (peekModal.classList.contains('is-peek')) completePeek(); }, { signal });
 
-      // Swipe up on the active modal while peeking also triggers transition
-      let _peekSwipeStartY = 0;
+      // Intentional swipe-up on the active content (when at the bottom and the
+      // peek is showing) also commits — but normal scrolling never does.
+      let _swipeStartY = 0;
       activeScroll.addEventListener('touchstart', e => {
-        _peekSwipeStartY = e.touches[0].clientY;
+        _swipeStartY = e.touches[0].clientY;
       }, { signal, passive: true });
       activeScroll.addEventListener('touchend', e => {
         if (!peeking) return;
-        const dy = _peekSwipeStartY - e.changedTouches[0].clientY;
-        if (dy > 40) completePeek();
+        const dy = _swipeStartY - e.changedTouches[0].clientY;
+        const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
+        if (dy > 48 && remaining <= SHOW_AT + 4) completePeek();
       }, { signal, passive: true });
 
       signal.addEventListener('abort', () => {
-        peekSpacer.remove();
         if (completing) return;
         activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
         activeModal.style.transform  = `${tx()}translateY(0)`;
