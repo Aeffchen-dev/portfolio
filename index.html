@@ -207,7 +207,7 @@
     }
 
     /* === PAGE WRAPPER === */
-    .page-wrapper { background:#000; }
+    .page-wrapper { background:#000; overflow-x:clip; }
 
     /* === HOME CONTENT === */
     .home-content {
@@ -919,7 +919,7 @@
     @media (max-width:639px) {
       /* no container padding; each element carries its own 8px */
       .home-content { display:flex; flex-direction:column; padding:0; }
-      .home-hero          { order:1; padding:80px 8px; min-height:45dvh; justify-content:center; }
+      .home-hero          { order:1; padding:96px 8px 56px; min-height:45dvh; justify-content:center; align-items:center; text-align:center; }
       .section-label      { order:2; margin-top:0; padding-left:8px; padding-right:8px; }
       .work-list          { display:contents; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
@@ -927,7 +927,7 @@
       .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
       .cv-card--quotes    { flex:1; }
       /* cards fill viewport to 8px from bottom */
-      .cv-section         { min-height:calc(100dvh - 8px); }
+      .cv-section         { min-height:calc(100dvh - 8px); width:100%; margin-left:0; margin-right:0; }
       .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:0; padding-right:0; }
       .cta-footer-box     { order:12; display:flex; flex-direction:column; }
