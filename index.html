@@ -919,7 +919,7 @@
     @media (max-width:639px) {
       /* no container padding; each element carries its own 8px */
       .home-content { display:flex; flex-direction:column; padding:0; }
-      .home-hero          { order:1; padding:96px 8px 56px; min-height:45dvh; justify-content:center; align-items:center; text-align:center; }
+      .home-hero          { order:1; padding:96px 8px 56px; min-height:45dvh; justify-content:center; }
       .section-label      { order:2; margin-top:0; padding-left:8px; padding-right:8px; }
       .work-list          { display:contents; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
@@ -935,7 +935,7 @@
       .cta-section__texts { margin-bottom:32px; }
       .home-footer        { flex:1; padding:8px; margin-left:0; margin-right:0; margin-bottom:0; background:#141414; border-radius:4px; position:relative; isolation:isolate; }
       .footer-bottom      { position:relative; margin-top:30px; z-index:0; pointer-events:none; }
-      .footer-name        { margin-bottom:-24px; }
+      .footer-name        { margin-bottom:-24px; pointer-events:auto; cursor:pointer; }
       .footer-logo        { top:8px; left:-5px; pointer-events:auto; cursor:pointer; }
       .footer-grid        { position:relative; z-index:1; }
       .footer-legal       { position:relative; z-index:1; margin-top:auto; }
@@ -1918,7 +1918,7 @@
         {
           text: 'Her deep understanding of various aspects involved in product design is evident in her work, and I was highly impressed with her ability to manage stakeholders and guide clients through design decisions which had substantial impact on their business.',
           name: 'Nicolai Fleischhauer',
-          pos:  'Design Lead · AutoScout24'
+          pos:  'Head of UX · Ebay Kleinanzeigen'
         },
         {
           text: 'When everyone is tangled up in details, Jana reminds everyone of the big picture to re-align on what really matters — when a debate gets vague and theoretical, she gets specific and figures out the details with a keen eye and laser-sharp focus.',
@@ -3034,13 +3034,15 @@ quoteText.textContent = '“' + q.text + '”';
       new IntersectionObserver((entries, obs) => {
         if (entries[0].isIntersecting) { jana.classList.add('jana-in'); obs.disconnect(); }
       }, { threshold: 0.1 }).observe(jana);
-      // Exit: click logo to fly letters out
-      logo.addEventListener('click', () => {
+      // Exit: click the logo OR the "Jana" text to fly the letters out
+      const flyOut = () => {
         if (jana.classList.contains('jana-animate')) return;
         jana.classList.add('jana-animate');
         const lastSpan = jana.querySelector('span:last-child') || jana;
         lastSpan.addEventListener('animationend', () => jana.classList.remove('jana-animate'), { once: true });
-      });
+      };
+      logo.addEventListener('click', flyOut);
+      jana.addEventListener('click', flyOut);
     })();
 
     // === WORK ITEM IMAGE ERROR HANDLING ===
@@ -3097,7 +3099,14 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      const IMGS = Array.from({length:40}, (_,i) => 'images/parallax/p' + String(i+1).padStart(2,'0') + '.png')
+      // Only images that exist in the repo (p08–p21 were removed) — avoids
+      // broken tiles and gaps in the grid.
+      const AVAIL = [
+        'p01','p02','p03','p04','p05','p06','p07',
+        'p22','p23','p24','p25','p26','p27','p28','p29','p30',
+        'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+      ];
+      const IMGS = AVAIL.map(n => 'images/parallax/' + n + '.png')
         .sort(() => Math.random() - 0.5);
 
       const COLS = 10, ROWS = 10;
