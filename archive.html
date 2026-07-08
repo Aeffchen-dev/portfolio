@@ -234,6 +234,9 @@
 </head>
 <body>
 
+  <!-- Auto-generated list of images/parallax/*; keeps the canvas in sync when new images are added -->
+  <script src="images/parallax/parallax-images.js"></script>
+
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
     <div class="loading-phrase" id="loadingPhrase"></div>
@@ -390,13 +393,18 @@
     const RX     = COLS * (TILE_W + GAP);
     const RY     = ROWS * (TILE_H + GAP);
 
-    // Only images that exist in the repo
-    const AVAIL = [
-      'p01','p02','p03','p04','p05','p06','p07',
-      'p22','p23','p24','p25','p26','p27','p28','p29','p30',
-      'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+    // Image list comes from images/parallax/parallax-images.js (auto-generated
+    // from the folder), so newly added images appear here automatically.
+    // The hardcoded list is only a fallback if that file is unavailable.
+    const AVAIL_FALLBACK = [
+      'p01.png','p02.png','p03.png','p04.png','p05.png','p06.png','p07.png',
+      'p22.png','p23.png','p24.png','p25.png','p26.png','p27.png','p28.png','p29.png','p30.png',
+      'p31.png','p32.png','p33.png','p34.png','p35.png','p36.png','p37.png','p38.png','p39.png','p40.png'
     ];
-    const IMGS = AVAIL.map(n => `images/parallax/${n}.png`).sort(() => Math.random() - 0.5);
+    const AVAIL = (window.PARALLAX_IMAGES && window.PARALLAX_IMAGES.length)
+      ? window.PARALLAX_IMAGES
+      : AVAIL_FALLBACK;
+    const IMGS = AVAIL.map(n => `images/parallax/${n}`).sort(() => Math.random() - 0.5);
 
     // Parallax: 3 speed tiers — columns scroll vertically at different speeds
     const COL_PAR  = [0.78, 1.22, 0.83, 1.17, 0.80, 1.20, 0.85, 1.15];
