@@ -1173,6 +1173,9 @@
 </head>
 <body>
 
+  <!-- Auto-generated list of images/parallax/*; keeps the archive views in sync when new images are added -->
+  <script src="images/parallax/parallax-images.js"></script>
+
   <!-- LOADING SCREEN -->
   <div id="loadingScreen" class="loading-screen" aria-hidden="true">
     <div class="loading-phrase" id="loadingPhrase"></div>
@@ -2993,11 +2996,10 @@ quoteText.textContent = '“' + q.text + '”';
         const shown = posts.slice(0, 8);
         const label = document.getElementById('articlesLabel');
         if (label) label.textContent = `Articles (${shown.length})`;
-        const ARTICLE_FALLBACKS = [
-          'images/parallax/p07.png','images/parallax/p09.png','images/parallax/p10.png',
-          'images/parallax/p11.png','images/parallax/p12.png','images/parallax/p13.png',
-          'images/parallax/p14.png','images/parallax/p15.png',
-        ];
+        const ARTICLE_FALLBACKS = ((window.PARALLAX_IMAGES && window.PARALLAX_IMAGES.length)
+          ? window.PARALLAX_IMAGES
+          : ['p01.png','p02.png','p03.png','p04.png','p05.png','p06.png','p07.png']
+        ).map(n => 'images/parallax/' + n);
         const cards = await Promise.all(shown.map(async (post, idx) => {
           const title = post.title?.rendered ? new DOMParser().parseFromString(post.title.rendered, 'text/html').body.textContent : 'Untitled';
           const slug = post.slug || '';
@@ -3098,14 +3100,18 @@ quoteText.textContent = '“' + q.text + '”';
       const mini = document.getElementById('archiveMini');
       if (!mini) return;
 
-      // Only images that exist in the repo (p08–p21 were removed) — avoids
-      // broken tiles and gaps in the grid.
-      const AVAIL = [
-        'p01','p02','p03','p04','p05','p06','p07',
-        'p22','p23','p24','p25','p26','p27','p28','p29','p30',
-        'p31','p32','p33','p34','p35','p36','p37','p38','p39','p40'
+      // Image list comes from images/parallax/parallax-images.js (auto-generated
+      // from the folder), so newly added images appear here automatically.
+      // The hardcoded list is only a fallback if that file is unavailable.
+      const AVAIL_FALLBACK = [
+        'p01.png','p02.png','p03.png','p04.png','p05.png','p06.png','p07.png',
+        'p22.png','p23.png','p24.png','p25.png','p26.png','p27.png','p28.png','p29.png','p30.png',
+        'p31.png','p32.png','p33.png','p34.png','p35.png','p36.png','p37.png','p38.png','p39.png','p40.png'
       ];
-      const IMGS = AVAIL.map(n => 'images/parallax/' + n + '.png')
+      const AVAIL = (window.PARALLAX_IMAGES && window.PARALLAX_IMAGES.length)
+        ? window.PARALLAX_IMAGES
+        : AVAIL_FALLBACK;
+      const IMGS = AVAIL.map(n => 'images/parallax/' + n)
         .sort(() => Math.random() - 0.5);
 
       const COLS = 10, ROWS = 10;
