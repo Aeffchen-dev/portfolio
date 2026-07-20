@@ -3239,7 +3239,13 @@ quoteText.textContent = '“' + q.text + '”';
             // band edge into view, since masonry columns no longer share one
             // uniform, over-provisioned height.
             const wy = (((t.y + poy + t.stagger) % t.ry) + t.ry) % t.ry - t.ry / 2 + CH / 2;
-            return { x: wx - t.w / 2, y: wy - t.h / 2 };
+            // t.y (and so wy) is each tile's own TOP edge, not its center — unlike
+            // t.w (uniform for every tile, so "- t.w/2" is just a harmless constant
+            // shift), t.h now varies per tile in the masonry layout, so subtracting
+            // t.h/2 here would shift each tile by a different amount and break the
+            // spacing between consecutive tiles (showing up as random gaps/overlaps
+            // down a column).
+            return { x: wx - t.w / 2, y: wy };
           }
 
           function render() {
