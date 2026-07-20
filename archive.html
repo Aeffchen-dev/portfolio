@@ -389,11 +389,21 @@
     const BASE_W = 120;
     const BASE_G = 4;
     const mult   = CW < 640 ? 3.2 : CW < 1024 ? 1.8 : 1.1;
-    const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
+    const DEFAULT_RATIO = 253 / 120; // h/w fallback for images that error or don't load in time
+    // A column's ROWS tiles must always cumulatively cover more than the viewport
+    // height, even in the unlucky case where every assigned image is unusually
+    // wide/short (low aspect ratio) — otherwise its infinite-wrap band would be
+    // shorter than the screen and expose a gap at the top/bottom. The width-based
+    // scale alone doesn't guarantee that on tall viewports (e.g. a portrait
+    // tablet), so floor it with a height-derived minimum too.
+    const WORST_RATIO   = 1.2;
+    const HEIGHT_SAFETY = 1.3;
+    const scaleForWidth  = CW / (COLS * (BASE_W + BASE_G)) * mult;
+    const scaleForHeight = (CH * HEIGHT_SAFETY) / (ROWS * BASE_W * WORST_RATIO);
+    const scale  = Math.max(scaleForWidth, scaleForHeight);
     const TILE_W = BASE_W * scale;
     const GAP    = BASE_G * scale;
     const RX     = COLS * (TILE_W + GAP);
-    const DEFAULT_RATIO = 253 / 120; // h/w fallback for images that error or don't load in time
 
     // Image list comes from images/parallax/parallax-images.js (auto-generated
     // from the folder), so newly added images appear here automatically.
@@ -553,8 +563,13 @@
       const p  = COL_PAR[t.c];
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
       const poy = oy * p + ox * (p - 1.0) * 0.3;
-      const wy = (((t.y + poy) % t.ry) + t.ry) % t.ry - t.ry / 2;
-      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger };
+      // stagger is wrapped together with the rest so it only shifts the phase of
+      // the tiling (the brick offset), not the whole covering band's position —
+      // added outside the modulo it could push a short column's band edge into
+      // view, since masonry columns no longer share one uniform, over-provisioned
+      // height.
+      const wy = (((t.y + poy + t.stagger) % t.ry) + t.ry) % t.ry - t.ry / 2;
+      return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 };
     }
 
     function render() {
