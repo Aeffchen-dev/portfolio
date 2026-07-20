@@ -1270,7 +1270,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">Vibe coded<br>with Claude Code</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -3117,115 +3117,151 @@ quoteText.textContent = '“' + q.text + '”';
       const COLS = 10, ROWS = 10;
       const GAP  = 8;
 
+      // Preload each image's natural size so tile height can match its own aspect
+      // ratio (masonry, no cropping) instead of a fixed portrait box. Falls back to
+      // DEFAULT_RATIO for anything that errors or is still pending after timeoutMs.
+      const DEFAULT_RATIO = 253 / 120;
+      function preloadAspectRatios(srcs, timeoutMs) {
+        const ratios = new Map();
+        const loads = srcs.map(src => new Promise(resolve => {
+          const probe = new Image();
+          const done = ratio => { ratios.set(src, ratio); resolve(); };
+          probe.onload  = () => done(probe.naturalHeight / probe.naturalWidth);
+          probe.onerror = () => done(DEFAULT_RATIO);
+          probe.src = src;
+          if (probe.complete && probe.naturalWidth) done(probe.naturalHeight / probe.naturalWidth);
+        }));
+        return Promise.race([
+          Promise.all(loads),
+          new Promise(resolve => setTimeout(resolve, timeoutMs))
+        ]).then(() => {
+          srcs.forEach(src => { if (!ratios.has(src)) ratios.set(src, DEFAULT_RATIO); });
+          return ratios;
+        });
+      }
+
       function init() {
         const CW = mini.offsetWidth;
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
         const TW = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
-        const TH = TW * (253 / 120); // same portrait ratio as archive page
         const RX = COLS * (TW + GAP);
-        const RY = ROWS * (TH + GAP);
 
         const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07, 0.88, 1.12]; // unique speed per col
         const COL_YOFF = [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5]; // alternating half-tile stagger
 
-        const DEFS = [];
-        for (let r = 0; r < ROWS; r++) {
+        preloadAspectRatios([...new Set(IMGS)], 3000).then(ratios => {
+          // Each column is its own infinitely-wrapping vertical strip: tiles keep the
+          // fixed column width but stack at their real height, so the strip's wrap
+          // length (ry) is computed per column instead of one global RY.
+          const DEFS = [];
           for (let col = 0; col < COLS; col++) {
-            const stagger = COL_YOFF[col] * (TH + GAP);
-            DEFS.push({ x: col * (TW + GAP), y: r * (TH + GAP), stagger, w: TW, h: TH, c: col });
+            const heights = [];
+            for (let r = 0; r < ROWS; r++) {
+              const src = IMGS[(r * COLS + col) % IMGS.length];
+              heights.push(TW * ratios.get(src));
+            }
+            const ry = heights.reduce((sum, h) => sum + h + GAP, 0);
+            const stagger = COL_YOFF[col] * (ry / ROWS);
+            let y = 0;
+            for (let r = 0; r < ROWS; r++) {
+              const src = IMGS[(r * COLS + col) % IMGS.length];
+              const h = heights[r];
+              DEFS.push({ x: col * (TW + GAP), y, ry, stagger, w: TW, h, c: col, src });
+              y += h + GAP;
+            }
           }
-        }
 
-        const wrap = document.createElement('div');
-        wrap.className = 'archive-mini-canvas';
-        wrap.style.width  = CW + 'px';
-        wrap.style.height = CH + 'px';
-        mini.appendChild(wrap);
+          const wrap = document.createElement('div');
+          wrap.className = 'archive-mini-canvas';
+          wrap.style.width  = CW + 'px';
+          wrap.style.height = CH + 'px';
+          mini.appendChild(wrap);
 
-        const workingImgs = [];
-        const pendingImgs = [];
+          const workingImgs = [];
+          const pendingImgs = [];
 
-        const tiles = DEFS.map((def, i) => {
-          const el = document.createElement('div');
-          el.className = 'archive-mini-tile';
-          el.style.width  = def.w + 'px';
-          el.style.height = def.h + 'px';
-          const img = document.createElement('img');
-          const src = IMGS[i % IMGS.length];
-          img.alt = '';
-          img.onload = () => {
-            if (!workingImgs.includes(src)) workingImgs.push(src);
-            for (const p of pendingImgs.splice(0)) {
-              p.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
-            }
-          };
-          img.onerror = () => {
-            if (workingImgs.length) {
-              img.onerror = null;
-              img.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
-            } else {
-              pendingImgs.push(img);
-            }
-          };
-          img.src = src;
-          el.appendChild(img);
-          wrap.appendChild(el);
-          return Object.assign({}, def, { el });
-        });
-
-        const AUTO_VX = 0.22, AUTO_VY = 0.11; // constant auto drift
-        let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
-
-        function tilePos(t) {
-          const p  = COL_PAR[t.c];
-          const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2 + CW / 2;
-          const poy = oy * p + ox * (p - 1.0) * 0.3;
-          const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2 + CH / 2;
-          return { x: wx - t.w / 2, y: wy - t.h / 2 + t.stagger };
-        }
-
-        function render() {
-          tiles.forEach(t => {
-            const p = tilePos(t);
-            t.el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+          const tiles = DEFS.map(def => {
+            const el = document.createElement('div');
+            el.className = 'archive-mini-tile';
+            el.style.width  = def.w + 'px';
+            el.style.height = def.h + 'px';
+            const img = document.createElement('img');
+            const src = def.src;
+            img.alt = '';
+            img.onload = () => {
+              if (!workingImgs.includes(src)) workingImgs.push(src);
+              for (const p of pendingImgs.splice(0)) {
+                p.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
+              }
+            };
+            img.onerror = () => {
+              if (workingImgs.length) {
+                img.onerror = null;
+                img.src = workingImgs[Math.floor(Math.random() * workingImgs.length)];
+              } else {
+                pendingImgs.push(img);
+              }
+            };
+            img.src = src;
+            el.appendChild(img);
+            wrap.appendChild(el);
+            return Object.assign({}, def, { el });
           });
-          if (!dragging) {
-            ox += vx; oy += vy;
-            // ease velocity back towards auto-drift speed after manual interaction
-            vx += (AUTO_VX - vx) * 0.07;
-            vy += (AUTO_VY - vy) * 0.07;
+
+          const AUTO_VX = 0.22, AUTO_VY = 0.11; // constant auto drift
+          let ox = 0, oy = 0, vx = AUTO_VX, vy = AUTO_VY, dragging = false, lx = 0, ly = 0, lt = 0;
+
+          function tilePos(t) {
+            const p  = COL_PAR[t.c];
+            const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2 + CW / 2;
+            const poy = oy * p + ox * (p - 1.0) * 0.3;
+            const wy = (((t.y + poy) % t.ry) + t.ry) % t.ry - t.ry / 2 + CH / 2;
+            return { x: wx - t.w / 2, y: wy - t.h / 2 + t.stagger };
           }
-          requestAnimationFrame(render);
-        }
 
-        // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
-        mini.addEventListener('wheel', e => {
-          if (window.innerWidth >= 1024 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) return;
-          e.preventDefault();
-          vx = -e.deltaX * 0.6 + vx * 0.4;
-          vy = -e.deltaY * 0.6 + vy * 0.4;
-        }, { passive: false });
+          function render() {
+            tiles.forEach(t => {
+              const p = tilePos(t);
+              t.el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+            });
+            if (!dragging) {
+              ox += vx; oy += vy;
+              // ease velocity back towards auto-drift speed after manual interaction
+              vx += (AUTO_VX - vx) * 0.07;
+              vy += (AUTO_VY - vy) * 0.07;
+            }
+            requestAnimationFrame(render);
+          }
 
-        // Drag (mobile/tablet only)
-        mini.addEventListener('pointerdown', e => {
-          if (window.innerWidth >= 1024) return;
-          dragging = true; mini.classList.add('is-dragging');
-          lx = e.clientX; ly = e.clientY; lt = performance.now();
-          vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
+          // Wheel / trackpad scroll (desktop) — same EMA as drag so carry-over momentum feels identical
+          mini.addEventListener('wheel', e => {
+            if (window.innerWidth >= 1024 && Math.abs(e.deltaY) > Math.abs(e.deltaX)) return;
+            e.preventDefault();
+            vx = -e.deltaX * 0.6 + vx * 0.4;
+            vy = -e.deltaY * 0.6 + vy * 0.4;
+          }, { passive: false });
+
+          // Drag (mobile/tablet only)
+          mini.addEventListener('pointerdown', e => {
+            if (window.innerWidth >= 1024) return;
+            dragging = true; mini.classList.add('is-dragging');
+            lx = e.clientX; ly = e.clientY; lt = performance.now();
+            vx = 0; vy = 0; mini.setPointerCapture(e.pointerId);
+          });
+          mini.addEventListener('pointermove', e => {
+            if (!dragging) return;
+            const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
+            const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
+            vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
+            ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
+          });
+          mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
+          mini.addEventListener('pointercancel', () => { dragging = false; mini.classList.remove('is-dragging'); });
+
+          render();
         });
-        mini.addEventListener('pointermove', e => {
-          if (!dragging) return;
-          const dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(performance.now() - lt, 1);
-          const rawVx = dx / dt * 5, rawVy = dy / dt * 5;
-          vx = rawVx * 0.6 + vx * 0.4; vy = rawVy * 0.6 + vy * 0.4;
-          ox += dx; oy += dy; lx = e.clientX; ly = e.clientY; lt = performance.now();
-        });
-        mini.addEventListener('pointerup',     () => { dragging = false; mini.classList.remove('is-dragging'); });
-        mini.addEventListener('pointercancel', () => { dragging = false; mini.classList.remove('is-dragging'); });
-
-        render();
       }
 
       requestAnimationFrame(init);

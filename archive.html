@@ -275,7 +275,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">This page is<br>vibe coded<br>with Claude</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">Vibe coded<br>with Claude Code</span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
@@ -380,7 +380,8 @@
     canvas.style.width  = CW + 'px';
     canvas.style.height = CH + 'px';
 
-    // Grid config — portrait tiles (9:19 ratio)
+    // Grid config — masonry: fixed column width, each tile's height follows its
+    // own image's natural aspect ratio (no cropping to a uniform box).
     const COLS   = 8;
     const ROWS   = 5;
     const BASE_W = 120;
@@ -388,10 +389,9 @@
     const mult   = CW < 640 ? 3.2 : CW < 1024 ? 1.8 : 1.1;
     const scale  = CW / (COLS * (BASE_W + BASE_G)) * mult;
     const TILE_W = BASE_W * scale;
-    const TILE_H = 253   * scale;
     const GAP    = BASE_G * scale;
     const RX     = COLS * (TILE_W + GAP);
-    const RY     = ROWS * (TILE_H + GAP);
+    const DEFAULT_RATIO = 253 / 120; // h/w fallback for images that error or don't load in time
 
     // Image list comes from images/parallax/parallax-images.js (auto-generated
     // from the folder), so newly added images appear here automatically.
@@ -410,13 +410,51 @@
     const COL_PAR  = [0.78, 1.22, 0.83, 1.17, 0.80, 1.20, 0.85, 1.15];
     const COL_YOFF = [0, 0.7, 0, 0.7, 0, 0.7, 0, 0.7];
 
-    const DEFS = [];
-    for (let r = 0; r < ROWS; r++) {
+    // Preload each image's natural size so tile height can match its own aspect
+    // ratio instead of a fixed box. Falls back to DEFAULT_RATIO for anything that
+    // errors or is still pending after timeoutMs, so a slow/broken image can't
+    // hang the reveal.
+    function preloadAspectRatios(srcs, timeoutMs) {
+      const ratios = new Map();
+      const loads = srcs.map(src => new Promise(resolve => {
+        const probe = new Image();
+        const done = ratio => { ratios.set(src, ratio); resolve(); };
+        probe.onload  = () => done(probe.naturalHeight / probe.naturalWidth);
+        probe.onerror = () => done(DEFAULT_RATIO);
+        probe.src = src;
+        if (probe.complete && probe.naturalWidth) done(probe.naturalHeight / probe.naturalWidth);
+      }));
+      return Promise.race([
+        Promise.all(loads),
+        new Promise(resolve => setTimeout(resolve, timeoutMs))
+      ]).then(() => {
+        srcs.forEach(src => { if (!ratios.has(src)) ratios.set(src, DEFAULT_RATIO); });
+        return ratios;
+      });
+    }
+
+    // Each column is its own infinitely-wrapping vertical strip: tiles keep the
+    // fixed column width but stack at their real height, so the strip's wrap
+    // length (ry) is computed per column instead of one global RY.
+    function buildDefs(ratios) {
+      const defs = [];
       for (let c = 0; c < COLS; c++) {
-        // stagger stored separately so it can be applied in screen space (unaffected by parallax)
-        const stagger = COL_YOFF[c] * (TILE_H + GAP);
-        DEFS.push({ x: c * (TILE_W + GAP), y: r * (TILE_H + GAP), stagger, w: TILE_W, h: TILE_H, c });
+        const heights = [];
+        for (let r = 0; r < ROWS; r++) {
+          const src = IMGS[(r * COLS + c) % IMGS.length];
+          heights.push(TILE_W * ratios.get(src));
+        }
+        const ry = heights.reduce((sum, h) => sum + h + GAP, 0);
+        const stagger = COL_YOFF[c] * (ry / ROWS);
+        let y = 0;
+        for (let r = 0; r < ROWS; r++) {
+          const src = IMGS[(r * COLS + c) % IMGS.length];
+          const h = heights[r];
+          defs.push({ x: c * (TILE_W + GAP), y, ry, stagger, w: TILE_W, h, c, src });
+          y += h + GAP;
+        }
       }
+      return defs;
     }
 
     // Reveal animation state
@@ -429,7 +467,7 @@
     // Create tile DOM elements
     let _loadedCount = 0;
     let _revealed = false;
-    const _totalTiles = DEFS.length;
+    const _totalTiles = COLS * ROWS;
     function _reveal() {
       if (_revealed) return;
       _revealed = true;
@@ -441,25 +479,29 @@
       _loadedCount++;
       if (_loadedCount >= _totalTiles) _reveal();
     }
-    // Fallback: show canvas after 4s regardless of image load status
-    setTimeout(_reveal, 4000);
+    // Fallback: show canvas regardless of image load status
+    setTimeout(_reveal, 6000);
 
-    const tiles = DEFS.map((def, i) => {
-      const el  = document.createElement('div');
-      el.className = 'tile';
-      el.style.width  = def.w + 'px';
-      el.style.height = def.h + 'px';
-      const img = document.createElement('img');
-      img.alt = '';
-      img.draggable = false;
-      img.onload = _onTileLoad;
-      img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; _onTileLoad(); };
-      img.src = IMGS[i % IMGS.length];
-      // Belt-and-suspenders for browsers that don't fire onload for cached images
-      if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
-      el.appendChild(img);
-      canvas.appendChild(el);
-      return Object.assign({}, def, { el });
+    let tiles = [];
+    preloadAspectRatios([...new Set(IMGS)], 4000).then(ratios => {
+      const DEFS = buildDefs(ratios);
+      tiles = DEFS.map(def => {
+        const el  = document.createElement('div');
+        el.className = 'tile';
+        el.style.width  = def.w + 'px';
+        el.style.height = def.h + 'px';
+        const img = document.createElement('img');
+        img.alt = '';
+        img.draggable = false;
+        img.onload = _onTileLoad;
+        img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; _onTileLoad(); };
+        img.src = def.src;
+        // Belt-and-suspenders for browsers that don't fire onload for cached images
+        if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
+        el.appendChild(img);
+        canvas.appendChild(el);
+        return Object.assign({}, def, { el });
+      });
     });
 
     // State
@@ -484,7 +526,7 @@
       const p  = COL_PAR[t.c];
       const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2;
       const poy = oy * p + ox * (p - 1.0) * 0.3;
-      const wy = (((t.y + poy) % RY) + RY) % RY - RY / 2;
+      const wy = (((t.y + poy) % t.ry) + t.ry) % t.ry - t.ry / 2;
       return { x: cx + wx - t.w / 2, y: cy + wy - t.h / 2 + t.stagger };
     }
 
