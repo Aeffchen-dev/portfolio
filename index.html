@@ -3150,7 +3150,15 @@ quoteText.textContent = '“' + q.text + '”';
         const CH = mini.offsetHeight;
         if (!CW || !CH) { requestAnimationFrame(init); return; }
 
-        const TW = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
+        const twForWidth = CW < 1024 ? (CW - GAP * 1.5) / 2.5 : (CW - GAP * 2.5) / 3.5; // 2.5 cols mobile, 3.5 desktop
+        // A column's ROWS tiles must always cumulatively cover more than the box's
+        // height, even in the unlucky case where every assigned image is unusually
+        // wide/short (low aspect ratio) — otherwise its infinite-wrap band would be
+        // shorter than the box and expose a gap at the top/bottom.
+        const WORST_RATIO   = 1.2;
+        const HEIGHT_SAFETY = 1.3;
+        const twForHeight = (CH * HEIGHT_SAFETY) / (ROWS * WORST_RATIO);
+        const TW = Math.max(twForWidth, twForHeight);
         const RX = COLS * (TW + GAP);
 
         const COL_PAR  = [0.87, 1.13, 0.91, 1.09, 0.89, 1.11, 0.93, 1.07, 0.88, 1.12]; // unique speed per col
@@ -3225,8 +3233,13 @@ quoteText.textContent = '“' + q.text + '”';
             const p  = COL_PAR[t.c];
             const wx = (((t.x + ox) % RX) + RX) % RX - RX / 2 + CW / 2;
             const poy = oy * p + ox * (p - 1.0) * 0.3;
-            const wy = (((t.y + poy) % t.ry) + t.ry) % t.ry - t.ry / 2 + CH / 2;
-            return { x: wx - t.w / 2, y: wy - t.h / 2 + t.stagger };
+            // stagger is wrapped together with the rest so it only shifts the phase
+            // of the tiling (the brick offset), not the whole covering band's
+            // position — added outside the modulo it could push a short column's
+            // band edge into view, since masonry columns no longer share one
+            // uniform, over-provisioned height.
+            const wy = (((t.y + poy + t.stagger) % t.ry) + t.ry) % t.ry - t.ry / 2 + CH / 2;
+            return { x: wx - t.w / 2, y: wy - t.h / 2 };
           }
 
           function render() {
