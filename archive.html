@@ -134,12 +134,14 @@
     }
     .nav.is-open .nav__cursor { animation-play-state:running; }
     .nav__cursor-tag {
-      display:block;
+      display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+      margin-top:-1px; margin-left:9px;
+    }
+    .nav__cursor-tag span {
       background:#acb0ff; color:#171717;
       font-size:10px; font-weight:700; letter-spacing:0;
       padding:2px 6px; border-radius:0 4px 4px 4px;
       white-space:nowrap; line-height:1.5;
-      margin-top:-1px; margin-left:9px;
     }
     .nav__link {
       display:block;
@@ -275,7 +277,7 @@
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
           </div>
-          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag">Vibe coded<br>with Claude Code</span></span></p>
+          <p class="nav__vibe"><span class="nav__cursor" aria-hidden="true"><svg width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M0 0L0 12L3.5 9L6 14L7.5 13L5 8L9 8Z" fill="#acb0ff" stroke="none"/></svg><span class="nav__cursor-tag"><span>Vibe coded</span><span>with Claude Code</span></span></span></p>
         </div>
         <div class="nav__contact">
           <p class="nav__contact-label">Contact</p>
