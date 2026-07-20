@@ -411,16 +411,17 @@
     const COL_YOFF = [0, 0.7, 0, 0.7, 0, 0.7, 0, 0.7];
 
     // Preload each image's natural size so tile height can match its own aspect
-    // ratio instead of a fixed box. Falls back to DEFAULT_RATIO for anything that
-    // errors or is still pending after timeoutMs, so a slow/broken image can't
-    // hang the reveal.
+    // ratio instead of a fixed box. Anything that errors or is still pending
+    // after timeoutMs is marked bad (not just given DEFAULT_RATIO) so buildDefs
+    // can swap it for a real working image instead of leaving an empty hole.
     function preloadAspectRatios(srcs, timeoutMs) {
       const ratios = new Map();
+      const good = new Set();
       const loads = srcs.map(src => new Promise(resolve => {
         const probe = new Image();
-        const done = ratio => { ratios.set(src, ratio); resolve(); };
+        const done = ratio => { ratios.set(src, ratio); if (ratio !== null) good.add(src); resolve(); };
         probe.onload  = () => done(probe.naturalHeight / probe.naturalWidth);
-        probe.onerror = () => done(DEFAULT_RATIO);
+        probe.onerror = () => done(null);
         probe.src = src;
         if (probe.complete && probe.naturalWidth) done(probe.naturalHeight / probe.naturalWidth);
       }));
@@ -428,29 +429,39 @@
         Promise.all(loads),
         new Promise(resolve => setTimeout(resolve, timeoutMs))
       ]).then(() => {
-        srcs.forEach(src => { if (!ratios.has(src)) ratios.set(src, DEFAULT_RATIO); });
-        return ratios;
+        srcs.forEach(src => { if (!ratios.has(src)) ratios.set(src, null); });
+        return { ratios, good };
       });
     }
 
     // Each column is its own infinitely-wrapping vertical strip: tiles keep the
     // fixed column width but stack at their real height, so the strip's wrap
-    // length (ry) is computed per column instead of one global RY.
-    function buildDefs(ratios) {
+    // length (ry) is computed per column instead of one global RY. Any src that
+    // failed to preload is swapped for a known-good one (with its real ratio)
+    // so every slot gets an actual image instead of a blank hole.
+    function buildDefs(ratios, good) {
+      const goodList = [...good];
+      function resolveSrc(src) {
+        if (ratios.get(src) !== null) return src;
+        if (goodList.length) return goodList[Math.floor(Math.random() * goodList.length)];
+        return src; // nothing better available — last resort
+      }
       const defs = [];
       for (let c = 0; c < COLS; c++) {
+        const srcs = [];
         const heights = [];
         for (let r = 0; r < ROWS; r++) {
-          const src = IMGS[(r * COLS + c) % IMGS.length];
-          heights.push(TILE_W * ratios.get(src));
+          const src = resolveSrc(IMGS[(r * COLS + c) % IMGS.length]);
+          const ratio = ratios.get(src) ?? DEFAULT_RATIO;
+          srcs.push(src);
+          heights.push(TILE_W * ratio);
         }
         const ry = heights.reduce((sum, h) => sum + h + GAP, 0);
         const stagger = COL_YOFF[c] * (ry / ROWS);
         let y = 0;
         for (let r = 0; r < ROWS; r++) {
-          const src = IMGS[(r * COLS + c) % IMGS.length];
           const h = heights[r];
-          defs.push({ x: c * (TILE_W + GAP), y, ry, stagger, w: TILE_W, h, c, src });
+          defs.push({ x: c * (TILE_W + GAP), y, ry, stagger, w: TILE_W, h, c, src: srcs[r] });
           y += h + GAP;
         }
       }
@@ -483,8 +494,10 @@
     setTimeout(_reveal, 6000);
 
     let tiles = [];
-    preloadAspectRatios([...new Set(IMGS)], 4000).then(ratios => {
-      const DEFS = buildDefs(ratios);
+    preloadAspectRatios([...new Set(IMGS)], 4000).then(({ ratios, good }) => {
+      const DEFS = buildDefs(ratios, good);
+      const _counted = new WeakSet();
+      const countOnce = el => { if (!_counted.has(el)) { _counted.add(el); _onTileLoad(); } };
       tiles = DEFS.map(def => {
         const el  = document.createElement('div');
         el.className = 'tile';
@@ -493,11 +506,23 @@
         const img = document.createElement('img');
         img.alt = '';
         img.draggable = false;
-        img.onload = _onTileLoad;
-        img.onerror = () => { el.style.opacity = '0'; el.style.pointerEvents = 'none'; _onTileLoad(); };
+        img.onload = () => { good.add(img.src); countOnce(el); };
+        img.onerror = () => {
+          // Same-slot src already failed during preload; retry with a known-good
+          // image so the tile stays filled instead of leaving a visible hole.
+          const goodList = [...good].filter(s => s !== img.src);
+          if (goodList.length) {
+            img.onerror = null;
+            img.src = goodList[Math.floor(Math.random() * goodList.length)];
+          } else {
+            el.style.opacity = '0';
+            el.style.pointerEvents = 'none';
+          }
+          countOnce(el);
+        };
         img.src = def.src;
         // Belt-and-suspenders for browsers that don't fire onload for cached images
-        if (img.complete) { img.onload = img.onerror = null; _onTileLoad(); }
+        if (img.complete) { img.onload = img.onerror = null; good.add(img.src); countOnce(el); }
         el.appendChild(img);
         canvas.appendChild(el);
         return Object.assign({}, def, { el });
