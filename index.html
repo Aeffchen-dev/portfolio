@@ -2604,7 +2604,7 @@ quoteText.textContent = '“' + q.text + '”';
     function fillModal(modalEl, key) {
       const p = PROJECTS[key]; if (!p) return;
       const clientEl = modalEl.querySelector('.modal__peek-bar__client');
-      if (clientEl) clientEl.textContent = p.client || p.name;
+      if (clientEl) clientEl.textContent = p.name || p.client;
       const bg = p.bg || '#f2f2f2';
       const peekBarEl = modalEl.querySelector('.modal__peek-bar');
       if (peekBarEl) { peekBarEl.style.background = bg; peekBarEl.style.color = p.textColor || '#000'; }
