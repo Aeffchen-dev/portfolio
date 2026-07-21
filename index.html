@@ -625,6 +625,44 @@
     .modal.is-peek .modal__peek-bar { display:block; }
     .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
 
+    /* === NEXT PROJECT TEASER (mobile/tablet) ===
+       In-flow preview of the next project, appended after a project's own
+       content so it scrolls into view like any other content — never
+       overlapping what's already on screen. Committing to it (transitioning
+       to the next project) only ever happens on a tap/click or a deliberate
+       upward swipe once already scrolled to the bottom — never as a side
+       effect of scrolling it into view. Desktop keeps the separate hover +
+       peek-overlay experience instead (see .modal.is-peek above). */
+    .modal__next-teaser { display:none; }
+    @media (max-width:1023px) {
+      .modal__next-teaser {
+        display:block; position:relative; overflow:hidden;
+        margin:24px 8px 8px; border-radius:12px; cursor:pointer;
+        background:#0d0d0d;
+      }
+      .modal__next-teaser__inner {
+        min-height:45vh; position:relative;
+        display:flex; flex-direction:column; justify-content:flex-end;
+        padding:20px;
+      }
+      .modal__next-teaser__bg {
+        position:absolute; inset:0; width:100%; height:100%; object-fit:cover; margin:0;
+      }
+      .modal__next-teaser__overlay {
+        position:absolute; inset:0;
+        background:linear-gradient(to top, rgba(0,0,0,.7) 0%, rgba(0,0,0,.15) 55%, transparent 100%);
+      }
+      .modal__next-teaser__label,
+      .modal__next-teaser__client,
+      .modal__next-teaser__hint { position:relative; z-index:2; color:#fff; }
+      .modal__next-teaser__label {
+        font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; opacity:0.6;
+        margin-bottom:6px;
+      }
+      .modal__next-teaser__client { font-size:28px; font-weight:500; line-height:1.15; }
+      .modal__next-teaser__hint { font-size:12px; opacity:0.5; margin-top:8px; }
+    }
+
     /* === PAGE HEADER (modal) === */
     .page-header { }
     .modal-header-left { display:flex; flex-direction:column; }
@@ -2526,6 +2564,11 @@ quoteText.textContent = '“' + q.text + '”';
     // === TWO-MODAL PING-PONG ===
     let activeModal = document.getElementById('modalA');
     let peekModal   = document.getElementById('modalB');
+    // Set by setupPeek() to the currently-armed completePeek closure, so the
+    // in-flow next-project teaser (mobile/tablet) can trigger the same
+    // transition the desktop peek-overlay uses, without needing its own
+    // reference into that closure.
+    let _completePeek = null;
 
     // Peek cursor — follows mouse over the peek hero area
     const peekCursor = document.createElement('div');
@@ -2562,6 +2605,19 @@ quoteText.textContent = '“' + q.text + '”';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
+      const nextKeyForTeaser = getNextProjectKey(key);
+      const nextP = nextKeyForTeaser ? PROJECTS[nextKeyForTeaser] : null;
+      const teaserHTML = nextP
+        ? `<div class="modal__next-teaser">` +
+            `<div class="modal__next-teaser__inner">` +
+              (nextP.hero ? `<img class="modal__next-teaser__bg" src="${nextP.hero}" alt="" loading="lazy">` : '') +
+              `<div class="modal__next-teaser__overlay"></div>` +
+              `<span class="modal__next-teaser__label">Next project</span>` +
+              `<span class="modal__next-teaser__client">${nextP.client||nextP.name||''}</span>` +
+              `<span class="modal__next-teaser__hint">Tap or swipe up</span>` +
+            `</div>` +
+          `</div>`
+        : '';
       const scrollEl = modalEl.querySelector('.modal__scroll');
       scrollEl.style.background = bg;
       scrollEl.style.color = p.textColor || '';
@@ -2585,7 +2641,8 @@ quoteText.textContent = '“' + q.text + '”';
           `</section>` +
           `<nav class="project-links">${buildLinkCards(externalLinks)}</nav>` +
         `</div>` +
-        `<div class="modal__end-sentinel" aria-hidden="true"></div>`;
+        `<div class="modal__end-sentinel" aria-hidden="true"></div>` +
+        teaserHTML;
       if (p.kpis && p.kpis.length) {
         scrollEl.querySelector('.blocks__grid').insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
       }
@@ -2593,6 +2650,38 @@ quoteText.textContent = '“' + q.text + '”';
       if (externalLinks.length) {
         hydrateLinkThumbs(scrollEl.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[key] || null);
       }
+      wireNextTeaser(scrollEl.querySelector('.modal__next-teaser'), scrollEl);
+    }
+
+    // Tap/click, or a deliberate upward swipe once already scrolled to the
+    // bottom, commits to the next project. A swipe that's still mid-scroll
+    // (not yet at the bottom) is left alone — it's just normal scrolling
+    // that happens to pass over the teaser, not a "pull up" gesture.
+    function wireNextTeaser(teaserEl, scrollEl) {
+      if (!teaserEl) return;
+      let startY = 0, moved = false, tracking = false, triggered = false;
+      function commit() {
+        if (triggered) return;
+        triggered = true;
+        if (_completePeek) _completePeek();
+      }
+      teaserEl.addEventListener('touchstart', e => {
+        tracking = true; moved = false;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      teaserEl.addEventListener('touchmove', e => {
+        if (!tracking) return;
+        if (Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
+      }, { passive: true });
+      teaserEl.addEventListener('touchend', e => {
+        if (!tracking) return;
+        tracking = false;
+        if (!moved) { commit(); return; }
+        const dy = startY - e.changedTouches[0].clientY;
+        const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight <= 2;
+        if (dy > 24 && atBottom) commit();
+      }, { passive: true });
+      teaserEl.addEventListener('click', commit);
     }
 
     function setupPeek(key) {
@@ -2601,58 +2690,23 @@ quoteText.textContent = '“' + q.text + '”';
       if (!nextKey) return;
 
       const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
+      // Desktop keeps the hover + peek-overlay experience (below). Mobile and
+      // tablet instead get an in-flow next-project teaser appended to each
+      // project's own content (see fillModal/wireNextTeaser) — it scrolls in
+      // naturally after the content, never overlapping it, and only commits
+      // on a tap or a deliberate upward swipe once already at the bottom.
+      const isDesktop = window.innerWidth >= 1024;
 
       fillModal(peekModal, nextKey);
-      peekModal.classList.add('is-peek', 'modal--hero-inset');
+      if (isDesktop) peekModal.classList.add('is-peek', 'modal--hero-inset');
       peekModal.style.visibility = 'visible';
       peekModal.style.transition = 'none';
       peekModal.style.transform  = `${tx()}translateY(100%)`;
 
-      const activeScroll = activeModal.querySelector('.modal__scroll');
-
-      // Peek resting position: show peek bar + a sliver of the hero image.
-      const peekBarEl = peekModal.querySelector('.modal__peek-bar');
-      const peekBarH = peekBarEl ? peekBarEl.offsetHeight : 80;
-      const heroExtraH = Math.round(window.innerWidth * 5 / 8);
-      const peekVisiblePx = peekBarH + heroExtraH;
-      const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
-
       _nextRevealAbort = new AbortController();
       const { signal } = _nextRevealAbort;
 
-      let dragging = false, completing = false, peekShown = false;
-      let peeking = false;
-      let startY = 0, startPct = 100, curPct = 100;
-
-      // The next project is NOT dragged along by scrolling. Reaching the bottom
-      // of the content snaps the peek affordance (bar + hero sliver) into view;
-      // scrolling back up dismisses it. Committing to the next project is always
-      // an intentional gesture (swipe up / tap / click) — never a side effect of
-      // scrolling through the content.
-      const SHOW_AT = 8, HIDE_AT = 120;
-      function showPeek() {
-        if (peekShown) return;
-        peekShown = true; peeking = true; curPct = peekTargetPct;
-        peekModal.style.transition = 'transform 0.5s cubic-bezier(.16,1,.3,1)';
-        peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
-      }
-      function hidePeek() {
-        if (!peekShown) return;
-        peekShown = false; peeking = false; curPct = 100;
-        peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = `${tx()}translateY(100%)`;
-        activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = `${tx()}translateY(0)`;
-      }
-      function onScroll() {
-        if (dragging || completing) return;
-        const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
-        if (remaining <= SHOW_AT) showPeek();
-        else if (remaining > HIDE_AT) hidePeek();
-      }
-      activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
-      // Content may already be shorter than the viewport (so we're at the bottom).
-      requestAnimationFrame(onScroll);
+      let completing = false;
 
       function completePeek() {
         if (completing) return;
@@ -2689,54 +2743,101 @@ quoteText.textContent = '“' + q.text + '”';
           setupPeek(nk);
         }, 340);
       }
+      // Expose to the in-flow teaser (mobile/tablet) so it can trigger the
+      // same transition without reaching into this closure directly.
+      _completePeek = completePeek;
 
-      let touchMoved = false;
-      peekModal.addEventListener('touchstart', e => {
-        if (!peeking) return;
-        e.preventDefault(); // own this gesture; listener removed when the peek is torn down
-        dragging = true; touchMoved = false;
-        startY   = e.touches[0].clientY;
-        startPct = curPct;
-        peekModal.style.transition = 'none';
-      }, { passive: false, signal });
+      if (isDesktop) {
+        const activeScroll = activeModal.querySelector('.modal__scroll');
 
-      peekModal.addEventListener('touchmove', e => {
-        if (!dragging) return;
-        touchMoved = true;
-        const dy = startY - e.touches[0].clientY;
-        curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
-        if (curPct <= 0) { dragging = false; completePeek(); return; }
-        peekModal.style.transform = `${tx()}translateY(${curPct}%)`;
-        const prog = peekTargetPct > 0 ? Math.max(0, (peekTargetPct - curPct) / peekTargetPct) : 1;
-        activeModal.style.transition = 'none';
-        activeModal.style.transform  = `${tx()}translateY(${-prog * 8}%)`;
-      }, { passive: true, signal });
+        // Peek resting position: show peek bar + a sliver of the hero image.
+        const peekBarEl = peekModal.querySelector('.modal__peek-bar');
+        const peekBarH = peekBarEl ? peekBarEl.offsetHeight : 80;
+        const heroExtraH = Math.round(window.innerWidth * 5 / 8);
+        const peekVisiblePx = peekBarH + heroExtraH;
+        const peekTargetPct = Math.max(0, (1 - peekVisiblePx / window.innerHeight) * 100);
 
-      peekModal.addEventListener('touchend', () => {
-        if (!dragging) return; dragging = false;
-        // A tap, or a drag past the halfway point, commits; otherwise snap back to rest.
-        if (!touchMoved || curPct < peekTargetPct * 0.5) { completePeek(); return; }
-        peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
-        curPct = peekTargetPct;
-        activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-        activeModal.style.transform  = `${tx()}translateY(0)`;
-      }, { signal });
+        let dragging = false, peekShown = false, peeking = false;
+        let startY = 0, startPct = 100, curPct = 100;
 
-      peekModal.addEventListener('click', () => { if (peekModal.classList.contains('is-peek')) completePeek(); }, { signal });
+        // The next project is NOT dragged along by scrolling. Reaching the bottom
+        // of the content snaps the peek affordance (bar + hero sliver) into view;
+        // scrolling back up dismisses it. Committing to the next project is always
+        // an intentional gesture (swipe up / tap / click) — never a side effect of
+        // scrolling through the content.
+        const SHOW_AT = 8, HIDE_AT = 120;
+        function showPeek() {
+          if (peekShown) return;
+          peekShown = true; peeking = true; curPct = peekTargetPct;
+          peekModal.style.transition = 'transform 0.5s cubic-bezier(.16,1,.3,1)';
+          peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
+        }
+        function hidePeek() {
+          if (!peekShown) return;
+          peekShown = false; peeking = false; curPct = 100;
+          peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+          peekModal.style.transform  = `${tx()}translateY(100%)`;
+          activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+          activeModal.style.transform  = `${tx()}translateY(0)`;
+        }
+        function onScroll() {
+          if (dragging || completing) return;
+          const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
+          if (remaining <= SHOW_AT) showPeek();
+          else if (remaining > HIDE_AT) hidePeek();
+        }
+        activeScroll.addEventListener('scroll', onScroll, { signal, passive: true });
+        // Content may already be shorter than the viewport (so we're at the bottom).
+        requestAnimationFrame(onScroll);
 
-      // Intentional swipe-up on the active content (when at the bottom and the
-      // peek is showing) also commits — but normal scrolling never does.
-      let _swipeStartY = 0;
-      activeScroll.addEventListener('touchstart', e => {
-        _swipeStartY = e.touches[0].clientY;
-      }, { signal, passive: true });
-      activeScroll.addEventListener('touchend', e => {
-        if (!peeking) return;
-        const dy = _swipeStartY - e.changedTouches[0].clientY;
-        const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
-        if (dy > 48 && remaining <= SHOW_AT + 4) completePeek();
-      }, { signal, passive: true });
+        let touchMoved = false;
+        peekModal.addEventListener('touchstart', e => {
+          if (!peeking) return;
+          e.preventDefault(); // own this gesture; listener removed when the peek is torn down
+          dragging = true; touchMoved = false;
+          startY   = e.touches[0].clientY;
+          startPct = curPct;
+          peekModal.style.transition = 'none';
+        }, { passive: false, signal });
+
+        peekModal.addEventListener('touchmove', e => {
+          if (!dragging) return;
+          touchMoved = true;
+          const dy = startY - e.touches[0].clientY;
+          curPct = Math.max(0, startPct - (dy / window.innerHeight * 100));
+          if (curPct <= 0) { dragging = false; completePeek(); return; }
+          peekModal.style.transform = `${tx()}translateY(${curPct}%)`;
+          const prog = peekTargetPct > 0 ? Math.max(0, (peekTargetPct - curPct) / peekTargetPct) : 1;
+          activeModal.style.transition = 'none';
+          activeModal.style.transform  = `${tx()}translateY(${-prog * 8}%)`;
+        }, { passive: true, signal });
+
+        peekModal.addEventListener('touchend', () => {
+          if (!dragging) return; dragging = false;
+          // A tap, or a drag past the halfway point, commits; otherwise snap back to rest.
+          if (!touchMoved || curPct < peekTargetPct * 0.5) { completePeek(); return; }
+          peekModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+          peekModal.style.transform  = `${tx()}translateY(${peekTargetPct}%)`;
+          curPct = peekTargetPct;
+          activeModal.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
+          activeModal.style.transform  = `${tx()}translateY(0)`;
+        }, { signal });
+
+        peekModal.addEventListener('click', () => { if (peekModal.classList.contains('is-peek')) completePeek(); }, { signal });
+
+        // Intentional swipe-up on the active content (when at the bottom and the
+        // peek is showing) also commits — but normal scrolling never does.
+        let _swipeStartY = 0;
+        activeScroll.addEventListener('touchstart', e => {
+          _swipeStartY = e.touches[0].clientY;
+        }, { signal, passive: true });
+        activeScroll.addEventListener('touchend', e => {
+          if (!peeking) return;
+          const dy = _swipeStartY - e.changedTouches[0].clientY;
+          const remaining = activeScroll.scrollHeight - activeScroll.scrollTop - activeScroll.clientHeight;
+          if (dy > 48 && remaining <= SHOW_AT + 4) completePeek();
+        }, { signal, passive: true });
+      }
 
       signal.addEventListener('abort', () => {
         if (completing) return;
@@ -2754,6 +2855,7 @@ quoteText.textContent = '“' + q.text + '”';
     // === OPEN MODAL ===
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
+      _completePeek = null; // stale until setupPeek() arms it for this project
       activeModal = document.getElementById('modalA');
       peekModal   = document.getElementById('modalB');
       [activeModal, peekModal].forEach(m => {
