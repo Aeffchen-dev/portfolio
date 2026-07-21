@@ -675,7 +675,7 @@
     @media (max-width:1023px) {
       .modal-next-cta {
         display:flex; flex-direction:column;
-        margin:32px 0; padding:0 8px;
+        margin:32px 0 80px; padding:0 8px;
       }
       .modal-next-cta__texts { margin-bottom:32px; }
       .modal-next-cta__label {
@@ -706,20 +706,15 @@
       .modal-next-reveal {
         display:block; position:relative; overflow:hidden; cursor:pointer;
         background:#1a1a1a; height:33vh; min-height:33vh;
-        margin:0 -8px; border-radius:16px 16px 0 0;
+        margin:0 -8px -24px; border-radius:16px 16px 0 0;
         box-shadow:0 -4px 10px rgba(0,0,0,0.05);
       }
       .modal-next-reveal__bg { position:absolute; inset:0; opacity:1; }
       .modal-next-reveal__bg img,
       .modal-next-reveal__bg video { width:100%; height:100%; object-fit:cover; display:block; }
-      .modal-next-reveal__bg::after {
-        content:''; position:absolute; inset:0;
-        background:linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 100%);
-      }
     }
     @media (min-width:640px) and (max-width:1023px) {
       .modal-next-reveal { height:500px; min-height:500px; }
-      .modal-next-reveal__bg::after { display:none; }
     }
 
     /* === MODAL MORE PROJECTS === */
