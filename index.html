@@ -628,49 +628,10 @@
     .modal.is-peek .modal__peek-bar { display:block; }
     .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
 
-    /* === NEXT PROJECT TEASER (mobile/tablet) ===
-       Text-only preview appended after a project's own content, scrolling
-       into view like any other content. No preview image or box — instead,
-       an invisible spacer below the text hands scroll progress straight to
-       the real next-project modal (already prepared in peekModal), which
-       rises from the bottom in step with scroll position: fully hidden at
-       the spacer's start, revealed up to the height an old preview image
-       used to occupy by the spacer's end — and no further from scrolling
-       alone. From that resting point, dragging up on the revealed sliver
-       continues growing it the rest of the way and completes the
-       transition; a tap on the text (or on the revealed sliver) also jumps
-       straight there. Desktop keeps the separate hover + peek-overlay
-       experience instead (see .modal.is-peek above). */
-    .modal__next-teaser { display:none; }
-    .modal__next-teaser__spacer { display:none; }
-    @media (max-width:1023px) {
-      .modal__next-teaser {
-        display:block; margin:32px 0 0; cursor:pointer;
-      }
-      .modal__next-teaser__top {
-        display:flex; align-items:baseline; justify-content:space-between;
-        padding:0 8px; margin-bottom:20px;
-      }
-      .modal__next-teaser__eyebrow,
-      .modal__next-teaser__all {
-        font-family:ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
-        font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
-        color:rgba(0,0,0,0.5);
-      }
-      .modal__next-teaser__all { background:none; border:none; padding:0; cursor:pointer; }
-      .modal__next-teaser__heading {
-        padding:0 8px;
-        display:flex; flex-direction:column; gap:4px;
-      }
-      .modal__next-teaser__client { font-size:14px; font-weight:500; line-height:1.3; color:#111; }
-      .modal__next-teaser__sub { font-size:14px; font-weight:400; line-height:1.3; color:rgba(0,0,0,0.4); }
-      .modal__next-teaser__spacer { display:block; height:60dvh; }
-    }
-
     /* === MODAL FOOTER (mobile/tablet) ===
        Boxed like the home footer tile, so it stays legible regardless of
        the current project's background color and reads as a matching
-       card alongside the next-project teaser above it. */
+       card at the end of a project's content. */
     .modal__footer { display:none; }
     @media (max-width:1023px) {
       .modal__footer {
@@ -2592,11 +2553,6 @@ quoteText.textContent = '“' + q.text + '”';
     // === TWO-MODAL PING-PONG ===
     let activeModal = document.getElementById('modalA');
     let peekModal   = document.getElementById('modalB');
-    // Set by setupPeek() to the currently-armed completePeek closure, so the
-    // in-flow next-project teaser (mobile/tablet) can trigger the same
-    // transition the desktop peek-overlay uses, without needing its own
-    // reference into that closure.
-    let _completePeek = null;
 
     // Peek cursor — follows mouse over the peek hero area
     const peekCursor = document.createElement('div');
@@ -2633,21 +2589,6 @@ quoteText.textContent = '“' + q.text + '”';
       const factsHTML = (p.facts||[]).map(f =>
         `<div class="info-row"><span class="info-label">${f.l}:</span><span class="info-value">${f.v}</span></div>`).join('');
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
-      const nextKeyForTeaser = getNextProjectKey(key);
-      const nextP = nextKeyForTeaser ? PROJECTS[nextKeyForTeaser] : null;
-      const teaserHTML = nextP
-        ? `<div class="modal__next-teaser">` +
-            `<div class="modal__next-teaser__top">` +
-              `<span class="modal__next-teaser__eyebrow">Next Up</span>` +
-              `<button class="modal__next-teaser__all" type="button" onclick="event.stopPropagation();closeModal()">[ View all projects ]</button>` +
-            `</div>` +
-            `<div class="modal__next-teaser__heading">` +
-              `<span class="modal__next-teaser__client">${nextP.client||nextP.name||''}</span>` +
-              (nextP.desc ? `<span class="modal__next-teaser__sub">${nextP.desc}</span>` : '') +
-            `</div>` +
-          `</div>` +
-          `<div class="modal__next-teaser__spacer" aria-hidden="true"></div>`
-        : '';
       const footerHTML =
         `<div class="modal__footer">` +
           `<div class="modal__footer__row">` +
@@ -2690,7 +2631,6 @@ quoteText.textContent = '“' + q.text + '”';
           `<nav class="project-links">${buildLinkCards(externalLinks)}</nav>` +
         `</div>` +
         `<div class="modal__end-sentinel" aria-hidden="true"></div>` +
-        teaserHTML +
         footerHTML;
       if (p.kpis && p.kpis.length) {
         scrollEl.querySelector('.blocks__grid').insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
@@ -2699,106 +2639,6 @@ quoteText.textContent = '“' + q.text + '”';
       if (externalLinks.length) {
         hydrateLinkThumbs(scrollEl.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[key] || null);
       }
-      // Not wired here: at fill time a dormant peek's own next-project key
-      // isn't resolvable yet (peekModal still points at the node being
-      // filled). wireNextTeaser is instead called once this modal actually
-      // becomes active, when peekModal correctly points elsewhere — see
-      // openModal and completePeek.
-    }
-
-    // As the user scrolls past a project's own content, the real next-project
-    // modal (already prepared in peekModal by setupPeek) rises from the
-    // bottom in step with scroll position, via the invisible spacer below
-    // the teaser text: fully hidden at the spacer's start, revealed up to
-    // the height an old preview image used to occupy (60% of the screen) by
-    // the spacer's end — and no further from scrolling alone. From that
-    // resting point, dragging up on the revealed sliver continues growing
-    // it the rest of the way and completes the transition; a tap on the
-    // teaser text or the revealed sliver also jumps straight there.
-    //
-    // Listeners are cleaned up via an AbortController stashed on each DOM
-    // node (rather than left to accumulate) because modalA/modalB are
-    // reused across many open/peek cycles over a session — without this,
-    // stale listeners from earlier cycles would keep firing on detached
-    // elements and fight the live instance for control of the transform.
-    function wireNextTeaser(scrollEl) {
-      if (scrollEl._teaserScrollAbort) scrollEl._teaserScrollAbort.abort();
-      const teaserEl = scrollEl.querySelector('.modal__next-teaser');
-      const spacerEl = scrollEl.querySelector('.modal__next-teaser__spacer');
-      if (!teaserEl || !spacerEl) return;
-      const scrollAbort = new AbortController();
-      scrollEl._teaserScrollAbort = scrollAbort;
-      const scrollSignal = scrollAbort.signal;
-
-      const peekEl = peekModal; // fixed target for this teaser instance's lifetime
-      if (peekEl._teaserDragAbort) peekEl._teaserDragAbort.abort();
-      const dragAbort = new AbortController();
-      peekEl._teaserDragAbort = dragAbort;
-      const dragSignal = dragAbort.signal;
-      peekEl.style.pointerEvents = 'none'; // reset in case a stale cycle left it 'auto'
-
-      const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
-      const CAP_PCT = 40; // translateY% resting point = 60% of screen revealed (old image height)
-      let committed = false, armed = false, dragging = false, moved = false, startY = 0, curPct = 100;
-
-      function commit() {
-        if (committed || !_completePeek) return;
-        committed = true;
-        _completePeek();
-      }
-      function setPeek(pct, withTransition) {
-        curPct = pct;
-        peekEl.style.transition = withTransition ? 'transform 0.3s cubic-bezier(.4,0,.2,1)' : 'none';
-        peekEl.style.transform  = `${tx()}translateY(${pct}%)`;
-      }
-      function setArmed(v) {
-        if (armed === v) return;
-        armed = v;
-        peekEl.style.pointerEvents = v ? 'auto' : 'none';
-      }
-
-      function onScroll() {
-        if (committed || dragging) return;
-        const spacerTop = spacerEl.offsetTop;
-        const spacerH = spacerEl.offsetHeight || 1;
-        const scrollEnd = scrollEl.scrollTop + scrollEl.clientHeight;
-        const progress = Math.max(0, Math.min(1, (scrollEnd - spacerTop) / spacerH));
-        setPeek(100 - 60 * progress, false);
-        setArmed(progress >= 1);
-      }
-
-      scrollEl.addEventListener('scroll', onScroll, { passive: true, signal: scrollSignal });
-      requestAnimationFrame(onScroll);
-      teaserEl.addEventListener('click', commit, { signal: scrollSignal });
-
-      // Once scrolling has revealed the sliver up to its resting cap,
-      // dragging further up on it completes the reveal; a plain tap on it
-      // also commits, same as the peek-bar on desktop.
-      peekEl.addEventListener('touchstart', e => {
-        if (!armed || committed) return;
-        dragging = true; moved = false;
-        startY = e.touches[0].clientY;
-        peekEl.style.transition = 'none';
-      }, { passive: true, signal: dragSignal });
-
-      peekEl.addEventListener('touchmove', e => {
-        if (!dragging) return;
-        const dy = startY - e.touches[0].clientY; // positive = dragging up
-        if (Math.abs(dy) > 6) moved = true;
-        const pct = Math.max(0, Math.min(CAP_PCT, CAP_PCT - (dy / window.innerHeight * 100)));
-        setPeek(pct, false);
-        if (pct <= 0) { dragging = false; commit(); }
-      }, { passive: true, signal: dragSignal });
-
-      peekEl.addEventListener('touchend', () => {
-        if (!dragging) return;
-        dragging = false;
-        if (!moved) { commit(); return; }
-        if (curPct < CAP_PCT / 2) commit();
-        else setPeek(CAP_PCT, true);
-      }, { signal: dragSignal });
-
-      peekEl.addEventListener('click', () => { if (armed) commit(); }, { signal: dragSignal });
     }
 
     function setupPeek(key) {
@@ -2807,15 +2647,9 @@ quoteText.textContent = '“' + q.text + '”';
       if (!nextKey) return;
 
       const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
-      // Desktop keeps the hover + peek-overlay experience (below). Mobile and
-      // tablet instead get an in-flow next-project teaser appended to each
-      // project's own content (see fillModal/wireNextTeaser) — it scrolls in
-      // naturally after the content, never overlapping it, and only commits
-      // on a tap or a deliberate upward swipe once already at the bottom.
-      const isDesktop = window.innerWidth >= 1024;
 
       fillModal(peekModal, nextKey);
-      if (isDesktop) peekModal.classList.add('is-peek', 'modal--hero-inset');
+      peekModal.classList.add('is-peek', 'modal--hero-inset');
       peekModal.style.visibility = 'visible';
       peekModal.style.transition = 'none';
       peekModal.style.transform  = `${tx()}translateY(100%)`;
@@ -2842,10 +2676,6 @@ quoteText.textContent = '“' + q.text + '”';
         pm.style.pointerEvents = 'auto';
         if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; pmScroll.scrollTop = 0; }
         activeModal = pm; peekModal = am; currentProjectKey = nk;
-        // pm's own teaser was wired back when it was still a dormant peek,
-        // before peekModal pointed at am — re-wire now that it's correct,
-        // so pm's teaser targets the right node instead of itself.
-        if (pmScroll) wireNextTeaser(pmScroll);
 
         requestAnimationFrame(() => {
           pm.style.transition = 'transform 0.34s cubic-bezier(.4,0,.2,1)';
@@ -2864,11 +2694,8 @@ quoteText.textContent = '“' + q.text + '”';
           setupPeek(nk);
         }, 340);
       }
-      // Expose to the in-flow teaser (mobile/tablet) so it can trigger the
-      // same transition without reaching into this closure directly.
-      _completePeek = completePeek;
 
-      if (isDesktop) {
+      {
         const activeScroll = activeModal.querySelector('.modal__scroll');
 
         // Peek resting position: show peek bar + a sliver of the hero image.
@@ -2976,7 +2803,6 @@ quoteText.textContent = '“' + q.text + '”';
     // === OPEN MODAL ===
     function openModal(key) {
       const p = PROJECTS[key]; if (!p) return;
-      _completePeek = null; // stale until setupPeek() arms it for this project
       activeModal = document.getElementById('modalA');
       peekModal   = document.getElementById('modalB');
       [activeModal, peekModal].forEach(m => {
@@ -2987,7 +2813,6 @@ quoteText.textContent = '“' + q.text + '”';
         s.innerHTML = ''; s.style.background = '';
       });
       fillModal(activeModal, key);
-      wireNextTeaser(activeModal.querySelector('.modal__scroll'));
       currentProjectKey = key;
       activeModal.style.visibility = 'visible';
       activeModal.classList.add('is-open');
