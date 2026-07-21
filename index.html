@@ -705,9 +705,10 @@
     @media (max-width:1023px) {
       .modal-next-reveal {
         display:block; position:relative; overflow:hidden; cursor:pointer;
-        background:#1a1a1a; height:40vh; min-height:40vh;
-        margin:0 -8px; border-radius:16px;
-        box-shadow:0 -8px 20px rgba(0,0,0,0.1);
+        background:#1a1a1a; height:55vh; min-height:55vh;
+        margin:0 -8px; border-radius:16px 16px 0 0;
+        touch-action:none;
+        box-shadow:0 -4px 10px rgba(0,0,0,0.05);
       }
       .modal-next-reveal__bg { position:absolute; inset:0; opacity:1; }
       .modal-next-reveal__bg img,
@@ -718,7 +719,7 @@
       }
     }
     @media (min-width:640px) and (max-width:1023px) {
-      .modal-next-reveal { height:360px; min-height:360px; }
+      .modal-next-reveal { height:500px; min-height:500px; }
       .modal-next-reveal__bg::after { display:none; }
     }
 
