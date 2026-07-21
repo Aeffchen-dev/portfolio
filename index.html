@@ -315,6 +315,9 @@
       position:absolute; inset:0;
       overflow:hidden; border-radius:4px;
       cursor:pointer;
+      /* Let vertical touch gestures always scroll the page normally; only
+         horizontal drags are claimed by the mini-canvas's own panning. */
+      touch-action:pan-y;
     }
     .archive-mini.is-dragging { cursor:grabbing; }
     .archive-mini-canvas { position:absolute; top:0; left:0; }
@@ -683,12 +686,6 @@
     }
     .modal-close-bar.is-active { opacity:1; pointer-events:auto; }
     .modal.is-open::before, .modal.is-peek::before { content:none; }
-    .modal__grabber {
-      position:absolute; top:8px; left:50%; transform:translateX(-50%);
-      width:18px; height:1px; background:#000;
-      z-index:10; pointer-events:none;
-    }
-    .modal--no-grabber .modal__grabber { display:none; }
     .modal-close-bar__icon {
       display:flex; align-items:center; justify-content:center;
       height:1.5em; flex-shrink:0;
@@ -1666,7 +1663,6 @@
     </span>
   </div>
   <div class="modal is-hidden" id="modalA">
-    <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <div class="modal__peek-bar__left">
@@ -1679,7 +1675,6 @@
     <div class="modal__scroll"></div>
   </div>
   <div class="modal is-hidden" id="modalB">
-    <div class="modal__grabber"></div>
     <div class="modal__peek-bar">
       <div class="modal__peek-bar__row">
         <div class="modal__peek-bar__left">
@@ -2721,7 +2716,7 @@ quoteText.textContent = '“' + q.text + '”';
         // Promote the incoming modal to active IMMEDIATELY so it is scrollable
         // and responsive the instant it lands — no post-transition dead zone.
         pm.classList.remove('is-peek', 'modal--hero-inset');
-        pm.classList.add('is-open', 'modal--no-grabber');
+        pm.classList.add('is-open');
         pm.style.pointerEvents = 'auto';
         if (pmScroll) { pmScroll.style.overflowY = 'auto'; pmScroll.style.touchAction = 'pan-y'; pmScroll.scrollTop = 0; }
         activeModal = pm; peekModal = am; currentProjectKey = nk;
@@ -2867,7 +2862,6 @@ quoteText.textContent = '“' + q.text + '”';
       });
       fillModal(activeModal, key);
       currentProjectKey = key;
-      activeModal.classList.remove('modal--no-grabber');
       activeModal.style.visibility = 'visible';
       activeModal.classList.add('is-open');
       document.getElementById('modalBackdrop').classList.add('is-active');

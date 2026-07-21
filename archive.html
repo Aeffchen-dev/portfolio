@@ -271,8 +271,7 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
-            <a href="index.html" class="nav__link">Home</a>
-            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
@@ -299,10 +298,10 @@
     nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
     nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
     nav.querySelector('.nav__logo').addEventListener('touchend', e => {
-      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+      e.preventDefault(); nav.classList.add('is-open');
     });
     nav.querySelector('.nav__logo').addEventListener('click', e => {
-      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+      e.preventDefault(); nav.classList.add('is-open');
     });
     nav.querySelector('.nav__menu').addEventListener('click', e => {
       e.stopPropagation();
