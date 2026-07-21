@@ -1162,7 +1162,7 @@
       font-size:10px; font-weight:700; letter-spacing:0;
       padding:2px 6px; border-radius:0 4px 4px 4px;
       white-space:nowrap; line-height:1.5;
-      margin-top:-1px; margin-left:2px;
+      margin-top:-1px; margin-left:9px;
     }
 
     /* === NEXT PROJECT CURSOR === */
@@ -1241,9 +1241,9 @@
 
     // Move cursor around the phrase text box
     var moveTimer = null;
-    function moveCursor() {
+    function randomPointAroundPhrase() {
       var rect = phraseEl.getBoundingClientRect();
-      if (!rect.width) return;
+      if (!rect.width) return null;
       var pad = 72, gap = 36, side = Math.floor(Math.random() * 4), x, y;
       if (side === 0) { x = rect.left + Math.random() * rect.width; y = rect.top - gap - Math.random() * pad; }
       else if (side === 1) { x = rect.right + gap + Math.random() * pad; y = rect.top + Math.random() * rect.height; }
@@ -1251,17 +1251,21 @@
       else { x = rect.left - 90 - Math.random() * pad; y = rect.top + Math.random() * rect.height; }
       x = Math.max(4, Math.min(window.innerWidth - 90, x));
       y = Math.max(4, Math.min(window.innerHeight - 20, y));
-      counterEl.style.left = x + 'px';
-      counterEl.style.top  = y + 'px';
+      return { x: x, y: y };
+    }
+    function moveCursor() {
+      var p = randomPointAroundPhrase();
+      if (!p) return;
+      counterEl.style.left = p.x + 'px';
+      counterEl.style.top  = p.y + 'px';
       moveTimer = setTimeout(moveCursor, 1200 + Math.random() * 800);
     }
-    // Start at top-left of phrase, then begin wandering
+    // Start at a random position around the phrase, then begin wandering
     counterEl.style.transition = 'none';
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        var rect = phraseEl.getBoundingClientRect();
-        counterEl.style.left = rect.left + 'px';
-        counterEl.style.top  = (rect.top - 18) + 'px';
+        var p = randomPointAroundPhrase();
+        if (p) { counterEl.style.left = p.x + 'px'; counterEl.style.top = p.y + 'px'; }
         counterEl.style.transition = '';
         setTimeout(moveCursor, 1000);
       });
