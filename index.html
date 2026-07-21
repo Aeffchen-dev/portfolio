@@ -664,25 +664,26 @@
        peek-overlay experience instead (see .modal.is-peek above). */
     .modal-page-end { display:none; }
     @media (max-width:1023px) {
-      .modal-page-end { display:block; padding-top:40px; }
+      .modal-page-end { display:block; }
     }
-    /* Next-project CTA card — same pattern as the home page's "Sounds
-       interesting? / Let's have a conversation" section, background set
-       to the next project's own bg so it reads as a preview of it;
-       text color follows the next project's textColor for contrast. */
+    /* Next-project CTA — same pattern and sizing as the home page's
+       "Sounds interesting? / Let's have a conversation" section. No box
+       background; sits directly on the modal's own background, so the
+       label/heading just dim/inherit the current project's own text
+       color rather than needing their own contrast handling. */
     .modal-next-cta { display:none; }
     @media (max-width:1023px) {
       .modal-next-cta {
         display:flex; flex-direction:column;
-        padding:24px 8px; border-radius:12px; margin-bottom:16px;
+        margin:32px 0 16px; padding:0 8px;
       }
+      .modal-next-cta__texts { margin-bottom:32px; }
       .modal-next-cta__label {
-        font-size:16px; font-weight:400; line-height:1.1; opacity:0.55;
+        font-size:21px; font-weight:400; line-height:1.1; opacity:0.55;
         margin-bottom:4px;
       }
       .modal-next-cta__heading {
-        font-size:24px; font-weight:400; line-height:1.1;
-        margin-bottom:24px;
+        font-size:21px; font-weight:400; line-height:1.1;
       }
       .modal-next-cta__btn {
         display:inline-flex; align-items:center; gap:8px;
@@ -2617,11 +2618,9 @@ quoteText.textContent = '“' + q.text + '”';
       const externalLinks = (p.links||[]).filter(l => { try { return new URL(l.u).hostname !== location.hostname; } catch { return false; } });
       const nextKeyForReveal = getNextProjectKey(key);
       const nextP = nextKeyForReveal ? PROJECTS[nextKeyForReveal] : null;
-      const nextBg = nextP ? (nextP.bg || '#f2f2f2') : '';
-      const nextTextColor = nextP ? (nextP.textColor || '#000') : '';
       const pageEndHTML =
         `<div class="modal-page-end">` +
-          (nextP ? `<div class="modal-next-cta" style="background:${nextBg};color:${nextTextColor}">` +
+          (nextP ? `<div class="modal-next-cta">` +
             `<div class="modal-next-cta__texts">` +
               `<p class="modal-next-cta__label">Next up</p>` +
               `<p class="modal-next-cta__heading">${nextP.client||nextP.name||''}</p>` +
