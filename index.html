@@ -889,11 +889,11 @@
     .project-links { margin-top:16px; margin-bottom:-16px; display:flex; flex-direction:column; gap:8px; }
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
-      padding:8px 16px 8px 8px; background:rgba(0,0,0,0.1); border-radius:8px;
+      padding:8px 16px 8px 8px; background:var(--link-card-bg, rgba(0,0,0,0.1)); border:none; border-radius:8px;
       opacity:0.95;
-      text-decoration:none; color:inherit; transition:background .3s ease-in-out;
+      text-decoration:none; color:inherit; transition:filter .3s ease-in-out;
     }
-    @media (hover:hover) { .modal-link-card:hover { background:rgba(0,0,0,0.15); } }
+    @media (hover:hover) { .modal-link-card:hover { filter:brightness(0.92); } }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:4px; overflow:hidden;
@@ -1232,7 +1232,11 @@
     var counterEl = document.getElementById('loadingCounter');
     var countEl = document.getElementById('loadingCount');
 
-    phraseEl.innerHTML = phrase.replace(/\n/g, '<br>');
+    function noWidow(line) {
+      var idx = line.lastIndexOf(' ');
+      return idx === -1 ? line : line.slice(0, idx) + ' ' + line.slice(idx + 1);
+    }
+    phraseEl.innerHTML = phrase.split('\n').map(noWidow).join('<br>');
     setTimeout(function() { phraseEl.classList.add('is-in'); }, 150);
 
     // Move cursor around the phrase text box
@@ -2584,6 +2588,13 @@ quoteText.textContent = '“' + q.text + '”';
       peekCursor.classList.toggle('is-visible', over);
     }, { passive: true });
 
+    function darkenHex(hex, amt) {
+      const n = parseInt(hex.slice(1), 16);
+      const r = ((n >> 16) & 255) * (1 - amt);
+      const g = ((n >> 8) & 255) * (1 - amt);
+      const b = (n & 255) * (1 - amt);
+      return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+    }
     function fillModal(modalEl, key) {
       const p = PROJECTS[key]; if (!p) return;
       const clientEl = modalEl.querySelector('.modal__peek-bar__client');
@@ -2623,6 +2634,7 @@ quoteText.textContent = '“' + q.text + '”';
       scrollEl.style.background = bg;
       scrollEl.style.color = p.textColor || '';
       scrollEl.style.setProperty('--modal-bg', bg);
+      scrollEl.style.setProperty('--link-card-bg', darkenHex(bg, 0.08));
       modalEl.style.background = bg;
       scrollEl.scrollTop = 0;
       scrollEl.innerHTML =
