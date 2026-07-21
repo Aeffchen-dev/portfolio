@@ -219,9 +219,23 @@
       margin:40px 0 0;
     }
 
-    .imprint-footer {
-      display:none;
+    /* === PAGE FOOTER === */
+    .page-footer {
+      padding:40px 16px 24px; display:flex; flex-direction:column; gap:24px;
+      max-width:900px; margin:0 auto;
     }
+    .page-footer__grid { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; }
+    .page-footer__col { display:flex; flex-direction:column; gap:4px; }
+    .page-footer__label { font-size:12px; font-weight:500; letter-spacing:0.48px; color:#989898; text-transform:uppercase; }
+    .page-footer__col a { font-size:14px; font-weight:400; color:#fff; text-decoration:none; transition:opacity .3s ease; }
+    .page-footer__col a:hover { opacity:.6; }
+    .page-footer__col span { font-size:14px; font-weight:400; color:#989898; }
+    .page-footer__legal { display:flex; gap:16px; }
+    .page-footer__legal a {
+      font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898;
+      text-transform:uppercase; text-decoration:none; transition:opacity .3s ease;
+    }
+    .page-footer__legal a:hover { opacity:.6; }
     #imprint-body h1 { font-size:21px; font-weight:400; color:#fff; line-height:1.4; margin-bottom:16px; }
     #imprint-body h2, #imprint-body h5 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:32px; margin-bottom:8px; }
     #imprint-body h3 { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); letter-spacing:0.48px; text-transform:uppercase; margin-top:24px; margin-bottom:8px; }
@@ -277,8 +291,7 @@
       <div class="nav__expand-inner">
         <div class="nav__top-row">
           <div class="nav__links">
-            <a href="index.html" class="nav__link">Home</a>
-            <a href="index.html#work" class="nav__link">Work</a>
+            <a href="index.html" class="nav__link">Work</a>
             <a href="index.html#about" class="nav__link">About</a>
             <a href="archive.html" class="nav__link">Archive</a>
             <a href="index.html#articles" class="nav__link">Articles</a>
@@ -302,6 +315,25 @@
     </div>
   </div>
 
+  <footer class="page-footer">
+    <div class="page-footer__grid">
+      <div class="page-footer__col">
+        <span class="page-footer__label">Social</span>
+        <a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/Aeffchen-dev?tab=repositories" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="page-footer__col">
+        <span>© Jana Gramlich, 2026</span>
+        <span>Located in Berlin</span>
+        <a href="mailto:hello@janagramlich.com">hello@janagramlich.com</a>
+      </div>
+    </div>
+    <div class="page-footer__legal">
+      <a href="imprint.html">Imprint</a>
+      <a href="privacy-policy.html">Privacy</a>
+    </div>
+  </footer>
+
   <script>
     // === NAV ===
     const nav = document.getElementById('mainNav');
@@ -310,10 +342,10 @@
     nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
     nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive: true });
     nav.querySelector('.nav__logo').addEventListener('touchend', e => {
-      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+      e.preventDefault(); nav.classList.add('is-open');
     });
     nav.querySelector('.nav__logo').addEventListener('click', e => {
-      if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
+      e.preventDefault(); nav.classList.add('is-open');
     });
     nav.querySelector('.nav__menu').addEventListener('click', e => {
       e.stopPropagation();
