@@ -675,7 +675,7 @@
     @media (max-width:1023px) {
       .modal-next-cta {
         display:flex; flex-direction:column;
-        margin:32px 0 16px; padding:0 8px;
+        margin:32px 0; padding:0 8px;
       }
       .modal-next-cta__texts { margin-bottom:32px; }
       .modal-next-cta__label {
@@ -706,7 +706,7 @@
       .modal-next-reveal {
         display:block; position:relative; overflow:hidden; cursor:pointer;
         background:#1a1a1a; height:55vh; min-height:55vh;
-        margin:0; border-radius:4px;
+        margin:0 -8px; border-radius:16px;
       }
       .modal-next-reveal__bg { position:absolute; inset:0; opacity:1; }
       .modal-next-reveal__bg img,
@@ -2623,7 +2623,7 @@ quoteText.textContent = '“' + q.text + '”';
           (nextP ? `<div class="modal-next-cta">` +
             `<div class="modal-next-cta__texts">` +
               `<p class="modal-next-cta__label">Next up</p>` +
-              `<p class="modal-next-cta__heading">${nextP.client||nextP.name||''}</p>` +
+              `<p class="modal-next-cta__heading">${nextP.name||nextP.client||''}</p>` +
             `</div>` +
             `<button type="button" class="modal-next-cta__btn" onclick="event.stopPropagation();closeModal()">` +
               `<span class="modal-next-cta__dot"></span>All Projects` +
