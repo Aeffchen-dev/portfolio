@@ -168,7 +168,7 @@
     }
     .nav.is-open .nav__divider { opacity:1; transition:opacity .2s ease .32s; }
     .nav__contact {
-      padding:40px 16px 24px;
+      padding:40px 0 24px;
       opacity:0; transform:translateY(6px);
       transition:opacity .2s ease, transform .25s ease;
     }
@@ -510,10 +510,10 @@
   nav.addEventListener('mouseleave', () => { if (!_mlSuppress) nav.classList.remove('is-open'); });
   nav.addEventListener('touchend', () => { _mlSuppress = true; setTimeout(() => { _mlSuppress = false; }, 600); }, { passive:true });
   nav.querySelector('.nav__logo').addEventListener('touchend', e => {
-    e.preventDefault(); nav.classList.add('is-open');
+    if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
   });
   nav.querySelector('.nav__logo').addEventListener('click', e => {
-    e.preventDefault(); nav.classList.add('is-open');
+    if (!nav.classList.contains('is-open')) { e.preventDefault(); nav.classList.add('is-open'); }
   });
   nav.querySelector('.nav__menu').addEventListener('click', e => {
     e.stopPropagation();
