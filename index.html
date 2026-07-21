@@ -631,39 +631,41 @@
     /* === NEXT PROJECT TEASER (mobile/tablet) ===
        In-flow preview of the next project, appended after a project's own
        content so it scrolls into view like any other content — never
-       overlapping what's already on screen. Committing to it (transitioning
-       to the next project) only ever happens on a tap/click or a deliberate
-       upward swipe once already scrolled to the bottom — never as a side
-       effect of scrolling it into view. Desktop keeps the separate hover +
-       peek-overlay experience instead (see .modal.is-peek above). */
+       overlapping what's already on screen. Text sits above a plain,
+       unfiltered image (no gradient), inset the same as the content blocks
+       above it; the image itself bleeds to the true bottom edge of the
+       screen (cancels .modal__scroll's own bottom padding). Dragging up on
+       it grows the incoming next-project modal to fill the screen, tracking
+       the gesture 1:1; a tap commits immediately. Desktop keeps the
+       separate hover + peek-overlay experience instead (see .modal.is-peek
+       above). */
     .modal__next-teaser { display:none; }
     @media (max-width:1023px) {
       .modal__next-teaser {
-        display:block; position:relative; overflow:hidden;
-        margin:24px 8px 8px; border-radius:12px; cursor:pointer;
-        background:#0d0d0d;
+        display:block; margin:32px 0 -24px; cursor:pointer;
       }
-      .modal__next-teaser__inner {
-        min-height:45vh; position:relative;
-        display:flex; flex-direction:column; justify-content:flex-end;
-        padding:20px;
+      .modal__next-teaser__top {
+        display:flex; align-items:baseline; justify-content:space-between;
+        padding:0 8px; margin-bottom:20px;
       }
+      .modal__next-teaser__eyebrow,
+      .modal__next-teaser__all {
+        font-family:ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
+        font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+        color:rgba(255,255,255,0.5);
+      }
+      .modal__next-teaser__all { background:none; border:none; padding:0; cursor:pointer; }
+      .modal__next-teaser__heading {
+        padding:0 8px; margin-bottom:16px;
+        display:flex; flex-direction:column; gap:4px;
+      }
+      .modal__next-teaser__client { font-size:32px; font-weight:500; line-height:1.15; color:#fff; }
+      .modal__next-teaser__sub { font-size:16px; font-weight:400; color:rgba(255,255,255,0.4); }
+      .modal__next-teaser__media { position:relative; overflow:hidden; }
       .modal__next-teaser__bg {
-        position:absolute; inset:0; width:100%; height:100%; object-fit:cover; margin:0;
+        display:block; width:100%; height:60vh;
+        object-fit:cover; margin:0;
       }
-      .modal__next-teaser__overlay {
-        position:absolute; inset:0;
-        background:linear-gradient(to top, rgba(0,0,0,.7) 0%, rgba(0,0,0,.15) 55%, transparent 100%);
-      }
-      .modal__next-teaser__label,
-      .modal__next-teaser__client,
-      .modal__next-teaser__hint { position:relative; z-index:2; color:#fff; }
-      .modal__next-teaser__label {
-        font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; opacity:0.6;
-        margin-bottom:6px;
-      }
-      .modal__next-teaser__client { font-size:28px; font-weight:500; line-height:1.15; }
-      .modal__next-teaser__hint { font-size:12px; opacity:0.5; margin-top:8px; }
     }
 
     /* === PAGE HEADER (modal) === */
@@ -2604,13 +2606,15 @@ quoteText.textContent = '“' + q.text + '”';
       const nextP = nextKeyForTeaser ? PROJECTS[nextKeyForTeaser] : null;
       const teaserHTML = nextP
         ? `<div class="modal__next-teaser">` +
-            `<div class="modal__next-teaser__inner">` +
-              (nextP.hero ? `<img class="modal__next-teaser__bg" src="${nextP.hero}" alt="" loading="lazy">` : '') +
-              `<div class="modal__next-teaser__overlay"></div>` +
-              `<span class="modal__next-teaser__label">Next project</span>` +
-              `<span class="modal__next-teaser__client">${nextP.client||nextP.name||''}</span>` +
-              `<span class="modal__next-teaser__hint">Tap or swipe up</span>` +
+            `<div class="modal__next-teaser__top">` +
+              `<span class="modal__next-teaser__eyebrow">Next Up</span>` +
+              `<button class="modal__next-teaser__all" type="button" onclick="event.stopPropagation();closeModal()">[ View all projects ]</button>` +
             `</div>` +
+            `<div class="modal__next-teaser__heading">` +
+              `<span class="modal__next-teaser__client">${nextP.client||nextP.name||''}</span>` +
+              (nextP.desc ? `<span class="modal__next-teaser__sub">${nextP.desc}</span>` : '') +
+            `</div>` +
+            (nextP.hero ? `<div class="modal__next-teaser__media"><img class="modal__next-teaser__bg" src="${nextP.hero}" alt="" loading="lazy"></div>` : '') +
           `</div>`
         : '';
       const scrollEl = modalEl.querySelector('.modal__scroll');
@@ -2645,37 +2649,52 @@ quoteText.textContent = '“' + q.text + '”';
       if (externalLinks.length) {
         hydrateLinkThumbs(scrollEl.querySelector('.project-links'), externalLinks, PROJECT_LINK_ICONS[key] || null);
       }
-      wireNextTeaser(scrollEl.querySelector('.modal__next-teaser'), scrollEl);
+      wireNextTeaser(scrollEl.querySelector('.modal__next-teaser'));
     }
 
-    // Tap/click, or a deliberate upward swipe once already scrolled to the
-    // bottom, commits to the next project. A swipe that's still mid-scroll
-    // (not yet at the bottom) is left alone — it's just normal scrolling
-    // that happens to pass over the teaser, not a "pull up" gesture.
-    function wireNextTeaser(teaserEl, scrollEl) {
+    // Tap/click commits immediately. Dragging up grows the already-prepared
+    // next-project modal (peekModal, sitting just off-screen) 1:1 with the
+    // gesture, so it visibly fills more of the screen the further you pull —
+    // reaching the top commits, releasing early snaps it back down.
+    function wireNextTeaser(teaserEl) {
       if (!teaserEl) return;
-      let startY = 0, moved = false, tracking = false, triggered = false;
+      const tx = () => window.innerWidth >= 640 ? 'translateX(-50%) ' : '';
+      let startY = 0, dragging = false, moved = false, triggered = false, curPct = 100;
+
       function commit() {
         if (triggered) return;
         triggered = true;
         if (_completePeek) _completePeek();
       }
+      function snapBack() {
+        curPct = 100;
+        peekModal.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)';
+        peekModal.style.transform  = `${tx()}translateY(100%)`;
+      }
+
       teaserEl.addEventListener('touchstart', e => {
-        tracking = true; moved = false;
+        if (e.target.closest('.modal__next-teaser__all')) return;
+        dragging = true; moved = false; curPct = 100;
         startY = e.touches[0].clientY;
+        peekModal.style.transition = 'none';
       }, { passive: true });
+
       teaserEl.addEventListener('touchmove', e => {
-        if (!tracking) return;
-        if (Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
+        if (!dragging) return;
+        const dy = startY - e.touches[0].clientY; // positive = dragging up
+        if (Math.abs(dy) > 6) moved = true;
+        curPct = Math.max(0, Math.min(100, 100 - (dy / window.innerHeight * 100)));
+        peekModal.style.transform = `${tx()}translateY(${curPct}%)`;
+        if (curPct <= 0) { dragging = false; commit(); }
       }, { passive: true });
-      teaserEl.addEventListener('touchend', e => {
-        if (!tracking) return;
-        tracking = false;
+
+      teaserEl.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
         if (!moved) { commit(); return; }
-        const dy = startY - e.changedTouches[0].clientY;
-        const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight <= 2;
-        if (dy > 24 && atBottom) commit();
-      }, { passive: true });
+        if (curPct < 50) commit(); else snapBack();
+      });
+
       teaserEl.addEventListener('click', commit);
     }
 
