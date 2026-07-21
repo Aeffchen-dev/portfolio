@@ -674,7 +674,7 @@
     .modal-next-cta { display:none; }
     @media (max-width:1023px) {
       .modal-next-cta {
-        display:flex; flex-direction:column;
+        display:flex; flex-direction:column; cursor:pointer;
         margin:95px 0 80px; padding:0 8px;
       }
       .modal-next-cta__texts { margin-bottom:32px; }
@@ -2738,6 +2738,9 @@ quoteText.textContent = '“' + q.text + '”';
       });
 
       revealEl.addEventListener('click', commit);
+
+      const ctaEl = scrollEl.querySelector('.modal-next-cta');
+      if (ctaEl) ctaEl.addEventListener('click', commit);
     }
 
     function setupPeek(key) {
