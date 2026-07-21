@@ -628,37 +628,6 @@
     .modal.is-peek .modal__peek-bar { display:block; }
     .modal.is-peek .modal__scroll { margin-top:0; overflow:hidden; touch-action:none; }
 
-    /* === MODAL FOOTER (mobile/tablet) ===
-       Boxed like the home footer tile, so it stays legible regardless of
-       the current project's background color and reads as a matching
-       card at the end of a project's content. */
-    .modal__footer { display:none; }
-    @media (max-width:1023px) {
-      .modal__footer {
-        display:block; margin:32px 0 0; padding:20px 16px;
-        border-radius:12px; background:#141414; color:#fff;
-      }
-      .modal__footer__row {
-        display:flex; justify-content:space-between; align-items:flex-start;
-        flex-wrap:wrap; gap:16px;
-      }
-      .modal__footer__col { display:flex; flex-direction:column; gap:4px; }
-      .modal__footer__col a, .modal__footer__col span {
-        font-size:12px; font-weight:500; letter-spacing:0.48px; color:#989898;
-        text-transform:uppercase; text-decoration:none;
-      }
-      .modal__footer__col a { transition:opacity .4s ease-in-out; }
-      .modal__footer__col a:hover { opacity:.5; }
-      .modal__footer__social-link,
-      .modal__footer__location,
-      .modal__footer__email { text-transform:none !important; letter-spacing:0 !important; color:#fff !important; }
-      .modal__footer__legal { display:flex; gap:16px; margin-top:16px; }
-      .modal__footer__legal a {
-        font-size:11px; font-weight:500; letter-spacing:0.48px; color:#989898;
-        text-transform:uppercase; text-decoration:none; transition:opacity .4s ease-in-out;
-      }
-      .modal__footer__legal a:hover { opacity:.5; }
-    }
 
     /* === PAGE HEADER (modal) === */
     .page-header { }
@@ -2664,24 +2633,6 @@ quoteText.textContent = '“' + q.text + '”';
             `</div>` +
           `</div>` : '') +
         `</div>`;
-      const footerHTML =
-        `<div class="modal__footer">` +
-          `<div class="modal__footer__row">` +
-            `<div class="modal__footer__col">` +
-              `<span>Social</span>` +
-              `<a href="https://www.linkedin.com/in/jana-gramlich-4646991a2/" target="_blank" rel="noopener" class="modal__footer__social-link">LinkedIn</a>` +
-              `<a href="https://github.com/Aeffchen-dev?tab=repositories" target="_blank" rel="noopener" class="modal__footer__social-link">GitHub</a>` +
-            `</div>` +
-            `<div class="modal__footer__col">` +
-              `<span class="modal__footer__location">Located in Berlin</span>` +
-              `<a href="mailto:hello@janagramlich.com" class="modal__footer__email">hello@janagramlich.com</a>` +
-            `</div>` +
-          `</div>` +
-          `<div class="modal__footer__legal">` +
-            `<a href="imprint.html">Imprint</a>` +
-            `<a href="privacy-policy.html">Privacy</a>` +
-          `</div>` +
-        `</div>`;
       const scrollEl = modalEl.querySelector('.modal__scroll');
       scrollEl.style.background = bg;
       scrollEl.style.color = p.textColor || '';
@@ -2706,8 +2657,7 @@ quoteText.textContent = '“' + q.text + '”';
           `<nav class="project-links">${buildLinkCards(externalLinks)}</nav>` +
         `</div>` +
         `<div class="modal__end-sentinel" aria-hidden="true"></div>` +
-        pageEndHTML +
-        footerHTML;
+        pageEndHTML;
       if (p.kpis && p.kpis.length) {
         scrollEl.querySelector('.blocks__grid').insertAdjacentHTML('beforeend', buildStatsHtml(p.kpis));
       }
