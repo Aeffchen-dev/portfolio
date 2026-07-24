@@ -2677,6 +2677,10 @@ quoteText.textContent = '“' + q.text + '”';
       touchTargets.forEach(target => {
         target.addEventListener('touchstart', e => {
           if (navigating) return;
+          // Snap the scroll to the bottom immediately so the reveal image is
+          // visible and grows in view from the first touch, even when the
+          // drag starts higher up on the "Next up" text.
+          scrollEl.scrollTop = scrollEl.scrollHeight;
           if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
           dragStartY = e.touches[0].clientY;
           dragStartH = revealEl.getBoundingClientRect().height;
@@ -2692,6 +2696,11 @@ quoteText.textContent = '“' + q.text + '”';
           const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
           revealEl.style.height = Math.round(newH) + 'px';
           applyProgress(newH);
+          // Keep the panel's bottom pinned to the bottom of the scroll area as
+          // it grows, so it visibly rises/fills upward toward the top in sync
+          // with the drag — identical whether the gesture started on the
+          // image or higher up on the CTA text.
+          scrollEl.scrollTop = scrollEl.scrollHeight;
         }, { passive: true });
 
         target.addEventListener('touchend', () => {
