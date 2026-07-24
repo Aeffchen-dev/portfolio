@@ -890,10 +890,9 @@
     .modal-link-card {
       display:flex; align-items:center; gap:12px;
       padding:8px 16px 8px 8px; background:var(--link-card-bg, rgba(0,0,0,0.1)); border:none; border-radius:8px;
-      opacity:0.95;
-      text-decoration:none; color:inherit; transition:filter .3s ease-in-out;
+      box-shadow:none; opacity:0.95;
+      text-decoration:none; color:inherit;
     }
-    @media (hover:hover) { .modal-link-card:hover { filter:brightness(0.92); } }
     .modal-link-card__thumb {
       width:44px; height:44px; flex-shrink:0;
       border-radius:4px; overflow:hidden;
@@ -1151,9 +1150,9 @@
     }
     .loading-phrase.is-in { opacity:1; }
     .loading-counter {
-      position:absolute; display:flex; align-items:flex-start;
+      position:absolute; top:0; left:0;
       pointer-events:none;
-      transition:left 1.4s cubic-bezier(.16,1,.3,1), top 1.4s cubic-bezier(.16,1,.3,1), opacity 0.4s;
+      transition:transform 1.4s cubic-bezier(.16,1,.3,1), opacity 0.4s;
     }
     .loading-cur-tag {
       display:block;
@@ -1162,7 +1161,7 @@
       font-size:10px; font-weight:700; letter-spacing:0;
       padding:2px 6px; border-radius:0 4px 4px 4px;
       white-space:nowrap; line-height:1.5;
-      margin-top:-1px; margin-left:9px;
+      margin-top:-1px; margin-left:8px;
     }
 
     /* === NEXT PROJECT CURSOR === */
@@ -1256,8 +1255,7 @@
     function moveCursor() {
       var p = randomPointAroundPhrase();
       if (!p) return;
-      counterEl.style.left = p.x + 'px';
-      counterEl.style.top  = p.y + 'px';
+      counterEl.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)';
       moveTimer = setTimeout(moveCursor, 1200 + Math.random() * 800);
     }
     // Start at a random position around the phrase, then begin wandering
@@ -1265,7 +1263,7 @@
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         var p = randomPointAroundPhrase();
-        if (p) { counterEl.style.left = p.x + 'px'; counterEl.style.top = p.y + 'px'; }
+        if (p) { counterEl.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)'; }
         counterEl.style.transition = '';
         setTimeout(moveCursor, 1000);
       });
@@ -2703,44 +2701,46 @@ quoteText.textContent = '“' + q.text + '”';
         if (_completePeek) _completePeek();
       }
 
-      revealEl.addEventListener('touchstart', e => {
-        if (navigating) return;
-        if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
-        dragStartY = e.touches[0].clientY;
-        dragStartH = revealEl.getBoundingClientRect().height;
-        dragging = true;
-        revealEl.style.transition = 'none';
-      }, { passive: true });
-
-      revealEl.addEventListener('touchmove', e => {
-        if (!dragging || navigating) return;
-        const dy = dragStartY - e.touches[0].clientY;
-        const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
-        revealEl.style.height = Math.round(newH) + 'px';
-        applyProgress(newH);
-      }, { passive: true });
-
-      revealEl.addEventListener('touchend', () => {
-        if (!dragging) return;
-        dragging = false;
-        const h = revealEl.getBoundingClientRect().height;
-        if (h >= THRESHOLD && !navigating) {
-          revealEl.style.transition = `height 0.42s ${EASE}`;
-          revealEl.style.height = modalH + 'px';
-          applyProgress(modalH);
-          setTimeout(commit, 420);
-        } else {
-          revealEl.style.transition = `height 0.42s ${EASE}`;
-          revealEl.style.height = naturalH + 'px';
-          applyProgress(naturalH);
-          setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
-        }
-      });
-
-      revealEl.addEventListener('click', commit);
-
       const ctaEl = scrollEl.querySelector('.modal-next-cta');
-      if (ctaEl) ctaEl.addEventListener('click', commit);
+      const touchTargets = [revealEl, ctaEl].filter(Boolean);
+
+      touchTargets.forEach(target => {
+        target.addEventListener('touchstart', e => {
+          if (navigating) return;
+          if (!naturalH) naturalH = revealEl.getBoundingClientRect().height;
+          dragStartY = e.touches[0].clientY;
+          dragStartH = revealEl.getBoundingClientRect().height;
+          dragging = true;
+          revealEl.style.transition = 'none';
+        }, { passive: true });
+
+        target.addEventListener('touchmove', e => {
+          if (!dragging || navigating) return;
+          const dy = dragStartY - e.touches[0].clientY;
+          const newH = Math.max(naturalH * 0.85, dragStartH + dy * (dy >= 0 ? 1 : 0.25));
+          revealEl.style.height = Math.round(newH) + 'px';
+          applyProgress(newH);
+        }, { passive: true });
+
+        target.addEventListener('touchend', () => {
+          if (!dragging) return;
+          dragging = false;
+          const h = revealEl.getBoundingClientRect().height;
+          if (h >= THRESHOLD && !navigating) {
+            revealEl.style.transition = `height 0.42s ${EASE}`;
+            revealEl.style.height = modalH + 'px';
+            applyProgress(modalH);
+            setTimeout(commit, 420);
+          } else {
+            revealEl.style.transition = `height 0.42s ${EASE}`;
+            revealEl.style.height = naturalH + 'px';
+            applyProgress(naturalH);
+            setTimeout(() => { revealEl.style.transition = ''; revealEl.style.height = ''; }, 420);
+          }
+        });
+
+        target.addEventListener('click', commit);
+      });
     }
 
     function setupPeek(key) {
