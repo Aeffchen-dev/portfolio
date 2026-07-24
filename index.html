@@ -948,13 +948,12 @@
       .section-label      { order:2; margin-top:0; padding-left:8px; padding-right:8px; }
       .work-list          { display:contents; }
       .exp-quotes-row     { order:10; display:flex; flex-direction:column; }
-      .cv-card--archive   { display:block; width:calc(100% - 16px); height:410px; aspect-ratio:unset; margin:8px 8px 0; }
-      .cv-card--archive__label { left:0; }
-      .cv-card--archive__arrow { right:0; }
+      .cv-card--archive   { display:block; height:410px; aspect-ratio:unset; margin-top:8px; }
       .about-quotes-row   { display:flex; flex-direction:column; flex:1; }
       .cv-card--quotes    { flex:1; }
-      /* cards fill viewport to 8px from bottom */
-      .cv-section         { min-height:calc(100dvh - 8px); width:100%; margin-left:0; margin-right:0; }
+      /* cards fill viewport to 8px from bottom; full-bleed like the archive
+         card — each card's own internal padding insets its content */
+      .cv-section         { min-height:calc(100dvh - 8px); width:100%; margin-left:0; margin-right:0; padding-left:0; padding-right:0; }
       .articles-section   { order:11; margin-top:0; margin-bottom:48px; }
       .articles-slider    { margin-left:0; padding-right:0; }
       .cta-footer-box     { order:12; display:flex; flex-direction:column; }
