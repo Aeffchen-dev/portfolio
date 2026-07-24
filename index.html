@@ -165,8 +165,9 @@
     }
     .nav__cursor-tag span {
       background:#acb0ff; color:#171717;
+      font-family:'HW Left Bold', sans-serif;
       font-size:10px; font-weight:700; letter-spacing:0;
-      padding:2px 6px; border-radius:4px;
+      padding:2px 6px; border-radius:0 4px 4px 4px;
       white-space:nowrap; line-height:1.5;
     }
     .nav__link {
@@ -2979,21 +2980,6 @@ quoteText.textContent = '“' + q.text + '”';
       }
       slider.addEventListener('scroll', updateFades, { passive: true });
       window.addEventListener('resize', updateFades);
-      // Desktop mouse wheels only scroll vertically by default; convert
-      // vertical wheel input into horizontal scroll so the slider is
-      // actually usable without a trackpad or shift+wheel.
-      slider.addEventListener('wheel', e => {
-        if (window.innerWidth < 1024) return;
-        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-        // scroll-snap-align rests the slider ~8px in (matching its own
-        // left padding) rather than exactly 0, so use a tolerance that
-        // still counts that resting position as "at the start".
-        const atStart = slider.scrollLeft <= 12;
-        const atEnd   = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 12;
-        if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
-        e.preventDefault();
-        slider.scrollLeft += e.deltaY;
-      }, { passive: false });
       updateFades();
       // Re-check after articles load (scrollWidth changes)
       const _origRender = window.__articlesRendered;

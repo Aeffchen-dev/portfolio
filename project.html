@@ -662,50 +662,35 @@
     if (bgVid && section.dataset.video) bgVid.src = section.dataset.video;
     const vh   = window.innerHeight;
     const MIN_H = Math.round(vh * 0.38);
-    const LERP  = 0.16; // trailing ease factor — higher = snappier, lower = more fluid
 
     // Set initial height
     section.style.height = MIN_H + 'px';
-    let currentH = MIN_H;
 
     // Store section's top offset once (before any height changes affect layout)
     let sectionTop = Math.round(section.getBoundingClientRect().top + window.scrollY);
 
-    let targetProgress = 0;
     let raf = 0;
     let navigating = false;
 
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    function computeTargetProgress() {
+    function update() {
+      raf = 0;
       const scrollY = window.scrollY;
       // progress 0 → 1 as section scrolls from entering viewport to top of viewport
-      return Math.max(0, Math.min(1, (scrollY - (sectionTop - vh)) / vh));
-    }
-
-    function tick() {
-      const targetH = MIN_H + (vh - MIN_H) * targetProgress;
-      currentH = lerp(currentH, targetH, LERP);
-      const settled = Math.abs(targetH - currentH) < 0.5;
-      if (settled) currentH = targetH;
-
-      section.style.height = Math.round(currentH) + 'px';
-      const visualProgress = (currentH - MIN_H) / (vh - MIN_H);
-      const imgOpacity = 0.2 + 0.8 * visualProgress;
+      const progress = Math.max(0, Math.min(1, (scrollY - (sectionTop - vh)) / vh));
+      const h = MIN_H + (vh - MIN_H) * progress;
+      section.style.height = Math.round(h) + 'px';
+      const imgOpacity = 0.2 + 0.8 * progress;
       if (bgImg) bgImg.style.opacity = imgOpacity;
       if (bgVid) bgVid.style.opacity = imgOpacity;
 
-      if (visualProgress >= 0.98 && !navigating && href && href !== '#') {
+      if (progress >= 0.98 && !navigating && href && href !== '#') {
         navigating = true;
         setTimeout(() => { window.location.href = href; }, 150);
       }
-
-      raf = settled ? 0 : requestAnimationFrame(tick);
     }
 
     window.addEventListener('scroll', () => {
-      targetProgress = computeTargetProgress();
-      if (!raf) raf = requestAnimationFrame(tick);
+      if (!raf) raf = requestAnimationFrame(update);
     }, { passive: true });
 
     window.addEventListener('resize', () => {
@@ -716,8 +701,7 @@
       if (href && href !== '#') window.location.href = href;
     });
 
-    targetProgress = computeTargetProgress();
-    tick();
+    update();
   })();
 </script>
 
