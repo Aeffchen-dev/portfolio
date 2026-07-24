@@ -33,7 +33,7 @@
     }
     /* === RESET === */
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
+    html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; background:#000; }
     body {
       font-family:'DM Sans', sans-serif;
       font-optical-sizing:auto;
@@ -563,7 +563,7 @@
       bottom:0; left:0;
       width:100vw; max-height:95dvh;
       z-index:200;
-      overflow:hidden; background:#000; border-radius:16px 16px 0 0;
+      overflow:hidden; border-radius:16px 16px 0 0;
       transform:translateY(100%);
       transition:transform .5s cubic-bezier(.4,0,.2,1);
       pointer-events:none;
@@ -691,7 +691,7 @@
     }
     .modal-next-reveal {
       display:block; position:relative; overflow:hidden; cursor:pointer;
-      background:#1a1a1a; height:33vh; min-height:33vh;
+      height:33vh; min-height:33vh;
       margin:0 -8px -24px; border-radius:16px 16px 0 0;
       box-shadow:0 -4px 10px rgba(0,0,0,0.05);
     }
@@ -1097,7 +1097,7 @@
       .articles-slider    { padding-left:8px; padding-bottom:8px; margin-top:0; }
       .cta-footer-box     { grid-column:1/7; display:flex; flex-direction:column; margin-bottom:16px; }
       .cv-awards-grid { column-gap:16px; }
-      .cv-card--archive { display:block; flex:1; min-height:200px; aspect-ratio:unset; margin-top:8px; }
+      .cv-card--archive { display:block; aspect-ratio:1/1; flex-shrink:0; margin-top:8px; }
       .work-list .work-item:nth-child(4),
       .work-list .work-item:nth-child(3) { margin-bottom:0; }
       .cta-section        { margin-top:50px; justify-content:center; align-items:center; padding:0; }
@@ -1135,7 +1135,8 @@
       font-family:'DM Sans', sans-serif;
       font-size:clamp(14px,1.6vw,20px); font-weight:400; line-height:1.2;
       color:#fff; text-align:center;
-      max-width:min(480px,80vw);
+      max-width:min(210px,52vw);
+      text-wrap:balance;
       opacity:0; transition:opacity 0.6s ease;
     }
     .loading-phrase.is-in { opacity:1; }
@@ -2595,7 +2596,7 @@ quoteText.textContent = '“' + q.text + '”';
               `<span class="modal-next-cta__dot"></span>All Projects` +
             `</button>` +
           `</div>` : '') +
-          (nextP ? `<div class="modal-next-reveal" style="background:${bg}">` +
+          (nextP ? `<div class="modal-next-reveal">` +
             `<div class="modal-next-reveal__bg">` +
               (nextP.hero ? `<img src="${nextP.hero}" alt="" loading="lazy">` :
                nextP.heroVideo ? `<video src="${nextP.heroVideo}" autoplay muted loop playsinline></video>` : '') +
@@ -2969,6 +2970,21 @@ quoteText.textContent = '“' + q.text + '”';
       }
       slider.addEventListener('scroll', updateFades, { passive: true });
       window.addEventListener('resize', updateFades);
+      // Desktop mouse wheels only scroll vertically by default; convert
+      // vertical wheel input into horizontal scroll so the slider is
+      // actually usable without a trackpad or shift+wheel.
+      slider.addEventListener('wheel', e => {
+        if (window.innerWidth < 1024) return;
+        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+        // scroll-snap-align rests the slider ~8px in (matching its own
+        // left padding) rather than exactly 0, so use a tolerance that
+        // still counts that resting position as "at the start".
+        const atStart = slider.scrollLeft <= 12;
+        const atEnd   = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 12;
+        if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
+        e.preventDefault();
+        slider.scrollLeft += e.deltaY;
+      }, { passive: false });
       updateFades();
       // Re-check after articles load (scrollWidth changes)
       const _origRender = window.__articlesRendered;
