@@ -3,6 +3,7 @@
 // images/parallax/ change, so the archive views pick up new images automatically.
 window.PARALLAX_IMAGES = [
   "V2.2.png",
+  "iPhone 13 & 14 - 6.png",
   "p01.png",
   "p02.png",
   "p03.png",
