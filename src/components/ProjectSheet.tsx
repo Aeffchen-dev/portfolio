@@ -49,7 +49,7 @@ export function ProjectSheet({ project, onClose }: Props) {
           top: 0, left: 0, right: 0,
           height: "5vh",
           minHeight: 40,
-          background: "#000",
+          background: "#1a1a1a",
           color: "#fff",
           display: "flex",
           alignItems: "center",
@@ -93,7 +93,7 @@ export function ProjectSheet({ project, onClose }: Props) {
             overflowY: "auto",
             overscrollBehavior: "contain",
             borderRadius: "16px 16px 0 0",
-            background: "#0d0d0d",
+            background: "#1a1a1a",
             paddingLeft: 8,
             paddingRight: 8,
             paddingBottom: 80,
@@ -146,6 +146,7 @@ export function ProjectSheet({ project, onClose }: Props) {
                     color: "#666666",
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
+                    marginTop: 2,
                   }}
                 >
                   {project.client}
@@ -159,6 +160,7 @@ export function ProjectSheet({ project, onClose }: Props) {
                     letterSpacing: "-0.03em",
                     lineHeight: 1.05,
                     maxWidth: "16ch",
+                    marginTop: 2,
                   }}
                 >
                   {project.title}
