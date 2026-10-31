@@ -1360,20 +1360,6 @@
           </div>
         </div>
       </article>
-      <article class="work-item" data-project="brand-consistency">
-        <div class="work-item__image" data-client="About You">
-          <img src="assets/brand-consistency/00-hero.jpg" alt="About You Brand Consistency" loading="lazy">
-          <video autoplay muted loop playsinline style="display:none"></video>
-        </div>
-        <div class="work-item__body">
-          <span class="work-item__year">2025–2026</span>
-          <p class="work-item__client">About You</p>
-          <p class="work-item__title">Aligning the About You brand across every customer touchpoint. One brand font, a simpler color system and a campaign framework for marketing and product teams.</p>
-          <div class="work-item__footer">
-            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
-          </div>
-        </div>
-      </article>
       <article class="work-item" data-project="dmexco">
         <div class="work-item__image" data-client="DMEXCO">
           <img src="images/parallax/p03.png" alt="DMEXCO" loading="lazy">
@@ -2291,34 +2277,6 @@ quoteText.textContent = '“' + q.text + '”';
         myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
         links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'}],
       },
-      'brand-consistency': {
-        bg:'#F5F5F5',
-        hero: 'assets/brand-consistency/00-hero.jpg', client:'About You', year:'2025–2026',
-        name:'Brand Consistency',
-        title:'About You Brand Consistency',
-        text:"<p>About You had grown into many touchpoints, each with its own look: different fonts in marketing and in the shop, a color for every use case, and campaigns that did not feel like one brand. The goal: one coherent visual identity along the whole customer journey, with better quality from the work we already do, not more budget.</p><p>I audited the status quo, benchmarked 13 brands and led the User Journey Analysis: 46 touchpoints mapped and scored, the 11 most effective selected for the rollout. The result is one brand font, one personalizable logo, a calm shop with a maximum of three campaign colors, and a campaign framework for every channel.</p>",
-        media:(() => {
-          const img = f => new URL('assets/brand-consistency/' + f, location.href).href;
-          return [
-            img('01-analysis-touchpoints-before-problems.jpg'), img('02-analysis-findings.jpg'), img('03-analysis-positioning.jpg'), img('04-analysis-benchmark.jpg'),
-            {__type:'numbers', items:[{unit:'13', label:'Brands benchmarked'},{unit:'46', label:'Touchpoints mapped'}]},
-            img('05-touchpoints-scoring.jpg'), img('06-touchpoints-selection.jpg'),
-            img('07-typography-before-problems.jpg'), img('08-typography-in-progress.jpg'), img('09-typography-brand-guide.jpg'), img('10-typography-example-abc-whyte.jpg'), img('11-typography-example-font-switch.jpg'), img('12-typography-example-poster.jpg'), img('13-typography-example-screens.jpg'),
-            {__type:'numbers', items:[{unit:'4+ → 1', label:'Brand fonts'},{unit:'2 → 1', label:'Logos'}]},
-            img('14-color-before-problems.jpg'), img('15-color-in-progress.jpg'), img('16-color-brand-guide.jpg'), img('17-color-example-palette.jpg'), img('18-color-example-banner.jpg'),
-            {__type:'numbers', items:[{unit:'3', label:'Campaign colors max.'},{unit:'9', label:'Color scales'}]},
-            img('19-icons-before-problems.jpg'), img('20-icons-brand-guide.jpg'), img('21-icons-example-set.jpg'), img('22-icons-example-tab-bar.jpg'),
-            {__type:'numbers', items:[{unit:'250+', label:'Icons unified'},{unit:'24', label:'px icon grid'}]},
-            img('23-coupons-before-problems.jpg'), img('24-coupons-brand-guide.jpg'), img('25-coupons-example-redesign.jpg'), img('26-coupons-example-app-creatives.jpg'),
-            img('27-campaigns-before-problems.jpg'), img('28-campaigns-brand-guide.jpg'), img('29-campaigns-example-types.jpg'),
-            {__type:'numbers', items:[{unit:'4', label:'Campaign types'},{unit:'11', label:'Touchpoints in rollout'}]},
-            img('30-example-category-tiles.jpg'), img('31-app-before-after.jpg'), img('32-ui-elements-brand-guide.jpg'), img('33-app-screens.jpg'),
-          ];
-        })(),
-        facts:[{l:'Year',v:'2025–2026'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
-        myRole:'I co-led the Brand Visuality workstream and led the User Journey Analysis. I audited the look and feel of every customer touchpoint, defined the new typography and logo system, and turned the decisions into a brand style guide and a campaign framework that marketing and product teams now use.',
-        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'}],
-      },
       'douglas-hybrid': {
         bg:'#EDD3DE',
         hero: BASE+'Dgls-hybrid-Header.jpg', client:'Douglas', year:'2021–2022',
@@ -2405,7 +2363,7 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     // === NEXT PROJECT SETUP ===
-    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','brand-consistency','douglas-hybrid','zalando','dmexco','the-makery'];
+    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
     const PROJECT_OVERRIDES = {
       'the-makery': { textColor: '#000000' },
     };
