@@ -26,28 +26,41 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 >
 > The result is one brand font, ABC Whyte, used across all touchpoints; a personalizable logo; a simpler color system with defined campaign, coupon, loyalty, AI and highlight colors; accessibility rules for every color pairing; and a campaign framework with ready-made layouts for promotion, creative, coins and coupon campaigns.
 
-## `section` (flexible content, in order)
+## `section` (in order)
 
-All images are composed case-study assets (2554×1437 JPG): bento tiles on `#F5F5F5`, device frames, browser bar, minimal labels. Built from the original Figma files at 2–3× (`download_assets`), not 1:1 slides.
+Composed assets, 2554×1437 JPG, set in the portfolio type system: HW Left Bold for headlines and numbers, uppercase grey labels, DM Sans regular for body text. Each element follows the same order: before → in progress → after → brand guide.
 
-| # | Layout | Content |
-|---|---|---|
-| hero | image | `00-hero.jpg`: new app screens in phone frames and campaign creatives |
-| 1 | image | `01-before-app-and-web.jpg`: before, app and mobile web in phone frames, old marketing |
-| 2 | image | `02-before-web-and-campaigns.jpg`: before, desktop shop in a browser frame, old campaign and social |
-| 3 | image | `03-positioning.jpg` |
-| 4 | image | `04-benchmark.jpg` |
-| 5 | kpi-numbers | `13` Brands benchmarked / `46` Touchpoints mapped |
-| 6 | image | `05-touchpoint-map.jpg` |
-| 7 | image | `06-touchpoint-scoring.jpg` |
-| 8 | image | `07-app-before-after.jpg` |
-| 9 | image | `08-campaigns-before-after.jpg` |
-| 10 | kpi-numbers | `4+ → 1` Brand fonts / `3` Campaign colors max. |
-| 11 | image | `09-typography-logo.jpg` |
-| 12 | image | `10-colors.jpg` |
-| 13 | image | `11-ui-elements.jpg` |
-| 14 | image | `12-campaign-framework.jpg` |
-| 15 | image | `13-app-screens.jpg` |
+| File | Content |
+|---|---|
+| `00-hero.jpg` | Hero |
+| `01-analysis-before-app-web.jpg` | Initial analysis: before, app, mobile web, marketing |
+| `02-analysis-before-web-campaigns.jpg` | Initial analysis: before, desktop, campaign, social |
+| `03-analysis-findings.jpg` | Initial analysis: 6 areas to align |
+| `04-analysis-positioning.jpg` | Positioning map |
+| `05-analysis-benchmark.jpg` | Benchmark: 13 brands, 5 learnings |
+| kpi-numbers | Numbers: 13 brands benchmarked / 46 touchpoints mapped |
+| `06-touchpoints-in-progress-scoring.jpg` | Touchpoints: in progress (scoring) |
+| `07-touchpoints-after-selection.jpg` | Touchpoints: after (11 selected) |
+| `08-color-before.jpg` | Color: before |
+| `09-color-in-progress.jpg` | Color: in progress (lime and pink routes) |
+| `10-color-after.jpg` | Color: after |
+| `11-color-brand-guide.jpg` | Color: brand guide rules |
+| kpi-numbers | Numbers: 3 campaign colors max. / 9 color scales |
+| `12-typography-before.jpg` | Typography: before |
+| `13-typography-in-progress.jpg` | Typography: in progress (typesetting iterations) |
+| `14-typography-after.jpg` | Typography: after |
+| `15-typography-brand-guide.jpg` | Typography: brand guide rules |
+| `16-icons-before.jpg` | Icons: before |
+| `17-icons-after.jpg` | Icons: after (250+) |
+| `18-icons-brand-guide.jpg` | Icons: brand guide (grid, stroke, shape, style) |
+| kpi-numbers | Numbers: 4+ → 1 brand fonts / 250+ icons unified |
+| `19-app-before-after.jpg` | App before → after |
+| `20-campaigns-before-after.jpg` | Campaigns before → after |
+| `21-ui-elements-brand-guide.jpg` | Buttons and tags (brand guide) |
+| `22-campaign-framework.jpg` | Campaign framework |
+| `23-app-screens.jpg` | App screens |
+
+The initial analysis is rebuilt from the Figma status-quo files and the deck text. Slide images from the Google Slides deck (pages 1–126) are not included because the deck export times out.
 
 ## Left out on purpose (do not publish)
 
