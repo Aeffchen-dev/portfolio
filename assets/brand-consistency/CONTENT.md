@@ -38,27 +38,29 @@ Composed assets, 2554×1437 JPG, set in the About You type system per brand guid
 | `03-analysis-findings.jpg` | Initial analysis: 6 areas to align |
 | `04-analysis-positioning.jpg` | Positioning map |
 | `05-analysis-benchmark.jpg` | Benchmark: 13 brands, 5 learnings |
-| kpi-numbers | Numbers: 13 brands benchmarked / 46 touchpoints mapped |
-| `06-touchpoints-in-progress-scoring.jpg` | Touchpoints: in progress (scoring) |
-| `07-touchpoints-after-selection.jpg` | Touchpoints: after (11 selected) |
+| kpi-numbers | 13 brands benchmarked / 46 touchpoints mapped |
+| `06-touchpoints-in-progress-scoring.jpg` | Touchpoints: in progress |
+| `07-touchpoints-after-selection.jpg` | Touchpoints: after |
 | `08-color-before.jpg` | Color: before |
-| `09-color-in-progress.jpg` | Color: in progress (lime and pink routes) |
+| `09-color-in-progress.jpg` | Color: in progress |
 | `10-color-after.jpg` | Color: after |
-| `11-color-brand-guide.jpg` | Color: brand guide rules |
-| kpi-numbers | Numbers: 3 campaign colors max. / 9 color scales |
-| `12-typography-before.jpg` | Typography: before |
-| `13-typography-in-progress.jpg` | Typography: in progress (typesetting iterations) |
-| `14-typography-after.jpg` | Typography: after |
-| `15-typography-brand-guide.jpg` | Typography: brand guide rules |
-| `16-icons-before.jpg` | Icons: before |
-| `17-icons-after.jpg` | Icons: after (250+) |
-| `18-icons-brand-guide.jpg` | Icons: brand guide (grid, stroke, shape, style) |
-| kpi-numbers | Numbers: 4+ → 1 brand fonts / 250+ icons unified |
-| `19-app-before-after.jpg` | App before → after |
-| `20-campaigns-before-after.jpg` | Campaigns before → after |
-| `21-ui-elements-brand-guide.jpg` | Buttons and tags (brand guide) |
-| `22-campaign-framework.jpg` | Campaign framework |
-| `23-app-screens.jpg` | App screens |
+| `11-color-brand-guide.jpg` | Color: brand guide |
+| kpi-numbers | 3 campaign colors max. / 9 color scales |
+| `12-typography-before-font-mix.jpg` | Typography: before, real font mix |
+| `13-typography-in-progress.jpg` | Typography: in progress |
+| `14-typography-after-abc-whyte.jpg` | Typography: after, ABC Whyte specimen |
+| `15-typography-brand-guide.jpg` | Typography: brand guide |
+| `16-poster-before-after.jpg` | Poster before → after |
+| `17-screens-before-after.jpg` | Screens before → after |
+| kpi-numbers | 4+ → 1 brand fonts / 250+ icons unified |
+| `18-icons-before.jpg` | Icons: before |
+| `19-icons-after.jpg` | Icons: after |
+| `20-icons-brand-guide.jpg` | Icons: brand guide |
+| `21-campaigns-before.jpg` | Campaigns: before mosaic |
+| `22-campaign-types-now.jpg` | Campaign types now: promotion, creative, coins, coupons |
+| `23-app-before-after.jpg` | App before → after |
+| `24-ui-elements-brand-guide.jpg` | Buttons and tags |
+| `25-app-screens.jpg` | App screens |
 
 The initial analysis is rebuilt from the Figma status-quo files and the deck text. Slide images from the Google Slides deck (pages 1–126) are not included because the deck export times out.
 
