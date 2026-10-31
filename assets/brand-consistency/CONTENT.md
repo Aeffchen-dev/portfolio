@@ -28,7 +28,7 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 ## `section` (in order)
 
-Composed assets, 2554×1437 JPG, set in the About You type system per brand guide: headlines bold and mixed case without letter-spacing, toplines and labels uppercase with letter-spacing, body regular. Font: Poppins (the guide's official fallback, ABC Whyte files not available). Swap to ABC Whyte when the font files are available. Each element follows the same order: before → in progress → after → brand guide.
+Composed assets, 2554×1437 JPG, set in the About You type system per brand guide: headlines bold and mixed case without letter-spacing, toplines and labels uppercase with letter-spacing, body regular. Font: ABC Whyte (font files used locally for rendering only, not committed because the font is licensed). Each element follows the same order: before → in progress → after → brand guide.
 
 | File | Content |
 |---|---|
