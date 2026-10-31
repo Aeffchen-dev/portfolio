@@ -30,40 +30,44 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 Composed assets, 2554×1437 JPG, set in the About You type system per brand guide: headlines bold and mixed case without letter-spacing, toplines and labels uppercase with letter-spacing, body regular. Font: ABC Whyte (font files used locally for rendering only, not committed because the font is licensed). Each element follows the same order: before → in progress → after → brand guide.
 
-| File | Content |
-|---|---|
-| `00-hero.jpg` | Hero |
-| `01-analysis-before-app-web.jpg` | Initial analysis: before, app, mobile web, marketing |
-| `02-analysis-before-web-campaigns.jpg` | Initial analysis: before, desktop, campaign, social |
-| `03-analysis-findings.jpg` | Initial analysis: 6 areas to align |
-| `04-analysis-positioning.jpg` | Positioning map |
-| `05-analysis-benchmark.jpg` | Benchmark: 13 brands, 5 learnings |
-| kpi-numbers | 13 brands benchmarked / 46 touchpoints mapped |
-| `06-touchpoints-in-progress-scoring.jpg` | Touchpoints: in progress |
-| `07-touchpoints-after-selection.jpg` | Touchpoints: after |
-| `08-color-before.jpg` | Color: before |
-| `09-color-in-progress.jpg` | Color: in progress |
-| `10-color-after.jpg` | Color: after |
-| `11-color-brand-guide.jpg` | Color: brand guide |
-| kpi-numbers | 3 campaign colors max. / 9 color scales |
-| `12-typography-before-font-mix.jpg` | Typography: before, real font mix |
-| `13-typography-in-progress.jpg` | Typography: in progress |
-| `14-typography-after-abc-whyte.jpg` | Typography: after, ABC Whyte specimen |
-| `15-typography-brand-guide.jpg` | Typography: brand guide |
-| `16-poster-before-after.jpg` | Poster before → after |
-| `17-screens-before-after.jpg` | Screens before → after |
-| kpi-numbers | 4+ → 1 brand fonts / 250+ icons unified |
-| `18-icons-before.jpg` | Icons: before |
-| `19-icons-after.jpg` | Icons: after |
-| `20-icons-brand-guide.jpg` | Icons: brand guide |
-| `21-components-font-icon-switch.jpg` | Components: font switch, icon switch (before → after) |
-| `22-components-color-coupon.jpg` | Components: color switch, coupon redesign |
-| `23-components-category-tiles.jpg` | Components: category tiles |
-| `24-campaigns-before.jpg` | Campaigns: before mosaic |
-| `25-campaign-types-now.jpg` | Campaign types now: promotion, creative, coins, coupons |
-| `26-app-before-after.jpg` | App before → after |
-| `27-ui-elements-brand-guide.jpg` | Buttons and tags |
-| `28-app-screens.jpg` | App screens |
+Structure per element: before + problems → in progress (where available) → brand guide → examples / components.
+
+| File |
+|---|
+| `00-hero.jpg` |
+| `01-analysis-touchpoints-before-problems.jpg` |
+| `02-analysis-findings.jpg` |
+| `03-analysis-positioning.jpg` |
+| `04-analysis-benchmark.jpg` |
+| `05-touchpoints-scoring.jpg` |
+| `06-touchpoints-selection.jpg` |
+| `07-typography-before-problems.jpg` |
+| `08-typography-in-progress.jpg` |
+| `09-typography-brand-guide.jpg` |
+| `10-typography-example-abc-whyte.jpg` |
+| `11-typography-example-font-switch.jpg` |
+| `12-typography-example-poster.jpg` |
+| `13-typography-example-screens.jpg` |
+| `14-color-before-problems.jpg` |
+| `15-color-in-progress.jpg` |
+| `16-color-brand-guide.jpg` |
+| `17-color-example-palette.jpg` |
+| `18-color-example-banner.jpg` |
+| `19-icons-before-problems.jpg` |
+| `20-icons-brand-guide.jpg` |
+| `21-icons-example-set.jpg` |
+| `22-icons-example-tab-bar.jpg` |
+| `23-coupons-before-problems.jpg` |
+| `24-coupons-brand-guide.jpg` |
+| `25-coupons-example-redesign.jpg` |
+| `26-coupons-example-app-creatives.jpg` |
+| `27-campaigns-before-problems.jpg` |
+| `28-campaigns-brand-guide.jpg` |
+| `29-campaigns-example-types.jpg` |
+| `30-example-category-tiles.jpg` |
+| `31-app-before-after.jpg` |
+| `32-ui-elements-brand-guide.jpg` |
+| `33-app-screens.jpg` |
 
 The initial analysis is rebuilt from the Figma status-quo files and the deck text. Slide images from the Google Slides deck (pages 1–126) are not included because the deck export times out.
 
