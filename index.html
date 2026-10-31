@@ -1360,6 +1360,20 @@
           </div>
         </div>
       </article>
+      <article class="work-item" data-project="brand-consistency">
+        <div class="work-item__image" data-client="About You">
+          <img src="assets/brand-consistency/00-hero.png" alt="About You Brand Consistency" loading="lazy">
+          <video autoplay muted loop playsinline style="display:none"></video>
+        </div>
+        <div class="work-item__body">
+          <span class="work-item__year">2025–2026</span>
+          <p class="work-item__client">About You</p>
+          <p class="work-item__title">Aligning the About You brand across every customer touchpoint. One brand font, a simpler color system and a campaign framework for marketing and product teams.</p>
+          <div class="work-item__footer">
+            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
+          </div>
+        </div>
+      </article>
       <article class="work-item" data-project="dmexco">
         <div class="work-item__image" data-client="DMEXCO">
           <img src="images/parallax/p03.png" alt="DMEXCO" loading="lazy">
@@ -2277,6 +2291,30 @@ quoteText.textContent = '“' + q.text + '”';
         myRole:'I have created the Figma Design System for the About You App and Webshop with Figma variables.',
         links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'},{t:'App Download',u:'https://apps.apple.com/de/app/about-you-mode-online-shop/id985244644'}],
       },
+      'brand-consistency': {
+        bg:'#F5F5F5',
+        hero: 'assets/brand-consistency/00-hero.png', client:'About You', year:'2025–2026',
+        name:'Brand Consistency',
+        title:'About You Brand Consistency',
+        text:"<p>About You had grown into many customer touchpoints, each with its own look and feel: different fonts in marketing and in the shop, a different color for every use case, and campaign assets that did not look like they came from the same brand. The goal of the Brand Consistency project was to build brand equity and make marketing more efficient through one coherent visual identity along the whole user journey. The aim was better quality from the work we already do, not more budget.</p><p>We started by auditing 11 touchpoint groups, from packaging, newsletter and social to TV, print, app and web, and benchmarked About You against 11 other brands. From this we derived a two-mode concept: bold and attention-seeking where we inspire (campaigns, ads, stories), calm and minimal where customers shop (from filters to checkout).</p><p>The result is one brand font, ABC Whyte, used across all touchpoints; a personalizable logo; a simpler color system with defined campaign, coupon, loyalty, AI and highlight colors; accessibility rules for every color pairing; and a campaign framework with ready-made layouts for promotion, creative, coins and coupon campaigns.</p>",
+        media:(() => {
+          const img = f => new URL('assets/brand-consistency/' + f, location.href).href;
+          return [
+            img('02-logo.png'), img('03-logo-personalization.png'),
+            {__type:'numbers', items:[{unit:'11', label:'Touchpoints audited'},{unit:'11', label:'Brands benchmarked'}]},
+            img('04-color-token-scales.png'), img('05-campaign-color-lime.png'), img('06-coupon-colors.png'),
+            img('07-ai-colors.png'), img('08-highlight-colors.png'), img('09-accessibility.png'),
+            img('10-typeface.png'), img('11-font-weights.png'), img('12-typography-in-use.png'),
+            {__type:'numbers', items:[{unit:'1', label:'Brand font, all touchpoints'},{unit:'250+', label:'Icons unified'}]},
+            img('13-cta.png'), img('14-tags.png'), img('15-px-campaign-overview.png'),
+            img('16-creative-campaign-layouts.png'), img('17-coins-layouts.png'), img('18-coupon-layouts.png'),
+            img('19-campaign-examples.png'),
+          ];
+        })(),
+        facts:[{l:'Year',v:'2025–2026'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],
+        myRole:'I co-led the Brand Visuality workstream and led the User Journey Analysis. I audited the look and feel of every customer touchpoint, defined the new typography and logo system, and turned the decisions into a brand style guide and a campaign framework that marketing and product teams now use.',
+        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'}],
+      },
       'douglas-hybrid': {
         bg:'#EDD3DE',
         hero: BASE+'Dgls-hybrid-Header.jpg', client:'Douglas', year:'2021–2022',
@@ -2363,7 +2401,7 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     // === NEXT PROJECT SETUP ===
-    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
+    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','brand-consistency','douglas-hybrid','zalando','dmexco','the-makery'];
     const PROJECT_OVERRIDES = {
       'the-makery': { textColor: '#000000' },
     };
