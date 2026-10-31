@@ -1362,7 +1362,7 @@
       </article>
       <article class="work-item" data-project="brand-consistency">
         <div class="work-item__image" data-client="About You">
-          <img src="assets/brand-consistency/00-hero.png" alt="About You Brand Consistency" loading="lazy">
+          <img src="assets/brand-consistency/00-hero.jpg" alt="About You Brand Consistency" loading="lazy">
           <video autoplay muted loop playsinline style="display:none"></video>
         </div>
         <div class="work-item__body">
@@ -2293,26 +2293,21 @@ quoteText.textContent = '“' + q.text + '”';
       },
       'brand-consistency': {
         bg:'#F5F5F5',
-        hero: 'assets/brand-consistency/00-hero.png', client:'About You', year:'2025–2026',
+        hero: 'assets/brand-consistency/00-hero.jpg', client:'About You', year:'2025–2026',
         name:'Brand Consistency',
         title:'About You Brand Consistency',
-        text:"<p>About You had grown into many customer touchpoints, each with its own look and feel: different fonts in marketing and in the shop, a different color for every use case, and campaigns that did not look like they came from the same brand. The goal of the Brand Consistency project was to build brand equity and make marketing more efficient through one coherent visual identity along the whole user journey. The aim was better quality from the work we already do, not more budget.</p><p>The initial analysis showed one brand with four different looks: loud and promotional in marketing, functional in the app, generic in the web shop and scrapbook-like internally. We benchmarked About You against 13 brands, from Zalando and Zara to Apple, Nike and Shein, and mapped where they stand between functional and editorial, and between price-driven and premium. About You sat in the middle as a mix of everything, with imagery that looked younger than its actual 38-year-old core customer. The decision: keep the central position, but focused. Bold and editorial where we inspire, calm, minimal and timeless where customers shop.</p><p>As lead of the User Journey Analysis, I mapped 46 touchpoints along the five stages of the customer journey. Each one was scored on reach, the quality of the users reached, how much brand and message it can carry, and its potential for emotional involvement. The 11 highest-scoring touchpoints, among them packaging, the newsletter, organic social, the wishlist and TV ads, became the focus of the rollout.</p><p>The result aligns six areas: one brand font, ABC Whyte, on every touchpoint; one personalizable logo; shared color scales with a maximum of three campaign colors; defined buttons and tags; one icon set; and a campaign framework with ready-made layouts for promotion, creative, coins and coupon campaigns.</p>",
+        text:"<p>About You had grown into many touchpoints, each with its own look: different fonts in marketing and in the shop, a color for every use case, and campaigns that did not feel like one brand. The goal: one coherent visual identity along the whole customer journey, with better quality from the work we already do, not more budget.</p><p>I audited the status quo, benchmarked 13 brands and led the User Journey Analysis: 46 touchpoints mapped and scored, the 11 most effective selected for the rollout. The result is one brand font, one personalizable logo, a calm shop with a maximum of three campaign colors, and a campaign framework for every channel.</p>",
         media:(() => {
           const img = f => new URL('assets/brand-consistency/' + f, location.href).href;
           return [
-            img('01c-before-status-quo.png'), img('01d-positioning.png'), img('01e-benchmark.png'),
-            {__type:'numbers', items:[{unit:'13', label:'Brands benchmarked'},{unit:'6', label:'Areas to align'}]},
-            img('01a-touchpoint-map.png'), img('01b-touchpoint-scoring.png'),
-            {__type:'numbers', items:[{unit:'46', label:'Touchpoints mapped'},{unit:'11', label:'Selected for rollout'}]},
-            img('01f-before-after-areas.png'), img('01g-campaigns-before-after.png'),
-            img('02-logo.png'), img('03-logo-personalization.png'),
-            img('04-color-token-scales.png'), img('05-campaign-color-lime.png'), img('06-coupon-colors.png'),
-            img('07-ai-colors.png'), img('08-highlight-colors.png'), img('09-accessibility.png'),
-            img('10-typeface.png'), img('11-font-weights.png'), img('12-typography-in-use.png'),
-            {__type:'numbers', items:[{unit:'1', label:'Brand font, all touchpoints'},{unit:'250+', label:'Icons unified'}]},
-            img('13-cta.png'), img('14-tags.png'), img('15-px-campaign-overview.png'),
-            img('16-creative-campaign-layouts.png'), img('17-coins-layouts.png'), img('18-coupon-layouts.png'),
-            img('19-campaign-examples.png'),
+            img('01-before-app-and-web.jpg'), img('02-before-web-and-campaigns.jpg'),
+            img('03-positioning.jpg'), img('04-benchmark.jpg'),
+            {__type:'numbers', items:[{unit:'13', label:'Brands benchmarked'},{unit:'46', label:'Touchpoints mapped'}]},
+            img('05-touchpoint-map.jpg'), img('06-touchpoint-scoring.jpg'),
+            img('07-app-before-after.jpg'), img('08-campaigns-before-after.jpg'),
+            {__type:'numbers', items:[{unit:'4+ → 1', label:'Brand fonts'},{unit:'3', label:'Campaign colors max.'}]},
+            img('09-typography-logo.jpg'), img('10-colors.jpg'), img('11-ui-elements.jpg'),
+            img('12-campaign-framework.jpg'), img('13-app-screens.jpg'),
           ];
         })(),
         facts:[{l:'Year',v:'2025–2026'},{l:'Brand',v:'About You'},{l:'Position',v:'Lead Designer'}],

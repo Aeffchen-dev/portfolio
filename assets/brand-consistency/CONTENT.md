@@ -28,36 +28,26 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 ## `section` (flexible content, in order)
 
+All images are composed case-study assets (2554×1437 JPG): bento tiles on `#F5F5F5`, device frames, browser bar, minimal labels. Built from the original Figma files at 2–3× (`download_assets`), not 1:1 slides.
+
 | # | Layout | Content |
 |---|---|---|
-| 0a | image | `01c-before-status-quo.png` (Marketing, App, Web, Internal: four looks) |
-| 0b | image | `01d-positioning.png` (positioning map, today vs. target) |
-| 0c | image | `01e-benchmark.png` (13 brands, five learnings) |
-| 0d | kpi-numbers | left `13` · *Brands benchmarked* / right `6` · *Areas to align* |
-| 1 | image | `01a-touchpoint-map.png` (custom graphic: 46 touchpoints on 5 journey stages, 11 selected) |
-| 2 | image | `01b-touchpoint-scoring.png` (custom graphic: 4 scoring criteria + ranked total scores) |
-| 3 | kpi-numbers | left `46` · *Touchpoints mapped* / right `11` · *Selected for rollout* |
-| 3a | image | `01f-before-after-areas.png` (six areas, before → after) |
-| 3b | image | `01g-campaigns-before-after.png` |
-| 3c | image | `02-logo.png` |
-| 3b | image | `03-logo-personalization.png` |
-| 4 | image | `04-color-token-scales.png` |
-| 5 | image | `05-campaign-color-lime.png` |
-| 6 | image | `06-coupon-colors.png` |
-| 7 | image | `07-ai-colors.png` |
-| 8 | image | `08-highlight-colors.png` |
-| 9 | image | `09-accessibility.png` |
-| 10 | image | `10-typeface.png` |
-| 11 | image | `11-font-weights.png` |
-| 12 | image | `12-typography-in-use.png` |
-| 13 | kpi-numbers | left `1` · *Brand font, all touchpoints* / right `250+` · *Icons unified* |
-| 14 | image | `13-cta.png` |
-| 15 | image | `14-tags.png` |
-| 16 | image | `15-px-campaign-overview.png` |
-| 17 | image | `16-creative-campaign-layouts.png` |
-| 18 | image | `17-coins-layouts.png` |
-| 19 | image | `18-coupon-layouts.png` |
-| 20 | image | `19-campaign-examples.png` |
+| hero | image | `00-hero.jpg`: new app screens in phone frames and campaign creatives |
+| 1 | image | `01-before-app-and-web.jpg`: before, app and mobile web in phone frames, old marketing |
+| 2 | image | `02-before-web-and-campaigns.jpg`: before, desktop shop in a browser frame, old campaign and social |
+| 3 | image | `03-positioning.jpg` |
+| 4 | image | `04-benchmark.jpg` |
+| 5 | kpi-numbers | `13` Brands benchmarked / `46` Touchpoints mapped |
+| 6 | image | `05-touchpoint-map.jpg` |
+| 7 | image | `06-touchpoint-scoring.jpg` |
+| 8 | image | `07-app-before-after.jpg` |
+| 9 | image | `08-campaigns-before-after.jpg` |
+| 10 | kpi-numbers | `4+ → 1` Brand fonts / `3` Campaign colors max. |
+| 11 | image | `09-typography-logo.jpg` |
+| 12 | image | `10-colors.jpg` |
+| 13 | image | `11-ui-elements.jpg` |
+| 14 | image | `12-campaign-framework.jpg` |
+| 15 | image | `13-app-screens.jpg` |
 
 ## Left out on purpose (do not publish)
 
