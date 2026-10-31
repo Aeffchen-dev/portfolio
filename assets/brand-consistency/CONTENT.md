@@ -56,11 +56,14 @@ Composed assets, 2554×1437 JPG, set in the About You type system per brand guid
 | `18-icons-before.jpg` | Icons: before |
 | `19-icons-after.jpg` | Icons: after |
 | `20-icons-brand-guide.jpg` | Icons: brand guide |
-| `21-campaigns-before.jpg` | Campaigns: before mosaic |
-| `22-campaign-types-now.jpg` | Campaign types now: promotion, creative, coins, coupons |
-| `23-app-before-after.jpg` | App before → after |
-| `24-ui-elements-brand-guide.jpg` | Buttons and tags |
-| `25-app-screens.jpg` | App screens |
+| `21-components-font-icon-switch.jpg` | Components: font switch, icon switch (before → after) |
+| `22-components-color-coupon.jpg` | Components: color switch, coupon redesign |
+| `23-components-category-tiles.jpg` | Components: category tiles |
+| `24-campaigns-before.jpg` | Campaigns: before mosaic |
+| `25-campaign-types-now.jpg` | Campaign types now: promotion, creative, coins, coupons |
+| `26-app-before-after.jpg` | App before → after |
+| `27-ui-elements-brand-guide.jpg` | Buttons and tags |
+| `28-app-screens.jpg` | App screens |
 
 The initial analysis is rebuilt from the Figma status-quo files and the deck text. Slide images from the Google Slides deck (pages 1–126) are not included because the deck export times out.
 
@@ -82,3 +85,5 @@ The initial analysis is rebuilt from the Figma status-quo files and the deck tex
 Slides 02–19 are cropped from the Brand Guide: the black sidebar is removed and the content is centred on white, so the page reads as work rather than as a presentation. The two touchpoint graphics are built in DM Sans with the campaign lime `#C6FF00` (colors.lime.shade400). Source for the selection: Figma file `4os1bCa2fSj8h7WFla6a6f`, page "Presentation – Final result".
 
 The intro text on the live page (`index.html`, `brand-consistency` entry) has four paragraphs: context, initial analysis and positioning, touchpoint selection, result. That is the current version.
+
+All before and after tiles are white. Only the brand guide color cards use color, because there the color is the content.
