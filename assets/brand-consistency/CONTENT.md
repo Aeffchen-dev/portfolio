@@ -8,7 +8,7 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 |---|---|
 | `title` | About You Brand Consistency |
 | `slug` | `brand-consistency-about-you` |
-| `hero_image` | `01-hero-campaign-examples.png` |
+| `hero_image` | `00-hero.png` |
 | `background_color` | `#f5f5f5` (same as About You Design System → the two pages read as a pair) |
 | `text-color` | `#000000` |
 | `shortfacts` | Year: `2025 – 2026` · Brand: `About You` · Position: `Lead Designer` |
@@ -22,7 +22,7 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 > About You had grown into many customer touchpoints, each with its own look and feel: different fonts in marketing and in the shop, a different color for every use case, and campaign assets that did not look like they came from the same brand. The goal of the Brand Consistency project was to build brand equity and make marketing more efficient through one coherent visual identity along the whole user journey. The aim was better quality from the work we already do, not more budget.
 >
-> We started by auditing 11 touchpoint groups, from packaging, newsletter and social to TV, print, app and web, and benchmarked About You against 11 other brands. From this we derived a two-mode concept: bold and attention-seeking where we inspire (campaigns, ads, stories), calm and minimal where customers shop (from filters to checkout).
+> As lead of the User Journey Analysis, I mapped 46 touchpoints along the five stages of the customer journey, from awareness to loyalty. Each one was scored on four criteria: reach, the quality of the users reached, how much brand and message it can carry, and its potential for emotional involvement. The 11 highest-scoring touchpoints, among them packaging, the newsletter, organic social, the wishlist and TV ads, became the focus of the rollout. We audited their current look and feel, benchmarked About You against 11 other brands, and derived a two-mode concept: bold and attention-seeking where we inspire (campaigns, ads, stories), calm and minimal where customers shop (from filters to checkout).
 >
 > The result is one brand font, ABC Whyte, used across all touchpoints; a personalizable logo; a simpler color system with defined campaign, coupon, loyalty, AI and highlight colors; accessibility rules for every color pairing; and a campaign framework with ready-made layouts for promotion, creative, coins and coupon campaigns.
 
@@ -30,9 +30,11 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 | # | Layout | Content |
 |---|---|---|
-| 1 | image | `02-logo.png` |
-| 2 | image | `03-logo-personalization.png` |
-| 3 | kpi-numbers | left `11` · *Touchpoints audited* / right `11` · *Brands benchmarked* |
+| 1 | image | `01a-touchpoint-map.png` (custom graphic: 46 touchpoints on 5 journey stages, 11 selected) |
+| 2 | image | `01b-touchpoint-scoring.png` (custom graphic: 4 scoring criteria + ranked total scores) |
+| 3 | kpi-numbers | left `46` · *Touchpoints mapped* / right `11` · *Selected for rollout* |
+| 3a | image | `02-logo.png` |
+| 3b | image | `03-logo-personalization.png` |
 | 4 | image | `04-color-token-scales.png` |
 | 5 | image | `05-campaign-color-lime.png` |
 | 6 | image | `06-coupon-colors.png` |
@@ -63,3 +65,7 @@ Ready to paste into WordPress → Projects → new entry (ACF fields as used by 
 
 - Check with About You that the final logo and colors are public before going live (the deck marks some as rolling out in Q1–Q2).
 - There are no outcome KPIs yet (the pre/post measurement is not in the sources). If you have them, swap them for the second kpi-numbers row.
+
+## Visual style
+
+Slides 02–19 are cropped from the Brand Guide: the black sidebar is removed and the content is centred on white, so the page reads as work rather than as a presentation. The two touchpoint graphics are built in DM Sans with the campaign lime `#C6FF00` (colors.lime.shade400). Source for the selection: Figma file `4os1bCa2fSj8h7WFla6a6f`, page "Presentation – Final result".
