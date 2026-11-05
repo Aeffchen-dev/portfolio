@@ -1360,20 +1360,6 @@
           </div>
         </div>
       </article>
-      <article class="work-item" data-project="brand-consistency">
-        <div class="work-item__image" data-client="About You">
-          <img src="assets/brand-consistency/00-hero.jpg" alt="About You Brand Consistency" loading="lazy">
-          <video autoplay muted loop playsinline style="display:none"></video>
-        </div>
-        <div class="work-item__body">
-          <span class="work-item__year">2025–2026</span>
-          <p class="work-item__client">About You</p>
-          <p class="work-item__title">Aligning the About You brand across every customer touchpoint. One brand font, one color system and a campaign framework shared by marketing and product.</p>
-          <div class="work-item__footer">
-            <span class="work-item__view"><span class="view-text">View project </span><span class="work-item__arrow"><svg class="arrow-icon" width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg"><path d="M2.3042 7.69434L7.38914 2.6094" stroke-linecap="square"/><path d="M2.3042 2.14746H7.8514V7.69467" stroke-linecap="square"/></svg></span></span>
-          </div>
-        </div>
-      </article>
       <article class="work-item" data-project="dmexco">
         <div class="work-item__image" data-client="DMEXCO">
           <img src="images/parallax/p03.png" alt="DMEXCO" loading="lazy">
@@ -2313,27 +2299,6 @@ quoteText.textContent = '“' + q.text + '”';
         myRole:'My role was creating and leading the user interface and experience design, interdisciplinary communication, and development handoff.',
         links:[],
       },
-      'brand-consistency': {
-        bg:'#F2F2F2',
-        hero: 'assets/brand-consistency/00-hero.jpg', client:'About You', year:'2025–2026',
-        name:'Brand Consistency',
-        title:'About You Brand Consistency',
-        text:"<p>Every About You touchpoint had grown its own look. Marketing set headlines in a condensed Helvetica, the shop used Mark Pro and the newsletter Montserrat. Each channel brought its own colors, icons and layouts, so campaigns did not read as one brand across app, web, social and out-of-home.</p><p>Brand Consistency was a cross-functional project from January 2025 to early 2026, in three phases: groundwork, brand elements and execution. The goal was stronger brand recognition and more efficient marketing through one coherent visual identity along the customer journey. Better quality from the work we already do, not more budget.</p><p>The result is the About You Brand Guide: one brand font, ABC Whyte, for every channel; a reduced color system with dedicated campaign, sale, coupon, loyalty and AI colors that meet contrast rules; a proportional layout and radius system; a 24 px icon set; and a campaign framework for promotion, creative, coins and coupon campaigns.</p>",
-        media:(() => {
-          const img = f => new URL('assets/brand-consistency/' + f, location.href).href;
-          return [
-            img('01-cover.jpg'), img('02-logo.jpg'), img('03-font.jpg'), img('04-typo-marketing.jpg'), img('05-typo-shop.jpg'),
-            {__type:'numbers', items:[{unit:'1', label:'Brand font for all channels'},{unit:'3', label:'Campaign colors max.'}]},
-            img('06-color-pink.jpg'), img('07-padding.jpg'), img('08-layout-examples.jpg'),
-            img('09-icon-grid.jpg'), img('10-icon-set.jpg'), img('11-cta.jpg'),
-            {__type:'numbers', items:[{unit:'250+', label:'Icons unified'},{unit:'4', label:'Campaign types'}]},
-            img('12-px-campaign.jpg'), img('13-coins.jpg'), img('14-creative.jpg'),
-          ];
-        })(),
-        facts:[{l:'Year',v:'2025–2026'},{l:'Brand',v:'About You'},{l:'Position',v:'UI/UX Lead'}],
-        myRole:'I led the User Journey Analysis and co-led the Brand Visuality workstream. I audited the touchpoints with the team, ran the typography and logo design tests and turned the decisions into the brand guide that creative, marketing and product teams now work with.',
-        links:[{t:'Visit the Shop',u:'https://www.aboutyou.de/'}],
-      },
       'dmexco': {
         bg:'#ffffff',
         hero: BASE+'Header2.jpg', client:'DMEXCO', year:'2017–2020',
@@ -2398,7 +2363,7 @@ quoteText.textContent = '“' + q.text + '”';
     }
 
     // === NEXT PROJECT SETUP ===
-    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','brand-consistency','douglas-hybrid','zalando','dmexco','the-makery'];
+    const PROJECT_ORDER = ['douglas-premium-relaunch','about-you','douglas-hybrid','zalando','dmexco','the-makery'];
     const PROJECT_OVERRIDES = {
       'the-makery': { textColor: '#000000' },
     };
