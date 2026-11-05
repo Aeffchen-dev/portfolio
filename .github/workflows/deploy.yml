@@ -1,0 +1,63 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+# Allow only one concurrent deployment
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regenerate parallax image manifest
+        # The committed images/parallax/parallax-images.js (kept in sync by
+        # .github/workflows/parallax-manifest.yml, for local dev) can lag behind
+        # the deployed commit: that workflow's own commit is pushed with the
+        # default GITHUB_TOKEN, which GitHub doesn't allow to trigger this
+        # workflow, so a manifest-only update never gets its own deploy.
+        # Regenerating it fresh here guarantees what's live always matches
+        # images/parallax/ at this exact commit, regardless of that gap.
+        run: |
+          dir="images/parallax"
+          out="$dir/parallax-images.js"
+          files=$(cd "$dir" && ls -1 2>/dev/null | grep -iE '\.(png|jpe?g|webp|gif|avif)$' | LC_ALL=C sort || true)
+          {
+            echo "// AUTO-GENERATED — do not edit by hand."
+            echo "// Regenerated on every deploy from the current contents of images/parallax/."
+            printf 'window.PARALLAX_IMAGES = ['
+            first=1
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              if [ $first -eq 1 ]; then first=0; else printf ','; fi
+              printf '\n  "%s"' "$f"
+            done <<< "$files"
+            printf '\n];\n'
+          } > "$out"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

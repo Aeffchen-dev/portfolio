@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1028 1232" width="1028" height="1232">
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 L 0 50" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1028" height="1232" fill="#141414"/>
+  <rect width="1028" height="1232" fill="url(#grid)"/>
+
+  <!-- ① Large down-arrow — Squared CUTS
+       Shaft: x=605–685, top at y=50
+       Arrowhead wings at y=545: left tip x=270, right tip x=895
+       Arrow tip: x=645 y=870                                     -->
+  <polygon
+    points="605,50 685,50 685,545 895,545 645,875 270,545 605,545"
+    fill="#e2e2de"/>
+
+  <!-- ② Diagonal band — 2px stroke width
+       Band centre-line from (345,415) to (160,548), width ≈ 72px
+       Perpendicular offset vector (half-width = 36):
+         dir = (-185, 133), |dir| ≈ 227.5
+         perp unit = (133/227.5, 185/227.5) = (0.585, 0.813)
+         offset = 36 × (0.585, 0.813) = (21, 29)               -->
+  <polygon
+    points="366,386 181,519 139,577 324,444"
+    fill="#e2e2de"/>
+
+  <!-- ③ L-shape — 90° corner prefer
+       Vertical bar: x=140–215, from y=645 down
+       Horizontal bar: y=1025–1115, from x=140 to x=900
+       Outer bottom-left corner: arc radius 80
+       Inner corner (x=215, y=1025): sharp 90°                   -->
+  <path
+    d="M 140,645 L 215,645 L 215,1025 L 900,1025 L 900,1115 L 220,1115 A 80,80 0 0 1 140,1035 Z"
+    fill="#e2e2de"/>
+
+  <!-- Text annotations -->
+  <text x="758" y="62"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="18" font-weight="400" fill="#e2e2de" letter-spacing="0">Squared CUTS</text>
+
+  <text x="215" y="383"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="18" font-weight="400" fill="#e2e2de">2px stroke width</text>
+
+  <text x="742" y="918"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="18" font-weight="400" fill="#e2e2de">90° corner preffer.</text>
+</svg>

@@ -69,7 +69,7 @@ export default function Home() {
             key={project.slug}
             href={`/projects/${project.slug}`}
             onClick={(e: React.MouseEvent) => { e.preventDefault(); setOpenProject(project); }}
-            style={{ gridColumn: "span 2", textDecoration: "none" }}
+            style={{ gridColumn: "span 2", textDecoration: "none", backgroundColor: "#1a1a1a", borderRadius: 16 }}
             className="group"
           >
             <div
@@ -84,7 +84,7 @@ export default function Home() {
               <div
                 style={{
                   aspectRatio: "16/9",
-                  backgroundColor: "#222222",
+                  backgroundColor: "#1a1a1a",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
